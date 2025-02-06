@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using LCMSWipPrinter.Models.Datasources;
 
 namespace LCMSWipPrinter.ViewModels;
 
@@ -7,14 +8,25 @@ namespace LCMSWipPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject {
     // public class properties
-    private string? _process;
-    public string? Process {
-        get {return _process;}
-        set {_process = value;}
+    private string? _selectedProcess;
+    public string? SelectedProcess {
+        get {return _selectedProcess;}
+        set {_selectedProcess = value;}
     }
 
+    // public process list
+    private List<string> _processes = ProcessData.ProcessMasterList;
+    public List<string> Processes {
+        get {return _processes;}
+    }
+    
+    // public part lists
+    public List<string> DiecastParts = PartData.DiecastPartsAsString;
+    public List<string> DeburrParts = PartData.DeburrPartsAsString;
+    public List<string> PivotHousingMCParts = PartData.PivotHousingMCPartsAsString;
+    
     // full constructor
     public MainPageViewModel() {
-        
+
     }
 }

@@ -17,58 +17,79 @@ public static class ProcessData {
     // requirements for each process
     // Diecast
     private static readonly List<string> _diecastRequirements = [
-        "ProcessPicker", "JBKNumberInput", "DieNumberInput", "PartPicker", 
-        "QuantityInput", "ProductionDatePicker", "ProductionShiftPicker"
+        "ProcessPicker", "JBKNumberEntry", "DieNumberEntry", "PartPicker", 
+        "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker"
     ];
     public static List<string> DiecastRequirements {
         get {return _diecastRequirements;}
     }
     // Deburr
     private static readonly List<string> _deburrRequirements = [
-        "ProcessPicker", "JBKNumberInput", "PartPicker", 
-        "QuantityInput", "ProductionDatePicker", "ProductionShiftPicker"
+        "ProcessPicker", "JBKNumberEntry", "PartPicker", 
+        "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker"
     ];
     public static List<string> DeburrRequirements {
         get {return _deburrRequirements;}
     }
     // Pivot Housing MC
     private static readonly List<string> _pivotHousingMCRequirements = [
-        "ProcessPicker", "JBKNumberInput", "DeburrJBKNumberInput", "PartPicker", 
-        "QuantityInput", "ProductionDatePicker", "ProductionShiftPicker"
+        "ProcessPicker", "JBKNumberEntry", "DeburrJBKNumberEntry", "PartPicker", 
+        "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker"
     ];
     public static List<string> PivotHousingMCRequirements {
         get {return _pivotHousingMCRequirements;}
     }
     // Tilt Bracket Weld
     private static readonly List<string> _tiltBracketWeldRequirements = [
-        "ProcessPicker", "LotNumberInput", "PartPicker", 
-        "QuantityInput", "ProductionDatePicker", "ProductionShiftPicker"
+        "ProcessPicker", "LotNumberEntry", "PartPicker", 
+        "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker"
     ];
     public static List<string> TiltBracketWeldRequirements {
         get {return _tiltBracketWeldRequirements;}
     }
     // Pipe Weld
     private static readonly List<string> _pipeWeldRequirements = [
-        "ProcessPicker", "LotNumberInput", "PartPicker", "ModelNumberPicker",
-        "QuantityInput", "ProductionDatePicker", "ProductionShiftPicker"
+        "ProcessPicker", "LotNumberEntry", "PartPicker", "ModelNumberPicker",
+        "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker"
     ];
     public static List<string> PipeWeldRequirements {
         get {return _pipeWeldRequirements;}
     }
     // Shaft Clinch
     private static readonly List<string> _shaftClinchRequirements = [
-        "ProcessPicker", "LotNumberInput", "PartPicker", "ModelNumberPicker",
-        "QuantityInput", "ProductionDatePicker", "ProductionShiftPicker"
+        "ProcessPicker", "LotNumberEntry", "PartPicker", "ModelNumberPicker",
+        "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker"
     ];
     public static List<string> ShaftClinchRequirements {
         get {return _shaftClinchRequirements;}
     }
     // Uppershaft MC
     private static readonly List<string> _uppershaftMCRequirements = [
-        "ProcessPicker", "LotNumberInput", "PartPicker", 
-        "QuantityInput", "ProductionDatePicker", "ProductionShiftPicker"
+        "ProcessPicker", "LotNumberEntry", "PartPicker", 
+        "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker"
     ];
     public static List<string> UppershaftMCRequirements {
         get {return _uppershaftMCRequirements;}
+    }
+
+    /// <summary>
+    /// Allows access to a Process' requirements from a string.
+    /// </summary>
+    /// <param name="Process">The Process selection to retrieve requirements for.</param>
+    /// <returns></returns>
+    public static List<string> GetProcessRequirements(string Process) {
+        // create a dictionary to convert from Process to Property
+        Dictionary<string, List<string>> Conversions = new Dictionary<string, List<string>> {
+            {"Diecast", DiecastRequirements},
+            {"Deburr", DeburrRequirements},
+            {"PivotHousingMC", PivotHousingMCRequirements},
+            {"UppershaftMC", UppershaftMCRequirements},
+            {"TiltBracketWeld", TiltBracketWeldRequirements},
+            {"PipeWeld", PipeWeldRequirements},
+            {"ShaftClinch", ShaftClinchRequirements}
+        };
+        // find the property in the ProcessData class
+        List<string> Requirements = Conversions[Process];
+        return Requirements;
     }
 }

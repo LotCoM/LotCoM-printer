@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ViewModels="clr-namespace:LCMSWipPrinter.ViewModels"
+             x:DataType="ViewModels:MainPageViewModel"
              x:Class="LCMSWipPrinter.Views.MainPage">
 
     <!-- Main Layout Grid -->
@@ -44,7 +46,10 @@
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="0"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                ItemsSource="{Binding Processes}"
+                SelectedIndexChanged="OnProcessSelection">
+            </Picker>
         </Grid>
         <!-- Left-Side Sub-Grid (Stack of Input Elements) allows control over label/input positions-->
         <Grid
