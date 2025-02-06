@@ -5,8 +5,7 @@
 
     <!-- Main Layout Grid -->
     <Grid
-        Margin="20"
-        Padding="5">
+        Margin="10">
         <Grid.RowDefinitions>
             <!-- Single Row to Hold StackLayouts in each Column -->
             <RowDefinition Height="*"/>
@@ -17,53 +16,204 @@
             <!-- Right-Side Column (Date/shift input elements) -->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <!-- Left-Side StackLayout (Stack of Input Elements) -->
-        <StackLayout
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="20"
-            Padding="5">
-            <!-- Process Picker -->
+        <!-- Left-Side Sub-Grid (Stack of Input Elements) allows control over label/input positions-->
+        <Grid
+            Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Labels -->
+                <ColumnDefinition Width="150"/>
+                <!-- Inputs -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- Stack Labels -->
+            <!-- Process -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="Process"/>
+            <!-- JBK Number -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="1"
+                Grid.Column="0"
+                Text="JBK #"/>
+            <!-- Lot Number -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="0"
+                Text="Lot #"/>
+            <!-- Deburr JBK Number -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="3"
+                Grid.Column="0"
+                Text="Deburr JBK #"/>
+            <!-- Die Number -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="4"
+                Grid.Column="0"
+                Text="Die #"/>
+            <!-- Part Number -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="5"
+                Grid.Column="0"
+                Text="Part #/Name"/>
+            <!-- Model Number -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="6"
+                Grid.Column="0"
+                Text="Model #"/>
+            <!-- Quantity -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="7"
+                Grid.Column="0"
+                Text="Total Quantity"/>
+            <!-- Stack Inputs -->
+            <!-- Process -->
             <Picker
-                Title="Process"
-                WidthRequest="200"
-                HeightRequest="50"/>
-            <!-- JBK Number Label and Input -->
-            <Label/>
-            <Entry/>
-            <!-- Lot Number Label and Input -->
-            <Label/>
-            <Entry/>
-            <!-- Deburr JBK Number Label and Input -->
-            <Label/>
-            <Entry/>
-            <!-- Die Number Label and Input -->
-            <Label/>
-            <Entry/>
-            <!-- Part Number Picker -->
-            <Label/>
-            <Entry/>
-            <!-- Part Name Label and Input -->
-            <Label/>
-            <Entry/>
-            <!-- Model Number Picker -->
-            <Label/>
-            <Entry/>
-            <!-- Quantity Label and Input -->
-            <Label/>
-            <Entry/>
-        </StackLayout>
-        <!-- Right-Side StackLayout (Production Time Inputs) -->
-        <StackLayout
-            Grid.Row="0"
-            Grid.Column="1"
-            Margin="20"
-            Padding="5">
-            <!-- Production Date Label and DatePicker -->
-            <Label/>
-            <DatePicker/>
-            <!-- Production Shift Picker -->
-            <Picker/>
-        </StackLayout>
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="0"
+                Grid.Column="1"/>
+            <!-- JBK Number -->
+            <Entry
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="1"
+                Grid.Column="1"/>
+            <!-- Lot Number -->
+            <Entry
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="1"/>
+            <!-- Deburr JBK Number -->
+            <Entry
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="3"
+                Grid.Column="1"/>
+            <!-- Die Number -->
+            <Entry
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="4"
+                Grid.Column="1"/>
+            <!-- Part Number -->
+            <Picker
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="5"
+                Grid.Column="1"/>
+            <!-- Model Number -->
+            <Picker
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="6"
+                Grid.Column="1"/>
+            <!-- Quantity -->
+            <Entry
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="7"
+                Grid.Column="1"/>
+        </Grid>
+        <!-- Right-Side Sub-Grid (Production Time Inputs) allows control over label/input positions -->
+        <Grid
+            Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Labels -->
+                <ColumnDefinition Width="150"/>
+                <!-- Inputs -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- Stack Labels -->
+            <!-- Production Date -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="Production Date"/>
+            <!-- Production Shift -->
+            <Label
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="1"
+                Grid.Column="0"
+                Text="Production Shift"/>
+            <!-- Stack Inputs -->
+            <!-- Production Date -->
+            <DatePicker
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="0"
+                Grid.Column="1"/>
+            <!-- Production Shift -->
+            <Picker
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="1"
+                Grid.Column="1"/>
+        </Grid>
     </Grid>
 </ContentPage>
