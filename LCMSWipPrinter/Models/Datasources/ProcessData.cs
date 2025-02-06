@@ -5,6 +5,15 @@ namespace LCMSWipPrinter.Models.Datasources;
 /// Requirements are stored as the name of the Input Element on the Main Page.
 /// </summary>
 public static class ProcessData {
+    // master list of processes
+    // each key is a displayable string and the value is the programmatic name
+    private static readonly List<string> _processMasterList = [
+        "Diecast", "Deburr", "Pivot Housing MC", "Uppershaft MC", "Tilt Bracket Weld", "Pipe Weld", "Shaft Clinch"
+    ];
+    public static List<string> ProcessMasterList {
+        get {return _processMasterList;}
+    }
+
     // requirements for each process
     // Diecast
     private static readonly List<string> _diecastRequirements = [
