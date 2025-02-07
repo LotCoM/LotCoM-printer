@@ -1,4 +1,4 @@
-namespace LCMSWipPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Provides a static source for Required Process Data when verifying Label printability.

@@ -1,7 +1,7 @@
-namespace LCMSWipPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
-/// Provides a static source for Part Data throughout the LCMS WIP Printer application.
+/// Provides a static source for Part Data throughout the LotCoM WIP Printer application.
 /// </summary>
 public static class PartData {
     // Part Data masterlist

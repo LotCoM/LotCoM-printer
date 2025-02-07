@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LCMSWipPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Datasources;
 
-namespace LCMSWipPrinter.ViewModels;
+namespace LotCoMPrinter.ViewModels;
 
 /// <summary>
 /// Constructs a ViewModel for the MainPage class.
