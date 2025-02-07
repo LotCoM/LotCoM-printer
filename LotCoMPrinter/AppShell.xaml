@@ -5,11 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:LotCoMPrinter"
     xmlns:views="clr-namespace:LotCoMPrinter.Views"
-    Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutBehavior="Disabled"
     Title="WIP Labels">
 
     <ShellContent
-        Title="Home"
+        Title="Print Labels"
         ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage" />
 
