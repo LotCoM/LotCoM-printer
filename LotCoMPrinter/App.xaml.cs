@@ -1,4 +1,4 @@
-﻿namespace LCMSWipPrinter;
+﻿namespace LotCoMPrinter;
 
 public partial class App : Application
 {

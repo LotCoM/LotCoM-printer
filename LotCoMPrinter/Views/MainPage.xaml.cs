@@ -1,4 +1,4 @@
-﻿namespace LCMSWipPrinter.Views;
+﻿namespace LotCoMPrinter.Views;
 
 public partial class MainPage : ContentPage {
 	

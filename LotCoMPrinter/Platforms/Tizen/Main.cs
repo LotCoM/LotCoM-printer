@@ -2,7 +2,7 @@ using System;
 using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
 
-namespace LCMSWipPrinter;
+namespace LotCoMPrinter;
 
 class Program : MauiApplication
 {

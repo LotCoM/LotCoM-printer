@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace LCMSWipPrinter;
+namespace LotCoMPrinter;
 
 public static class MauiProgram
 {
