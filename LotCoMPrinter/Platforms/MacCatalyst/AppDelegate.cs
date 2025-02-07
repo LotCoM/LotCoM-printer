@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace LCMSWipPrinter;
+namespace LotCoMPrinter;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

@@ -1,7 +1,7 @@
-﻿using LCMSWipPrinter.Models.Datasources;
-using LCMSWipPrinter.ViewModels;
+﻿using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.ViewModels;
 
-namespace LCMSWipPrinter.Views;
+namespace LotCoMPrinter.Views;
 
 public partial class MainPage : ContentPage {
 	

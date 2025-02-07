@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-    x:Class="LCMSWipPrinter.AppShell"
+    x:Class="LotCoMPrinter.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:LCMSWipPrinter"
-    xmlns:views="clr-namespace:LCMSWipPrinter.Views"
+    xmlns:local="clr-namespace:LotCoMPrinter"
+    xmlns:views="clr-namespace:LotCoMPrinter.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="WIP Labels">
 
