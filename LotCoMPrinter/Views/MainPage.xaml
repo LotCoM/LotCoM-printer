@@ -72,13 +72,31 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!-- Stack Labels -->
+            <!-- Part Number -->
+            <Label
+                x:Name="PartLabel"
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="1"
+                Grid.Column="0"
+                Text="Part #/Name"/>
+            <!-- Quantity -->
+            <Label
+                x:Name="QuantityLabel"
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="0"
+                Text="Total Quantity"/>
             <!-- JBK Number -->
             <Label
                 x:Name="JBKNumberLabel"
                 Margin="10"
                 VerticalOptions="Start"
                 HeightRequest="40"
-                Grid.Row="1"
+                Grid.Row="3"
                 Grid.Column="0"
                 Text="JBK #"/>
             <!-- Lot Number -->
@@ -87,7 +105,7 @@
                 Margin="10"
                 VerticalOptions="Start"
                 HeightRequest="40"
-                Grid.Row="2"
+                Grid.Row="4"
                 Grid.Column="0"
                 Text="Lot #"/>
             <!-- Deburr JBK Number -->
@@ -96,7 +114,7 @@
                 Margin="10"
                 VerticalOptions="Start"
                 HeightRequest="40"
-                Grid.Row="3"
+                Grid.Row="5"
                 Grid.Column="0"
                 Text="Deburr JBK #"/>
             <!-- Die Number -->
@@ -105,37 +123,37 @@
                 Margin="10"
                 VerticalOptions="Start"
                 HeightRequest="40"
-                Grid.Row="4"
+                Grid.Row="6"
                 Grid.Column="0"
                 Text="Die #"/>
-            <!-- Part Number -->
-            <Label
-                x:Name="PartLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="5"
-                Grid.Column="0"
-                Text="Part #/Name"/>
             <!-- Model Number -->
             <Label
                 x:Name="ModelNumberLabel"
                 Margin="10"
                 VerticalOptions="Start"
                 HeightRequest="40"
-                Grid.Row="6"
-                Grid.Column="0"
-                Text="Model #"/>
-            <!-- Quantity -->
-            <Label
-                x:Name="QuantityLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
                 Grid.Row="7"
                 Grid.Column="0"
-                Text="Total Quantity"/>
+                Text="Model #"/>
             <!-- Stack Inputs -->
+            <!-- Part Number -->
+            <Picker
+                x:Name="PartPicker"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="1"
+                Grid.Column="1"/>
+            <!-- Quantity -->
+            <Entry
+                x:Name="QuantityEntry"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="1"/>
             <!-- JBK Number -->
             <Entry
                 x:Name="JBKNumberEntry"
@@ -143,7 +161,7 @@
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
-                Grid.Row="1"
+                Grid.Row="3"
                 Grid.Column="1"/>
             <!-- Lot Number -->
             <Entry
@@ -152,7 +170,7 @@
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
-                Grid.Row="2"
+                Grid.Row="4"
                 Grid.Column="1"/>
             <!-- Deburr JBK Number -->
             <Entry
@@ -161,7 +179,7 @@
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
-                Grid.Row="3"
+                Grid.Row="5"
                 Grid.Column="1"/>
             <!-- Die Number -->
             <Entry
@@ -170,29 +188,11 @@
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
-                Grid.Row="4"
-                Grid.Column="1"/>
-            <!-- Part Number -->
-            <Picker
-                x:Name="PartPicker"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="1"/>
             <!-- Model Number -->
             <Picker
                 x:Name="ModelNumberPicker"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="6"
-                Grid.Column="1"/>
-            <!-- Quantity -->
-            <Entry
-                x:Name="QuantityEntry"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
