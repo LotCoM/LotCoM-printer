@@ -15,3 +15,8 @@
 # `v0.0.2`
 ### Entered Data Validation
 - Implement `PrintValidator` class that captures and ensures that all required entries are made for any Process.
+
+# `v0.1.0`
+### Label Generation
+- Implement connection between `InterfaceCaptureValidator` and digital Label generation.
+- Implement digital Label generation classes.
