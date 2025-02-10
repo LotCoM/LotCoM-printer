@@ -1,4 +1,5 @@
 ﻿using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Validators;
 using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
@@ -90,6 +91,12 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
+		// validate inputs
+		try {
+			Dictionary<string, string> UICapture = PrintValidator.Validate(
+				_viewModel.SelectedProcess, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, 
+				DeburrJBKNumberEntry, DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);
+		} catch {}
 		// do print activities
 		await Task.Delay(0);
 	}
