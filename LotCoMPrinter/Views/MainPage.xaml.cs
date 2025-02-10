@@ -93,7 +93,7 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// validate inputs
 		try {
-			Dictionary<string, string> UICapture = PrintValidator.Validate(
+			Dictionary<string, string> UICapture = InterfaceCaptureValidator.Validate(
 				_viewModel.SelectedProcess.Replace(" ", ""), 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
 				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);

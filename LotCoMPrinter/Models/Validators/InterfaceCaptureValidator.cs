@@ -5,7 +5,7 @@ namespace LotCoMPrinter.Models.Validators;
 /// <summary>
 /// Validates and captures the Data entered on the UI.
 /// </summary>
-public static class PrintValidator {
+public static class InterfaceCaptureValidator {
 
     private static string? ValidatePicker(Picker PickerControl, string DataField) {
         // validate that the Picker has a selection
