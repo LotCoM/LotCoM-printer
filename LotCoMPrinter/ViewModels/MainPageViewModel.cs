@@ -39,12 +39,6 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
 
-    // public process list
-    private List<string> _processes = ProcessData.ProcessMasterList;
-    public List<string> Processes {
-        get {return _processes;}
-    }
-        
     private List<string> _displayedModels = [];
     public List<string> DisplayedModels {
         get {return _displayedModels;}
@@ -55,6 +49,11 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     
+    private List<string> _processes = ProcessData.ProcessMasterList;
+    public List<string> Processes {
+        get {return _processes;}
+    }
+
     // full constructor
     public MainPageViewModel() {}
 
@@ -132,5 +131,15 @@ public partial class MainPageViewModel : ObservableObject {
         } else {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Resets the ViewModel's public properties.
+    /// </summary>
+    public void Reset() {
+        SelectedProcess = "";
+        SelectedProcessParts = [];
+        SelectedPart = "";
+        DisplayedModels = [];
     }
 }

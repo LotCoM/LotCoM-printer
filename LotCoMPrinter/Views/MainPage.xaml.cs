@@ -58,6 +58,8 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnProcessSelection(object Sender, EventArgs e) {
+		// reset the Page
+		Reset();
 		// update the SelectedProcess and SelectedProcessParts properties
 		Picker ProcessPicker = (Picker)Sender;
 		await _viewModel.UpdateSelectedProcess(ProcessPicker);
@@ -90,6 +92,41 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// do print activities
 		await Task.Delay(0);
+	}
+
+	/// <summary>
+	/// Clears and reactivates all UI Controls on the Page.
+	/// </summary>
+	public void Reset() {
+		// reset viewmodel properties
+		_viewModel.Reset();
+		// Part Picker reset
+		PartPicker.SelectedIndex = -1;
+		PartPicker.IsEnabled = true;
+		// Quantity Input reset
+		QuantityEntry.Text = "";
+		QuantityEntry.IsEnabled = true;
+		// JBK Input reset
+		JBKNumberEntry.Text = "";
+		JBKNumberEntry.IsEnabled = true;
+		// Lot Input reset
+		LotNumberEntry.Text = "";
+		LotNumberEntry.IsEnabled = true;
+		// Deburr JBK Input reset
+		DeburrJBKNumberEntry.Text = "";
+		DeburrJBKNumberEntry.IsEnabled = true;
+		// Die Number Input reset
+		DieNumberEntry.Text = "";
+		DieNumberEntry.IsEnabled = true;
+		// Model Number Picker reset
+		ModelNumberPicker.SelectedIndex = -1;
+		ModelNumberPicker.IsEnabled = true;
+		// Production Date Picker reset
+		ProductionDatePicker.Date = DateTime.Now;
+		ProductionDatePicker.IsEnabled = true;
+		// Production Shift Picker reset
+		ProductionShiftPicker.SelectedIndex = -1;
+		ProductionShiftPicker.IsEnabled = true;
 	}
 }
 
