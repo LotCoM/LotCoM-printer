@@ -48,6 +48,7 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 ItemsSource="{Binding Processes}"
+                SelectedIndex="-1"
                 SelectedIndexChanged="OnProcessSelection">
             </Picker>
         </Grid>
@@ -139,6 +140,9 @@
             <!-- Part Number -->
             <Picker
                 x:Name="PartPicker"
+                ItemsSource="{Binding SelectedProcessParts}"
+                SelectedIndex="-1"
+                SelectedIndexChanged="OnPartSelection"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -193,6 +197,7 @@
             <!-- Model Number -->
             <Picker
                 x:Name="ModelNumberPicker"
+                ItemsSource="{Binding DisplayedModels}"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -252,7 +257,15 @@
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="1"
-                Grid.Column="1"/>
+                Grid.Column="1">
+                <Picker.ItemsSource>
+                    <x:Array Type ="{x:Type x:String}">
+                        <x:String>1</x:String>
+                        <x:String>2</x:String>
+                        <x:String>3</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
         </Grid>
         <!-- Print Button -->
         <Button

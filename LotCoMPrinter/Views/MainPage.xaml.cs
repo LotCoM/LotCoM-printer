@@ -4,10 +4,10 @@ using LotCoMPrinter.ViewModels;
 namespace LotCoMPrinter.Views;
 
 public partial class MainPage : ContentPage {
-	
 	// private property to store the ViewModel
 	private readonly MainPageViewModel _viewModel;
 
+	// full constructor
 	public MainPage() {
 		// instantiate the ViewModel and bind the Page to it
 		_viewModel = new MainPageViewModel();
@@ -58,12 +58,29 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnProcessSelection(object Sender, EventArgs e) {
-		// update the SelectedProcess property
-		Picker picker = (Picker)Sender;
-		_viewModel.SelectedProcess = (string?)picker.ItemsSource[picker.SelectedIndex];
+		// reset the Page
+		Reset();
+		// update the SelectedProcess and SelectedProcessParts properties
+		Picker ProcessPicker = (Picker)Sender;
+		await _viewModel.UpdateSelectedProcess(ProcessPicker);
 		// change visible UI elements
 		ChangeDisplayedInputs();
-		await Task.Delay(0);
+	}
+
+	/// <summary>
+	/// Handler for the ItemSelected event from PartPicker.
+	/// </summary>
+	/// <param name="Sender"></param>
+	/// <param name="e"></param>
+	public async void OnPartSelection(object Sender, EventArgs e) {
+		// update the SelectedPart and SelectedPartModel properties
+		Picker PartPicker = (Picker)Sender;
+		bool ModelImplication = await _viewModel.UpdateSelectedPart(PartPicker);
+		// disable the Model control if the implication was successful
+		if (ModelImplication) {
+			ModelNumberPicker.SelectedIndex = 0;
+			ModelNumberPicker.IsEnabled = false;
+		}
 	}
 
 	/// <summary>
@@ -75,6 +92,41 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// do print activities
 		await Task.Delay(0);
+	}
+
+	/// <summary>
+	/// Clears and reactivates all UI Controls on the Page.
+	/// </summary>
+	public void Reset() {
+		// reset viewmodel properties
+		_viewModel.Reset();
+		// Part Picker reset
+		PartPicker.SelectedIndex = -1;
+		PartPicker.IsEnabled = true;
+		// Quantity Input reset
+		QuantityEntry.Text = "";
+		QuantityEntry.IsEnabled = true;
+		// JBK Input reset
+		JBKNumberEntry.Text = "";
+		JBKNumberEntry.IsEnabled = true;
+		// Lot Input reset
+		LotNumberEntry.Text = "";
+		LotNumberEntry.IsEnabled = true;
+		// Deburr JBK Input reset
+		DeburrJBKNumberEntry.Text = "";
+		DeburrJBKNumberEntry.IsEnabled = true;
+		// Die Number Input reset
+		DieNumberEntry.Text = "";
+		DieNumberEntry.IsEnabled = true;
+		// Model Number Picker reset
+		ModelNumberPicker.SelectedIndex = -1;
+		ModelNumberPicker.IsEnabled = true;
+		// Production Date Picker reset
+		ProductionDatePicker.Date = DateTime.Now;
+		ProductionDatePicker.IsEnabled = true;
+		// Production Shift Picker reset
+		ProductionShiftPicker.SelectedIndex = -1;
+		ProductionShiftPicker.IsEnabled = true;
 	}
 }
 
