@@ -35,20 +35,48 @@ public static class PartData {
     public static Dictionary<string, string> PivotHousingMCPartsList {
         get {return _pivotHousingMCPartsList;}
     }
+    // Uppershaft Machining
+    private static readonly Dictionary<string, string> _uppershaftMCPartsList = new Dictionary<string, string> {
+        {"00-T20-532AP-A000-YB1", "HOUSING, PIVOT*"}
+    };
+    public static Dictionary<string, string> UppershaftMCPartsList {
+        get {return _uppershaftMCPartsList;}
+    }
+    // Tilt Bracket Weld
+    private static readonly Dictionary<string, string> _tiltBracketWeldPartsList = new Dictionary<string, string> {
+        {"00-T20-532AP-A000-YB1", "HOUSING, PIVOT*"}
+    };
+    public static Dictionary<string, string> TiltBracketWeldPartsList {
+        get {return _tiltBracketWeldPartsList;}
+    }
+    // Pipe Weld
+    private static readonly Dictionary<string, string> _pipeWeldPartsList = new Dictionary<string, string> {
+        {"00-T20-532AP-A000-YB1", "HOUSING, PIVOT*"}
+    };
+    public static Dictionary<string, string> PipeWeldPartsList {
+        get {return _pipeWeldPartsList;}
+    }
+    // Shaft Clinch
+    private static readonly Dictionary<string, string> _shaftClinchPartsList = new Dictionary<string, string> {
+        {"00-T20-532AP-A000-YB1", "HOUSING, PIVOT*"}
+    };
+    public static Dictionary<string, string> ShaftClinchPartsList {
+        get {return _shaftClinchPartsList;}
+    }
 
     /// <summary>
     /// Attempts to access the Part Information stored under PartNumber.
     /// </summary>
     /// <param name="PartNumber"></param>
     /// <returns>String formatted as "PartNumber\nPartName" if the PartNumber exists as a key; null if not.</returns>
-    public static string? GetPartAsString(string PartNumber) {
+    public static string GetPartAsString(string PartNumber) {
         // access the full part data from the internal static source
         try {
             var PartData = PartsMasterList[PartNumber];
             string PartString = PartNumber + "\n" + PartData;
             return PartString;
         } catch {
-            return null;
+            throw new ArgumentException($"Part Number {PartNumber} was not found in the Parts masterlist.");
         }
     }
 
@@ -63,10 +91,10 @@ public static class PartData {
             {"Diecast", DiecastPartsList},
             {"Deburr", DeburrPartsList},
             {"PivotHousingMC", PivotHousingMCPartsList},
-            {"UppershaftMC", new Dictionary<string, string> {}},
-            {"TiltBracketWeld", new Dictionary<string, string> {}},
-            {"PipeWeld", new Dictionary<string, string> {}},
-            {"ShaftClinch", new Dictionary<string, string> {}}
+            {"UppershaftMC", UppershaftMCPartsList},
+            {"TiltBracketWeld", TiltBracketWeldPartsList},
+            {"PipeWeld", PipeWeldPartsList},
+            {"ShaftClinch", ShaftClinchPartsList}
         };
         // find the property in the ProcessData class
         Dictionary<string, string> PartData = Conversions[Process.Replace(" ", "")];

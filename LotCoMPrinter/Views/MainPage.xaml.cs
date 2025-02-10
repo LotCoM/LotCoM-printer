@@ -66,6 +66,22 @@ public partial class MainPage : ContentPage {
 	}
 
 	/// <summary>
+	/// Handler for the ItemSelected event from PartPicker.
+	/// </summary>
+	/// <param name="Sender"></param>
+	/// <param name="e"></param>
+	public async void OnPartSelection(object Sender, EventArgs e) {
+		// update the SelectedPart and SelectedPartModel properties
+		Picker PartPicker = (Picker)Sender;
+		bool ModelImplication = await _viewModel.UpdateSelectedPart(PartPicker);
+		// disable the Model control if the implication was successful
+		if (ModelImplication) {
+			ModelNumberPicker.SelectedIndex = 0;
+			ModelNumberPicker.IsEnabled = false;
+		}
+	}
+
+	/// <summary>
 	/// Handler for the Pressed event from the PrintButton.
 	/// Starts the print action using the information entered in the entries on the UI.
 	/// </summary>

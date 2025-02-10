@@ -141,6 +141,8 @@
             <Picker
                 x:Name="PartPicker"
                 ItemsSource="{Binding SelectedProcessParts}"
+                SelectedIndex="-1"
+                SelectedIndexChanged="OnPartSelection"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -195,6 +197,7 @@
             <!-- Model Number -->
             <Picker
                 x:Name="ModelNumberPicker"
+                ItemsSource="{Binding DisplayedModels}"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
