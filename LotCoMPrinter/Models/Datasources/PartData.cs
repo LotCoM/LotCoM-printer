@@ -69,7 +69,7 @@ public static class PartData {
             {"ShaftClinch", new Dictionary<string, string> {}}
         };
         // find the property in the ProcessData class
-        Dictionary<string, string> PartData = Conversions[Process];
+        Dictionary<string, string> PartData = Conversions[Process.Replace(" ", "")];
         return PartData;
     }
 }

@@ -60,10 +60,9 @@ public partial class MainPage : ContentPage {
 	public async void OnProcessSelection(object Sender, EventArgs e) {
 		// update the SelectedProcess and SelectedProcessParts properties
 		Picker ProcessPicker = (Picker)Sender;
-		_viewModel.UpdateSelectedProcess(ProcessPicker);
+		await _viewModel.UpdateSelectedProcess(ProcessPicker);
 		// change visible UI elements
 		ChangeDisplayedInputs();
-		await Task.Delay(0);
 	}
 
 	/// <summary>
