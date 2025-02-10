@@ -94,8 +94,9 @@ public partial class MainPage : ContentPage {
 		// validate inputs
 		try {
 			Dictionary<string, string> UICapture = PrintValidator.Validate(
-				_viewModel.SelectedProcess, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, 
-				DeburrJBKNumberEntry, DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);
+				_viewModel.SelectedProcess.Replace(" ", ""), 
+				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
+				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);
 		} catch {}
 		// do print activities
 		await Task.Delay(0);
