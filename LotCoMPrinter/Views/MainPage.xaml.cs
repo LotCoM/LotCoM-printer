@@ -4,10 +4,10 @@ using LotCoMPrinter.ViewModels;
 namespace LotCoMPrinter.Views;
 
 public partial class MainPage : ContentPage {
-	
 	// private property to store the ViewModel
 	private readonly MainPageViewModel _viewModel;
 
+	// full constructor
 	public MainPage() {
 		// instantiate the ViewModel and bind the Page to it
 		_viewModel = new MainPageViewModel();
@@ -58,9 +58,9 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnProcessSelection(object Sender, EventArgs e) {
-		// update the SelectedProcess property
-		Picker picker = (Picker)Sender;
-		_viewModel.SelectedProcess = (string?)picker.ItemsSource[picker.SelectedIndex];
+		// update the SelectedProcess and SelectedProcessParts properties
+		Picker ProcessPicker = (Picker)Sender;
+		_viewModel.UpdateSelectedProcess(ProcessPicker);
 		// change visible UI elements
 		ChangeDisplayedInputs();
 		await Task.Delay(0);

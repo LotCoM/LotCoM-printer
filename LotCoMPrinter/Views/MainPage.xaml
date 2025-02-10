@@ -139,6 +139,7 @@
             <!-- Part Number -->
             <Picker
                 x:Name="PartPicker"
+                ItemsSource="{Binding SelectedProcessParts}"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"

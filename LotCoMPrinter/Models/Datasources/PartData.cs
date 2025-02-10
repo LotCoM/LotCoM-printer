@@ -36,62 +36,6 @@ public static class PartData {
         get {return _pivotHousingMCPartsList;}
     }
 
-    // public attribute that returns all parts as displayable strings
-    public static List<string> AllPartsAsString {
-        get {
-            List<string> AllPartStrings = [];
-            foreach (string _key in PartsMasterList.Keys) {
-                var _part = GetPartAsString(_key);
-                if (_part != null) {
-                    AllPartStrings = AllPartStrings.Append(_part).ToList();
-                }
-            }
-            return AllPartStrings;
-        }
-    }
-
-    // public attribute that returns Diecast parts as displayable strings
-    public static List<string> DiecastPartsAsString {
-        get {
-            List<string> AllPartStrings = [];
-            foreach (string _key in DiecastPartsList.Keys) {
-                var _part = GetPartAsString(_key);
-                if (_part != null) {
-                    AllPartStrings = AllPartStrings.Append(_part).ToList();
-                }
-            }
-            return AllPartStrings;
-        }
-    }
-
-    // public attribute that returns Deburr parts as displayable strings
-    public static List<string> DeburrPartsAsString {
-        get {
-            List<string> AllPartStrings = [];
-            foreach (string _key in DeburrPartsList.Keys) {
-                var _part = GetPartAsString(_key);
-                if (_part != null) {
-                    AllPartStrings = AllPartStrings.Append(_part).ToList();
-                }
-            }
-            return AllPartStrings;
-        }
-    }
-
-    // public attribute that returns Pivot Housing MC parts as displayable strings
-    public static List<string> PivotHousingMCPartsAsString {
-        get {
-            List<string> AllPartStrings = [];
-            foreach (string _key in PivotHousingMCPartsList.Keys) {
-                var _part = GetPartAsString(_key);
-                if (_part != null) {
-                    AllPartStrings = AllPartStrings.Append(_part).ToList();
-                }
-            }
-            return AllPartStrings;
-        }
-    }
-
     /// <summary>
     /// Attempts to access the Part Information stored under PartNumber.
     /// </summary>
@@ -100,11 +44,32 @@ public static class PartData {
     public static string? GetPartAsString(string PartNumber) {
         // access the full part data from the internal static source
         try {
-            var FullData = PartsMasterList[PartNumber];
-            string FullDataString = FullData[0] + "\n" + FullData[1];
-            return FullDataString;
+            var PartData = PartsMasterList[PartNumber];
+            string PartString = PartNumber + "\n" + PartData;
+            return PartString;
         } catch {
             return null;
         }
+    }
+
+    /// <summary>
+    /// Allows access to a Process' Part Data from a string.
+    /// </summary>
+    /// <param name="Process">The Process selection to retrieve Part Data for.</param>
+    /// <returns></returns>
+    public static Dictionary<string, string> GetProcessParts(string Process) {
+        // create a dictionary to convert from Process to Property
+        Dictionary<string, Dictionary<string, string>> Conversions = new Dictionary<string, Dictionary<string, string>> {
+            {"Diecast", DiecastPartsList},
+            {"Deburr", DeburrPartsList},
+            {"PivotHousingMC", PivotHousingMCPartsList},
+            {"UppershaftMC", new Dictionary<string, string> {}},
+            {"TiltBracketWeld", new Dictionary<string, string> {}},
+            {"PipeWeld", new Dictionary<string, string> {}},
+            {"ShaftClinch", new Dictionary<string, string> {}}
+        };
+        // find the property in the ProcessData class
+        Dictionary<string, string> PartData = Conversions[Process];
+        return PartData;
     }
 }
