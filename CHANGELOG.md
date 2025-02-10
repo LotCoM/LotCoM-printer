@@ -11,3 +11,7 @@
 - Parts List population for any selected Process.
 - Model # implication when a Part is selected.
 - UI Entry controls reset their values and states when the Process is changed.
+
+# `v0.0.2`
+### Entered Data Validation
+- Implement `PrintValidator` class that captures and ensures that all required entries are made for any Process.
