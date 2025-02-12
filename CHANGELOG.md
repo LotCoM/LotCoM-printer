@@ -20,3 +20,8 @@
 ### Label Generation
 - Implement connection between `InterfaceCaptureValidator` and digital Label generation.
 - Implement digital Label generation classes.
+
+## `v0.1.1`
+### Print Spooling
+- Implement connection between Label generation and printing.
+- Implement Print Spooling classes.
