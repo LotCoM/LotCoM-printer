@@ -6,7 +6,7 @@ namespace LotCoMPrinter.Models.Labels;
 
 public class QRCode {
     // code size constant (square)
-    private const int CodeDimension = 375;
+    private const int CodeDimension = 150;  // square size of QR code (375)
     private byte[] _codeBytes;
     public byte[] CodeBytes {
         get {return _codeBytes;}
