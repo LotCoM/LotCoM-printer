@@ -1,6 +1,9 @@
-using System.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Labels;
+using LotCoMPrinter.Models.Validators;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -131,6 +134,37 @@ public partial class MainPageViewModel : ObservableObject {
         } else {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Processes a Print Request from the user 
+    /// (captures the interface and validates it, then creates a new Label object from that captured data).
+    /// </summary>
+    /// <param name="PartPicker"></param>
+    /// <param name="QuantityEntry"></param>
+    /// <param name="JBKNumberEntry"></param>
+    /// <param name="LotNumberEntry"></param>
+    /// <param name="DeburrJBKNumberEntry"></param>
+    /// <param name="DieNumberEntry"></param>
+    /// <param name="ModelNumberPicker"></param>
+    /// <param name="ProductionDatePicker"></param>
+    /// <param name="ProductionShiftPicker"></param>
+    /// <returns></returns>
+    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker) {
+        // attempt to validate the current UI status
+        List<string> UICapture = [];
+        try {
+			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
+				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
+				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);
+        // something was not valid in the UI
+		} catch (FormatException) {
+            // warnings are handled by the CaptureValidator
+        }
+		// generate a Label from the captured data
+		Image<Rgba32> NewLabel = await LabelGenerator.GenerateLabel(JBKNumberEntry.Text, UICapture);
+        // do print activities
+        await Task.Delay(0);
     }
 
     /// <summary>
