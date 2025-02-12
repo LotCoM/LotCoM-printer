@@ -102,7 +102,7 @@ public class Label {
     /// </summary>
     /// <param name="LabelFields"></param>
     /// <returns></returns>
-    public async Task AddLabelFields(List<string> LabelFields) {
+    public async Task AddLabelFieldsAsync(List<string> LabelFields) {
         // start a new CPU thread to apply the Label Fields to the LabelBase
         await Task.Run(() => {
             // combine the LabelFields into a string deliniated by newlines
