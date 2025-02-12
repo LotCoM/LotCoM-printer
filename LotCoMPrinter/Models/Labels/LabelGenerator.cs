@@ -15,7 +15,7 @@ public static class LabelGenerator {
     /// <remarks>If the Arial font is not found in the System, the method will throw SystemException.</remarks>
     /// <returns></returns>
     /// <exception cref="SystemException"></exception>
-    public static async Task<Image<Rgba32>> GenerateLabel(string LabelHeader, List<string> LabelData) {    
+    public static async Task<Image<Rgba32>> GenerateLabelAsync(string LabelHeader, List<string> LabelData) {    
         // create a new Label
         try {
             Label NewLabel = new Label();
