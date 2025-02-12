@@ -8,14 +8,14 @@ namespace LotCoMPrinter.Models.Labels;
 
 public class Label {
     // label dimension constants
-    private const int LabelDimension = 900;     // dimension (square dimension) of label
-    private const int CodeDimension = 375;      // dimension (square dimension) of QR Code on label
-    private const int TextSizeSmall = 36;       // size of small text on label
-    private const int TextSizeLarge = 306;      // size of large text on label
-    private const int TextPadding = 18;         // padding of text objects on the label
+    private const int LabelDimension = 300;     // dimension (square dimension) of label (900)
+    private const int CodeDimension = 150;      // dimension (square dimension) of QR Code on label (375)
+    private const int TextSizeSmall = 12;       // size of small text on label (36)
+    private const int TextSizeLarge = 72;      // size of large text on label (306)
+    private const int TextPadding = 9;         // padding of text objects on the label (18)
     private const int LabelHeadingX = 0;       // horizontal position of the label heading text
     private const int LabelHeadingY = 0;        // vertical position of the label heading text
-    private const int CodePositionX1 = LabelDimension - CodeDimension;  // left X coordinate of Code
+    private const int CodePositionX1 = LabelDimension - CodeDimension - 10;  // left X coordinate of Code
     private const int CodePositionY1 = 0;       // top Y coordinate of Code
     private const int LabelFieldsX = 10;        // horizontal position of the Label's information fields
     private const int LabelFieldsY = CodeDimension + TextSizeSmall;  // vertical position of the Label's information fields

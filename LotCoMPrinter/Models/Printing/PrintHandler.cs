@@ -27,7 +27,6 @@ public class PrintHandler(Stream LabelImageStream) {
             PrintDoc.PrintPage += LoadLabelImage;
             // start printing the Document
             PrintDoc.Print();
-            Console.WriteLine("Printing Label");
         });
     }
 
