@@ -122,7 +122,7 @@ public static class InterfaceCaptureValidator {
                 UIResults.Add($"Model #: {ModelNumber!}");
             };
             // add the production date; defaults to current day, no need to validate
-            UIResults.Add($"Production Date: {ProductionDatePicker.Date.ToLongDateString()!}");
+            UIResults.Add($"Production Date: {ProductionDatePicker.Date.ToShortDateString()!}");
             // validate production shift
             if (ProcessRequirements.Contains("ProductionShiftPicker")) {
                 ProductionShift = ValidatePicker(ProductionShiftPicker, "Production Shift");
