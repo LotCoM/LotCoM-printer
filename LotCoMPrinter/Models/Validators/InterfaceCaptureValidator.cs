@@ -68,13 +68,13 @@ public static class InterfaceCaptureValidator {
     /// <param name="ProductionShiftPicker"></param>
     /// <returns>A Dictionary of data captured from the UI Controls, keyed by their respective Control names.</returns>
     /// <exception cref="FormatException">Raises if any of the required checks are failed.</exception>
-    public static Dictionary<string, string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
+    public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
         Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry,
         Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker
     ) {
         // retrieve the Process requirements
         List<string> ProcessRequirements = ProcessData.GetProcessRequirements(Process);
-        Dictionary<string, string> UIResults = new Dictionary<string, string> {};
+        List<string> UIResults = [];
         // create values for each of the UI entries
         string? Part;
         string? Quantity;
@@ -89,44 +89,44 @@ public static class InterfaceCaptureValidator {
             // validate part
             if (ProcessRequirements.Contains("PartPicker")) {
                 Part = ValidatePicker(PartPicker, "Part");
-                UIResults.Add("Part", Part!);
+                UIResults.Add($"Part: {Part!}");
             };
             // validate quantity
             if (ProcessRequirements.Contains("QuantityEntry")) {
                 Quantity = ValidateAsDigits(QuantityEntry, "Quantity");
-                UIResults.Add("Quantity", Quantity!);
+                UIResults.Add($"Quantity: {Quantity!}");
             };
             // validate jbk number
             if (ProcessRequirements.Contains("JBKNumberEntry")) {
                 JBKNumber = ValidateAsDigits(JBKNumberEntry, "JBK Number");
-                UIResults.Add("JBKNumber", JBKNumber!);
+                UIResults.Add($"JBK #: {JBKNumber!}");
             };
             // validate lot number
             if (ProcessRequirements.Contains("LotNumberEntry")) {
                 LotNumber = ValidateLotNumberEntry(LotNumberEntry);
-                UIResults.Add("LotNumber", LotNumber!);
+                UIResults.Add($"Lot #: {LotNumber!}");
             };
             // validate deburr jbk number
             if (ProcessRequirements.Contains("DeburrJBKNumberEntry")) {
                 DeburrJBKNumber = ValidateAsDigits(DeburrJBKNumberEntry, "Deburr JBK Number");
-                UIResults.Add("DeburrJBKNumber", DeburrJBKNumber!);
+                UIResults.Add($"Deburr JBK # {DeburrJBKNumber!}");
             };
             // validate die number
             if (ProcessRequirements.Contains("DieNumberEntry")) {
                 DieNumber = ValidateAsDigits(DieNumberEntry, "Die Number");
-                UIResults.Add("DieNumber", DieNumber!);
+                UIResults.Add($"Die #: {DieNumber!}");
             };
             // validate model number
             if (ProcessRequirements.Contains("ModelNumberPicker")) {
                 ModelNumber = ValidatePicker(ModelNumberPicker, "Model Number");
-                UIResults.Add("ModelNumber", ModelNumber!);
+                UIResults.Add($"Model #: {ModelNumber!}");
             };
             // add the production date; defaults to current day, no need to validate
-            UIResults.Add("ProductionDate", ProductionDatePicker.Date.ToLongDateString()!);
+            UIResults.Add($"Production Date: {ProductionDatePicker.Date.ToLongDateString()!}");
             // validate production shift
             if (ProcessRequirements.Contains("ProductionShiftPicker")) {
                 ProductionShift = ValidatePicker(ProductionShiftPicker, "Production Shift");
-                UIResults.Add("ProductionShift", ProductionShift!);
+                UIResults.Add($"Production Shift: {ProductionShift!}");
             };
             // return the constructed UI Dictionary
             return UIResults;
