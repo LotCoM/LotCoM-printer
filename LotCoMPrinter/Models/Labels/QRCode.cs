@@ -50,7 +50,4 @@ public class QRCode {
         }));
         return CodeImage;
     }
-
-
-
 }
