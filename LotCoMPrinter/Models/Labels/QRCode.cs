@@ -2,7 +2,7 @@ using QRCoder;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace LotCoMPrinter.Models;
+namespace LotCoMPrinter.Models.Labels;
 
 public class QRCode {
     // code size constant (square)
