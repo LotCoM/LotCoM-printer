@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Labels;
+using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -162,9 +163,16 @@ public partial class MainPageViewModel : ObservableObject {
             // warnings are handled by the CaptureValidator
         }
 		// generate a Label from the captured data
-		Image<Rgba32> NewLabel = await LabelGenerator.GenerateLabel(JBKNumberEntry.Text, UICapture);
-        // do print activities
-        await Task.Delay(0);
+		Image<Rgba32> NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
+        // convert the Label to a stream of bytes
+        MemoryStream LabelStream = new MemoryStream();
+        NewLabel.Save(LabelStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
+        // create a PrintHandler object for the new Label
+        PrintHandler LabelPrinter = new PrintHandler(LabelStream);
+        // print the Label
+        await LabelPrinter.PrintLabelAsync();
+        // release the MemoryStream used in the PrintHandler
+        await LabelStream.DisposeAsync();
     }
 
     /// <summary>
