@@ -1,16 +1,16 @@
+using System.Drawing;
 using QRCoder;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 
 namespace LotCoMPrinter.Models.Labels;
 
+# pragma warning disable CA1416 // Validate platform compatibility
+
 public class QRCode {
-    // code size constant (square)
-    private const int CodeDimension = 375;
-    private byte[] _codeBytes;
-    public byte[] CodeBytes {
-        get {return _codeBytes;}
-        set {_codeBytes = value;}
+    // code Bitmap Image property
+    private Bitmap? _codeImage;
+    public Bitmap? CodeImage {
+        get {return _codeImage;}
+        set {_codeImage = value;}
     }
 
     /// <summary>
@@ -31,23 +31,11 @@ public class QRCode {
         // generate new Data to be encoded
         QRCodeData NewQRCode = Coder.CreateQrCode(CodeData, QRCodeGenerator.ECCLevel.H);
         // generate the QR Code as a new PNG image 
-        PngByteQRCode QRCodePNG = new(NewQRCode);
-        // save the QRCode as a stream of bytes
-        _codeBytes = QRCodePNG.GetGraphic(20);
-    }
-
-    /// <summary>
-    /// Returns the Code's bitmap converted to an Image.
-    /// </summary>
-    /// <returns></returns>
-    public SixLabors.ImageSharp.Image AsImage() {
-        // convert the byte array to an Image
-        SixLabors.ImageSharp.Image CodeImage = SixLabors.ImageSharp.Image.Load<Rgba32>(_codeBytes);
-        // size the image to the proper dimensions
-        CodeImage.Mutate(x => x.Resize(new ResizeOptions {
-            Mode = SixLabors.ImageSharp.Processing.ResizeMode.Stretch,
-            Size = new SixLabors.ImageSharp.Size(CodeDimension, CodeDimension)
-        }));
-        return CodeImage;
+        BitmapByteQRCode QRCodeBitmap = new (NewQRCode);
+        // save the QRCode Image
+        Stream ImageData = new MemoryStream(QRCodeBitmap.GetGraphic(20));
+        CodeImage = new Bitmap(ImageData);
+        ImageData.Dispose();
     }
 }
+# pragma warning restore CA1416 // Validate platform compatibility

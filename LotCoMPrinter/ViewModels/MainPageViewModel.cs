@@ -1,11 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Labels;
+using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using System.Drawing;
+using Windows.Graphics.Printing;
 
 namespace LotCoMPrinter.ViewModels;
+
+# pragma warning disable CA1416 // Validate platform compatibility
 
 /// <summary>
 /// Constructs a ViewModel for the MainPage class.
@@ -162,9 +165,18 @@ public partial class MainPageViewModel : ObservableObject {
             // warnings are handled by the CaptureValidator
         }
 		// generate a Label from the captured data
-		Image<Rgba32> NewLabel = await LabelGenerator.GenerateLabel(JBKNumberEntry.Text, UICapture);
-        // do print activities
-        await Task.Delay(0);
+		Bitmap NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
+        // create a PrintHandler object for the new Label
+        PrintHandler LabelPrinter = new PrintHandler(NewLabel);
+        try {
+            await LabelPrinter.PrintLabelAsync();
+        // handle errors thrown by the PrintLabelAsync() method
+        } catch (Exception _ex){
+            App.AlertSvc!.ShowAlert(
+                "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
+                + $"\n\nException Message: {_ex.Message}"
+            );
+        }
     }
 
     /// <summary>
@@ -177,3 +189,4 @@ public partial class MainPageViewModel : ObservableObject {
         DisplayedModels = [];
     }
 }
+# pragma warning restore CA1416 // Validate platform compatibility

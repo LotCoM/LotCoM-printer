@@ -72,13 +72,18 @@ public static class ProcessData {
         get {return _uppershaftMCRequirements;}
     }
 
+    
     /// <summary>
     /// Allows access to a Process' requirements from a string.
     /// </summary>
     /// <param name="Process">The Process selection to retrieve requirements for.</param>
     /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     public static List<string> GetProcessRequirements(string Process) {
-        Console.WriteLine($"Getting required data for {Process}.");
+        // ensure non-null Process value
+        if (Process == null) {
+            throw new ArgumentException("Process must not be null.");
+        }
         // create a dictionary to convert from Process to Property
         Dictionary<string, List<string>> Conversions = new Dictionary<string, List<string>> {
             {"Diecast", DiecastRequirements},
@@ -90,7 +95,13 @@ public static class ProcessData {
             {"ShaftClinch", ShaftClinchRequirements}
         };
         // find the property in the ProcessData class
-        List<string> Requirements = Conversions[Process];
+        List<string> Requirements = [];
+        try {
+            Requirements = Conversions[Process];
+        // the non-null Process is not in the datasource
+        } catch (KeyNotFoundException) {
+            throw new ArgumentException($"{Process} is not recognized as a Process");
+        }
         return Requirements;
     }
 }
