@@ -4,7 +4,6 @@ using LotCoMPrinter.Models.Labels;
 using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
 using System.Drawing;
-using Windows.Graphics.Printing;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -72,17 +71,22 @@ public partial class MainPageViewModel : ObservableObject {
         if (ProcessPicker.SelectedIndex != -1) {
             var PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
             // update the SelectedProcess properties
-            await Task.Run(() => {
+            await Task.Run(async () => {
                 if (PickedProcess != null) {
                     SelectedProcess = PickedProcess;
                     // get the Process Parts for the Picked Process and convert those parts to strings
-                    var ProcessParts = PartData.GetProcessParts(SelectedProcess);
+                    Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
+                    try {
+                        ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
+                    } catch (FileLoadException _ex) {
+                        App.AlertSvc!.ShowAlert(
+                            "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
+                            + $"\n\nException Message: {_ex.Message}"
+                        );
+                    }
                     List<string> DisplayableParts = [];
                     foreach (KeyValuePair<string, string> _pair in ProcessParts) {
-                        try {
-                            DisplayableParts = DisplayableParts.Append(PartData.GetPartAsString(_pair.Key)).ToList();
-                        // part number was not found in the Parts masterlist; skip it
-                        } catch {continue;}
+                        DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
                     }
                     // assign the new list of string parts to the SelectedProcessParts list
                     SelectedProcessParts = DisplayableParts;

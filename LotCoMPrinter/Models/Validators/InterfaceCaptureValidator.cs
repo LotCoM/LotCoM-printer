@@ -74,9 +74,9 @@ public static class InterfaceCaptureValidator {
         Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker
     ) {
         // retrieve the Process requirements
-        List<string> ProcessRequirements = [];
+        List<string> Requirements = [];
         try {
-            ProcessRequirements = ProcessData.GetProcessRequirements(Process);
+            Requirements = ProcessRequirements.GetProcessRequirements(Process);
         // the Process selection was null
         } catch (NullProcessException) {
             // show a warning
@@ -99,44 +99,44 @@ public static class InterfaceCaptureValidator {
         // attempt all the validations
         try {
             // validate part
-            if (ProcessRequirements.Contains("PartPicker")) {
+            if (Requirements.Contains("PartPicker")) {
                 Part = ValidatePicker(PartPicker, "Part");
                 UIResults.Add($"Part: {Part!}");
             };
             // validate quantity
-            if (ProcessRequirements.Contains("QuantityEntry")) {
+            if (Requirements.Contains("QuantityEntry")) {
                 Quantity = ValidateAsDigits(QuantityEntry, "Quantity");
                 UIResults.Add($"Quantity: {Quantity!}");
             };
             // validate jbk number
-            if (ProcessRequirements.Contains("JBKNumberEntry")) {
+            if (Requirements.Contains("JBKNumberEntry")) {
                 JBKNumber = ValidateAsDigits(JBKNumberEntry, "JBK Number");
                 UIResults.Add($"JBK #: {JBKNumber!}");
             };
             // validate lot number
-            if (ProcessRequirements.Contains("LotNumberEntry")) {
+            if (Requirements.Contains("LotNumberEntry")) {
                 LotNumber = ValidateLotNumberEntry(LotNumberEntry);
                 UIResults.Add($"Lot #: {LotNumber!}");
             };
             // validate deburr jbk number
-            if (ProcessRequirements.Contains("DeburrJBKNumberEntry")) {
+            if (Requirements.Contains("DeburrJBKNumberEntry")) {
                 DeburrJBKNumber = ValidateAsDigits(DeburrJBKNumberEntry, "Deburr JBK Number");
                 UIResults.Add($"Deburr JBK # {DeburrJBKNumber!}");
             };
             // validate die number
-            if (ProcessRequirements.Contains("DieNumberEntry")) {
+            if (Requirements.Contains("DieNumberEntry")) {
                 DieNumber = ValidateAsDigits(DieNumberEntry, "Die Number");
                 UIResults.Add($"Die #: {DieNumber!}");
             };
             // validate model number
-            if (ProcessRequirements.Contains("ModelNumberPicker")) {
+            if (Requirements.Contains("ModelNumberPicker")) {
                 ModelNumber = ValidatePicker(ModelNumberPicker, "Model Number");
                 UIResults.Add($"Model #: {ModelNumber!}");
             };
             // add the production date; defaults to current day, no need to validate
             UIResults.Add($"Production Date: {ProductionDatePicker.Date.ToShortDateString()!}");
             // validate production shift
-            if (ProcessRequirements.Contains("ProductionShiftPicker")) {
+            if (Requirements.Contains("ProductionShiftPicker")) {
                 ProductionShift = ValidatePicker(ProductionShiftPicker, "Production Shift");
                 UIResults.Add($"Production Shift: {ProductionShift!}");
             };

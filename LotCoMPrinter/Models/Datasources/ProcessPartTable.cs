@@ -25,6 +25,10 @@ public class ProcessPartTable(string Process) {
             throw new FileLoadException($"Failed to read the Process Part file at {_filePath}.");
         }
         // return all but the first two lines (instruction lines)
-        return Parts[2..];
+        try {
+            return Parts[2..];
+        } catch {
+            return [];
+        }
     }
 }

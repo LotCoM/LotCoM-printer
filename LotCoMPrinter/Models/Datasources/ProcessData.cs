@@ -17,10 +17,9 @@ public static class ProcessData {
     /// Formats the Part passed into a two-line, newline-split Part String, which can be displayed.
     /// </summary>
     /// <param name="PartNumber"></param>
-    public static string GetPartAsDisplayable(string PartNumber) {
+    public static string GetPartAsDisplayable(KeyValuePair<string, string> PartInformation) {
         // format the passed part as a displayable string
-        string[] SplitPart = PartNumber.Split(",");
-        string PartString = SplitPart[0] + "\n" + SplitPart[1];
+        string PartString = PartInformation.Key + "\n" + PartInformation.Value;
         return PartString;
     }
 
@@ -37,12 +36,16 @@ public static class ProcessData {
             ProcessPartTable Source = new ProcessPartTable(Process);
             string[] Parts = [];
             // read the Table
-            Parts = Source.Read();
+            try {
+                Parts = Source.Read();
+            } catch (FileLoadException) {
+                Parts = [];
+            }
             // convert the Part List into a dictionary of Part # key : Part Name value format
             Dictionary<string, string> PartDictionary = new Dictionary<string, string> {};
             foreach (string _part in Parts) {
                 // split the part at the comma and add a new KeyValuePair in the dict
-                string[] _splitPart = _part.Split(",");
+                string[] _splitPart = _part.Split(":");
                 PartDictionary.Add(_splitPart[0], _splitPart[1]);
             }
             // return the constructed dictionary
