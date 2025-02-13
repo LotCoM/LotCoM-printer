@@ -1,6 +1,7 @@
 using System.Drawing.Printing;
 using System.Drawing;
 using LotCoMPrinter.Models.Services;
+using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.Models.Printing;
 
@@ -16,6 +17,7 @@ public class PrintHandler(Bitmap LabelImage) {
     /// <summary>
     /// Prints the Label passed to the PrintHandler.
     /// </summary>
+    /// <exception cref="PrintRequestException"></exception>
     public async Task PrintLabelAsync() {
         await Task.Run(() => {
             // create a new PrintDocument to add the Label to
@@ -26,9 +28,28 @@ public class PrintHandler(Bitmap LabelImage) {
             // set the PrintDocument to print using the default printer
             PrintDoc.PrinterSettings.PrinterName = DefaultPrinterName;
             // add the Label Image Loading logic onto the PrintPage handler
-            PrintDoc.PrintPage += LoadLabelImage;
+            try {
+                PrintDoc.PrintPage += LoadLabelImage;
+            // handle exceptions thrown by the addition of the print handler behavior
+            } catch (Exception _ex) {
+                throw new PrintRequestException(
+                    $"The Print Request could not be completed due to the following exception:\n{_ex.Message}."
+                );
+            }
             // start printing the Document
-            PrintDoc.Print();
+            try {
+                PrintDoc.Print();
+            // the default printer pulled from the Default PrinterSettings object was invalid
+            } catch (InvalidPrinterException) {
+                throw new PrintRequestException(
+                    "There was an error accessing the Default Printer. Please see management to resolve this issue."
+                );
+            // there was some unexpected printing exception
+            } catch (Exception _ex) {
+                throw new PrintRequestException(
+                    $"The Print Request could not be completed due to the following exception:\n{_ex.Message}."
+                );
+            }
         });
     }
 

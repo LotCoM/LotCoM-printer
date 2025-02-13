@@ -4,6 +4,7 @@ using LotCoMPrinter.Models.Labels;
 using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
 using System.Drawing;
+using Windows.Graphics.Printing;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -167,8 +168,15 @@ public partial class MainPageViewModel : ObservableObject {
 		Bitmap NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
         // create a PrintHandler object for the new Label
         PrintHandler LabelPrinter = new PrintHandler(NewLabel);
-        // print the Label
-        await LabelPrinter.PrintLabelAsync();
+        try {
+            await LabelPrinter.PrintLabelAsync();
+        // handle errors thrown by the PrintLabelAsync() method
+        } catch (Exception _ex){
+            App.AlertSvc!.ShowAlert(
+                "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
+                + $"\n\nException Message: {_ex.Message}"
+            );
+        }
     }
 
     /// <summary>
