@@ -38,7 +38,14 @@ public partial class MainPage : ContentPage {
                 {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}}
             };
 			// get the process requirements for the currently selected Process
-			List<string> ProcessRequirements = ProcessData.GetProcessRequirements(_viewModel.SelectedProcess.Replace(" ", ""));
+			List<string> ProcessRequirements = [];
+			try {
+				ProcessRequirements = ProcessData.GetProcessRequirements(_viewModel.SelectedProcess.Replace(" ", ""));
+			// the selected Process was invalid (uncommon)
+			} catch (ArgumentException) {
+				// show a warning
+				App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+			}
 			// show all necessary UI input elements
 			foreach (KeyValuePair<string, List<View>> _pair in Conversions) {
 				if (ProcessRequirements.Contains(_pair.Key)) {

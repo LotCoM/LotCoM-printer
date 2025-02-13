@@ -1,4 +1,5 @@
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.Models.Validators;
 
@@ -73,7 +74,18 @@ public static class InterfaceCaptureValidator {
         Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker
     ) {
         // retrieve the Process requirements
-        List<string> ProcessRequirements = ProcessData.GetProcessRequirements(Process);
+        List<string> ProcessRequirements = [];
+        try {
+            ProcessRequirements = ProcessData.GetProcessRequirements(Process);
+        // the Process selection was null
+        } catch (NullProcessException) {
+            // show a warning
+            App.AlertSvc!.ShowAlert("Failed to Print", "Please select a Process before printing Labels.");
+        // the selected Process was invalid (uncommon)
+        } catch (ArgumentException) {
+            // show a warning
+            App.AlertSvc!.ShowAlert("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+        }
         List<string> UIResults = [];
         // create values for each of the UI entries
         string? Part;
