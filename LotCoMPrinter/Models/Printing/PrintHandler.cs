@@ -1,6 +1,6 @@
 using System.Drawing.Printing;
 using System.Drawing;
-using LotCoMPrinter.Models.Labels;
+using LotCoMPrinter.Models.Services;
 
 namespace LotCoMPrinter.Models.Printing;
 

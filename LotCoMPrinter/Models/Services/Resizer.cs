@@ -2,7 +2,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-namespace LotCoMPrinter.Models.Labels;
+namespace LotCoMPrinter.Models.Services;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 

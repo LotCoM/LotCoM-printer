@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using LotCoMPrinter.Models.Services;
 
 namespace LotCoMPrinter.Models.Labels;
 
