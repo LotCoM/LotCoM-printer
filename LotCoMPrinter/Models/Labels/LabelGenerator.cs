@@ -1,6 +1,4 @@
-using SixLabors.Fonts;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using System.Drawing;
 
 namespace LotCoMPrinter.Models.Labels;
 
@@ -15,7 +13,7 @@ public static class LabelGenerator {
     /// <remarks>If the Arial font is not found in the System, the method will throw SystemException.</remarks>
     /// <returns></returns>
     /// <exception cref="SystemException"></exception>
-    public static async Task<Image<Rgba32>> GenerateLabelAsync(string LabelHeader, List<string> LabelData) {    
+    public static async Task<Bitmap> GenerateLabelAsync(string LabelHeader, List<string> LabelData) {    
         // create a new Label
         try {
             Label NewLabel = new Label();
@@ -34,7 +32,7 @@ public static class LabelGenerator {
             // return the Label image
             return NewLabel.GetImage();
         // the Label failed to configure its fonts from the System
-        } catch (FontFamilyNotFoundException) {
+        } catch (SystemException) {
             throw new SystemException("The Arial font could not be found in the System.");
         }
     }

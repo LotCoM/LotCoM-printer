@@ -3,10 +3,11 @@ using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Labels;
 using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using System.Drawing;
 
 namespace LotCoMPrinter.ViewModels;
+
+# pragma warning disable CA1416 // Validate platform compatibility
 
 /// <summary>
 /// Constructs a ViewModel for the MainPage class.
@@ -163,16 +164,11 @@ public partial class MainPageViewModel : ObservableObject {
             // warnings are handled by the CaptureValidator
         }
 		// generate a Label from the captured data
-		Image<Rgba32> NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
-        // convert the Label to a stream of bytes
-        MemoryStream LabelStream = new MemoryStream();
-        NewLabel.Save(LabelStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
+		Bitmap NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
         // create a PrintHandler object for the new Label
-        PrintHandler LabelPrinter = new PrintHandler(LabelStream);
+        PrintHandler LabelPrinter = new PrintHandler(NewLabel);
         // print the Label
         await LabelPrinter.PrintLabelAsync();
-        // release the MemoryStream used in the PrintHandler
-        await LabelStream.DisposeAsync();
     }
 
     /// <summary>
@@ -185,3 +181,4 @@ public partial class MainPageViewModel : ObservableObject {
         DisplayedModels = [];
     }
 }
+# pragma warning restore CA1416 // Validate platform compatibility

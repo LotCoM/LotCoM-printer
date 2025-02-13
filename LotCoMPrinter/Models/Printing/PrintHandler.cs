@@ -1,4 +1,6 @@
 using System.Drawing.Printing;
+using System.Drawing;
+using LotCoMPrinter.Models.Labels;
 
 namespace LotCoMPrinter.Models.Printing;
 
@@ -7,9 +9,9 @@ namespace LotCoMPrinter.Models.Printing;
 /// Allows the printing of a Label Image.
 /// </summary>
 /// <param name="LabelImageStream">A stream of bytes representing the Label Image.</param>
-public class PrintHandler(Stream LabelImageStream) {
+public class PrintHandler(Bitmap LabelImage) {
     // private class attributes
-    private readonly Stream _labelImageStream = LabelImageStream;
+    private readonly Bitmap _labelImage = LabelImage;
 
     /// <summary>
     /// Prints the Label passed to the PrintHandler.
@@ -36,10 +38,9 @@ public class PrintHandler(Stream LabelImageStream) {
     /// <param name="Sender"></param>
     /// <param name="e"></param>
     private void LoadLabelImage(object Sender, PrintPageEventArgs e) {
-        // convert the Label Image Bytestream to an Image
-        System.Drawing.Image LabelImage = System.Drawing.Image.FromStream(_labelImageStream);
         // draw the Label Image onto the PrintDocument Graphic
-        e.Graphics!.DrawImage(LabelImage, new System.Drawing.Point(0, 0));
+        Bitmap Resized = Resizer.ResizeImage(_labelImage, 350, 350);
+        e.Graphics!.DrawImage(Resized, new System.Drawing.Point(0, 0));
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
