@@ -78,7 +78,6 @@ public static class ProcessData {
     /// <param name="Process">The Process selection to retrieve requirements for.</param>
     /// <returns></returns>
     public static List<string> GetProcessRequirements(string Process) {
-        Console.WriteLine($"Getting required data for {Process}.");
         // create a dictionary to convert from Process to Property
         Dictionary<string, List<string>> Conversions = new Dictionary<string, List<string>> {
             {"Diecast", DiecastRequirements},
