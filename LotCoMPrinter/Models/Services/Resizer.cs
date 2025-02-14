@@ -13,7 +13,9 @@ public static class Resizer {
     /// Adapted from method by mpen at:
     /// https://stackoverflow.com/a/24199315
     /// </summary>
-    /// <param name="image">The image to resize.</param>
+    /// <param name="Image">The image to resize.</param>
+    /// <param name="height">The height of the resized Image</param>
+    /// <param name="width">The width of the resized Image</param>
     /// <returns>The resized image.</returns>
     public static Bitmap ResizeImage(Bitmap Image, int width, int height) {
         // create bounding rectangle for the destination size
