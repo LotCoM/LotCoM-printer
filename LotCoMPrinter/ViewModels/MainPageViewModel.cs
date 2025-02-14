@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Labels;
 using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
@@ -174,10 +175,10 @@ public partial class MainPageViewModel : ObservableObject {
         try {
 		    NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
         // there was an unexpected error in the Label generation
-        } catch (AggregateException _ex) {
+        } catch (LabelBuildException _ex) {
             App.AlertSvc!.ShowAlert(
                 "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                + $"\n\nException Message(s): {_ex.InnerExceptions}"
+                + $"\n\nException Message(s): {_ex.Message}"
             );
         }
         // create a PrintHandler object for the new Label

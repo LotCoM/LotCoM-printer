@@ -11,9 +11,8 @@ public static class LabelGenerator {
     /// </summary>
     /// <param name="LabelHeader">The Large text to include on the Label's top-left corner.</param>
     /// <param name="LabelData">The Data to include in the Label's QR Code and on the Label in plain-text.</param>
-    /// <remarks>If the Arial font is not found in the System, the method will throw SystemException.</remarks>
     /// <returns></returns>
-    /// <exception cref="SystemException"></exception>
+    /// <exception cref="LabelBuildException"></exception>
     public static async Task<Bitmap> GenerateLabelAsync(string LabelHeader, List<string> LabelData) {    
         // create a new Label
         Label? NewLabel;
