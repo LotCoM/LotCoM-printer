@@ -15,25 +15,26 @@ public static class LabelGenerator {
     /// <exception cref="SystemException"></exception>
     public static async Task<Bitmap> GenerateLabelAsync(string LabelHeader, List<string> LabelData) {    
         // create a new Label
+        Label? NewLabel;
         try {
-            Label NewLabel = new Label();
-            // copy only the values of the data fields to the QR Code data
-            List<string> QRCodeData = [];
-            foreach(string _field in LabelData) {
-                // split the string at the colon and save the second segment (field value)
-                QRCodeData.Add(_field.Split(": ")[1]);
-            }
-            // generate a new QR Code from the Label's data
-            QRCode LabelCode = new QRCode(QRCodeData);
-            // apply the header, the QR Code, and the Label Data to the Label
-            await NewLabel.AddHeaderAsync(LabelHeader);
-            await NewLabel.AddQRCodeAsync(LabelCode);
-            await NewLabel.AddLabelFieldsAsync(LabelData);
-            // return the Label image
-            return NewLabel.GetImage();
+            NewLabel = new Label();
         // the Label failed to configure its fonts from the System
-        } catch (SystemException) {
-            throw new SystemException("The Arial font could not be found in the System.");
+        } catch (SystemException _ex) {
+            throw new SystemException($"Failed to construct new Label due to the following exception:\n{_ex.Message}");
         }
+        // copy only the values of the data fields to the QR Code data
+        List<string> QRCodeData = [];
+        foreach(string _field in LabelData) {
+            // split the string at the colon and save the second segment (field value)
+            QRCodeData.Add(_field.Split(": ")[1]);
+        }
+        // generate a new QR Code from the Label's data
+        QRCode LabelCode = new QRCode(QRCodeData);
+        // apply the header, the QR Code, and the Label Data to the Label
+        await NewLabel.AddHeaderAsync(LabelHeader);
+        await NewLabel.AddQRCodeAsync(LabelCode);
+        await NewLabel.AddLabelFieldsAsync(LabelData);
+        // return the Label image
+        return NewLabel.GetImage();
     }
 }

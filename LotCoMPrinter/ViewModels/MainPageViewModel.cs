@@ -78,10 +78,10 @@ public partial class MainPageViewModel : ObservableObject {
                     Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
                     try {
                         ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
-                    } catch (FileLoadException _ex) {
+                    } catch (AggregateException _ex) {
                         App.AlertSvc!.ShowAlert(
                             "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
-                            + $"\n\nException Message: {_ex.Message}"
+                            + $"\n\nException Message(s): {_ex.InnerExceptions}"
                         );
                     }
                     List<string> DisplayableParts = [];
@@ -104,9 +104,10 @@ public partial class MainPageViewModel : ObservableObject {
         string Model;
         try {
             Model = await ModelData.AttemptModelFromPart(SelectedPart);
-        } catch {
+        } catch (AggregateException _ex) {
             // could not automatically determine Model number from Part selection
-            throw new ArgumentException();
+            throw new ArgumentException($"Could not imply Model # from {SelectedPart} due to the following exception(s):"
+                                        + $"\n{_ex.InnerExceptions}");
         }
         // Model implication did not fail; return
         return Model;
@@ -130,7 +131,7 @@ public partial class MainPageViewModel : ObservableObject {
                     string ModelNumber = await AttemptModelNumberImplication();
                     DisplayedModels = [ModelNumber];
                     return true;
-                } catch (ArgumentException) {
+                } catch (AggregateException) {
                     return false;
                 }
             // the PickedPart was null
@@ -169,17 +170,28 @@ public partial class MainPageViewModel : ObservableObject {
             // warnings are handled by the CaptureValidator
         }
 		// generate a Label from the captured data
-		Bitmap NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
-        // create a PrintHandler object for the new Label
-        PrintHandler LabelPrinter = new PrintHandler(NewLabel);
+        Bitmap? NewLabel = null;
         try {
-            await LabelPrinter.PrintLabelAsync();
-        // handle errors thrown by the PrintLabelAsync() method
-        } catch (Exception _ex){
+		    NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
+        // there was an unexpected error in the Label generation
+        } catch (AggregateException _ex) {
             App.AlertSvc!.ShowAlert(
                 "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                + $"\n\nException Message: {_ex.Message}"
+                + $"\n\nException Message(s): {_ex.InnerExceptions}"
             );
+        }
+        // create a PrintHandler object for the new Label
+        if (NewLabel != null) {
+            PrintHandler LabelPrinter = new PrintHandler(NewLabel);
+            try {
+                await LabelPrinter.PrintLabelAsync();
+            // handle errors thrown by the PrintLabelAsync() method
+            } catch (AggregateException _ex){
+                App.AlertSvc!.ShowAlert(
+                    "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
+                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
+                );
+            }
         }
     }
 
