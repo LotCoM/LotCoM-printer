@@ -40,7 +40,7 @@ public class Label {
     /// <summary>
     /// Creates a new Image of a Production Lot Tracing Label that can be sent to Print Spooling.
     /// </summary>
-    /// <exception cref="FontFamilyNotFoundException"></exception>
+    /// <exception cref="SystemException"></exception>
     public Label() {
         // load a new Label base
         _image = LoadBase();

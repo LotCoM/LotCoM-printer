@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Labels;
 using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
 using System.Drawing;
-using Windows.Graphics.Printing;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -72,17 +72,22 @@ public partial class MainPageViewModel : ObservableObject {
         if (ProcessPicker.SelectedIndex != -1) {
             var PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
             // update the SelectedProcess properties
-            await Task.Run(() => {
+            await Task.Run(async () => {
                 if (PickedProcess != null) {
                     SelectedProcess = PickedProcess;
                     // get the Process Parts for the Picked Process and convert those parts to strings
-                    var ProcessParts = PartData.GetProcessParts(SelectedProcess);
+                    Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
+                    try {
+                        ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
+                    } catch (AggregateException _ex) {
+                        App.AlertSvc!.ShowAlert(
+                            "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
+                            + $"\n\nException Message(s): {_ex.InnerExceptions}"
+                        );
+                    }
                     List<string> DisplayableParts = [];
                     foreach (KeyValuePair<string, string> _pair in ProcessParts) {
-                        try {
-                            DisplayableParts = DisplayableParts.Append(PartData.GetPartAsString(_pair.Key)).ToList();
-                        // part number was not found in the Parts masterlist; skip it
-                        } catch {continue;}
+                        DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
                     }
                     // assign the new list of string parts to the SelectedProcessParts list
                     SelectedProcessParts = DisplayableParts;
@@ -100,9 +105,10 @@ public partial class MainPageViewModel : ObservableObject {
         string Model;
         try {
             Model = await ModelData.AttemptModelFromPart(SelectedPart);
-        } catch {
+        } catch (AggregateException _ex) {
             // could not automatically determine Model number from Part selection
-            throw new ArgumentException();
+            throw new ArgumentException($"Could not imply Model # from {SelectedPart} due to the following exception(s):"
+                                        + $"\n{_ex.InnerExceptions}");
         }
         // Model implication did not fail; return
         return Model;
@@ -126,7 +132,7 @@ public partial class MainPageViewModel : ObservableObject {
                     string ModelNumber = await AttemptModelNumberImplication();
                     DisplayedModels = [ModelNumber];
                     return true;
-                } catch (ArgumentException) {
+                } catch (AggregateException) {
                     return false;
                 }
             // the PickedPart was null
@@ -165,17 +171,28 @@ public partial class MainPageViewModel : ObservableObject {
             // warnings are handled by the CaptureValidator
         }
 		// generate a Label from the captured data
-		Bitmap NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
-        // create a PrintHandler object for the new Label
-        PrintHandler LabelPrinter = new PrintHandler(NewLabel);
+        Bitmap? NewLabel = null;
         try {
-            await LabelPrinter.PrintLabelAsync();
-        // handle errors thrown by the PrintLabelAsync() method
-        } catch (Exception _ex){
+		    NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
+        // there was an unexpected error in the Label generation
+        } catch (LabelBuildException _ex) {
             App.AlertSvc!.ShowAlert(
                 "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                + $"\n\nException Message: {_ex.Message}"
+                + $"\n\nException Message(s): {_ex.Message}"
             );
+        }
+        // create a PrintHandler object for the new Label
+        if (NewLabel != null) {
+            PrintHandler LabelPrinter = new PrintHandler(NewLabel);
+            try {
+                await LabelPrinter.PrintLabelAsync();
+            // handle errors thrown by the PrintLabelAsync() method
+            } catch (AggregateException _ex){
+                App.AlertSvc!.ShowAlert(
+                    "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
+                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
+                );
+            }
         }
     }
 
