@@ -1,4 +1,5 @@
 using System.Drawing;
+using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.Models.Labels;
 
@@ -20,7 +21,7 @@ public static class LabelGenerator {
             NewLabel = new Label();
         // the Label failed to configure its fonts from the System
         } catch (SystemException _ex) {
-            throw new SystemException($"Failed to construct new Label due to the following exception:\n{_ex.Message}");
+            throw new LabelBuildException($"Failed to construct new Label due to the following exception:\n{_ex.Message}");
         }
         // copy only the values of the data fields to the QR Code data
         List<string> QRCodeData = [];
@@ -29,7 +30,12 @@ public static class LabelGenerator {
             QRCodeData.Add(_field.Split(": ")[1]);
         }
         // generate a new QR Code from the Label's data
-        QRCode LabelCode = new QRCode(QRCodeData);
+        QRCode? LabelCode;
+        try {
+            LabelCode = new QRCode(QRCodeData);
+        } catch (ArgumentException _ex) {
+            throw new LabelBuildException($"Failed to construct new Label due to the following exception:\n{_ex.Message}");
+        }
         // apply the header, the QR Code, and the Label Data to the Label
         await NewLabel.AddHeaderAsync(LabelHeader);
         await NewLabel.AddQRCodeAsync(LabelCode);
