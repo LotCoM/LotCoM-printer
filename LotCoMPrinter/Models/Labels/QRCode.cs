@@ -16,7 +16,6 @@ public class QRCode {
     /// <summary>
     /// Constructs a QR Code with a bitmap image property.
     /// </summary>
-    /// <param name="ProcessTitle">The name of the Process producing the Label.</param>
     /// <param name="LabelFields">The Fields of information to encode in the QR Code.</param>
     /// <exception cref="ArgumentException"></exception>
     public QRCode(IEnumerable<string> LabelFields) {

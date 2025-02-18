@@ -16,7 +16,7 @@ public static class ProcessData {
     /// <summary>
     /// Formats the Part passed into a two-line, newline-split Part String, which can be displayed.
     /// </summary>
-    /// <param name="PartNumber"></param>
+    /// <param name="PartInformation">A key/value pair pulled from a part number dictionary.</param>
     public static string GetPartAsDisplayable(KeyValuePair<string, string> PartInformation) {
         // format the passed part as a displayable string
         string PartString = PartInformation.Key + "\n" + PartInformation.Value;

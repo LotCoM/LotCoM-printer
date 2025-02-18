@@ -29,3 +29,6 @@
 ## `v0.2.0`
 - Adopt [SemVer](https://semver.org/) (Semantic Versioning 2.0.0) versioning conventions.
 - Implement integration with Database for external Process Part Number control.
+
+## `v0.2.1`
+- Build environment setup (manifests) for Windows MSIX Packaging.

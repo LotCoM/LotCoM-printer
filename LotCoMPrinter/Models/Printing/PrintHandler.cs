@@ -9,7 +9,7 @@ namespace LotCoMPrinter.Models.Printing;
 /// <summary>
 /// Allows the printing of a Label Image.
 /// </summary>
-/// <param name="LabelImageStream">A stream of bytes representing the Label Image.</param>
+/// <param name="LabelImage">A Bitmap Label Image.</param>
 public class PrintHandler(Bitmap LabelImage) {
     // private class attributes
     private readonly Bitmap _labelImage = LabelImage;

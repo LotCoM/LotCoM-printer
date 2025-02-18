@@ -6,14 +6,14 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap rescap">
 
-  <Identity Name="maui-package-name-placeholder" Publisher="CN=User Name" Version="0.0.0.0" />
+  <Identity Name="LotCoMPrinter" Publisher="CN=Mason Ritchason, O=Yamada North America, C=US" Version="0.2.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="F69185D5-8BB2-4FBA-A087-414B199240E7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>$placeholder$</DisplayName>
-    <PublisherDisplayName>User Name</PublisherDisplayName>
-    <Logo>$placeholder$.png</Logo>
+    <DisplayName>LotCom Printer</DisplayName>
+    <PublisherDisplayName>Mason Ritchason</PublisherDisplayName>
+    <Logo>appicontext.jpg</Logo>
   </Properties>
 
   <Dependencies>
@@ -26,10 +26,10 @@
   </Resources>
 
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
+    <Application Id="LotCoMPrinter" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="$placeholder$"
-        Description="$placeholder$"
+        DisplayName="LotCoM Printer"
+        Description="Print WIP Labels for Lot Tracing at YNA."
         Square150x150Logo="$placeholder$.png"
         Square44x44Logo="$placeholder$.png"
         BackgroundColor="transparent">
