@@ -212,6 +212,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -239,6 +240,15 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Text="Production Shift"/>
+            <!-- Operator Identification -->
+            <Label
+                x:Name="OperatorIDLabel"
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="0"
+                Text="Operator Initials"/>
             <!-- Stack Inputs -->
             <!-- Production Date -->
             <DatePicker
@@ -266,6 +276,16 @@
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
+            <!-- Operator Identification -->
+            <Entry
+                x:Name="OperatorIDEntry"
+                MaxLength="3"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="1"/>
         </Grid>
         <!-- Print Button -->
         <Button
