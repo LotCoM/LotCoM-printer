@@ -159,13 +159,13 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
-    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker) {
+    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
         List<string> UICapture = [];
         try {
 			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);
+				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // something was not valid in the UI
 		} catch (FormatException) {
             // warnings are handled by the CaptureValidator
