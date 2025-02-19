@@ -12,7 +12,7 @@ public class LabelPrintJob(List<string> LabelInformation) {
     // private class properties to hold Label data and generated Label Bitmap
     private List<string> _labelInformation = LabelInformation;
     // split out the JBK # value to apply as the header
-    private string _header = LabelInformation[2].Split(":")[1].Replace(" ", "");
+    private string _header = LabelInformation[3].Split(":")[1].Replace(" ", "");
     private Bitmap? _label = null;
 
     /// <summary>

@@ -123,7 +123,7 @@ public static class InterfaceCaptureValidator {
             // show a warning
             App.AlertSvc!.ShowAlert("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
         }
-        List<string> UIResults = [];
+        List<string> UIResults = [$"Process: {Process}"];
         // create values for each of the UI entries
         string? Part;
         string? Quantity;
