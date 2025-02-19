@@ -159,7 +159,7 @@ public static class InterfaceCaptureValidator {
             // validate deburr jbk number
             if (Requirements.Contains("DeburrJBKNumberEntry")) {
                 DeburrJBKNumber = ValidateJBKNumber(DeburrJBKNumberEntry, "Deburr JBK Number");
-                UIResults.Add($"Deburr JBK # {DeburrJBKNumber!}");
+                UIResults.Add($"Deburr JBK #: {DeburrJBKNumber!}");
             };
             // validate die number
             if (Requirements.Contains("DieNumberEntry")) {
