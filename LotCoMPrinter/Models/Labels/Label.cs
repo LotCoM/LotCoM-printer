@@ -134,7 +134,12 @@ public class Label {
             // combine the LabelFields into a string deliniated by newlines
             string LabelFieldsBody = "";
             foreach (string _field in LabelFields) {
-                LabelFieldsBody += _field + "\n";
+                // if the field is the operator ID, do not include in the shown text
+                if (_field.Contains("Operator")) {
+                    continue;
+                } else {
+                    LabelFieldsBody += _field + "\n";
+                }
             }
             // create a drawing surface to draw the text with
             Graphics Surface = Graphics.FromImage(_image);

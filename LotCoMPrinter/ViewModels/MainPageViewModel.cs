@@ -1,10 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Labels;
 using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
-using System.Drawing;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -66,34 +63,28 @@ public partial class MainPageViewModel : ObservableObject {
     /// <summary>
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
-    /// <param name="ProcessPicker">The Picker UI Control that allows the selection of a Process.</param>
-    public async Task UpdateSelectedProcess(Picker ProcessPicker) {
-        // get the ProcessPicker's selected item
-        if (ProcessPicker.SelectedIndex != -1) {
-            var PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
-            // update the SelectedProcess properties
-            await Task.Run(async () => {
-                if (PickedProcess != null) {
-                    SelectedProcess = PickedProcess;
-                    // get the Process Parts for the Picked Process and convert those parts to strings
-                    Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
-                    try {
-                        ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
-                    } catch (AggregateException _ex) {
-                        App.AlertSvc!.ShowAlert(
-                            "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
-                            + $"\n\nException Message(s): {_ex.InnerExceptions}"
-                        );
-                    }
-                    List<string> DisplayableParts = [];
-                    foreach (KeyValuePair<string, string> _pair in ProcessParts) {
-                        DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
-                    }
-                    // assign the new list of string parts to the SelectedProcessParts list
-                    SelectedProcessParts = DisplayableParts;
-                }
-            });
-        }
+    /// <param name="Process">The Process name to configure the UI for.</param>
+    public async Task UpdateSelectedProcess(string Process) {
+        // update the SelectedProcess properties
+        await Task.Run(async () => {
+            SelectedProcess = Process;
+            // get the Process Parts for the Picked Process and convert those parts to strings
+            Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
+            try {
+                ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
+            } catch (AggregateException _ex) {
+                App.AlertSvc!.ShowAlert(
+                    "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
+                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
+                );
+            }
+            List<string> DisplayableParts = [];
+            foreach (KeyValuePair<string, string> _pair in ProcessParts) {
+                DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
+            }
+            // assign the new list of string parts to the SelectedProcessParts list
+            SelectedProcessParts = DisplayableParts;
+        });
     }
 
     /// <summary>
@@ -159,41 +150,21 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
-    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker) {
+    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
-        List<string> UICapture = [];
+        List<string> UICapture;
         try {
 			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);
+				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // something was not valid in the UI
 		} catch (FormatException) {
-            // warnings are handled by the CaptureValidator
+            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
+            return;
         }
-		// generate a Label from the captured data
-        Bitmap? NewLabel = null;
-        try {
-		    NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
-        // there was an unexpected error in the Label generation
-        } catch (LabelBuildException _ex) {
-            App.AlertSvc!.ShowAlert(
-                "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                + $"\n\nException Message(s): {_ex.Message}"
-            );
-        }
-        // create a PrintHandler object for the new Label
-        if (NewLabel != null) {
-            PrintHandler LabelPrinter = new PrintHandler(NewLabel);
-            try {
-                await LabelPrinter.PrintLabelAsync();
-            // handle errors thrown by the PrintLabelAsync() method
-            } catch (AggregateException _ex){
-                App.AlertSvc!.ShowAlert(
-                    "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
-                );
-            }
-        }
+        // create and run a Label print job
+        LabelPrintJob Job = new LabelPrintJob(UICapture);
+        await Job.Run();
     }
 
     /// <summary>

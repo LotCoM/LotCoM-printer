@@ -35,7 +35,8 @@ public partial class MainPage : ContentPage {
                 {"ModelNumberPicker", new List<View> {ModelNumberPicker, ModelNumberLabel}},
                 {"QuantityEntry", new List<View> {QuantityEntry, QuantityLabel}},
                 {"ProductionDatePicker", new List<View> {ProductionDatePicker, ProductionDateLabel}},
-                {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}}
+                {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}},
+				{"OperatorIDEntry", new List<View> {OperatorIDEntry, OperatorIDLabel}}
             };
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
@@ -65,13 +66,16 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnProcessSelection(object Sender, EventArgs e) {
+		// retrieve the picked process
+		Picker ProcessPicker = (Picker)Sender;
+		string? PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
 		// reset the Page
 		Reset();
-		// update the SelectedProcess and SelectedProcessParts properties
-		Picker ProcessPicker = (Picker)Sender;
-		await _viewModel.UpdateSelectedProcess(ProcessPicker);
-		// change visible UI elements
-		ChangeDisplayedInputs();
+		// update the SelectedProcess and change the visible UI elements
+		if (PickedProcess != null) {
+			await _viewModel.UpdateSelectedProcess(PickedProcess);
+			ChangeDisplayedInputs();
+		}
 	}
 
 	/// <summary>
@@ -99,7 +103,8 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// call the ViewModel's Print Request method
 		await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-									  DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker);
+									  DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker, 
+									  OperatorIDEntry);
 	}
 
 	/// <summary>
@@ -135,6 +140,9 @@ public partial class MainPage : ContentPage {
 		// Production Shift Picker reset
 		ProductionShiftPicker.SelectedIndex = -1;
 		ProductionShiftPicker.IsEnabled = true;
+		// Operator Initials Entry reset
+		OperatorIDEntry.Text = "";
+		OperatorIDEntry.IsEnabled = true;
 	}
 }
 
