@@ -3,7 +3,13 @@
 - Operator identification (initial) input in UI.
 
 ## `v0.4.0`
-- UI stylizing.
+- Global JBK # assignment system integration.
 
 ## `v0.5.0`
+- Full/Partial baskets
+
+## `v0.6.0`
+- UI stylizing.
+
+## `v0.7.0`
 - Print history logging.
