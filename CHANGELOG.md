@@ -32,3 +32,12 @@
 
 ## `v0.2.1`
 - Build environment setup (manifests) for Windows MSIX Packaging.
+
+## `v0.3.0`
+- Operator identification (initial) input in UI.
+- Refactor `ProcessRequirements` datasource to leverage more code reuse and enforce universal basket data fields.
+- Resolve issue with error messaging on UI validation failure ([#16](https://github.com/LotCoM/LotCoM-printer/issues/16)).
+- Resolve issue with improper JBK # formatting ([#17](https://github.com/LotCoM/LotCoM-printer/issues/17)).
+- Resolve a fatal formatting error in the Deburr JBK # field ([#18](https://github.com/LotCoM/LotCoM-printer/issues/18)).
+- Resolve omission of Process Title in Label text ([#19](https://github.com/LotCoM/LotCoM-printer/issues/19)).
+- Resolve issue with required data fields not hiding/showing on Process ([#20](https://github.com/LotCoM/LotCoM-printer/issues/20)).
