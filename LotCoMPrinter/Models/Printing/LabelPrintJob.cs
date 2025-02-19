@@ -8,11 +8,11 @@ namespace LotCoMPrinter.Models.Printing;
 /// Creates a Print Job that can generate a Bitmap image Label and spool a print job to the printing system.
 /// </summary>
 /// <param name="LabelInformation">The Data to be encoded in the Label's QR Code and shown on the Label itself (a validated UI Capture from InterfaceCaptureValidator).</param>
-/// <param name="JBKNumberEntry">The JBKNumberEntry control that serves as the Label Header text source.</param>
-public class LabelPrintJob(List<string> LabelInformation, Entry JBKNumberEntry) {
+public class LabelPrintJob(List<string> LabelInformation) {
     // private class properties to hold Label data and generated Label Bitmap
     private List<string> _labelInformation = LabelInformation;
-    private string _header = JBKNumberEntry.Text;
+    // split out the JBK # value to apply as the header
+    private string _header = LabelInformation[2].Split(":")[1].Replace(" ", "");
     private Bitmap? _label = null;
 
     /// <summary>

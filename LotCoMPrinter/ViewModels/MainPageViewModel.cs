@@ -169,7 +169,7 @@ public partial class MainPageViewModel : ObservableObject {
             return;
         }
         // create and run a Label print job
-        LabelPrintJob Job = new LabelPrintJob(UICapture, JBKNumberEntry);
+        LabelPrintJob Job = new LabelPrintJob(UICapture);
         await Job.Run();
     }
 
