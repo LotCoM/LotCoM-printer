@@ -55,6 +55,21 @@ public static class InterfaceCaptureValidator {
         }
     }
 
+    private static string ValidateJBKNumber(Entry EntryControl, string JBKType) {
+        // validate that the entry has a value and that it only contains digits
+        string Value;
+        try {
+            Value = ValidateAsDigits(EntryControl, JBKType);
+        } catch (FormatException) {
+            throw new FormatException();
+        }
+        // add leading zeroes to enforce formatting (3-length digit)
+        while (Value.Length < 3) {
+            Value = "0" + Value;
+        }
+        return Value;
+    }
+
     private static string ValidateOperatorID(Entry OperatorIDEntry) {
         // validate that the entry has a value and that it only contains characters
         string Value = OperatorIDEntry.Text;
@@ -133,7 +148,7 @@ public static class InterfaceCaptureValidator {
             };
             // validate jbk number
             if (Requirements.Contains("JBKNumberEntry")) {
-                JBKNumber = ValidateAsDigits(JBKNumberEntry, "JBK Number");
+                JBKNumber = ValidateJBKNumber(JBKNumberEntry, "JBK Number");
                 UIResults.Add($"JBK #: {JBKNumber!}");
             };
             // validate lot number
@@ -143,7 +158,7 @@ public static class InterfaceCaptureValidator {
             };
             // validate deburr jbk number
             if (Requirements.Contains("DeburrJBKNumberEntry")) {
-                DeburrJBKNumber = ValidateAsDigits(DeburrJBKNumberEntry, "Deburr JBK Number");
+                DeburrJBKNumber = ValidateJBKNumber(DeburrJBKNumberEntry, "Deburr JBK Number");
                 UIResults.Add($"Deburr JBK # {DeburrJBKNumber!}");
             };
             // validate die number

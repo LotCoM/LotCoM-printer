@@ -170,6 +170,7 @@
             <!-- Lot Number -->
             <Entry
                 x:Name="LotNumberEntry"
+                MaxLength="3"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -179,6 +180,7 @@
             <!-- Deburr JBK Number -->
             <Entry
                 x:Name="DeburrJBKNumberEntry"
+                MaxLength="3"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -188,6 +190,7 @@
             <!-- Die Number -->
             <Entry
                 x:Name="DieNumberEntry"
+                MaxLength="3"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
