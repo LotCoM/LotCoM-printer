@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
 
@@ -21,7 +22,7 @@ public static class InterfaceCaptureValidator {
     }
 
     private static string ValidateLotNumberEntry(Entry LotNumberEntry) {
-        // validate that the entry has a value and that it only contains digits
+        // validate that the entry has a value
         string Value = LotNumberEntry.Text;
         if (Value == "") {
             // show a warning
@@ -54,6 +55,27 @@ public static class InterfaceCaptureValidator {
         }
     }
 
+    private static string ValidateOperatorID(Entry OperatorIDEntry) {
+        // validate that the entry has a value and that it only contains characters
+        string Value = OperatorIDEntry.Text;
+        if (Value == "") {
+            // show a warning
+            App.AlertSvc!.ShowAlert("Invalid Operator Initials", "Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
+            throw new FormatException();
+        } else {
+            // set a regex pattern for 2 or 3 alphabetical characters
+            string InitialPattern = @"^[a-zA-Z][a-zA-Z][a-zA-Z]?$";
+            Regex InitialRegex = new Regex(InitialPattern);
+            // ensure the value matches the regex requirement
+            if (!InitialRegex.IsMatch(Value)) {
+                App.AlertSvc!.ShowAlert("Invalid Operator Initials", "Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
+                throw new FormatException();
+            }
+            // cast the string to Uppercase and return it
+            return Value.ToUpper();
+        }
+    }
+
     /// <summary>
     /// Validates the PartValidator's UI Control states and Entries.
     /// </summary>
@@ -71,7 +93,7 @@ public static class InterfaceCaptureValidator {
     /// <exception cref="FormatException">Raises if any of the required checks are failed.</exception>
     public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
         Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry,
-        Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker
+        Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
         // retrieve the Process requirements
         List<string> Requirements = [];
@@ -96,6 +118,7 @@ public static class InterfaceCaptureValidator {
         string? DieNumber;
         string? ModelNumber;
         string? ProductionShift;
+        string? OperatorID;
         // attempt all the validations
         try {
             // validate part
@@ -140,6 +163,11 @@ public static class InterfaceCaptureValidator {
                 ProductionShift = ValidatePicker(ProductionShiftPicker, "Production Shift");
                 UIResults.Add($"Production Shift: {ProductionShift!}");
             };
+            // validate the operator initials
+            if (Requirements.Contains("OperatorIDEntry")) {
+                OperatorID = ValidateOperatorID(OperatorIDEntry);
+                UIResults.Add($"Operator: {OperatorID!}");
+            }
             // return the constructed UI Dictionary
             return UIResults;
         } catch {
