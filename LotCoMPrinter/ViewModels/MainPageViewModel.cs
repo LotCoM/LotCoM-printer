@@ -63,34 +63,28 @@ public partial class MainPageViewModel : ObservableObject {
     /// <summary>
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
-    /// <param name="ProcessPicker">The Picker UI Control that allows the selection of a Process.</param>
-    public async Task UpdateSelectedProcess(Picker ProcessPicker) {
-        // get the ProcessPicker's selected item
-        if (ProcessPicker.SelectedIndex != -1) {
-            var PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
-            // update the SelectedProcess properties
-            await Task.Run(async () => {
-                if (PickedProcess != null) {
-                    SelectedProcess = PickedProcess;
-                    // get the Process Parts for the Picked Process and convert those parts to strings
-                    Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
-                    try {
-                        ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
-                    } catch (AggregateException _ex) {
-                        App.AlertSvc!.ShowAlert(
-                            "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
-                            + $"\n\nException Message(s): {_ex.InnerExceptions}"
-                        );
-                    }
-                    List<string> DisplayableParts = [];
-                    foreach (KeyValuePair<string, string> _pair in ProcessParts) {
-                        DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
-                    }
-                    // assign the new list of string parts to the SelectedProcessParts list
-                    SelectedProcessParts = DisplayableParts;
-                }
-            });
-        }
+    /// <param name="Process">The Process name to configure the UI for.</param>
+    public async Task UpdateSelectedProcess(string Process) {
+        // update the SelectedProcess properties
+        await Task.Run(async () => {
+            SelectedProcess = Process;
+            // get the Process Parts for the Picked Process and convert those parts to strings
+            Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
+            try {
+                ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
+            } catch (AggregateException _ex) {
+                App.AlertSvc!.ShowAlert(
+                    "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
+                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
+                );
+            }
+            List<string> DisplayableParts = [];
+            foreach (KeyValuePair<string, string> _pair in ProcessParts) {
+                DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
+            }
+            // assign the new list of string parts to the SelectedProcessParts list
+            SelectedProcessParts = DisplayableParts;
+        });
     }
 
     /// <summary>

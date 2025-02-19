@@ -66,13 +66,16 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnProcessSelection(object Sender, EventArgs e) {
+		// retrieve the picked process
+		Picker ProcessPicker = (Picker)Sender;
+		string? PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
 		// reset the Page
 		Reset();
-		// update the SelectedProcess and SelectedProcessParts properties
-		Picker ProcessPicker = (Picker)Sender;
-		await _viewModel.UpdateSelectedProcess(ProcessPicker);
-		// change visible UI elements
-		ChangeDisplayedInputs();
+		// update the SelectedProcess and change the visible UI elements
+		if (PickedProcess != null) {
+			await _viewModel.UpdateSelectedProcess(PickedProcess);
+			ChangeDisplayedInputs();
+		}
 	}
 
 	/// <summary>

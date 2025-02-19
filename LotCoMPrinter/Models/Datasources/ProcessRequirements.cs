@@ -37,7 +37,7 @@ public static class ProcessRequirements {
             {"ShaftClinch", _shaftClinchRequirements}
         };
         // start with the universal requirement set
-        List<string> Requirements = _universalRequirements;
+        List<string> Requirements = _universalRequirements.ToList();
         try {
             // try to convert the string name to a set of Process Requirements
             Requirements.AddRange(Conversions[Process]);
