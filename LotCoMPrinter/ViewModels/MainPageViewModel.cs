@@ -1,10 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Labels;
 using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Validators;
-using System.Drawing;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -161,39 +158,19 @@ public partial class MainPageViewModel : ObservableObject {
     /// <returns></returns>
     public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
-        List<string> UICapture = [];
+        List<string> UICapture;
         try {
 			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
 				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // something was not valid in the UI
 		} catch (FormatException) {
-            // warnings are handled by the CaptureValidator
+            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
+            return;
         }
-		// generate a Label from the captured data
-        Bitmap? NewLabel = null;
-        try {
-		    NewLabel = await LabelGenerator.GenerateLabelAsync(JBKNumberEntry.Text, UICapture);
-        // there was an unexpected error in the Label generation
-        } catch (LabelBuildException _ex) {
-            App.AlertSvc!.ShowAlert(
-                "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                + $"\n\nException Message(s): {_ex.Message}"
-            );
-        }
-        // create a PrintHandler object for the new Label
-        if (NewLabel != null) {
-            PrintHandler LabelPrinter = new PrintHandler(NewLabel);
-            try {
-                await LabelPrinter.PrintLabelAsync();
-            // handle errors thrown by the PrintLabelAsync() method
-            } catch (AggregateException _ex){
-                App.AlertSvc!.ShowAlert(
-                    "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
-                );
-            }
-        }
+        // create and run a Label print job
+        LabelPrintJob Job = new LabelPrintJob(UICapture, JBKNumberEntry);
+        await Job.Run();
     }
 
     /// <summary>
