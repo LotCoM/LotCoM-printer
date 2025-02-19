@@ -161,6 +161,7 @@
             <!-- JBK Number -->
             <Entry
                 x:Name="JBKNumberEntry"
+                MaxLength="3"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -170,7 +171,6 @@
             <!-- Lot Number -->
             <Entry
                 x:Name="LotNumberEntry"
-                MaxLength="3"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
