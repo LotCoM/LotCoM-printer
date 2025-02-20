@@ -179,6 +179,37 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
+    /// Attempts to assign a serialized identifier (JBK or Lot #) to the Label in the UI.
+    /// </summary>
+    /// <param name="SerializeMode">The data field that serializes this Process' labels (either "JBK" or "Lot").</param>
+    /// <returns></returns>
+    /// <exception cref="SystemException"></exception>
+    private async Task AssignSerializer(string SerializeMode) {
+        await Task.Run(async () => {
+            // attempt to assign a JBK number
+            if (SerializeMode == "JBK") {
+                try {
+                    await ConfigureJBKNumber();
+                } catch (Exception _ex) {
+                    DisplayedJBKNumber = "";
+                    throw new SystemException("Failed to assign a JBK # to this Label. Please see management to resolve this issue."
+                                              + $"\n\nException Message(s): {_ex.Message}");
+                }
+            // attempt to assign a Lot number
+            } else {
+                try {
+                    await ConfigureLotNumber();
+                // the JBK AND Lot number queue reads failed (fatal)
+                } catch (ArgumentException _ex) {
+                    DisplayedLotNumber = "";
+                    throw new SystemException("Failed to assign a Lot # to this Label. Please see management to resolve this issue."
+                                              + $"\n\nException Message(s): {_ex.Message}");
+                }
+            }
+        });
+    }
+
+    /// <summary>
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
     /// <param name="Process">The Process name to configure the UI for.</param>
@@ -211,12 +242,13 @@ public partial class MainPageViewModel : ObservableObject {
     /// Attempts to automatically assign the queued JBK Number for that Model to the JBK Entry UI control.
     /// </summary>
     /// <param name="PartPicker">The Picker UI Control that allows the selection of a Part.</param>
+    /// <param name="SerializeMode">The data field that serializes this Process' labels (either "JBK" or "Lot").</param>
     /// <returns>Returns a boolean that indicates whether to disable the Model Picker (if the Model assignment was failed).</returns>
-    public async Task<bool> UpdateSelectedPart(Picker PartPicker) {
+    public async Task<bool> UpdateSelectedPart(Picker PartPicker, string SerializeMode) {
         // configure the SelectedPart
         bool PartResult = await ConfigureSelectedPart(PartPicker);
-        // if the selected part is valid, configure the DisplayedModel, and DisplayedJBKNumber properties
         if (PartResult) {
+            // attempt to imply and configure the Model Number of the Part
             try {
                 await ConfigureSelectedModelNumber();
             // the Model Number implication failed (some fatal issue with part selection)
@@ -224,20 +256,14 @@ public partial class MainPageViewModel : ObservableObject {
                 throw new SystemException("There was an unexpected error while retreiving the Model #. Please see management to resolve this issue."
                                           + $"\n\nException Message(s): {_ex.Message}");
             }
-            // attempt to assign a JBK number OR a Lot number
+            // attempt to apply a serializer to the Label being generated (JBK/Lot #)
             try {
-                await ConfigureJBKNumber();
-            } catch {
-                DisplayedJBKNumber = "";
-            }
-            try {
-                await ConfigureLotNumber();
-            // the JBK AND Lot number queue reads failed (fatal)
-            } catch (ArgumentException _ex) {
-                DisplayedLotNumber = "";
-                throw new SystemException("Failed to assign a JBK # or Lot # to this Label. Please see management to resolve this issue."
+                await AssignSerializer(SerializeMode);
+            } catch (Exception _ex) {
+                throw new SystemException($"Failed to assign a {SerializeMode} # to this Label. Please see management to resolve this issue."
                                           + $"\n\nException Message(s): {_ex.Message}");
             }
+            // the part number was valid and all of its data was retrieved
             return true;
         // the selected part number was somehow invalid
         } else {
