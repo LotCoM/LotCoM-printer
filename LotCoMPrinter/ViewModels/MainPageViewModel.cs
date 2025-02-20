@@ -297,8 +297,15 @@ public partial class MainPageViewModel : ObservableObject {
             // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
             return;
         }
+        // get the serialize mode for this Label
+        string SerializeMode;
+        if (JBKNumberEntry.IsVisible) {
+			SerializeMode = "JBK";
+		} else {
+			SerializeMode = "Lot";
+		}
         // create and run a Label print job
-        LabelPrintJob Job = new LabelPrintJob(UICapture);
+        LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel);
         await Job.Run();
     }
 
