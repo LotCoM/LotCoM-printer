@@ -161,6 +161,7 @@
             <!-- JBK Number -->
             <Entry
                 x:Name="JBKNumberEntry"
+                Text="{Binding DisplayedJBKNumber}"
                 MaxLength="3"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
@@ -198,9 +199,9 @@
                 Grid.Row="6"
                 Grid.Column="1"/>
             <!-- Model Number -->
-            <Picker
-                x:Name="ModelNumberPicker"
-                ItemsSource="{Binding DisplayedModels}"
+            <Entry
+                x:Name="ModelNumberEntry"
+                Text="{Binding DisplayedModel}"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
