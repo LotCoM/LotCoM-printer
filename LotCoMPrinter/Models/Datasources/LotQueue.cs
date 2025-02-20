@@ -72,7 +72,7 @@ public static class LotQueue {
                 Unincremented = 0;
             }
             // increment the Queued Lot number and save the new Queue version
-            QueueDictionary[ModelNumber] = Unincremented++;
+            QueueDictionary[ModelNumber] = Unincremented + 1;
         });
         // save the incremented queue
         await SaveAsync(QueueDictionary);
