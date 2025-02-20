@@ -41,22 +41,32 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(SelectedPart));
         }
     }
-
-    private List<string> _displayedModels = [];
-    public List<string> DisplayedModels {
-        get {return _displayedModels;}
-        set {
-            _displayedModels = value;
-            OnPropertyChanged(nameof(_displayedModels));
-            OnPropertyChanged(nameof(DisplayedModels));
-        }
-    }
     
     private List<string> _processes = ProcessData.ProcessMasterList;
     public List<string> Processes {
         get {return _processes;}
     }
 
+    private string _displayedModel = "";
+    public string DisplayedModel {
+        get {return _displayedModel;}
+        set {
+            _displayedModel = value;
+            OnPropertyChanged(nameof(_displayedModel));
+            OnPropertyChanged(nameof(DisplayedModel));
+        }
+    }
+    
+    private string _displayedJBKNumber = "";
+    public string DisplayedJBKNumber {
+        get {return _displayedJBKNumber;}
+        set {
+            _displayedJBKNumber = value;
+            OnPropertyChanged(nameof(_displayedJBKNumber));
+            OnPropertyChanged(nameof(DisplayedJBKNumber));
+        }
+    }
+    
     // full constructor
     public MainPageViewModel() {}
 
@@ -121,7 +131,7 @@ public partial class MainPageViewModel : ObservableObject {
                 // get the Part's Model number and update the DisplayedModel property to only include the implied Model
                 try {
                     string ModelNumber = await AttemptModelNumberImplication();
-                    DisplayedModels = [ModelNumber];
+                    DisplayedModel = ModelNumber;
                     return true;
                 } catch (AggregateException) {
                     return false;
@@ -174,7 +184,7 @@ public partial class MainPageViewModel : ObservableObject {
         SelectedProcess = "";
         SelectedProcessParts = [];
         SelectedPart = "";
-        DisplayedModels = [];
+        DisplayedModel = "";
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
