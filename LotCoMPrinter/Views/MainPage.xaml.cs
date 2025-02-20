@@ -32,7 +32,7 @@ public partial class MainPage : ContentPage {
                 {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
                 {"DieNumberEntry", new List<View> {DieNumberEntry, DieNumberLabel}},
                 {"PartPicker", new List<View> {PartPicker, PartLabel}},
-                {"ModelNumberPicker", new List<View> {ModelNumberPicker, ModelNumberLabel}},
+                {"ModelNumberEntry", new List<View> {ModelNumberEntry, ModelNumberLabel}},
                 {"QuantityEntry", new List<View> {QuantityEntry, QuantityLabel}},
                 {"ProductionDatePicker", new List<View> {ProductionDatePicker, ProductionDateLabel}},
                 {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}},
@@ -84,13 +84,21 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnPartSelection(object Sender, EventArgs e) {
-		// update the SelectedPart and SelectedPartModel properties
+		// update the SelectedPart, DisplayedModel, and DisplayedJBKNumber properties
 		Picker PartPicker = (Picker)Sender;
-		bool ModelImplication = await _viewModel.UpdateSelectedPart(PartPicker);
-		// disable the Model control if the implication was successful
-		if (ModelImplication) {
-			ModelNumberPicker.SelectedIndex = 0;
-			ModelNumberPicker.IsEnabled = false;
+		bool PartSelection = false;
+		try {
+			PartSelection = await _viewModel.UpdateSelectedPart(PartPicker);
+		// the Model Number was either unimplied or the JBK # Queue could not be accessed
+		} catch (Exception _ex) {
+			// show a warning
+			App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Part/Model # could not be retrieved. Please see management to resolve this issue."
+									+ $"\n\nError: {_ex.Message}");
+		}
+		// disable the Model and JBK Number controls if the implication was successful
+		if (PartSelection) {
+			ModelNumberEntry.IsEnabled = false;
+			JBKNumberEntry.IsEnabled = false;
 		}
 	}
 
@@ -103,7 +111,7 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// call the ViewModel's Print Request method
 		await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-									  DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker, 
+									  DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, 
 									  OperatorIDEntry);
 	}
 
@@ -132,8 +140,8 @@ public partial class MainPage : ContentPage {
 		DieNumberEntry.Text = "";
 		DieNumberEntry.IsEnabled = true;
 		// Model Number Picker reset
-		ModelNumberPicker.SelectedIndex = -1;
-		ModelNumberPicker.IsEnabled = true;
+		ModelNumberEntry.Text = "";
+		ModelNumberEntry.IsEnabled = true;
 		// Production Date Picker reset
 		ProductionDatePicker.Date = DateTime.Now;
 		ProductionDatePicker.IsEnabled = true;

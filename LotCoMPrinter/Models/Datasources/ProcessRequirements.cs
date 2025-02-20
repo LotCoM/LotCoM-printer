@@ -11,8 +11,8 @@ public static class ProcessRequirements {
     private static readonly List<string> _deburrRequirements = ["JBKNumberEntry"];
     private static readonly List<string> _pivotHousingMCRequirements = ["JBKNumberEntry", "DeburrJBKNumberEntry"];
     private static readonly List<string> _tiltBracketWeldRequirements = ["LotNumberEntry"];
-    private static readonly List<string> _pipeWeldRequirements = ["LotNumberEntry", "ModelNumberPicker"];
-    private static readonly List<string> _shaftClinchRequirements = ["LotNumberEntry", "ModelNumberPicker"];
+    private static readonly List<string> _pipeWeldRequirements = ["LotNumberEntry", "ModelNumberEntry"];
+    private static readonly List<string> _shaftClinchRequirements = ["LotNumberEntry", "ModelNumberEntry"];
     private static readonly List<string> _uppershaftMCRequirements = ["LotNumberEntry"];
 
     /// <summary>

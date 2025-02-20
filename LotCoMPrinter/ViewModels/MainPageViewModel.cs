@@ -41,24 +41,116 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(SelectedPart));
         }
     }
-
-    private List<string> _displayedModels = [];
-    public List<string> DisplayedModels {
-        get {return _displayedModels;}
-        set {
-            _displayedModels = value;
-            OnPropertyChanged(nameof(_displayedModels));
-            OnPropertyChanged(nameof(DisplayedModels));
-        }
-    }
     
     private List<string> _processes = ProcessData.ProcessMasterList;
     public List<string> Processes {
         get {return _processes;}
     }
 
+    private string _displayedModel = "";
+    public string DisplayedModel {
+        get {return _displayedModel;}
+        set {
+            _displayedModel = value;
+            OnPropertyChanged(nameof(_displayedModel));
+            OnPropertyChanged(nameof(DisplayedModel));
+        }
+    }
+    
+    private string _displayedJBKNumber = "";
+    public string DisplayedJBKNumber {
+        get {return _displayedJBKNumber;}
+        set {
+            _displayedJBKNumber = value;
+            OnPropertyChanged(nameof(_displayedJBKNumber));
+            OnPropertyChanged(nameof(DisplayedJBKNumber));
+        }
+    }
+    
     // full constructor
     public MainPageViewModel() {}
+
+    /// <summary>
+    /// Uses the SelectedPart property to attempt to imply the Model number.
+    /// </summary>
+    /// <returns>Model # if implication is successful; raises ArgumentException if not.</returns>
+    /// <exception cref="ArgumentException"></exception>"
+    private async Task<string> AttemptModelNumberImplication() {
+        // get the Part's Model number and update the SelectedModel property
+        string Model;
+        try {
+            Model = await ModelData.AttemptModelFromPart(SelectedPart);
+        } catch (AggregateException _ex) {
+            // could not automatically determine Model number from Part selection
+            throw new ArgumentException($"Could not imply Model # from {SelectedPart} due to the following exception(s):"
+                                        + $"\n{_ex.InnerExceptions}");
+        }
+        // Model implication did not fail; return
+        return Model;
+    }
+
+    /// <summary>
+    /// Configures the PartPicker control and the SelectedPart ViewModel property.
+    /// </summary>
+    /// <param name="PartPicker">The UI's Picker control for the Part.</param>
+    /// <returns>true if the selected part is valid; false if not.</returns>
+    private async Task<bool> ConfigureSelectedPart(Picker PartPicker) {
+        bool Result = await Task.Run(() => {
+            // get the PartPicker's selected item
+            if (PartPicker.SelectedIndex != -1) {
+                var PickedPart = (string?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
+                // update the SelectedPart properties
+                if (PickedPart != null) {
+                    SelectedPart = PickedPart;
+                    return true;
+                } else {
+                    SelectedPart = "";
+                    return false;
+                }
+            } else {
+                SelectedPart = "";
+                return false;
+            }
+        });
+        return Result;
+    }
+
+    /// <summary>
+    /// Configures the ModelNumberEntry control and the DisplayedModel ViewModel property using the SelectedPart property.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    private async Task ConfigureSelectedModelNumber() {
+        // get the Part's Model number and update the DisplayedModel property to only include the implied Model
+        try {
+            string ModelNumber = await AttemptModelNumberImplication();
+            DisplayedModel = ModelNumber;
+        } catch {
+            throw new ArgumentException($"Could not configure the Model # for the Part {SelectedPart}.");
+        }
+    }
+
+    /// <summary>
+    /// Configures the JBKNumberEntry control and the DisplayedJBKNumber ViewModel property using the DisplayedModel property.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    private async Task ConfigureJBKNumber() {
+        // retrieve the Queued JBK number for this part model
+        try {
+            int _awaited = await JBKQueue.QueuedAsync(DisplayedModel);
+            string Queued = _awaited.ToString();
+            // add leading zeroes to enforce 3-digit format
+            while (Queued.Length < 3) {
+                Queued = "0" + Queued;
+            }
+            // update the Displayed JBK
+            DisplayedJBKNumber = Queued;
+        // there was no JBK queue for the passed Model Number
+        } catch (ArgumentException) {
+            throw new ArgumentException($"Could not find a JBK # Queue for the Model # {DisplayedModel}.");
+        }
+    }
 
     /// <summary>
     /// Updates the Page's Selected Process and its Part Data.
@@ -88,49 +180,33 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
-    /// Uses the SelectedPart property to attempt to imply the Model number.
-    /// </summary>
-    /// <returns>Model # if implication is successful; raises ArgumentException if not.</returns>
-    private async Task<string> AttemptModelNumberImplication() {
-        // get the Part's Model number and update the SelectedModel property
-        string Model;
-        try {
-            Model = await ModelData.AttemptModelFromPart(SelectedPart);
-        } catch (AggregateException _ex) {
-            // could not automatically determine Model number from Part selection
-            throw new ArgumentException($"Could not imply Model # from {SelectedPart} due to the following exception(s):"
-                                        + $"\n{_ex.InnerExceptions}");
-        }
-        // Model implication did not fail; return
-        return Model;
-    }
-
-    /// <summary>
-    /// Updates the Page's Selected Part and Model Number.
+    /// Updates the Page's Selected Part, Model Number, and queued JBK Number.
     /// Attempts to automatically assign a Model Number to the Model Picker UI control.
+    /// Attempts to automatically assign the queued JBK Number for that Model to the JBK Entry UI control.
     /// </summary>
     /// <param name="PartPicker">The Picker UI Control that allows the selection of a Part.</param>
     /// <returns>Returns a boolean that indicates whether to disable the Model Picker (if the Model assignment was failed).</returns>
     public async Task<bool> UpdateSelectedPart(Picker PartPicker) {
-        // get the PartPicker's selected item
-        if (PartPicker.SelectedIndex != -1) {
-            var PickedPart = (string?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
-            // update the SelectedPart properties
-            if (PickedPart != null) {
-                SelectedPart = PickedPart;
-                // get the Part's Model number and update the DisplayedModel property to only include the implied Model
-                try {
-                    string ModelNumber = await AttemptModelNumberImplication();
-                    DisplayedModels = [ModelNumber];
-                    return true;
-                } catch (AggregateException) {
-                    return false;
-                }
-            // the PickedPart was null
-            } else {
-                return false;
+        // configure the SelectedPart
+        bool PartResult = await ConfigureSelectedPart(PartPicker);
+        // if the selected part is valid, configure the DisplayedModel, and DisplayedJBKNumber properties
+        if (PartResult) {
+            try {
+                await ConfigureSelectedModelNumber();
+            // the Model Number implication failed (some fatal issue with part selection)
+            } catch (ArgumentException _ex) {
+                throw new SystemException("There was an unexpected error while retreiving the Model #. Please see management to resolve this issue."
+                                          + $"\n\nException Message(s): {_ex.Message}");
             }
-        // the Selection index was -1 (invalid; no selection)
+            try {
+                await ConfigureJBKNumber();
+            // the JBK queue read failed (some fatal issue with model implication)
+            } catch (ArgumentException _ex) {
+                throw new SystemException("There was an unexpected error while retreiving the JBK #. Please see management to resolve this issue."
+                                          + $"\n\nException Message(s): {_ex.Message}");
+            }
+            return true;
+        // the selected part number was somehow invalid
         } else {
             return false;
         }
@@ -146,17 +222,17 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="LotNumberEntry"></param>
     /// <param name="DeburrJBKNumberEntry"></param>
     /// <param name="DieNumberEntry"></param>
-    /// <param name="ModelNumberPicker"></param>
+    /// <param name="ModelNumberEntry"></param>
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
-    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
 			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-				DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+				DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // something was not valid in the UI
 		} catch (FormatException) {
             // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
@@ -174,7 +250,7 @@ public partial class MainPageViewModel : ObservableObject {
         SelectedProcess = "";
         SelectedProcessParts = [];
         SelectedPart = "";
-        DisplayedModels = [];
+        DisplayedModel = "";
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility

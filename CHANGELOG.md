@@ -41,3 +41,8 @@
 - Resolve a fatal formatting error in the Deburr JBK # field ([#18](https://github.com/LotCoM/LotCoM-printer/issues/18)).
 - Resolve omission of Process Title in Label text ([#19](https://github.com/LotCoM/LotCoM-printer/issues/19)).
 - Resolve issue with required data fields not hiding/showing on Process ([#20](https://github.com/LotCoM/LotCoM-printer/issues/20)).
+
+## `v0.4.0`
+- Global JBK # queueing and assignment system integration.
+- General performance and clarity refactoring.
+- Model Number UI control changed from a configured Picker to an implied Entry.
