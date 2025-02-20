@@ -11,16 +11,18 @@ public static class JBKQueue {
     /// </summary>
     /// <returns></returns>
     /// <exception cref="JsonException"></exception>
-    private static Dictionary<string, int> Deserialize() {
+    private static async Task<Dictionary<string, int>> DeserializeAsync() {
         // read the JBK queue file
-        string QueueFile = File.ReadAllText(_queuePath);
-        Dictionary<string, int> QueueDictionary = new Dictionary<string, int> {};
-        // attempt to deserialize the queue file text into a dictionary
-        try {
-            JsonConvert.DeserializeAnonymousType(QueueFile, QueueDictionary);
-        } catch {
-            throw new JsonException($"Failed to deserialize the JBK # queue.");
-        }
+        string QueueFile = await File.ReadAllTextAsync(_queuePath);
+        Dictionary<string, int> QueueDictionary = await Task.Run(() => {
+            // attempt to deserialize the queue file text into a dictionary
+            try {
+                Dictionary<string, int> Dict = JsonConvert.DeserializeObject<Dictionary<string, int>>(QueueFile)!;
+                return Dict;
+            } catch {
+                throw new JsonException($"Failed to deserialize the JBK # queue.");
+            }
+        });
         return QueueDictionary;
     }
 
@@ -28,11 +30,11 @@ public static class JBKQueue {
     /// Overwrites the JBK Queue file with a new version of the Queue.
     /// </summary>
     /// <param name="QueueDictionary">The modified queue dictionary.</param>
-    private static void Save(Dictionary<string, int> QueueDictionary) {
+    private static async Task SaveAsync(Dictionary<string, int> QueueDictionary) {
         // serialize the QueueDictionary to a JSON string
         string Serialized = JsonConvert.SerializeObject(QueueDictionary);
         // write the serialized string to the JBK queue file
-        File.WriteAllText(_queuePath, Serialized);
+        await File.WriteAllTextAsync(_queuePath, Serialized);
     }
 
     /// <summary>
@@ -41,9 +43,9 @@ public static class JBKQueue {
     /// <param name="ModelNumber">The Model number to access the queue of.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public static int Queued(string ModelNumber) {
+    public static async Task<int> QueuedAsync(string ModelNumber) {
         // retrieve the Queue Dictionary
-        Dictionary<string, int> QueueDictionary = Deserialize();
+        Dictionary<string, int> QueueDictionary = await DeserializeAsync();
         // access the JBK number for the Model number key
         int QueuedJBK;
         try {
@@ -59,18 +61,20 @@ public static class JBKQueue {
     /// This method WILL consume a JBK number from the queue when called.
     /// </summary>
     /// <param name="ModelNumber"></param>
-    public static void Consume(string ModelNumber) {
+    public static async Task ConsumeAsync(string ModelNumber) {
         // retrieve the Queue Dictionary
-        Dictionary<string, int> QueueDictionary = Deserialize();
-        // access the queued JBK number for the Model number
-        int Unincremented = QueueDictionary[ModelNumber];
-        // if the queued number is 500, reset to 1
-        if (Unincremented >= 500) {
-            Unincremented = 0;
-        }
-        // increment the Queued JBK number and save the new Queue version
-        QueueDictionary[ModelNumber] = Unincremented++;
+        Dictionary<string, int> QueueDictionary = await DeserializeAsync();
+        await Task.Run(() => {
+            // access the queued JBK number for the Model number
+            int Unincremented = QueueDictionary[ModelNumber];
+            // if the queued number is 500, reset to 1
+            if (Unincremented >= 500) {
+                Unincremented = 0;
+            }
+            // increment the Queued JBK number and save the new Queue version
+            QueueDictionary[ModelNumber] = Unincremented++;
+        });
         // save the incremented queue
-        Save(QueueDictionary);
+        await SaveAsync(QueueDictionary);
     }
 }
