@@ -32,7 +32,7 @@ public partial class MainPage : ContentPage {
                 {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
                 {"DieNumberEntry", new List<View> {DieNumberEntry, DieNumberLabel}},
                 {"PartPicker", new List<View> {PartPicker, PartLabel}},
-                {"ModelNumberPicker", new List<View> {ModelNumberPicker, ModelNumberLabel}},
+                {"ModelNumberEntry", new List<View> {ModelNumberEntry, ModelNumberLabel}},
                 {"QuantityEntry", new List<View> {QuantityEntry, QuantityLabel}},
                 {"ProductionDatePicker", new List<View> {ProductionDatePicker, ProductionDateLabel}},
                 {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}},
@@ -89,8 +89,8 @@ public partial class MainPage : ContentPage {
 		bool ModelImplication = await _viewModel.UpdateSelectedPart(PartPicker);
 		// disable the Model control if the implication was successful
 		if (ModelImplication) {
-			ModelNumberPicker.SelectedIndex = 0;
-			ModelNumberPicker.IsEnabled = false;
+			ModelNumberEntry.Text = _viewModel.DisplayedModel;
+			ModelNumberEntry.IsEnabled = false;
 		}
 	}
 
@@ -103,7 +103,7 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// call the ViewModel's Print Request method
 		await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-									  DieNumberEntry, ModelNumberPicker, ProductionDatePicker, ProductionShiftPicker, 
+									  DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, 
 									  OperatorIDEntry);
 	}
 
@@ -132,8 +132,8 @@ public partial class MainPage : ContentPage {
 		DieNumberEntry.Text = "";
 		DieNumberEntry.IsEnabled = true;
 		// Model Number Picker reset
-		ModelNumberPicker.SelectedIndex = -1;
-		ModelNumberPicker.IsEnabled = true;
+		ModelNumberEntry.Text = "";
+		ModelNumberEntry.IsEnabled = true;
 		// Production Date Picker reset
 		ProductionDatePicker.Date = DateTime.Now;
 		ProductionDatePicker.IsEnabled = true;
