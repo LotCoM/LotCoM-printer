@@ -6,8 +6,8 @@
 - Production Datasource Model implementations.
 - Rename (LCMS -> LotCoM).
 
-# `v0.0.11`
-### Final UI Design and Functionality
+## `v0.0.11`
+#### Final UI Design and Functionality
 - Parts List population for any selected Process.
 - Model # implication when a Part is selected.
 - UI Entry controls reset their values and states when the Process is changed.
@@ -22,18 +22,21 @@
 - Implement digital Label generation classes.
 
 ## `v0.1.1`
-### Print Spooling
+#### Print Spooling
 - Implement connection between Label generation and printing.
 - Implement Print Spooling classes.
 
-## `v0.2.0`
+# `v0.2.0`
+### External Part Control
 - Adopt [SemVer](https://semver.org/) (Semantic Versioning 2.0.0) versioning conventions.
 - Implement integration with Database for external Process Part Number control.
 
 ## `v0.2.1`
+#### Build Setup
 - Build environment setup (manifests) for Windows MSIX Packaging.
 
-## `v0.3.0`
+# `v0.3.0`
+### Operator ID Input
 - Operator identification (initial) input in UI.
 - Refactor `ProcessRequirements` datasource to leverage more code reuse and enforce universal basket data fields.
 - Resolve issue with error messaging on UI validation failure ([#16](https://github.com/LotCoM/LotCoM-printer/issues/16)).
@@ -42,7 +45,17 @@
 - Resolve omission of Process Title in Label text ([#19](https://github.com/LotCoM/LotCoM-printer/issues/19)).
 - Resolve issue with required data fields not hiding/showing on Process ([#20](https://github.com/LotCoM/LotCoM-printer/issues/20)).
 
-## `v0.4.0`
+# `v0.4.0`
+### JBK Queue System
 - Global JBK # queueing and assignment system integration.
 - General performance and clarity refactoring.
 - Model Number UI control changed from a configured Picker to an implied Entry.
+
+## `v0.4.1`
+#### Label Serialization Build-out
+- Implement `LotQueue`, a copy of `JBKQueue` to complete the Label serialization system.
+- Implement actual consumption of serial numbers.
+
+## `v0.4.2`
+#### Improve Serialization Integrity
+- Adress a gap in the serialization system, outlined in [#25](https://github.com/LotCoM/LotCoM-printer/issues/25).

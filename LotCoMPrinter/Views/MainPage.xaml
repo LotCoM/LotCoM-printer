@@ -172,6 +172,7 @@
             <!-- Lot Number -->
             <Entry
                 x:Name="LotNumberEntry"
+                Text="{Binding DisplayedLotNumber}"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
