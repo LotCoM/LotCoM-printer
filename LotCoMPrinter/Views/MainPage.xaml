@@ -162,7 +162,6 @@
             <Entry
                 IsEnabled="false"
                 x:Name="JBKNumberEntry"
-                Text="{Binding DisplayedJBKNumber}"
                 MaxLength="3"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
@@ -174,7 +173,6 @@
             <Entry
                 IsEnabled="false"
                 x:Name="LotNumberEntry"
-                Text="{Binding DisplayedLotNumber}"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
