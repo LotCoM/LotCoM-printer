@@ -12,6 +12,10 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject {
     // public class properties
+    private List<string> _processes = ProcessData.ProcessMasterList;
+    public List<string> Processes {
+        get {return _processes;}
+    }
     private string _selectedProcess = "";
     public string SelectedProcess {
         get {return _selectedProcess;}
@@ -21,7 +25,6 @@ public partial class MainPageViewModel : ObservableObject {
             _selectedProcess = value;
         }
     }
-
     private List<string> _selectedProcessParts = [];
     public List<string> SelectedProcessParts {
         get {return _selectedProcessParts;}
@@ -31,7 +34,6 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(SelectedProcessParts));
         }
     }
-
     private string _selectedPart = "";
     public string SelectedPart {
         get {return _selectedPart;}
@@ -41,12 +43,6 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(SelectedPart));
         }
     }
-    
-    private List<string> _processes = ProcessData.ProcessMasterList;
-    public List<string> Processes {
-        get {return _processes;}
-    }
-
     private string _displayedModel = "";
     public string DisplayedModel {
         get {return _displayedModel;}
@@ -56,7 +52,6 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(DisplayedModel));
         }
     }
-    
     private string _displayedJBKNumber = "";
     public string DisplayedJBKNumber {
         get {return _displayedJBKNumber;}
@@ -66,7 +61,16 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(DisplayedJBKNumber));
         }
     }
-    
+    private string _displayedLotNumber = "";
+    public string DisplayedLotNumber {
+        get {return _displayedLotNumber;}
+        set {
+            _displayedLotNumber = value;
+            OnPropertyChanged(nameof(_displayedLotNumber));
+            OnPropertyChanged(nameof(DisplayedLotNumber));
+        }
+    }
+
     // full constructor
     public MainPageViewModel() {}
 
@@ -136,7 +140,7 @@ public partial class MainPageViewModel : ObservableObject {
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     private async Task ConfigureJBKNumber() {
-        // retrieve the Queued JBK number for this part model
+        // retrieve the Queued JBK number for the Displayed Model
         try {
             int _awaited = await JBKQueue.QueuedAsync(DisplayedModel);
             string Queued = _awaited.ToString();
@@ -149,6 +153,28 @@ public partial class MainPageViewModel : ObservableObject {
         // there was no JBK queue for the passed Model Number
         } catch (ArgumentException) {
             throw new ArgumentException($"Could not find a JBK # Queue for the Model # {DisplayedModel}.");
+        }
+    }
+
+    /// <summary>
+    /// Configures the LotNumberEntry control and the DisplayedLotNumber ViewModel property using the DisplayedModel property.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    private async Task ConfigureLotNumber() {
+        // retrieve the Queued Lot number for the Displayed Model
+        try {
+            int _awaited = await LotQueue.QueuedAsync(DisplayedModel);
+            string Queued = _awaited.ToString();
+            // add leading zeroes to enforce 9-digit format
+            while (Queued.Length < 9) {
+                Queued = "0" + Queued;
+            }
+            // update the Displayed Lot Number
+            DisplayedLotNumber = Queued;
+        // there was no Lot queue for the passed Model Number
+        } catch (ArgumentException) {
+            throw new ArgumentException($"Could not find a Lot # Queue for the Model # {DisplayedModel}.");
         }
     }
 
@@ -198,11 +224,18 @@ public partial class MainPageViewModel : ObservableObject {
                 throw new SystemException("There was an unexpected error while retreiving the Model #. Please see management to resolve this issue."
                                           + $"\n\nException Message(s): {_ex.Message}");
             }
+            // attempt to assign a JBK number OR a Lot number
             try {
                 await ConfigureJBKNumber();
-            // the JBK queue read failed (some fatal issue with model implication)
+            } catch {
+                DisplayedJBKNumber = "";
+            }
+            try {
+                await ConfigureLotNumber();
+            // the JBK AND Lot number queue reads failed (fatal)
             } catch (ArgumentException _ex) {
-                throw new SystemException("There was an unexpected error while retreiving the JBK #. Please see management to resolve this issue."
+                DisplayedLotNumber = "";
+                throw new SystemException("Failed to assign a JBK # or Lot # to this Label. Please see management to resolve this issue."
                                           + $"\n\nException Message(s): {_ex.Message}");
             }
             return true;
