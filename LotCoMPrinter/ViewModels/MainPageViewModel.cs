@@ -52,6 +52,24 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(DisplayedModel));
         }
     }
+    private string _displayedJBKNumber = "";
+    public string DisplayedJBKNumber {
+        get {return _displayedJBKNumber;}
+        set {
+            _displayedJBKNumber = value;
+            OnPropertyChanged(nameof(_displayedJBKNumber));
+            OnPropertyChanged(nameof(DisplayedJBKNumber));
+        }
+    }
+    private string _displayedLotNumber = "";
+    public string DisplayedLotNumber {
+        get {return _displayedLotNumber;}
+        set {
+            _displayedLotNumber = value;
+            OnPropertyChanged(nameof(_displayedLotNumber));
+            OnPropertyChanged(nameof(DisplayedLotNumber));
+        }
+    }
 
     // full constructor
     public MainPageViewModel() {}
@@ -134,9 +152,11 @@ public partial class MainPageViewModel : ObservableObject {
                     while (Queued.Length < 3) {
                         Queued = "0" + Queued;
                     }
+                    DisplayedJBKNumber = Queued;
                     return Queued;
                 // the JBK queue for this Model could not be read
                 } catch (Exception _ex) {
+                    DisplayedJBKNumber = "";
                     throw new SystemException("Failed to assign a JBK # to this Label. Please see management to resolve this issue."
                                               + $"\n\nException Message(s): {_ex.Message}");
                 }
@@ -150,9 +170,11 @@ public partial class MainPageViewModel : ObservableObject {
                     while (Queued.Length < 9) {
                         Queued = "0" + Queued;
                     }
+                    DisplayedLotNumber = Queued;
                     return Queued;
                 // the Lot queue for this Model could not be read
                 } catch (ArgumentException _ex) {
+                    DisplayedLotNumber = "";
                     throw new SystemException("Failed to assign a Lot # to this Label. Please see management to resolve this issue."
                                               + $"\n\nException Message(s): {_ex.Message}");
                 }
@@ -229,17 +251,6 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
     public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
-        // attempt to validate the current UI status
-        List<string> UICapture;
-        try {
-			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
-				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-				DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-        // something was not valid in the UI
-		} catch (FormatException) {
-            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
-            return;
-        }
         // get the serialize mode for this Label
         string SerializeMode;
         if (JBKNumberEntry.IsVisible) {
@@ -255,8 +266,17 @@ public partial class MainPageViewModel : ObservableObject {
             throw new SystemException($"Failed to assign a {SerializeMode} # to this Label. Please see management to resolve this issue."
                                       + $"\n\nException Message(s): {_ex.Message}");
         }
-        // update the serialized number in the UICapture
-        UICapture[3] = $"{SerializeMode} #: {SerialNumber}";
+        // attempt to validate the current UI status
+        List<string> UICapture;
+        try {
+			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
+				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
+				DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+        // something was not valid in the UI
+		} catch (FormatException) {
+            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
+            return;
+        }
         // create and run a Label print job
         LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel);
         await Job.Run();
@@ -268,6 +288,8 @@ public partial class MainPageViewModel : ObservableObject {
     public void Reset() {
         SelectedPart = "";
         DisplayedModel = "";
+        DisplayedJBKNumber = "";
+        DisplayedLotNumber = "";
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
