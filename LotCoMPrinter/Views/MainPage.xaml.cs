@@ -139,10 +139,10 @@ public partial class MainPage : ContentPage {
 		QuantityEntry.IsEnabled = true;
 		// JBK Input reset
 		JBKNumberEntry.Text = "";
-		JBKNumberEntry.IsEnabled = true;
+		JBKNumberEntry.IsEnabled = false;
 		// Lot Input reset
 		LotNumberEntry.Text = "";
-		LotNumberEntry.IsEnabled = true;
+		LotNumberEntry.IsEnabled = false;
 		// Deburr JBK Input reset
 		DeburrJBKNumberEntry.Text = "";
 		DeburrJBKNumberEntry.IsEnabled = true;

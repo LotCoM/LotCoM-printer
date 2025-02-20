@@ -160,6 +160,7 @@
                 Grid.Column="1"/>
             <!-- JBK Number -->
             <Entry
+                IsEnabled="false"
                 x:Name="JBKNumberEntry"
                 Text="{Binding DisplayedJBKNumber}"
                 MaxLength="3"
@@ -171,6 +172,7 @@
                 Grid.Column="1"/>
             <!-- Lot Number -->
             <Entry
+                IsEnabled="false"
                 x:Name="LotNumberEntry"
                 Text="{Binding DisplayedLotNumber}"
                 HorizontalOptions="Start"
