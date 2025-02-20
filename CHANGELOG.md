@@ -58,4 +58,11 @@
 
 ## `v0.4.2`
 #### Improve Serialization Integrity
-- Adress a gap in the serialization system, outlined in [#25](https://github.com/LotCoM/LotCoM-printer/issues/25).
+- Adress a gap in the serialization system, outlined in [#25](https://github.com/LotCoM/LotCoM-printer/issues/25); APPROACH 2:
+  - Consume the serial number at print execution:
+  - Waits until the print job is executed to read the queued serial number.
+  - Consumes it if the job is successful.
+  - Pros:
+    - Eliminates the problem and leaves no gaps in the FIFO ordering system.
+  - Cons:
+    - Operators cannot see the JBK # while printing the Label.
