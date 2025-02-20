@@ -84,13 +84,21 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnPartSelection(object Sender, EventArgs e) {
-		// update the SelectedPart and SelectedPartModel properties
+		// update the SelectedPart, DisplayedModel, and DisplayedJBKNumber properties
 		Picker PartPicker = (Picker)Sender;
-		bool ModelImplication = await _viewModel.UpdateSelectedPart(PartPicker);
-		// disable the Model control if the implication was successful
-		if (ModelImplication) {
-			ModelNumberEntry.Text = _viewModel.DisplayedModel;
+		bool PartSelection = false;
+		try {
+			PartSelection = await _viewModel.UpdateSelectedPart(PartPicker);
+		// the Model Number was either unimplied or the JBK # Queue could not be accessed
+		} catch (Exception _ex) {
+			// show a warning
+			App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Part/Model # could not be retrieved. Please see management to resolve this issue."
+									+ $"\n\nError: {_ex.Message}");
+		}
+		// disable the Model and JBK Number controls if the implication was successful
+		if (PartSelection) {
 			ModelNumberEntry.IsEnabled = false;
+			JBKNumberEntry.IsEnabled = false;
 		}
 	}
 
