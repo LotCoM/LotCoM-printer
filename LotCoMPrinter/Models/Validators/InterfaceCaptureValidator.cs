@@ -91,6 +91,27 @@ public static class InterfaceCaptureValidator {
         }
     }
 
+    private static string ValidateModelEntry(Entry ModelNumberEntry) {
+        // validate that the entry has a value and that it only contains alnum characters
+        string Value = ModelNumberEntry.Text;
+        if (Value == "") {
+            // show a warning
+            App.AlertSvc!.ShowAlert("Invalid Model #", "Please enter a Model # before printing Labels.");
+            throw new FormatException();
+        } else {
+            // set a regex pattern for 3 alphanumerical characters
+            string ModelPattern = @"^[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]$";
+            Regex ModelRegex = new Regex(ModelPattern);
+            // ensure the value matches the regex requirement
+            if (!ModelRegex.IsMatch(Value)) {
+                App.AlertSvc!.ShowAlert("Invalid Model #", "Please enter a valid Model # before printing Labels.");
+                throw new FormatException();
+            }
+            // cast the string to Uppercase and return it
+            return Value.ToUpper();
+        }
+    }
+
     /// <summary>
     /// Validates the PartValidator's UI Control states and Entries.
     /// </summary>
@@ -101,14 +122,14 @@ public static class InterfaceCaptureValidator {
     /// <param name="LotNumberEntry"></param>
     /// <param name="DeburrJBKNumberEntry"></param>
     /// <param name="DieNumberEntry"></param>
-    /// <param name="ModelNumberPicker"></param>
+    /// <param name="ModelNumberEntry"></param>
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <returns>A Dictionary of data captured from the UI Controls, keyed by their respective Control names.</returns>
     /// <exception cref="FormatException">Raises if any of the required checks are failed.</exception>
     public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
         Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry,
-        Picker ModelNumberPicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
+        Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
         // retrieve the Process requirements
         List<string> Requirements = [];
@@ -167,8 +188,8 @@ public static class InterfaceCaptureValidator {
                 UIResults.Add($"Die #: {DieNumber!}");
             };
             // validate model number
-            if (Requirements.Contains("ModelNumberPicker")) {
-                ModelNumber = ValidatePicker(ModelNumberPicker, "Model Number");
+            if (Requirements.Contains("ModelNumberEntry")) {
+                ModelNumber = ValidateModelEntry(ModelNumberEntry);
                 UIResults.Add($"Model #: {ModelNumber!}");
             };
             // add the production date; defaults to current day, no need to validate
