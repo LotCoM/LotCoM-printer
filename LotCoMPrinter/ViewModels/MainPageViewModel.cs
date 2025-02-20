@@ -101,7 +101,7 @@ public partial class MainPageViewModel : ObservableObject {
     private async Task<bool> ConfigureSelectedPart(Picker PartPicker) {
         bool Result = await Task.Run(() => {
             // get the PartPicker's selected item
-            if (PartPicker.SelectedIndex != -1) {
+            if (PartPicker.SelectedIndex >= 0) {
                 var PickedPart = (string?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
                 // update the SelectedPart properties
                 if (PickedPart != null) {
@@ -313,10 +313,10 @@ public partial class MainPageViewModel : ObservableObject {
     /// Resets the ViewModel's public properties.
     /// </summary>
     public void Reset() {
-        SelectedProcess = "";
-        SelectedProcessParts = [];
         SelectedPart = "";
         DisplayedModel = "";
+        DisplayedJBKNumber = "";
+        DisplayedLotNumber = "";
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility

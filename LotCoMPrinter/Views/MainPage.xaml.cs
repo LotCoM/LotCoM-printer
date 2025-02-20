@@ -121,6 +121,8 @@ public partial class MainPage : ContentPage {
 		await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
 									  DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, 
 									  OperatorIDEntry);
+		// reset the UI
+		Reset();
 	}
 
 	/// <summary>
