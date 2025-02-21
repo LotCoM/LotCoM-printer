@@ -135,71 +135,44 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
-    /// Configures the JBKNumberEntry control and the DisplayedJBKNumber ViewModel property using the DisplayedModel property.
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    private async Task ConfigureJBKNumber() {
-        // retrieve the Queued JBK number for the Displayed Model
-        try {
-            int _awaited = await JBKQueue.QueuedAsync(DisplayedModel);
-            string Queued = _awaited.ToString();
-            // add leading zeroes to enforce 3-digit format
-            while (Queued.Length < 3) {
-                Queued = "0" + Queued;
-            }
-            // update the Displayed JBK
-            DisplayedJBKNumber = Queued;
-        // there was no JBK queue for the passed Model Number
-        } catch (ArgumentException) {
-            throw new ArgumentException($"Could not find a JBK # Queue for the Model # {DisplayedModel}.");
-        }
-    }
-
-    /// <summary>
-    /// Configures the LotNumberEntry control and the DisplayedLotNumber ViewModel property using the DisplayedModel property.
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    private async Task ConfigureLotNumber() {
-        // retrieve the Queued Lot number for the Displayed Model
-        try {
-            int _awaited = await LotQueue.QueuedAsync(DisplayedModel);
-            string Queued = _awaited.ToString();
-            // add leading zeroes to enforce 9-digit format
-            while (Queued.Length < 9) {
-                Queued = "0" + Queued;
-            }
-            // update the Displayed Lot Number
-            DisplayedLotNumber = Queued;
-        // there was no Lot queue for the passed Model Number
-        } catch (ArgumentException) {
-            throw new ArgumentException($"Could not find a Lot # Queue for the Model # {DisplayedModel}.");
-        }
-    }
-
-    /// <summary>
-    /// Attempts to assign a serialized identifier (JBK or Lot #) to the Label in the UI.
+    /// Attempts to return a serialized identifier (JBK or Lot #) for the Label.
     /// </summary>
     /// <param name="SerializeMode">The data field that serializes this Process' labels (either "JBK" or "Lot").</param>
     /// <returns></returns>
     /// <exception cref="SystemException"></exception>
-    private async Task AssignSerializer(string SerializeMode) {
-        await Task.Run(async () => {
+    private async Task<string> AssignSerialNumber(string SerializeMode) {
+        string SerialNumber = await Task.Run(async () => {
             // attempt to assign a JBK number
             if (SerializeMode == "JBK") {
                 try {
-                    await ConfigureJBKNumber();
+                    // read the queued JBK number
+                    int _awaited = await JBKQueue.QueuedAsync(DisplayedModel);
+                    string Queued = _awaited.ToString();
+                    // add leading zeroes to enforce 3-digit format
+                    while (Queued.Length < 3) {
+                        Queued = "0" + Queued;
+                    }
+                    DisplayedJBKNumber = Queued;
+                    return Queued;
+                // the JBK queue for this Model could not be read
                 } catch (Exception _ex) {
                     DisplayedJBKNumber = "";
                     throw new SystemException("Failed to assign a JBK # to this Label. Please see management to resolve this issue."
                                               + $"\n\nException Message(s): {_ex.Message}");
                 }
-            // attempt to assign a Lot number
+            // else attempt to assign a Lot number
             } else {
                 try {
-                    await ConfigureLotNumber();
-                // the JBK AND Lot number queue reads failed (fatal)
+                    // read the queued Lot number
+                    int _awaited = await LotQueue.QueuedAsync(DisplayedModel);
+                    string Queued = _awaited.ToString();
+                    // add leading zeroes to enforce 9-digit format
+                    while (Queued.Length < 9) {
+                        Queued = "0" + Queued;
+                    }
+                    DisplayedLotNumber = Queued;
+                    return Queued;
+                // the Lot queue for this Model could not be read
                 } catch (ArgumentException _ex) {
                     DisplayedLotNumber = "";
                     throw new SystemException("Failed to assign a Lot # to this Label. Please see management to resolve this issue."
@@ -207,6 +180,7 @@ public partial class MainPageViewModel : ObservableObject {
                 }
             }
         });
+        return SerialNumber;
     }
 
     /// <summary>
@@ -237,14 +211,12 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
-    /// Updates the Page's Selected Part, Model Number, and queued JBK Number.
+    /// Updates the Page's Selected Part and Model Number.
     /// Attempts to automatically assign a Model Number to the Model Picker UI control.
-    /// Attempts to automatically assign the queued JBK Number for that Model to the JBK Entry UI control.
     /// </summary>
     /// <param name="PartPicker">The Picker UI Control that allows the selection of a Part.</param>
-    /// <param name="SerializeMode">The data field that serializes this Process' labels (either "JBK" or "Lot").</param>
     /// <returns>Returns a boolean that indicates whether to disable the Model Picker (if the Model assignment was failed).</returns>
-    public async Task<bool> UpdateSelectedPart(Picker PartPicker, string SerializeMode) {
+    public async Task<bool> UpdateSelectedPart(Picker PartPicker) {
         // configure the SelectedPart
         bool PartResult = await ConfigureSelectedPart(PartPicker);
         if (PartResult) {
@@ -254,13 +226,6 @@ public partial class MainPageViewModel : ObservableObject {
             // the Model Number implication failed (some fatal issue with part selection)
             } catch (ArgumentException _ex) {
                 throw new SystemException("There was an unexpected error while retreiving the Model #. Please see management to resolve this issue."
-                                          + $"\n\nException Message(s): {_ex.Message}");
-            }
-            // attempt to apply a serializer to the Label being generated (JBK/Lot #)
-            try {
-                await AssignSerializer(SerializeMode);
-            } catch (Exception _ex) {
-                throw new SystemException($"Failed to assign a {SerializeMode} # to this Label. Please see management to resolve this issue."
                                           + $"\n\nException Message(s): {_ex.Message}");
             }
             // the part number was valid and all of its data was retrieved
@@ -286,6 +251,21 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
     public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+        // get the serialize mode for this Label
+        string SerializeMode;
+        if (JBKNumberEntry.IsVisible) {
+			SerializeMode = "JBK";
+		} else {
+			SerializeMode = "Lot";
+		}
+        // attempt to apply a serial number to the Label being generated (JBK/Lot #)
+        string SerialNumber;
+        try {
+            SerialNumber = await AssignSerialNumber(SerializeMode);
+        } catch (Exception _ex) {
+            throw new SystemException($"Failed to assign a {SerializeMode} # to this Label. Please see management to resolve this issue."
+                                      + $"\n\nException Message(s): {_ex.Message}");
+        }
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
@@ -297,13 +277,6 @@ public partial class MainPageViewModel : ObservableObject {
             // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
             return;
         }
-        // get the serialize mode for this Label
-        string SerializeMode;
-        if (JBKNumberEntry.IsVisible) {
-			SerializeMode = "JBK";
-		} else {
-			SerializeMode = "Lot";
-		}
         // create and run a Label print job
         LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel);
         await Job.Run();

@@ -56,6 +56,22 @@
 - Implement `LotQueue`, a copy of `JBKQueue` to complete the Label serialization system.
 - Implement actual consumption of serial numbers.
 
-## `v0.4.2`
+## `v0.4.2 (dead branch)`
 #### Improve Serialization Integrity
 - Adress a gap in the serialization system, outlined in [#25](https://github.com/LotCoM/LotCoM-printer/issues/25).
+- Approach 1; **not selected for implementation**.
+
+## `v0.4.21`
+#### Resolve Serial Number System timing gap
+Approach 2:
+- Consume the serial number at print execution:
+  - Waits until the print job is started to read the queued serial number.
+  - Places the serial number in the UI to be validated.
+    - Consumes it if the job is successful; does not consume if not.
+- Pros:
+  - Eliminates* the problem and leaves no gaps in the FIFO ordering system.
+    - There is a very, very small gap between queue read time and consumption time.
+      - This could still duplicate serial numbers.
+      - Future efficiency improvements should be made to limit the time between.
+- Cons:
+  - Operators cannot see the serial number while printing the Label.

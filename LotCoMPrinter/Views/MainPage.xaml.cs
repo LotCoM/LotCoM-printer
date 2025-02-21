@@ -87,15 +87,8 @@ public partial class MainPage : ContentPage {
 		// update the SelectedPart, DisplayedModel, and DisplayedJBKNumber properties
 		Picker PartPicker = (Picker)Sender;
 		bool PartSelection = false;
-		// elicit whether to use JBK or Lot # for this Label (use the visibility of the Lot # control)
-		string SerializeMode;
-		if (JBKNumberEntry.IsVisible) {
-			SerializeMode = "JBK";
-		} else {
-			SerializeMode = "Lot";
-		}
 		try {
-			PartSelection = await _viewModel.UpdateSelectedPart(PartPicker, SerializeMode);
+			PartSelection = await _viewModel.UpdateSelectedPart(PartPicker);
 		// the Model Number was either unimplied or the JBK # Queue could not be accessed
 		} catch (Exception _ex) {
 			// show a warning
@@ -139,10 +132,10 @@ public partial class MainPage : ContentPage {
 		QuantityEntry.IsEnabled = true;
 		// JBK Input reset
 		JBKNumberEntry.Text = "";
-		JBKNumberEntry.IsEnabled = true;
+		JBKNumberEntry.IsEnabled = false;
 		// Lot Input reset
 		LotNumberEntry.Text = "";
-		LotNumberEntry.IsEnabled = true;
+		LotNumberEntry.IsEnabled = false;
 		// Deburr JBK Input reset
 		DeburrJBKNumberEntry.Text = "";
 		DeburrJBKNumberEntry.IsEnabled = true;
