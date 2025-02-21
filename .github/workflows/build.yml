@@ -31,10 +31,4 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --configuration Release --no-restore
-
-        with:
-
-          name: msix_package
-
-          path: "your_app.msix" 
+      run: dotnet build
