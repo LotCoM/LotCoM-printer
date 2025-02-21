@@ -75,3 +75,8 @@ Approach 2:
       - Future efficiency improvements should be made to limit the time between.
 - Cons:
   - Operators cannot see the serial number while printing the Label.
+
+## `0.4.22`
+#### Build Environment Work
+- Drop `v` prefixing convention for version numbers (not compliant with SemVer).
+- Update manifests to include new certificate information.
