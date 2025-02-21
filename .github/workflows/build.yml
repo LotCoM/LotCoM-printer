@@ -26,7 +26,10 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-
+    
+    - name: Install MAUI 
+      run: dotnet workload install maui
+      
     - name: Install dependencies
       run: dotnet restore
       
