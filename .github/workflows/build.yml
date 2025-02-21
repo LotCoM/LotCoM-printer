@@ -28,7 +28,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
     - name: Install MAUI 
-      run: dotnet workload install maui [1, 2, 6]
+      run: dotnet workload install maui
       
     - name: Install dependencies
       run: dotnet restore
