@@ -35,3 +35,10 @@ jobs:
       
     - name: Build
       run: dotnet build
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: latest-build
+        path: |
+          bin/Debug
