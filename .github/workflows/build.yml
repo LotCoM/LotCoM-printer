@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-2022]
 
     steps:
     - uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build
+      run: dotnet build --runtime win-x64
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v4
@@ -55,7 +55,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-2022]
 
     steps:
     - uses: actions/checkout@v3
@@ -64,6 +64,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         cache: true
+        cache-dependency-path: "./LotCoMPrinter/packages.lock.json"
       
     - name: Package
       run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
@@ -82,7 +83,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-2022]
 
     steps:
     - name: Download MSIX package
