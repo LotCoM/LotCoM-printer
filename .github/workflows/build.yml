@@ -72,7 +72,7 @@ jobs:
         $certificateData = [System.Convert]::FromBase64String($certificateBase64)
         
         # export the PFX bytes to a new file
-        New-Item -Path ".\signing-certificate.pfx" -ItemType File -Value $certificateData
+        $certificate = New-Item -Path ".\signing-certificate.pfx" -ItemType File -Value $certificateData
 
         # Save the directory of the MSIX file
         $msix = "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*\*.msix"
@@ -80,7 +80,7 @@ jobs:
         # Sign the MSIX Package using SignTools
         $password = "$Env:SIGNING_CERTIFICATE_PASSWORD"
         cd "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x86"
-        .\signtool.exe sign /fd SHA256 /a /f .\signing-certificate.pfx /t "http://timestamp.digicert.com" /p $password $msix
+        .\signtool.exe sign /fd SHA256 /a /f $certificate /t "http://timestamp.digicert.com" /p $password $msix
 
     - name: Archive signed MSIX artifact
       uses: actions/upload-artifact@v4
