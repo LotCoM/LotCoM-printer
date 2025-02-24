@@ -41,4 +41,4 @@ jobs:
       with:
         name: latest-build
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Debug
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Debug\net9.0-windows*
