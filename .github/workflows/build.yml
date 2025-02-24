@@ -11,8 +11,8 @@ on:
 env:
   DOTNET_VERSION: '9.0.103' # The .NET SDK version to use
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages # action runner's installed NuGet packages
-  SIGNING_CERTIFICATE_BASE64: ${{secrets.SIGNING_CERTIFICATE_BASE64}}
-  SIGNING_CERTIFICATE_PASSWORD: ${{secrets.SIGNING_CERTIFICATE_BASE64}}
+  SIGNING_CERTIFICATE_BASE64: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
+  SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
 
 jobs:
 
@@ -44,7 +44,7 @@ jobs:
     - name: Archive build package (MSIX) artifact
       uses: actions/upload-artifact@v4
       with:
-        name: latest-${{matrix.os}}-package
+        name: latest-${{ matrix.os }}-package
         path: |
           D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\AppPackages\**\*.msix
           
@@ -61,17 +61,15 @@ jobs:
     - name: Download MSIX package
       uses: actions/download-artifact@v4
       with:
-        name: latest-${{matrix.os}}-package
+        name: latest-${{ matrix.os }}-package
         
         
     - name: Sign MSIX with Certificate
       shell: pwsh
       run: |
         # Decode the Base64 Certificate
-        $certificateBase64 = $Env:SIGNING_CERTIFICATE_BASE64
-        $certificatePassword = $Env:SIGNING_CERTIFICATE_PASSWORD
-        echo $certificateBase64
-        echo $certificatePassword
+        $certificateBase64 = "$Env:SIGNING_CERTIFICATE_BASE64"
+        $certificatePassword = "$Env:SIGNING_CERTIFICATE_PASSWORD"
         $certificateData = [System.Convert]::FromBase64String($certificateBase64)
         $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($certificateData, $certificatePassword, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable) 
         
