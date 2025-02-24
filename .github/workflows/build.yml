@@ -71,7 +71,7 @@ jobs:
         $certificateBase64 = "$Env:SIGNING_CERTIFICATE_BASE64"
         $certificatePassword = "$Env:SIGNING_CERTIFICATE_PASSWORD"
         $certificateData = [System.Convert]::FromBase64String($certificateBase64)
-        $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($certificateData, $certificatePassword, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable) 
+        $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($certificateData, "", [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable) 
         
         # export the PFX bytes to a new file
         $pfx = $certificate.Export(3)
