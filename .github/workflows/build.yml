@@ -41,4 +41,4 @@ jobs:
       with:
         name: latest-build
         path: |
-          bin/Debug
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Debug
