@@ -69,13 +69,10 @@ jobs:
       run: |
         # Decode the Base64 Certificate
         $certificateBase64 = "$Env:SIGNING_CERTIFICATE_BASE64"
-        # $certificatePassword = "$Env:SIGNING_CERTIFICATE_PASSWORD"
         $certificateData = [System.Convert]::FromBase64String($certificateBase64)
-        $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($certificateData, "MRCertificate", [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags.MachineKeySet]::Exportable) 
         
         # export the PFX bytes to a new file
-        $pfx = $certificate.Export(3)
-        New-Item -Path ".\signing-certificate.pfx" -ItemType File -Value $pfx
+        New-Item -Path ".\signing-certificate.pfx" -ItemType File -Value $certificateData
 
         # Save the directory of the MSIX file
         $msix = D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\AppPackages\**\*.msix
