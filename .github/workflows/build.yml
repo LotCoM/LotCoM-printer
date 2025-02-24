@@ -29,13 +29,13 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
     - name: Install MAUI 
-      run: ${{env.DOTNET_INSTALL_DIR}}\dotnet workload install maui
+      run: dotnet workload install maui
       
     - name: Install dependencies
-      run: ${{env.DOTNET_INSTALL_DIR}}\dotnet restore
+      run: dotnet restore
       
     - name: Build
-      run: ${{env.DOTNET_INSTALL_DIR}}\dotnet build
+      run: dotnet build
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v4
@@ -61,7 +61,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
       
     - name: Package
-      run: ${{env.DOTNET_INSTALL_DIR}}\dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
+      run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
 
     - name: Archive package artifact
       uses: actions/upload-artifact@v4
