@@ -1,4 +1,4 @@
-name: CI Workflow
+name: CI
 
 on:
   push:
@@ -60,7 +60,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
       
     - name: Package
-      run: dotnet publish -f latest-build -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
+      run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
 
     - name: Archive package artifact
       uses: actions/upload-artifact@v4
@@ -79,6 +79,12 @@ jobs:
         os: [windows-latest]
 
     steps:
+    - name: Download MSIX package
+      uses: actions/download-artifact@v4
+      with:
+        name: latest-${{matrix.os}}-package
+        
+        
     - name: Sign MSIX with Certificate
       shell: pwsh
       run: |
@@ -87,11 +93,14 @@ jobs:
         $certificateData = [System.Convert]::FromBase64String($certificateBase64) [1, 2, 3]
         $certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificateData)
         $password = ${{secrets.SIGNING_CERTIFICATE_PASSWORD}}  
-        $certificate.Export(".\signing-certificate.pfx", "Pfx", $password) [2, 5, 10] 
+        $certificate.Export(".\signing-certificate.pfx", "Pfx", $password) [2, 5, 10]
+
+        # Save the directory of the MSIX file
+        $msix = "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows*\win10-x64\AppPackages\LotCoMPrinter*\LotCoMPrinter.msix"
 
         # Sign the MSIX Package using SignTools
         cd "C:\Program Files (x86)\Windows Kits\10\bin\10*\x86"
-        .\signtool.exe sign /fd SHA256 /a /f .\signing-certificate.pfx /t "http://timestamp.digicert.com" /p $password latest-windows-package
+        .\signtool.exe sign /fd SHA256 /a /f .\signing-certificate.pfx /t "http://timestamp.digicert.com" /p $password $msix
 
     - name: Archive signed MSIX artifact
       uses: actions/upload-artifact@v4
@@ -99,6 +108,3 @@ jobs:
         name: latest-${{matrix.os}}-signed
         path: |
           D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows*\win10-x64\AppPackages\LotCoMPrinter*\LotCoMPrinter.msix
-
-    
-    
