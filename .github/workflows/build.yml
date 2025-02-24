@@ -78,6 +78,7 @@ jobs:
         $msix = D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\AppPackages\**\*.msix
 
         # Sign the MSIX Package using SignTools
+        $password = "$Env:SIGNING_CERTIFICATE_PASSWORD"
         cd "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x86"
         .\signtool.exe sign /fd SHA256 /a /f .\signing-certificate.pfx /t "http://timestamp.digicert.com" /p $password $msix
 
