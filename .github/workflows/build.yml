@@ -1,4 +1,4 @@
-name: build
+name: CI Workflow
 
 on:
   push:
@@ -39,6 +39,35 @@ jobs:
     - name: Archive build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: latest-build
+        name: latest-${{matrix.os}}-build
         path: |
           D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Debug\net9.0-windows*
+
+  package:
+    
+    name: package-msix
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+    - name: Package
+      run: dotnet publish -f latest-build -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
+
+    - name: Archive package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: latest-${{matrix.os}}-package
+        path: |
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows*\win10-x64\AppPackages\LotCoMPrinter*\LotCoMPrinter.msix
+          
+
+    
