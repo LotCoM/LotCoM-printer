@@ -39,7 +39,7 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --runtime win-x64
+      run: dotnet build
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v4
