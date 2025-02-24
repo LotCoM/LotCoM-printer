@@ -46,7 +46,7 @@ jobs:
       with:
         name: latest-${{ matrix.os }}-package
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\**\**\*.msix
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*\*.msix
           
   sign:
 
@@ -75,7 +75,7 @@ jobs:
         New-Item -Path ".\signing-certificate.pfx" -ItemType File -Value $certificateData
 
         # Save the directory of the MSIX file
-        $msix = Resolve-Path -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\**\**\*.msix"
+        $msix = D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*\*.msix
 
         # Sign the MSIX Package using SignTools
         $password = "$Env:SIGNING_CERTIFICATE_PASSWORD"
@@ -87,4 +87,4 @@ jobs:
       with:
         name: latest-${{matrix.os}}-signed
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\**\**\*.msix
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*\*.msix
