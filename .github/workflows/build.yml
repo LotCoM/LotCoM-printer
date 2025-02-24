@@ -68,8 +68,8 @@ jobs:
       shell: pwsh
       run: |
         # Decode the Base64 Certificate
-        $certificateBase64 = $env:SIGNING_CERTIFICATE_BASE64
-        $certificatePassword = $env:SIGNING_CERTIFICATE_PASSWORD
+        $certificateBase64 = '$Env:SIGNING_CERTIFICATE_BASE64'
+        $certificatePassword = '$Env:SIGNING_CERTIFICATE_PASSWORD'
         $certificateData = [System.Convert]::FromBase64String($certificateBase64)
         $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($certificateData, $certificatePassword, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable) 
         
