@@ -27,13 +27,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4.3.0
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         cache: true
         cache-dependency-path: "./LotCoMPrinter/packages.lock.json"
     - name: Install dependencies
-      run: dotnet restore --locked-mode
+      run: dotnet restore
     
     - name: Install MAUI 
       run: dotnet workload install maui
