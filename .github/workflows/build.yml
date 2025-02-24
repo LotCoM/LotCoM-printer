@@ -67,7 +67,7 @@ jobs:
       with:
         name: latest-${{matrix.os}}-package
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows*\win10-x64\AppPackages\LotCoMPrinter*\LotCoMPrinter.msix
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\AppPackages\**\*.msix
           
   sign:
 
@@ -96,7 +96,7 @@ jobs:
         $certificate.Export(".\signing-certificate.pfx", "Pfx", $password) [2, 5, 10]
 
         # Save the directory of the MSIX file
-        $msix = "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows*\win10-x64\AppPackages\LotCoMPrinter*\LotCoMPrinter.msix"
+        $msix = D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\AppPackages\**\*.msix
 
         # Sign the MSIX Package using SignTools
         cd "C:\Program Files (x86)\Windows Kits\10\bin\10*\x86"
@@ -107,4 +107,4 @@ jobs:
       with:
         name: latest-${{matrix.os}}-signed
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows*\win10-x64\AppPackages\LotCoMPrinter*\LotCoMPrinter.msix
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\AppPackages\**\*.msix
