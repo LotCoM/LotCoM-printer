@@ -12,7 +12,7 @@ env:
   DOTNET_VERSION: '9.0.103' # The .NET SDK version to use
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages # action runner's installed NuGet packages
   SIGNING_CERTIFICATE_BASE64: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
-  SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
+  SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
 
 jobs:
 
