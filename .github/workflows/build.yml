@@ -56,7 +56,7 @@ jobs:
       with:
         name: latest-${{ matrix.os }}-package
         path: |
-          D:\a\Package\LotCoMPrinter.msix
+          D:\a\Package
           
   sign:
 
@@ -73,14 +73,14 @@ jobs:
       with:
         name: latest-${{ matrix.os }}-package
         path: |
-          D:\a\Package\LotCoMPrinter.msix
+          D:\a\Package
         
         
     - name: Sign MSIX with certificate
       shell: pwsh
       run: |
         # Save MSIX directory
-        $msix = "D:\a\Package\LotCoMPrinter.msix"
+        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # Save certificate directories (encoded and decoded)
         $certificateDirectory = "D:\a\Certificate"
