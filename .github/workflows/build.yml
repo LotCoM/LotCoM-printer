@@ -46,7 +46,7 @@ jobs:
       with:
         name: latest-${{ matrix.os }}-package
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*\*.msix
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*
           
   sign:
 
@@ -62,13 +62,14 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: latest-${{ matrix.os }}-package
+        path: D:\a\Package
         
         
     - name: Sign MSIX with Certificate
       shell: pwsh
       run: |
         # Save MSIX directory
-        $msix = "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*\*.msix"
+        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # Save certificate directories
         $certificateDirectory = "D:\a\Certificate"
@@ -93,4 +94,4 @@ jobs:
       with:
         name: latest-${{matrix.os}}-signed
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*\*.msix
+          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*
