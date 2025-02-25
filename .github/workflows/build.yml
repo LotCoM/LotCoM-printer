@@ -41,12 +41,21 @@ jobs:
     - name: Build
       run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
 
+    - name: Copy MSIX to known path
+      shell: pwsh
+      run: |
+        # find the MSIX package
+        $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+
+        # copy the MSIX to a set path
+        Copy-Item -Path $msix -Destination "D:\a\Package\LotCoMPrinter.msix"
+
     - name: Archive build package (MSIX) artifact
       uses: actions/upload-artifact@v4
       with:
         name: latest-${{ matrix.os }}-package
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*
+          D:\a\Package\LotCoMPrinter.msix
           
   sign:
 
@@ -62,16 +71,17 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: latest-${{ matrix.os }}-package
-        path: D:\a\Package
+        path: |
+          D:\a\Package\LotCoMPrinter.msix
         
         
-    - name: Sign MSIX with Certificate
+    - name: Sign MSIX with certificate
       shell: pwsh
       run: |
         # Save MSIX directory
-        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+        $msix = "D:\a\Package\LotCoMPrinter.msix"
 
-        # Save certificate directories
+        # Save certificate directories (encoded and decoded)
         $certificateDirectory = "D:\a\Certificate"
         $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
         $pfx = "D:\a\Certificate\signing-certificate.pfx"
@@ -94,4 +104,4 @@ jobs:
       with:
         name: latest-${{matrix.os}}-signed
         path: |
-          D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\*\*
+          D:\a\Package\LotCoMPrinter.msix
