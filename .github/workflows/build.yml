@@ -1,0 +1,112 @@
+name: .NET CI
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+    paths:
+    - '**.cs'
+    - '**.csproj'
+
+env:
+  DOTNET_VERSION: '9.0.103' # The .NET SDK version to use
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages # action runner's installed NuGet packages
+  SIGNING_CERTIFICATE_BASE64: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
+  SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+
+jobs:
+
+  build:
+
+    name: build-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2022]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4.3.0
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        cache: true
+        cache-dependency-path: "./LotCoMPrinter/packages.lock.json"
+    - name: Install dependencies
+      run: dotnet restore
+    
+    - name: Install MAUI 
+      run: dotnet workload install maui-windows
+      
+    - name: Build
+      run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
+
+    - name: Copy MSIX to known path
+      shell: pwsh
+      run: |
+        # find the MSIX package
+        $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+
+        # copy the MSIX to a set path
+        New-Item -ItemType directory -Path "D:\a\Package"
+        Copy-Item -Path $msix -Destination "D:\a\Package\LotCoMPrinter.msix"
+
+    - name: Archive build package (MSIX) artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: latest-${{ matrix.os }}-package
+        path: |
+          D:\a\Package
+          
+  sign:
+
+    name: sign-msix
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2022]
+
+    steps:
+    - name: Download MSIX package
+      uses: actions/download-artifact@v4
+      with:
+        name: latest-${{ matrix.os }}-package
+        path: |
+          D:\a\Package
+        
+        
+    - name: Sign MSIX with certificate
+      shell: pwsh
+      run: |
+        # Save MSIX directory
+        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+
+        # Save certificate directories (encoded and decoded)
+        $certificateDirectory = "D:\a\Certificate"
+        $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
+        $pfx = "D:\a\Certificate\signing-certificate.pfx"
+
+        # Save certificate password and encoded data
+        $password = "$env:SIGNING_CERTIFICATE_PASSWORD"
+        $certificate = "$env:SIGNING_CERTIFICATE_BASE64"
+        
+        # Decode the Base64 Certificate
+        New-Item -ItemType directory -Path $certificateDirectory
+        Set-Content -Path $pfxEnc -Value $certificate
+        certutil -decode $pfxEnc $pfx
+
+        # Install the PFX certificate to the Local Machine's Trusted Root CA store
+        $securePassword = ConvertTo-SecureString -String $password -Force -AsPlainText
+        Import-PfxCertificate -FilePath $pfx -CertStoreLocation "Cert:\LocalMachine\Root" -Password $securePassword
+        
+        # Sign the MSIX Package using SignTools
+        Set-Location "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x86"
+        .\signtool.exe sign /fd SHA256 /a /f $pfx /t "http://timestamp.digicert.com" /p $password $msix
+
+    - name: Archive signed MSIX artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: latest-${{matrix.os}}-signed
+        path: |
+          D:\a\Package\LotCoMPrinter.msix
