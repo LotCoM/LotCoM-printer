@@ -48,6 +48,7 @@ jobs:
         $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # copy the MSIX to a set path
+        New-Item -ItemType directory -Path "D:\a\Package"
         Copy-Item -Path $msix -Destination "D:\a\Package\LotCoMPrinter.msix"
 
     - name: Archive build package (MSIX) artifact
