@@ -1,0 +1,38 @@
+name: Retrieve Signing Certificate
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+    paths:
+    - '**.cs'
+    - '**.csproj'
+
+env: 
+  TOKEN: ${{ secrets.SIGNING_CERTIFICATE_ACCESS_TOKEN }}
+
+jobs:
+
+  retrieve:
+
+    name: retrieve-certificate
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2022]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Retrieve Certificate
+      run: |
+        $response = curl -H "Authorization: token ${TOKEN}" https://github.com/masonritchason/software-brain-stuff/raw/refs/heads/main/signing-certificate.pfx
+        echo $response
+        # $certificate = New-Item -Path "D:\a\LotCoM-printer\LotCoM-printer\signing-certificate.pfx" -ItemType File -Value $certificateData
+
+    - name: Archive Certificate (PFX) artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: signing-certificate
+        path: |
+          D:\a\LotCoM-printer\LotCoM-printer\signing-certificate.pfx
+          
