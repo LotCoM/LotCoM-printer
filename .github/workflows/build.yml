@@ -1,12 +1,17 @@
-name: .NET CI
+name: .NET CI/CD
 
 on:
-  push:
   pull_request:
-    branches: [ main ]
-    paths:
-    - '**.cs'
-    - '**.csproj'
+    types:
+      - closed
+    branches:
+      - main
+    tags:
+      - '*.*.*'
+      - '*.*.*.*'
+
+permissions:
+  contents: write
 
 env:
   DOTNET_VERSION: '9.0.103' # The .NET SDK version to use
@@ -110,3 +115,34 @@ jobs:
         name: latest-${{matrix.os}}-signed
         path: |
           D:\a\Package\LotCoMPrinter.msix
+
+  release:
+  
+    name: Auto-Release pushed tag
+    needs: sign
+    if: github.event.pull_request.merged
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Retrieve PR
+        id: merged-pr-info
+        uses: coin-tracker/get-merged-pull-request@v1.1
+        with: 
+          github_token: ${{ secrets.PAT_1 }}
+          
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_1 }}
+          tag: ${{ steps.merged-pr-info.outputs.title }}
+        run: |
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${tag#v}" \
+              --generate-notes
+      
+      - name: Upload MSIX to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_1 }}
+        run: |
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} D:\a\Package\LotCoMPrinter.msix
+
