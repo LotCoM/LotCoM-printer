@@ -2,11 +2,9 @@ name: .NET CI/CD
 
 on:
   pull_request:
-    types:
-      - closed
+    types: [closed]
   push:
-    branches:
-      - main
+    branches: [main]
     tags:
       - '*.*.*'
       - '*.*.*.*'
@@ -25,6 +23,7 @@ jobs:
   build:
 
     name: build-${{matrix.os}}
+    if: ${{ github.event_name }} == 'pull_request' && ${{ github.event.action }} == 'closed' && ${{ github.event.pull_request.merged }} == true
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
