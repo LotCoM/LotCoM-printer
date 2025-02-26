@@ -288,7 +288,7 @@ public partial class MainPageViewModel : ObservableObject {
             return;
         }
         // create and run a Label print job
-        LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel);
+        LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel, BasketType);
         await Job.Run();
     }
 
