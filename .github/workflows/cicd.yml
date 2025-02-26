@@ -149,7 +149,7 @@ jobs:
           New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -ErrorAction SilentlyContinue
           # mark that the release was auto-generated
           "## What's Changed in `${tag}`" | Out-File -FilePath "D:\a\Package\release_notes.md"
-          "**This release was generated automatically. It may not be complete or accurate.**" | Out-File -FilePath "D:\a\Package\release_notes.md" -Append
+          "#### This release was generated automatically. It may not be complete or accurate." | Out-File -FilePath "D:\a\Package\release_notes.md" -Append
           # create the release
           gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag"
           # edit the release notes to use the release notes file
