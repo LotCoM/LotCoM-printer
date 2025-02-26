@@ -1,9 +1,10 @@
 name: .NET CI/CD
 
 on:
-  pull_request:
-    types:
-      - closed
+  #pull_request:
+    # types:
+      # - closed
+  push:
     branches:
       - main
     tags:
