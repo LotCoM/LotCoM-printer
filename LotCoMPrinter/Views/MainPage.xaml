@@ -80,8 +80,7 @@
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="0"
-                Grid.Column="1"
-                SelectedIndex="-1">
+                Grid.Column="1">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>Full</x:String>
