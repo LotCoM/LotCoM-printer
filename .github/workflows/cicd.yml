@@ -1,10 +1,8 @@
 name: .NET CI/CD
 
 on:
-  pull_request:
-    types: [closed]
   push:
-    branches: [main]
+    branches: main
     tags:
       - '*.*.*'
       - '*.*.*.*'
@@ -127,7 +125,7 @@ jobs:
         id: merged-pr-info
         uses: coin-tracker/get-merged-pull-request@v1.1
         with: 
-          github_token: ${{ secrets.PAT_1 }}
+          token: ${{ secrets.PAT_1 }}
           
       - name: Create release
         env:
