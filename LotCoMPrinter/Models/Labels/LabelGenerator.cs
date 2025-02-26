@@ -62,7 +62,7 @@ public static class LabelGenerator {
             throw new LabelBuildException($"Failed to construct new Label due to the following exception:\n{_ex.Message}");
         }
         // copy only the values of the data fields to the QR Code data
-        List<string> QRCodeData = [];
+        List<string> QRCodeData = ["PARTIAL"];
         foreach(string _field in LabelData) {
             // split the string at the colon and save the second segment (field value)
             QRCodeData.Add(_field.Split(": ")[1]);
