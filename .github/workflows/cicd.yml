@@ -15,9 +15,6 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages # action runner's installed NuGet packages
   SIGNING_CERTIFICATE_BASE64: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
   SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
-  MSIX_DIRECTORY: ${{ github.workspace }}/Package
-  MSIX_PATH: ${{ github.workspace }}/Package/LotCoMPrinter.msix
-  CERTIFICATE_DIRECTORY: ${{ github.workspace }}/Certificate
 
 jobs:
 
@@ -51,16 +48,15 @@ jobs:
         $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # copy the MSIX to a set path
-        $msixDir = "$env:MSIX_DIRECTORY"
-        New-Item -ItemType directory -Path $msixDir
-        Copy-Item -Path $msix -Destination $msixDir
+        New-Item -ItemType directory -Path "D:\a\Package"
+        Copy-Item -Path $msix -Destination D:\a\Package
 
     - name: Archive build package (MSIX) artifact
       uses: actions/upload-artifact@v4
       with:
         name: latest-windows-package
         path: |
-          ${{ env.MSIX_DIRECTORY }}
+          D:\a\Package
           
   sign:
 
@@ -74,26 +70,24 @@ jobs:
       with:
         name: latest-windows-package
         path: |
-          ${{ env.MSIX_DIRECTORY }}
+          D:\a\Package
         
     - name: Sign MSIX with certificate
       shell: pwsh
       run: |
         # Save MSIX directory
-        $msixDir = "$env:MSIX_DIRECTORY"
-        $msix = Get-ChildItem -Path $msixDir -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # Save certificate directories (encoded and decoded)
-        $certificateDir = "$env:CERTIFICATE_DIRECTORY"
-        $pfxEnc = "$certificateDir\signing-certificate.txt"
-        $pfx = "$certificateDir\signing-certificate.pfx"
+        $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
+        $pfx = "D:\a\Certificate\signing-certificate.pfx"
 
         # Save certificate password and encoded data
         $password = "$env:SIGNING_CERTIFICATE_PASSWORD"
         $certificate = "$env:SIGNING_CERTIFICATE_BASE64"
         
         # Decode the Base64 Certificate
-        New-Item -ItemType directory -Path $certificateDir
+        New-Item -ItemType directory -Path "D:\a\Certificate"
         Set-Content -Path $pfxEnc -Value $certificate
         certutil -decode $pfxEnc $pfx
 
@@ -110,13 +104,13 @@ jobs:
       with:
         name: latest-windows-signed
         path: |
-          ${{ env.MSIX_DIRECTORY }}
+          D:\a\Package
 
   release:
   
     name: Auto-Release pushed tag
     needs: sign
-    runs-on: ubuntu-22.04
+    runs-on: windows-2022
     
     steps:
       - uses: actions/checkout@v3
@@ -131,29 +125,39 @@ jobs:
         with:
           name: latest-windows-package
           path: |
-            ${{ env.MSIX_DIRECTORY }}
+            D:\a\Package
+
+      - name: Copy MSIX to known path
+        shell: pwsh
+        run: |
+          # find the MSIX package
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+
+          # copy the MSIX to a set path
+          New-Item -ItemType directory -Path "D:\a\Package"
+          Copy-Item -Path $msix -Destination D:\a\Package
           
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
           tag: ${{ steps.merged-pr-info.outputs.title }}
+        shell: pwsh
         run: |
           # create a new release notes file
-          touch D:\a\Package\release_notes.md
+          New-Item -ItemType file -Path "D:\a\Package\release_notes.md"
           # mark that the release was auto-generated
-          echo "## What's Changed in `${tag}`" > "D:\a\Package\release_notes.md"
-          echo "**This release was generated automatically. It may not be complete or accurate.**" >> "D:\a\Package\release_notes.md"
+          Out-File -FilePath "D:\a\Package\release_notes.md" -InputObject "## What's Changed in `${tag}`"
+          Out-File -FilePath "D:\a\Package\release_notes.md" -Append -InputObject "**This release was generated automatically. It may not be complete or accurate.**"
           # create the release
-          gh release create "${tag}" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${tag#v}" \
-              # --generate-notes
+          gh release create "${tag}" --repo="$GITHUB_REPOSITORY" --title="${tag#v}" \
           # edit the release notes to use the release notes file
           gh release edit ${tag#v} --notes-file "D:\a\Package\release_notes.md"
       
       - name: Upload MSIX to release
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
+        shell: pwsh
         run: |
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} " ${{ env.MSIX_DIRECTORY }}"
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix
 
