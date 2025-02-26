@@ -105,7 +105,7 @@ jobs:
       with:
         name: latest-windows-signed
         path: |
-          D:\a\Package\LotCoMPrinter.msix
+          D:\a\Package
 
   release:
   
@@ -126,7 +126,7 @@ jobs:
         with:
           name: latest-windows-package
           path: |
-            D:\a\Package\LotCoMPrinter.msix
+            D:\a\Package
           
       - name: Create release
         env:
