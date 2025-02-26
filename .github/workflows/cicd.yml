@@ -155,5 +155,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
         run: |
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} " ${{ env.MSIX_PATH }}"
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} " ${{ env.MSIX_DIRECTORY }}"
 
