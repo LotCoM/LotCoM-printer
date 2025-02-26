@@ -130,7 +130,7 @@ public class PartialLabel {
         // start a new CPU thread to apply the Label Fields to the LabelBase
         await Task.Run(() => {
             // combine the LabelFields into a string deliniated by newlines
-            string LabelFieldsBody = "";
+            string LabelFieldsBody = "PARTIAL\n";
             foreach (string _field in LabelFields) {
                 // if the field is the operator ID, do not include in the shown text
                 if (_field.Contains("Operator")) {
