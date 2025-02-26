@@ -60,7 +60,7 @@ jobs:
       with:
         name: latest-windows-package
         path: |
-          ${{ MSIX_DIRECTORY }}
+          ${{ env.MSIX_DIRECTORY }}
           
   sign:
 
@@ -74,7 +74,7 @@ jobs:
       with:
         name: latest-windows-package
         path: |
-          ${{ MSIX_DIRECTORY }}
+          ${{ env.MSIX_DIRECTORY }}
         
     - name: Sign MSIX with certificate
       shell: pwsh
@@ -110,7 +110,7 @@ jobs:
       with:
         name: latest-windows-signed
         path: |
-          ${{ MSIX_DIRECTORY }}
+          ${{ env.MSIX_DIRECTORY }}
 
   release:
   
@@ -131,7 +131,7 @@ jobs:
         with:
           name: latest-windows-package
           path: |
-            ${{ MSIX_DIRECTORY }}
+            ${{ env.MSIX_DIRECTORY }}
           
       - name: Create release
         env:
@@ -155,5 +155,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
         run: |
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} " ${{ MSIX_PATH }}"
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} " ${{ env.MSIX_PATH }}"
 
