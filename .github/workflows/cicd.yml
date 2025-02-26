@@ -3,9 +3,6 @@ name: .NET CI/CD
 on:
   push:
     branches: main
-    tags:
-      - '*.*.*'
-      - '*.*.*.*'
 
 permissions:
   contents: write
@@ -151,7 +148,7 @@ jobs:
 
           # set the Markdown content for the release notes file
           $markdownContent = @(
-              "## What's Changed in `${tag}`"
+              "## What's Changed in ${tag}"
               "#### This release was generated automatically. It may not be complete or accurate."
               "#### Full notes may or may not be written in the future."
           )

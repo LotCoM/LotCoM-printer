@@ -70,7 +70,17 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(DisplayedLotNumber));
         }
     }
-
+    private string _basketType = "Full";
+    public string BasketType {
+        get {return _basketType;}
+        set {
+            _basketType = value;
+            OnPropertyChanged(nameof(_basketType));
+            OnPropertyChanged(nameof(BasketType));
+        }
+    }
+    
+    
     // full constructor
     public MainPageViewModel() {}
 
@@ -278,8 +288,20 @@ public partial class MainPageViewModel : ObservableObject {
             return;
         }
         // create and run a Label print job
-        LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel);
+        LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel, BasketType);
         await Job.Run();
+    }
+
+    /// <summary>
+    /// Updates the Page's Selected Basket Type (Full/Partial).
+    /// </summary>
+    /// <param name="BasketType">'Full' or 'Partial', as selected in the UI.</param>
+    /// <returns></returns>
+    public async Task UpdateBasketType(string BasketType) {
+        // update the BasketType property
+        await Task.Run(() => {
+            this.BasketType = BasketType;
+        });
     }
 
     /// <summary>

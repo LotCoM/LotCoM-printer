@@ -15,6 +15,9 @@ public partial class MainPage : ContentPage {
 
 		// show the window from XAML
 		InitializeComponent();
+
+		// force the basket type to be full on start-up
+		BasketTypePicker.SelectedIndex = 0;
 	}
 
 	/// <summary>
@@ -119,11 +122,28 @@ public partial class MainPage : ContentPage {
 	}
 
 	/// <summary>
+	/// Handler for the Item Selected event from the BasketTypePicker.
+	/// </summary>
+	/// <param name="Sender"></param>
+	/// <param name="e"></param>
+	public async void OnBasketTypeSelection(object Sender, EventArgs e) {
+		// update the BasketType ViewModel property
+		Picker BasketTypePicker = (Picker)Sender;
+		string? BasketType = (string?)BasketTypePicker.ItemsSource[BasketTypePicker.SelectedIndex];
+		if (BasketType != null) {
+			await _viewModel.UpdateBasketType(BasketType);
+		}
+	}
+
+	/// <summary>
 	/// Clears and reactivates all UI Controls on the Page.
 	/// </summary>
 	public void Reset() {
 		// reset viewmodel properties
 		_viewModel.Reset();
+		// Basket Type Picker reset
+		BasketTypePicker.SelectedIndex = 0;
+		BasketTypePicker.IsEnabled = true;
 		// Part Picker reset
 		PartPicker.SelectedIndex = -1;
 		PartPicker.IsEnabled = true;
