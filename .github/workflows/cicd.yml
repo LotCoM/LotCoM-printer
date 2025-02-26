@@ -15,6 +15,9 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages # action runner's installed NuGet packages
   SIGNING_CERTIFICATE_BASE64: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
   SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+  MSIX_DIRECTORY: ${{ github.workspace }}/Package
+  MSIX_PATH: ${{ github.workspace }}/Package/LotCoMPrinter.msix
+  CERTIFICATE_DIRECTORY: ${{ github.workspace }}/Certificate
 
 jobs:
 
@@ -48,15 +51,16 @@ jobs:
         $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # copy the MSIX to a set path
-        New-Item -ItemType directory -Path "D:\a\Package"
-        Copy-Item -Path $msix -Destination "D:\a\Package\LotCoMPrinter.msix"
+        $msixDir = "$env:MSIX_DIRECTORY"
+        New-Item -ItemType directory -Path $msixDir
+        Copy-Item -Path $msix -Destination $msixDir
 
     - name: Archive build package (MSIX) artifact
       uses: actions/upload-artifact@v4
       with:
         name: latest-windows-package
         path: |
-          D:\a\Package
+          ${{ MSIX_DIRECTORY }}
           
   sign:
 
@@ -70,25 +74,26 @@ jobs:
       with:
         name: latest-windows-package
         path: |
-          D:\a\Package
+          ${{ MSIX_DIRECTORY }}
         
     - name: Sign MSIX with certificate
       shell: pwsh
       run: |
         # Save MSIX directory
-        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+        $msixDir = "$env:MSIX_DIRECTORY"
+        $msix = Get-ChildItem -Path $msixDir -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # Save certificate directories (encoded and decoded)
-        $certificateDirectory = "D:\a\Certificate"
-        $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
-        $pfx = "D:\a\Certificate\signing-certificate.pfx"
+        $certificateDir = "$env:CERTIFICATE_DIRECTORY"
+        $pfxEnc = "$certificateDir\signing-certificate.txt"
+        $pfx = "$certificateDir\signing-certificate.pfx"
 
         # Save certificate password and encoded data
         $password = "$env:SIGNING_CERTIFICATE_PASSWORD"
         $certificate = "$env:SIGNING_CERTIFICATE_BASE64"
         
         # Decode the Base64 Certificate
-        New-Item -ItemType directory -Path $certificateDirectory
+        New-Item -ItemType directory -Path $certificateDir
         Set-Content -Path $pfxEnc -Value $certificate
         certutil -decode $pfxEnc $pfx
 
@@ -105,7 +110,7 @@ jobs:
       with:
         name: latest-windows-signed
         path: |
-          D:\a\Package
+          ${{ MSIX_DIRECTORY }}
 
   release:
   
@@ -126,7 +131,7 @@ jobs:
         with:
           name: latest-windows-package
           path: |
-            D:\a\Package
+            ${{ MSIX_DIRECTORY }}
           
       - name: Create release
         env:
@@ -150,5 +155,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
         run: |
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} "D:\a\Package\LotCoMPrinter.msix"
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} " ${{ MSIX_PATH }}"
 
