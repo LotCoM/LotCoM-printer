@@ -23,7 +23,9 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <!-- Process Selection Sub-Grid-->
-        <Grid>
+        <Grid
+            Grid.Row="0"
+            Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -50,6 +52,42 @@
                 ItemsSource="{Binding Processes}"
                 SelectedIndex="-1"
                 SelectedIndexChanged="OnProcessSelection">
+            </Picker>
+        </Grid>
+        <!-- Basket Type Selection (Full/Partial) -->
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label
+                x:Name="BasketTypeLabel"
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="Basket Type"/>
+            <Picker
+                x:Name="BasketTypePicker"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="0"
+                Grid.Column="1"
+                SelectedIndex="-1">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Full</x:String>
+                        <x:String>Partial</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
             </Picker>
         </Grid>
         <!-- Left-Side Sub-Grid (Stack of Input Elements) allows control over label/input positions-->
