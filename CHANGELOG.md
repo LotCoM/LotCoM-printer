@@ -86,3 +86,7 @@ Approach 2:
 
 ## `0.4.24`
 #### CI/CD Pipeline - Phase 2 (CD)
+
+# `0.5.0`
+### Partial Basket and Consolidation System
+- Implementation of `PartialLabel.cs`, an extension of the `Label.cs` class with special formatting.
