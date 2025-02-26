@@ -80,3 +80,9 @@ Approach 2:
 #### Build Environment Work
 - Drop `v` prefixing convention for version numbers (not compliant with SemVer).
 - Update manifests to include new certificate information.
+
+## `0.4.23`
+#### CI/CD Pipeline - Phase 1 (CI)
+
+## `0.4.24`
+#### CI/CD Pipeline - Phase 2 (CD)
