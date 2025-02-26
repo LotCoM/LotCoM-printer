@@ -157,7 +157,7 @@ jobs:
           )
 
           # write the Markdown content to the release notes file
-          $markdownContent | Set-Content -Path $filePath
+          $markdownContent | Set-Content -Path "D:\a\Package\release_notes.md"
           
           # create the release
           gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag"
