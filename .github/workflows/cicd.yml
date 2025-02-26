@@ -20,12 +20,9 @@ jobs:
 
   build:
 
-    name: build-${{matrix.os}}
+    name: build-windows
     if: ${{ github.event_name }} == 'pull_request' && ${{ github.event.action }} == 'closed' && ${{ github.event.pull_request.merged }} == true
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-2022]
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v3
@@ -57,7 +54,7 @@ jobs:
     - name: Archive build package (MSIX) artifact
       uses: actions/upload-artifact@v4
       with:
-        name: latest-${{ matrix.os }}-package
+        name: latest-windows-package
         path: |
           D:\a\Package
           
@@ -65,19 +62,15 @@ jobs:
 
     name: sign-msix
     needs: build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-2022]
+    runs-on: windows-2022
 
     steps:
     - name: Download MSIX package
       uses: actions/download-artifact@v4
       with:
-        name: latest-${{ matrix.os }}-package
+        name: latest-windows-package
         path: |
           D:\a\Package
-        
         
     - name: Sign MSIX with certificate
       shell: pwsh
@@ -110,7 +103,7 @@ jobs:
     - name: Archive signed MSIX artifact
       uses: actions/upload-artifact@v4
       with:
-        name: latest-${{matrix.os}}-signed
+        name: latest-windows-signed
         path: |
           D:\a\Package\LotCoMPrinter.msix
 
@@ -119,6 +112,7 @@ jobs:
     name: Auto-Release pushed tag
     needs: sign
     runs-on: ubuntu-22.04
+    
     steps:
       - uses: actions/checkout@v3
       - name: Retrieve PR
@@ -126,6 +120,13 @@ jobs:
         uses: coin-tracker/get-merged-pull-request@v1.1
         with: 
           github_token: ${{ secrets.PAT_1 }}
+
+      - name: Download MSIX package
+        uses: actions/download-artifact@v4
+        with:
+          name: latest-windows-package
+          path: |
+            D:\a\Package\LotCoMPrinter.msix
           
       - name: Create release
         env:
@@ -135,19 +136,19 @@ jobs:
           # create a new release notes file
           touch D:\a\Package\release_notes.md
           # mark that the release was auto-generated
-          echo "## What's Changed in `${tag}`" > D:\a\Package\release_notes.md
-          echo "**This release was generated automatically. It may not be complete or accurate.**" >> D:\a\Package\release_notes.md
+          echo "## What's Changed in `${tag}`" > "D:\a\Package\release_notes.md"
+          echo "**This release was generated automatically. It may not be complete or accurate.**" >> "D:\a\Package\release_notes.md"
           # create the release
-          gh release create "$tag" \
+          gh release create "${tag}" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
               # --generate-notes
           # edit the release notes to use the release notes file
-          gh release edit ${tag#v} --notes-file D:\a\Package\release_notes.md
+          gh release edit ${tag#v} --notes-file "D:\a\Package\release_notes.md"
       
       - name: Upload MSIX to release
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
         run: |
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} D:\a\Package\LotCoMPrinter.msix
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} "D:\a\Package\LotCoMPrinter.msix"
 
