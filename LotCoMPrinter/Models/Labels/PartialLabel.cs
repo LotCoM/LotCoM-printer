@@ -12,9 +12,9 @@ public class PartialLabel {
     // dimension (square dimension) of QR Code on label (375)
     private const int CodeDimension = 750;
     // size of small text on label (36)
-    private const int TextSizeSmall = 54;
+    private const int TextSizeSmall = 48;
     // size of large text on label (306)
-    private const int TextSizeLarge = 320;
+    private const int TextSizeLarge = 240;
     // padding of objects on the label (18) 
     private const int LabelInternalPadding = 16;
     // horizontal position of the label heading text
@@ -24,11 +24,11 @@ public class PartialLabel {
     // left X coordinate of Code
     private const int CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
     // top Y coordinate of Code
-    private const int CodePositionY1 = LabelInternalPadding;
+    private const int CodePositionY1 = LabelDimension - CodeDimension - LabelInternalPadding;
     // horizontal position of the Label's information fields
     private const int LabelFieldsX = LabelInternalPadding;
     // vertical position of the Label's information fields
-    private const int LabelFieldsY = CodeDimension + TextSizeSmall + LabelInternalPadding;
+    private const int LabelFieldsY = CodePositionY1 + (LabelInternalPadding * 3);
 
     // private class properties
     private readonly Bitmap _image;
@@ -93,7 +93,7 @@ public class PartialLabel {
             Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
             Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             // draw the Heading text
-            Surface.DrawString(HeadingText, _fontLarge, Brushes.Black, LabelHeadingX, LabelHeadingY);
+            Surface.DrawString($"PARTIAL\n{HeadingText}", _fontLarge, Brushes.Black, LabelHeadingX, LabelHeadingY);
             Surface.Flush();
         });
     }
@@ -129,14 +129,17 @@ public class PartialLabel {
     public async Task AddLabelFieldsAsync(List<string> LabelFields) {
         // start a new CPU thread to apply the Label Fields to the LabelBase
         await Task.Run(() => {
+            // create a list of Partial Label fields
+            List<string> PartialLabelFields = ["JBK #", "Lot #", "Part", "Quantity", "Production Date", "Production Shift"];
             // combine the LabelFields into a string deliniated by newlines
-            string LabelFieldsBody = "PARTIAL\n";
+            string LabelFieldsBody = "";
             foreach (string _field in LabelFields) {
-                // if the field is the operator ID, do not include in the shown text
-                if (_field.Contains("Operator")) {
-                    continue;
-                } else {
-                    LabelFieldsBody += _field + "\n";
+                // if the field is in the Partial Label Fields list, add it to the Label
+                if (PartialLabelFields.Any(_field.Contains)) {
+                    // remove part indicator (space constraint)
+                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "").Replace("Date: ", "");
+                    // add the field to the data body
+                    LabelFieldsBody += FormattedField + "\n";
                 }
             }
             // create a drawing surface to draw the text with
