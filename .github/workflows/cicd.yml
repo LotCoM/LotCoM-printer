@@ -146,12 +146,12 @@ jobs:
           # create a new release notes file
           New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -ErrorAction SilentlyContinue
           # mark that the release was auto-generated
-          Out-File -FilePath "D:\a\Package\release_notes.md" -InputObject "## What's Changed in `${tag}`"
-          Out-File -FilePath "D:\a\Package\release_notes.md" -Append -InputObject "**This release was generated automatically. It may not be complete or accurate.**"
+          # Out-File -FilePath "D:\a\Package\release_notes.md" -InputObject "## What's Changed in `${tag}`"
+          # Out-File -FilePath "D:\a\Package\release_notes.md" -Append -InputObject "**This release was generated automatically. It may not be complete or accurate.**"
           # create the release
           gh release create "${tag}" --repo="$GITHUB_REPOSITORY" --title="${tag#v}" \
           # edit the release notes to use the release notes file
-          gh release edit ${tag#v} --notes-file "D:\a\Package\release_notes.md"
+          # gh release edit ${tag#v} --notes-file "D:\a\Package\release_notes.md"
       
       - name: Upload MSIX to release
         env:
