@@ -145,13 +145,23 @@ jobs:
         run: |
           # save the tag from env
           $tag = "$env:tag"
+          
           # create a new release notes file
-          New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -ErrorAction SilentlyContinue
-          # mark that the release was auto-generated
-          "## What's Changed in `${tag}`" | Out-File -FilePath "D:\a\Package\release_notes.md"
-          "#### This release was generated automatically. It may not be complete or accurate." | Out-File -FilePath "D:\a\Package\release_notes.md" -Append
+          New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -Force -ErrorAction SilentlyContinue
+
+          # set the Markdown content for the release notes file
+          $markdownContent = @(
+              "## What's Changed in `${tag}`"
+              "#### This release was generated automatically. It may not be complete or accurate."
+              "#### Full notes may or may not be written in the future."
+          )
+
+          # write the Markdown content to the release notes file
+          $markdownContent | Set-Content -Path $filePath
+          
           # create the release
           gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag"
+          
           # edit the release notes to use the release notes file
           gh release edit "$tag" --notes-file "D:\a\Package\release_notes.md"
       
