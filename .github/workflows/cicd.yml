@@ -135,7 +135,7 @@ jobs:
 
           # copy the MSIX to a set path
           New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
-          Copy-Item -Path $msix -Destination D:\a\Package
+          Copy-Item -Path $msix -Destination D:\a\Package -ErrorAction SilentlyContinue
           
       - name: Create release
         env:
