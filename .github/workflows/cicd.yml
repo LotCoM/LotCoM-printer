@@ -48,7 +48,7 @@ jobs:
         $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
         # copy the MSIX to a set path
-        New-Item -ItemType directory -Path "D:\a\Package"
+        New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
         Copy-Item -Path $msix -Destination D:\a\Package
 
     - name: Archive build package (MSIX) artifact
@@ -87,7 +87,7 @@ jobs:
         $certificate = "$env:SIGNING_CERTIFICATE_BASE64"
         
         # Decode the Base64 Certificate
-        New-Item -ItemType directory -Path "D:\a\Certificate"
+        New-Item -ItemType directory -Path "D:\a\Certificate" -ErrorAction SilentlyContinue
         Set-Content -Path $pfxEnc -Value $certificate
         certutil -decode $pfxEnc $pfx
 
@@ -134,7 +134,7 @@ jobs:
           $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
 
           # copy the MSIX to a set path
-          New-Item -ItemType directory -Path "D:\a\Package"
+          New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
           Copy-Item -Path $msix -Destination D:\a\Package
           
       - name: Create release
@@ -144,7 +144,7 @@ jobs:
         shell: pwsh
         run: |
           # create a new release notes file
-          New-Item -ItemType file -Path "D:\a\Package\release_notes.md"
+          New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -ErrorAction SilentlyContinue
           # mark that the release was auto-generated
           Out-File -FilePath "D:\a\Package\release_notes.md" -InputObject "## What's Changed in `${tag}`"
           Out-File -FilePath "D:\a\Package\release_notes.md" -Append -InputObject "**This release was generated automatically. It may not be complete or accurate.**"
