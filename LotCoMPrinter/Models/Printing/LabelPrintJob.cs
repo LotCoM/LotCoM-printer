@@ -65,7 +65,7 @@ public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, 
                 Printed = false;
             }
             // consume the queued serializing number (only if the print was successful)
-            if (Printed) {
+            if (Printed && (_labelType == "Full")) {
                 if (_serializeMode == "JBK") {
                     await JBKQueue.ConsumeAsync(_modelNumber);
                 } else {
