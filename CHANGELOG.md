@@ -92,4 +92,8 @@ Approach 2:
 
 ## `0.5.0`
 #### Partial Label Implementation
-- Implementation of `PartialLabel.cs`, an extension of the `Label.cs` class with special formatting.
+- Implement `PartialLabel.cs`, an extension of the `Label.cs` class with special formatting.
+
+## `0.5.1`
+#### Queue Consumption and Reserving (Partial Label)
+- Refactor Serial # assignment and queueing to eliminate the gap outlined in [#53](https://github.com/LotCoM/LotCoM-printer/issues/53).
