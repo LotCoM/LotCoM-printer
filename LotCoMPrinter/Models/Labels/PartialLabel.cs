@@ -5,6 +5,8 @@ using LotCoMPrinter.Models.Services;
 
 namespace LotCoMPrinter.Models.Labels;
 
+# pragma warning disable CA1416 // Validate platform compatibility
+
 public class PartialLabel {
     // label dimension constants; (value) = default
     // dimension (square dimension) of label (900)
