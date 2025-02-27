@@ -168,6 +168,6 @@ jobs:
         shell: pwsh
         run: |
           $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
-          Rename-Item -Path $msix -NewName "LotCoMPrinter.msix"
+          Rename-Item -Path $msix.FullName -NewName "LotCoMPrinter_x64.msix"
           gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix
 
