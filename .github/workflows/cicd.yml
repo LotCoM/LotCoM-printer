@@ -42,7 +42,7 @@ jobs:
       shell: pwsh
       run: |
         # find the MSIX package
-        $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+        $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
 
         # copy the MSIX to a set path
         New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
@@ -73,7 +73,7 @@ jobs:
       shell: pwsh
       run: |
         # Save MSIX directory
-        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+        $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
 
         # Save certificate directories (encoded and decoded)
         $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
@@ -128,7 +128,7 @@ jobs:
         shell: pwsh
         run: |
           # find the MSIX package
-          $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
 
           # copy the MSIX to a set path
           New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
@@ -167,7 +167,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
         shell: pwsh
         run: |
-          $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+          # locate the MSIX file and rename it
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
+          Write-Host "MSIX: $msix"
+          Write-Host "MSIX Full Path:" 
+          Write-Host $msix.FullName
           Rename-Item -Path $msix.FullName -NewName "LotCoMPrinter_x64.msix"
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
+
+          # upload the MSIX to the release
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix.FullName
 
