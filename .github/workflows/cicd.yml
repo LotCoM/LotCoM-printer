@@ -120,7 +120,7 @@ jobs:
       - name: Download MSIX package
         uses: actions/download-artifact@v4
         with:
-          name: latest-windows-package
+          name: latest-windows-signed
           path: |
             D:\a\Package
 
