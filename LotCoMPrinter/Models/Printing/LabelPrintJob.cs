@@ -68,7 +68,8 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
                 // remove the cached serial number here if the label was full
                 if (_labelType == "Full") {
                     string SerialNumber = _labelInformation[3].Replace("JBK: ", "").Replace("Lot: ", "");
-                    await SerialCache.RemoveCachedSerialNumber(SerialNumber, _labelInformation[1].Split("\n")[0]);
+                    string PartNumber = _labelInformation[1].Split("\n")[0].Replace("Part: ", "");
+                    await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
                 }
             }
         }
