@@ -114,6 +114,40 @@ public static class SerialCache {
     }
 
     /// <summary>
+    /// Compiles a CachedSerialNumber object from the parameters, removes any matching objects from the cache, and saves it.
+    /// Deletes the cache files if the cache is empty after the removal.
+    /// </summary>
+    /// <param name="SerialNumber"></param>
+    /// <param name="PartNumber"></param>
+    /// <returns></returns>
+    private static async Task Remove(string SerialNumber, string PartNumber) {
+        // confirm the cache file exists
+        if (!ConfirmCacheDirectory() || !ConfirmCacheFile()) {
+            // cannot remove a cached object from non-existent cache
+            return;
+        }
+        // read the Cache
+        Dictionary<string, int> CacheDictionary = await Read();
+        // convert the Cache Dictionary into a Cache List
+        List<CachedSerialNumber> CacheList = await BuildCacheList(CacheDictionary);
+        // remove any matching cached objects
+        CachedSerialNumber Pattern = new CachedSerialNumber(SerialNumber, PartNumber);
+        bool Removed = CacheList.Remove(Pattern);
+        while (Removed) {
+            Removed = CacheList.Remove(Pattern);
+        }
+        // check if the modified cache dictionary has any contents
+        if (!HasContents(CacheDictionary)) {
+            // delete the cache files
+            File.Delete(_cacheFile);
+            Directory.Delete(_cacheDir);
+        // there are cached objects remaining; save the cache file
+        } else {
+            await Save(CacheDictionary);
+        }
+    }
+
+    /// <summary>
     /// Reads the Cache and attempts to find a hit for the Part Number.
     /// </summary>
     /// <param name="PartNumber"></param>
@@ -142,7 +176,7 @@ public static class SerialCache {
     }
 
     /// <summary>
-    /// Converts SerialNumber and PartNumber into a CachedSerialNumber object, adds that object to the Cache, and updates the cache file.
+    /// Adds a Serial Number to the Cache.
     /// </summary>
     /// <param name="SerialNumber"></param>
     /// <param name="PartNumber"></param>
@@ -157,5 +191,16 @@ public static class SerialCache {
         } catch {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Removes a Serial Number from the Cache.
+    /// </summary>
+    /// <param name="SerialNumber"></param>
+    /// <param name="PartNumber"></param>
+    /// <returns></returns>
+    public static async Task RemoveCachedSerialNumber(string SerialNumber, string PartNumber) {
+        // remove any occurrences of the cache object
+        await Remove(SerialNumber, PartNumber);
     }
 }
