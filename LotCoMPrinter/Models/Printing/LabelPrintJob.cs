@@ -107,7 +107,10 @@ public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, 
             // consume the queued serializing number (only if the print was successful)
             if (Printed) {
                 await ProcessSerialNumber();
-                // destroy the cached serial number here if the label was partial
+                // remove the cached serial number here if the label was partial
+                if (_labelType == "Partial") {
+                    await SerialCache.RemoveCachedSerialNumber(_labelInformation[3], _labelInformation[1].Split("\n")[0]);
+                }
             }
         }
     }
