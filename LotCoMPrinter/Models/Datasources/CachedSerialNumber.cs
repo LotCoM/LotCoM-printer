@@ -11,11 +11,19 @@ public class CachedSerialNumber(string SerialNumber, string PartNumber) {
     private string _partNumber = PartNumber;
 
     /// <summary>
-    /// Returns the serial number cached by this object
+    /// Returns the serial number cached by this object.
     /// </summary>
     /// <returns></returns>
-    public string Read() {
+    public string GetSerialNumber() {
         return _serialNumber;
+    }
+
+    /// <summary>
+    /// Returns the part number this object is cached for.
+    /// </summary>
+    /// <returns></returns>
+    public string GetPartNumber() {
+        return _partNumber;
     }
 
     /// <summary>
