@@ -61,10 +61,10 @@ public static class JBKQueue {
     /// This method WILL consume a JBK number from the queue when called.
     /// </summary>
     /// <param name="ModelNumber"></param>
-    public static async Task ConsumeAsync(string ModelNumber) {
+    public static async Task<string> ConsumeAsync(string ModelNumber) {
         // retrieve the Queue Dictionary
         Dictionary<string, int> QueueDictionary = await DeserializeAsync();
-        await Task.Run(() => {
+        int Consumed = await Task.Run(() => {
             // access the queued JBK number for the Model number
             int Unincremented = QueueDictionary[ModelNumber];
             // if the queued number is 500, reset to 1
@@ -73,8 +73,11 @@ public static class JBKQueue {
             }
             // increment the Queued JBK number and save the new Queue version
             QueueDictionary[ModelNumber] = Unincremented + 1;
+            return Unincremented;
         });
         // save the incremented queue
         await SaveAsync(QueueDictionary);
+        // return the unincremented (consumed) number
+        return Consumed.ToString();
     }
 }
