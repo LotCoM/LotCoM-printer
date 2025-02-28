@@ -55,7 +55,19 @@ public static class SerialCache {
             }
         });
         return CacheDictionary;
-    } 
+    }
+
+    /// <summary>
+    /// Saves the passed Dictionary to the Cache file.
+    /// </summary>
+    /// <param name="CacheDictionary"></param>
+    /// <returns></returns>
+    private static async Task Save(Dictionary<string, int> CacheDictionary) {
+        // serialize the CacheDictionary to a JSON string
+        string Serialized = JsonConvert.SerializeObject(CacheDictionary);
+        // write the serialized string to the cache file
+        await File.WriteAllTextAsync(_cacheFile, Serialized);
+    }
 
     /// <summary>
     /// Returns whether the passed Dictionary has any contents.
@@ -86,6 +98,22 @@ public static class SerialCache {
     }
 
     /// <summary>
+    /// Adds a new Cache object to the cache file.
+    /// </summary>
+    /// <param name="Cachable"></param>
+    /// <returns></returns>
+    private static async Task Cache(CachedSerialNumber Cachable) {
+        // confirm the cache file exists and create it if not
+        CreateCache();
+        // read the cache
+        Dictionary<string, int> CacheDictionary = await Read();
+        // add the cache to the dictionary  
+        CacheDictionary.Add(Cachable.GetPartNumber(), int.Parse(Cachable.GetSerialNumber()));
+        // write the cache back to the cache file
+        await Save(CacheDictionary);
+    }
+
+    /// <summary>
     /// Reads the Cache and attempts to find a hit for the Part Number.
     /// </summary>
     /// <param name="PartNumber"></param>
@@ -107,9 +135,27 @@ public static class SerialCache {
         List<CachedSerialNumber> Hit = CacheList.Where(x => x.IsForPart(PartNumber)).ToList();
         // return the hit if there was one
         if (Hit.Count > 0) {
-            return Hit[0].Read();
+            return Hit[0].GetSerialNumber();
         }
         // no hit was found for the number, return nothing
         return null;
+    }
+
+    /// <summary>
+    /// Converts SerialNumber and PartNumber into a CachedSerialNumber object, adds that object to the Cache, and updates the cache file.
+    /// </summary>
+    /// <param name="SerialNumber"></param>
+    /// <param name="PartNumber"></param>
+    /// <returns></returns>
+    public static async Task<bool> CacheSerialNumber(string SerialNumber, string PartNumber) {
+        // create a new CachedSerialNumber object
+        CachedSerialNumber NewCache = new CachedSerialNumber(SerialNumber, PartNumber);
+        // cache the number
+        try {
+            await Cache(NewCache);
+            return true;
+        } catch {
+            return false;
+        }
     }
 }
