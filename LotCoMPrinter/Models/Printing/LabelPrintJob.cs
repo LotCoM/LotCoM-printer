@@ -20,11 +20,51 @@ public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, 
     private string _labelType = LabelType;
 
     /// <summary>
+    /// Processes the use of a Serial Number for a Partial Label. 
+    /// Checks if there is a Serial Number cached for the Part Number.
+    /// If not, consumes and caches the queued Serial Number.
+    /// </summary>
+    /// <returns></returns>
+    private async Task<string?> ProcessSerialNumber() {
+        string? SerialNumber = null;
+        // run a new CPU thread to get the serial number for this label
+        await Task.Run(async () => {
+            // save the part number for later use
+            string PartNumber = _labelInformation[1].Split("\n")[0];
+            // check if there is already a cached number
+            SerialNumber = await SerialCache.FindNumberForPart(PartNumber);
+            // if there was no serial number found, consume and cache a new one
+            if (SerialNumber == null) {
+                if (_serializeMode == "JBK") {
+                    // consume the queued JBK number for this Model
+                    SerialNumber = await JBKQueue.ConsumeAsync(_modelNumber);
+                } else {
+                    // consume the queued Lot number for this Model and cache it under the part number
+                    SerialNumber = await LotQueue.ConsumeAsync(_modelNumber);
+                }
+                // if the label is a Partial, cache the Serial Number under the part number
+                if (_labelType == "Partial") {
+                    await SerialCache.CacheSerialNumber(SerialNumber, PartNumber);
+                }
+            }
+        });
+        // return the serial number
+        return SerialNumber;
+    }
+
+    /// <summary>
     /// Creates a Label object and Bitmap image from the Job's saved information. Stores the generated Bitmap image in _label property.
     /// </summary>
     /// <returns></returns>
     private async Task GenerateLabelImage() {
         try {
+            // get the Label's Serial Number
+            string? SerialNumber = await ProcessSerialNumber();
+            if (SerialNumber == null) {
+                throw new LabelBuildException("Failed to assign a Serial Number to the Label");
+            }
+            // assign the Serial Number to the JBK/Lot # field in _labelInformation
+            _labelInformation[3] = SerialNumber;
             // full label
             if (_labelType == "Full") {
                 _label = await LabelGenerator.GenerateFullLabelAsync(_header, _labelInformation);
@@ -66,16 +106,8 @@ public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, 
             }
             // consume the queued serializing number (only if the print was successful)
             if (Printed) {
-                string SerialNumber;
-                if (_serializeMode == "JBK") {
-                    SerialNumber = await JBKQueue.ConsumeAsync(_modelNumber);
-                } else {
-                    SerialNumber = await LotQueue.ConsumeAsync(_modelNumber);
-                }
-                // if partial, store the queued number for use in the full label
-                if (_labelType == "Partial") {
-                    // do caching actions
-                } 
+                await ProcessSerialNumber();
+                // destroy the cached serial number here if the label was partial
             }
         }
     }
