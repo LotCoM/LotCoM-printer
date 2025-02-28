@@ -265,6 +265,7 @@ public partial class MainPageViewModel : ObservableObject {
         DisplayedModel = "";
         DisplayedJBKNumber = "";
         DisplayedLotNumber = "";
+        BasketType = "Full";
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
