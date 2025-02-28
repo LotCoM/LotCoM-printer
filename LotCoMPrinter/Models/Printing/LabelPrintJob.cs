@@ -65,9 +65,10 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
             }
             // consume the queued serializing number (only if the print was successful)
             if (Printed) {
-                // remove the cached serial number here if the label was partial
-                if (_labelType == "Partial") {
-                    await SerialCache.RemoveCachedSerialNumber(_labelInformation[3], _labelInformation[1].Split("\n")[0]);
+                // remove the cached serial number here if the label was full
+                if (_labelType == "Full") {
+                    string SerialNumber = _labelInformation[3].Replace("JBK: ", "").Replace("Lot: ", "");
+                    await SerialCache.RemoveCachedSerialNumber(SerialNumber, _labelInformation[1].Split("\n")[0]);
                 }
             }
         }
