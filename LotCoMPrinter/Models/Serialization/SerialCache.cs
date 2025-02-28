@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Serialization;
 
 public static class SerialCache {
 

@@ -14,7 +14,7 @@ public class Serializer() {
     /// <param name="SerializeMode">Either 'JBK' or 'Lot'.</param>
     /// <param name="LabelType">Selection from the BasketTypePicker control.</param>
     /// <returns></returns>
-    private async Task<string?> Serialize(string Part, string ModelNumber, string SerializeMode, string LabelType) {
+    public async Task<string?> Serialize(string Part, string ModelNumber, string SerializeMode, string LabelType) {
         string? SerialNumber = null;
         // run a new CPU thread to get the serial number for this label
         await Task.Run(async () => {
