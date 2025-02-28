@@ -21,20 +21,6 @@ public static class InterfaceCaptureValidator {
         }
     }
 
-    private static string ValidateLotNumberEntry(Entry LotNumberEntry) {
-        // validate that the entry has a value
-        string Value = LotNumberEntry.Text;
-        if (Value == "") {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Invalid Production Data", "Please enter a Lot Number before printing Labels.");
-            throw new FormatException();
-        } else {
-            // remove whitespace and commas
-            Value = Value.Replace(",", "").Replace(" ", "");
-            return Value;
-        }
-    }
-
     private static string ValidateAsDigits(Entry EntryControl, string DataField) {
         // validate that the entry has a value and that it only contains digits
         string Value = EntryControl.Text;
@@ -118,8 +104,6 @@ public static class InterfaceCaptureValidator {
     /// <param name="Process"></param>
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
-    /// <param name="JBKNumberEntry"></param>
-    /// <param name="LotNumberEntry"></param>
     /// <param name="DeburrJBKNumberEntry"></param>
     /// <param name="DieNumberEntry"></param>
     /// <param name="ModelNumberEntry"></param>
@@ -128,8 +112,8 @@ public static class InterfaceCaptureValidator {
     /// <returns>A Dictionary of data captured from the UI Controls, keyed by their respective Control names.</returns>
     /// <exception cref="FormatException">Raises if any of the required checks are failed.</exception>
     public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
-        Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry,
-        Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
+        Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, 
+        Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
         // retrieve the Process requirements
         List<string> Requirements = [];
@@ -167,14 +151,14 @@ public static class InterfaceCaptureValidator {
                 Quantity = ValidateAsDigits(QuantityEntry, "Quantity");
                 UIResults.Add($"Quantity: {Quantity!}");
             };
-            // validate jbk number
+            // validate jbk number (not needed; Serializer assigns valid numbers)
             if (Requirements.Contains("JBKNumberEntry")) {
-                JBKNumber = ValidateJBKNumber(JBKNumberEntry, "JBK Number");
+                JBKNumber = "000";
                 UIResults.Add($"JBK #: {JBKNumber!}");
             };
-            // validate lot number
+            // validate lot number (not needed; Serializer assigns valid numbers)
             if (Requirements.Contains("LotNumberEntry")) {
-                LotNumber = ValidateLotNumberEntry(LotNumberEntry);
+                LotNumber = "000000000";
                 UIResults.Add($"Lot #: {LotNumber!}");
             };
             // validate deburr jbk number

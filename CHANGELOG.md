@@ -92,4 +92,13 @@ Approach 2:
 
 ## `0.5.0`
 #### Partial Label Implementation
-- Implementation of `PartialLabel.cs`, an extension of the `Label.cs` class with special formatting.
+- Implement `PartialLabel.cs`, an extension of the `Label.cs` class with special formatting.
+
+## `0.5.1`
+#### Queue Consumption and Reserving (Partial Label)
+- Refactor Serial # assignment and queueing to eliminate the gap outlined in [#53](https://github.com/LotCoM/LotCoM-printer/issues/53).
+- Resolve [#58](https://github.com/LotCoM/LotCoM-printer/issues/58).
+- Implement standalone `Serialization` namespace, classes, and system.
+  - `CachedSerialNumber.cs`: represents a simple `Part Number`: `Serial Number` pair with basic methods.
+  - `SerialCache.cs`: controls interaction with the Serial Caching file system and contents.
+  - `Serializer.cs`: assigns Serial Numbers to new Labels (both `Full` and `Partial`).
