@@ -8,32 +8,31 @@ public static class SerialCache {
     private static readonly string _cacheFile = Path.Join(_cacheDir, "serial_cache.json");
 
     /// <summary>
-    /// Checks if the cache directory exists.
-    /// </summary>
-    /// <returns></returns>
-    private static bool ConfirmCacheDirectory() {
-        return Directory.Exists(_cacheDir);
-    }
-
-    /// <summary>
-    /// Checks if the cache file exists.
-    /// </summary>
-    /// <returns></returns>
-    private static bool ConfirmCacheFile() {
-        return File.Exists(_cacheFile);
-    }
-
-    /// <summary>
     /// Creates the Cache filing system if it does not already exist.
     /// </summary>
     private static void CreateCache() {
         // create the cache directory
-        if (!ConfirmCacheDirectory()) {
+        if (!Directory.Exists(_cacheDir)) {
             Directory.CreateDirectory(_cacheDir);
         }
         // create the cache file
-        if (!ConfirmCacheDirectory()) {
+        if (!File.Exists(_cacheFile)) {
             File.Create(_cacheFile);
+        }
+    }
+
+    /// <summary>
+    /// Returns whether the passed Dictionary has any contents.
+    /// </summary>
+    /// <param name="CacheDictionary">The Dictionary built from the Cache File.</param>
+    /// <returns></returns>
+    private static bool HasContents(Dictionary<string, int> CacheDictionary) {
+        // return if there are any keys in the dictionary (contains any cached serials)
+        try {
+            return CacheDictionary.Keys.Count > 0;
+        // the key access failed; the dict is empty
+        } catch {
+            return false;
         }
     }
 
@@ -54,7 +53,13 @@ public static class SerialCache {
                 throw new JsonException($"Failed to deserialize the Serial Cache.");
             }
         });
-        return CacheDictionary;
+        // check that there was something in the cache
+        if (HasContents(CacheDictionary)) {
+            return CacheDictionary;
+        // the file was empty
+        } else {
+            throw new FileLoadException("The Cache file was empty.");
+        }
     }
 
     /// <summary>
@@ -67,16 +72,6 @@ public static class SerialCache {
         string Serialized = JsonConvert.SerializeObject(CacheDictionary);
         // write the serialized string to the cache file
         await File.WriteAllTextAsync(_cacheFile, Serialized);
-    }
-
-    /// <summary>
-    /// Returns whether the passed Dictionary has any contents.
-    /// </summary>
-    /// <param name="CacheDictionary">The Dictionary built from the Cache File.</param>
-    /// <returns></returns>
-    private static bool HasContents(Dictionary<string, int> CacheDictionary) {
-        // return if there are any keys in the dictionary (contains any cached serials)
-        return CacheDictionary.Keys.Count == 0;
     }
 
     /// <summary>
@@ -98,6 +93,24 @@ public static class SerialCache {
     }
 
     /// <summary>
+    /// Converts a List of CachedSerialNumber objects into a Cache Dictionary.
+    /// </summary>
+    /// <param name="CacheList"></param>
+    /// <returns></returns>
+    private static async Task<Dictionary<string, int>> BuildCacheDictionary(List<CachedSerialNumber> CacheList) {
+        // run the conversion on a new CPU thread
+        Dictionary<string, int> CacheDictionary = await Task.Run(() => {
+            Dictionary<string, int> Dict = [];
+            // convert each List index into a key/value in the cache dictionary
+            foreach (CachedSerialNumber _cached in CacheList) {
+                Dict.Add(_cached.GetPartNumber(), int.Parse(_cached.GetSerialNumber()));
+            }
+            return Dict;
+        });
+        return CacheDictionary;
+    }
+
+    /// <summary>
     /// Adds a new Cache object to the cache file.
     /// </summary>
     /// <param name="Cachable"></param>
@@ -106,7 +119,11 @@ public static class SerialCache {
         // confirm the cache file exists and create it if not
         CreateCache();
         // read the cache
-        Dictionary<string, int> CacheDictionary = await Read();
+        Dictionary<string, int> CacheDictionary = [];
+        try {
+            CacheDictionary = await Read();
+        // the empty file is not a problem here
+        } catch {}
         // add the cache to the dictionary  
         CacheDictionary.Add(Cachable.GetPartNumber(), int.Parse(Cachable.GetSerialNumber()));
         // write the cache back to the cache file
@@ -122,20 +139,29 @@ public static class SerialCache {
     /// <returns></returns>
     private static async Task Remove(string SerialNumber, string PartNumber) {
         // confirm the cache file exists
-        if (!ConfirmCacheDirectory() || !ConfirmCacheFile()) {
+        if (!Directory.Exists(_cacheDir) || !File.Exists(_cacheFile)) {
             // cannot remove a cached object from non-existent cache
             return;
         }
-        // read the Cache
-        Dictionary<string, int> CacheDictionary = await Read();
-        // convert the Cache Dictionary into a Cache List
-        List<CachedSerialNumber> CacheList = await BuildCacheList(CacheDictionary);
-        // remove any matching cached objects
-        CachedSerialNumber Pattern = new CachedSerialNumber(SerialNumber, PartNumber);
-        bool Removed = CacheList.Remove(Pattern);
-        while (Removed) {
-            Removed = CacheList.Remove(Pattern);
-        }
+        // read the cache
+        Dictionary<string, int> CacheDictionary = [];
+        try {
+            CacheDictionary = await Read();
+            // convert the Cache Dictionary into a List
+            List<CachedSerialNumber> CacheList = await BuildCacheList(CacheDictionary);
+            // remove the matching cached object
+            for (int i = 0; i < CacheList.Count; i += 1) {
+                CachedSerialNumber _cached = CacheList[i];
+                // if the numbers match, remove the cached item
+                if (_cached.GetPartNumber().Equals(PartNumber) && _cached.GetSerialNumber().Equals(SerialNumber)) {
+                    CacheList.RemoveAt(i);
+                    break;
+                }
+            }
+            // convert the List back to a Dictionary
+            CacheDictionary = await BuildCacheDictionary(CacheList);
+        // cannot remove anything from an empty file
+        } catch {}
         // check if the modified cache dictionary has any contents
         if (!HasContents(CacheDictionary)) {
             // delete the cache files
@@ -154,13 +180,15 @@ public static class SerialCache {
     /// <returns>The cached serial number for the Part, as a string; null if not found.</returns>
     public static async Task<string?> FindNumberForPart(string PartNumber) {
         // confirm that the cache exists
-        if (!ConfirmCacheDirectory() || !ConfirmCacheFile()) {
+        if (!Directory.Exists(_cacheDir) || !File.Exists(_cacheFile)) {
             return null;
         }
-        // the cache file exists; read it and check whether it contains any numbers
-        Dictionary<string, int> CacheDictionary = await Read();
-        if (!HasContents(CacheDictionary)) {
-            // cache is empty, will not have a number for any parts
+        // the cache file exists; read it
+        Dictionary<string, int> CacheDictionary = [];
+        try {
+            CacheDictionary = await Read();
+        // the empty file will not contain cached serial numbers
+        } catch {
             return null;
         }
         // convert the cache dictionary to a List of CachedSerialNumber objects
@@ -181,16 +209,11 @@ public static class SerialCache {
     /// <param name="SerialNumber"></param>
     /// <param name="PartNumber"></param>
     /// <returns></returns>
-    public static async Task<bool> CacheSerialNumber(string SerialNumber, string PartNumber) {
+    public static async Task CacheSerialNumber(string SerialNumber, string PartNumber) {
         // create a new CachedSerialNumber object
         CachedSerialNumber NewCache = new CachedSerialNumber(SerialNumber, PartNumber);
         // cache the number
-        try {
-            await Cache(NewCache);
-            return true;
-        } catch {
-            return false;
-        }
+        await Cache(NewCache);
     }
 
     /// <summary>

@@ -1,5 +1,3 @@
-using LotCoMPrinter.Models.Datasources;
-
 namespace LotCoMPrinter.Models.Serialization;
 
 public class Serializer() {
