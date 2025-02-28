@@ -65,12 +65,17 @@ public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, 
                 Printed = false;
             }
             // consume the queued serializing number (only if the print was successful)
-            if (Printed && (_labelType == "Full")) {
+            if (Printed) {
+                string SerialNumber;
                 if (_serializeMode == "JBK") {
-                    await JBKQueue.ConsumeAsync(_modelNumber);
+                    SerialNumber = await JBKQueue.ConsumeAsync(_modelNumber);
                 } else {
-                    await LotQueue.ConsumeAsync(_modelNumber);
+                    SerialNumber = await LotQueue.ConsumeAsync(_modelNumber);
                 }
+                // if partial, store the queued number for use in the full label
+                if (_labelType == "Partial") {
+                    // do caching actions
+                } 
             }
         }
     }
