@@ -31,6 +31,10 @@ public class PartialLabel {
     private const int LabelFieldsX = LabelInternalPadding;
     // vertical position of the Label's information fields
     private const int LabelFieldsY = CodePositionY1 + (LabelInternalPadding * 3);
+    // horizontal position of the Label's print timestamp
+    private const int TimestampX = LabelDimension - TextSizeSmall - LabelInternalPadding;
+    // vertical position of the Label's print timestamp
+    private const int TimestampY = LabelInternalPadding;
 
     // private class properties
     private readonly Bitmap _image;
@@ -153,6 +157,31 @@ public class PartialLabel {
             Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             // draw the Heading text
             Surface.DrawString(LabelFieldsBody, _fontSmall, Brushes.Black, LabelFieldsX, LabelFieldsY);
+            Surface.Flush();
+        });
+    }
+
+    
+    /// <summary>
+    /// Adds the print timestamp to the bottom-left corner of the Label.
+    /// </summary>
+    /// <returns></returns>
+    public async Task AddLabelPrintTimestamp() {
+        // start a new thread to apply the timestamp to the LabelBase
+        await Task.Run(() => {
+            // use DateTime to retrieve the current time from the system
+            string Timestamp = "Label Printed: " +
+                               $"{DateTime.Now.Month}/{DateTime.Now.Day}/{DateTime.Now.Year}" +
+                               $"-{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second}";
+            // create a drawing surface to draw the text with
+            Graphics Surface = Graphics.FromImage(_image);
+            // set the quality properties of the Surface
+            Surface.SmoothingMode = SmoothingMode.AntiAlias;
+            Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            // draw the Heading text
+            Surface.DrawString(Timestamp, _fontSmall, Brushes.Black, TimestampX, TimestampY);
             Surface.Flush();
         });
     }
