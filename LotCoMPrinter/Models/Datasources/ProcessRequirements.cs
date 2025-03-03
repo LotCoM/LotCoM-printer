@@ -8,7 +8,7 @@ public static class ProcessRequirements {
     ];
     // individual process requirements
     private static readonly List<string> _diecastRequirements = ["JBKNumberEntry", "DieNumberEntry"];
-    private static readonly List<string> _deburrRequirements = ["JBKNumberEntry"];
+    private static readonly List<string> _deburrRequirements = ["JBKNumberEntry", "DieNumberEntry"];
     private static readonly List<string> _pivotHousingMCRequirements = ["JBKNumberEntry", "DeburrJBKNumberEntry"];
     private static readonly List<string> _tiltBracketWeldRequirements = ["LotNumberEntry"];
     private static readonly List<string> _pipeWeldRequirements = ["LotNumberEntry", "ModelNumberEntry"];
