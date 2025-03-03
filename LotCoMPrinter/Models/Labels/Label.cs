@@ -16,7 +16,7 @@ public class Label {
     // size of small text on label (36)
     private const int TextSizeSmall = 54;
     // size of medium text on label
-    private const int TextSizeMedium = 180;
+    private const int TextSizeMedium = 96;
     // size of large text on label (306)
     private const int TextSizeLarge = 320;
     // padding of objects on the label (18) 
@@ -28,7 +28,7 @@ public class Label {
     // horizontal position of the label part name text
     private const int LabelPartNameX = LabelInternalPadding;
     // vertical position of the label part name text
-    private const int LabelPartNameY = 0;
+    private const int LabelPartNameY = CodeDimension;
     // left X coordinate of Code
     private const int CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
     // top Y coordinate of Code
@@ -113,6 +113,27 @@ public class Label {
     }
 
     /// <summary>
+    /// Writes PartName text below the Label Header.
+    /// </summary>
+    /// <param name="PartName"></param>
+    /// <returns></returns>
+    public async Task AddPartNameAsync(string PartName) {
+        // start a new CPU thread to apply the part name to the LabelBase
+        await Task.Run(() => {
+            // create a drawing surface to draw the text with
+            Graphics Surface = Graphics.FromImage(_image);
+            // set the quality properties of the Surface
+            Surface.SmoothingMode = SmoothingMode.AntiAlias;
+            Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            // draw the Part Name text
+            Surface.DrawString(PartName, _fontMedium, Brushes.Black, LabelPartNameX, LabelPartNameY);
+            Surface.Flush();
+        });
+    }
+
+    /// <summary>
     /// Adds a QR Code, as an image, to the top-right corner of the Label.
     /// </summary>
     /// <param name="LabelCode"></param>
@@ -170,7 +191,7 @@ public class Label {
     /// Adds the print timestamp to the bottom-left corner of the Label.
     /// </summary>
     /// <returns></returns>
-    public async Task AddLabelPrintTimestamp() {
+    public async Task AddLabelPrintTimestampAsync() {
         // start a new thread to apply the timestamp to the LabelBase
         await Task.Run(() => {
             // use DateTime to retrieve the current time from the system

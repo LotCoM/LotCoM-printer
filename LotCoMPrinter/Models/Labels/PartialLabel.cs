@@ -16,7 +16,7 @@ public class PartialLabel {
     // size of small text on label (36)
     private const int TextSizeSmall = 48;
     // size of medium text on label
-    private const int TextSizeMedium = 180;
+    private const int TextSizeMedium = 96;
     // size of large text on label (306)
     private const int TextSizeLarge = 240;
     // padding of objects on the label (18) 
@@ -174,7 +174,7 @@ public class PartialLabel {
     /// Adds the print timestamp to the bottom-left corner of the Label.
     /// </summary>
     /// <returns></returns>
-    public async Task AddLabelPrintTimestamp() {
+    public async Task AddLabelPrintTimestampAsync() {
         // start a new thread to apply the timestamp to the LabelBase
         await Task.Run(() => {
             // use DateTime to retrieve the current time from the system

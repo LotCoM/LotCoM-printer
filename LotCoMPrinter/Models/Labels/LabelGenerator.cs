@@ -37,9 +37,10 @@ public static class LabelGenerator {
         }
         // apply the header, the QR Code, and the Label Data to the Label
         await NewLabel.AddHeaderAsync(LabelHeader);
+        await NewLabel.AddPartNameAsync(LabelData[1].Split("\n")[1]);
         await NewLabel.AddQRCodeAsync(LabelCode);
         await NewLabel.AddLabelFieldsAsync(LabelData);
-        await NewLabel.AddLabelPrintTimestamp();
+        await NewLabel.AddLabelPrintTimestampAsync();
         // return the Label image
         return NewLabel.GetImage();
     }
@@ -79,7 +80,7 @@ public static class LabelGenerator {
         await NewLabel.AddHeaderAsync(LabelHeader);
         await NewLabel.AddQRCodeAsync(LabelCode);
         await NewLabel.AddLabelFieldsAsync(LabelData);
-        await NewLabel.AddLabelPrintTimestamp();
+        await NewLabel.AddLabelPrintTimestampAsync();
         // return the Label image
         return NewLabel.GetImage();
     }
