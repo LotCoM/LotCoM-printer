@@ -15,6 +15,8 @@ public class Label {
     private const int CodeDimension = 750;
     // size of small text on label (36)
     private const int TextSizeSmall = 54;
+    // size of medium text on label
+    private const int TextSizeMedium = 180;
     // size of large text on label (306)
     private const int TextSizeLarge = 320;
     // padding of objects on the label (18) 
@@ -23,6 +25,10 @@ public class Label {
     private const int LabelHeadingX = -72 + LabelInternalPadding;
     // vertical position of the label heading text
     private const int LabelHeadingY = -72 + LabelInternalPadding;
+    // horizontal position of the label part name text
+    private const int LabelPartNameX = LabelInternalPadding;
+    // vertical position of the label part name text
+    private const int LabelPartNameY = 0;
     // left X coordinate of Code
     private const int CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
     // top Y coordinate of Code
@@ -39,6 +45,7 @@ public class Label {
     // private class properties
     private readonly Bitmap _image;
     private readonly System.Drawing.Font _fontSmall;
+    private readonly System.Drawing.Font _fontMedium;
     private readonly System.Drawing.Font _fontLarge;
     
     /// <summary>
@@ -57,6 +64,7 @@ public class Label {
             throw new SystemException("Could not find Arial Font Group in the System.");
         }
         _fontSmall = new System.Drawing.Font(Arial!, TextSizeSmall);
+        _fontMedium = new System.Drawing.Font(Arial!, TextSizeMedium);
         _fontLarge = new System.Drawing.Font(Arial!, TextSizeLarge);
     }
 
