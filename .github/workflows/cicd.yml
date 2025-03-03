@@ -2,7 +2,7 @@ name: .NET CI/CD
 
 on:
   push:
-    branches: stable
+    branches: main
 
 permissions:
   contents: write
@@ -154,10 +154,9 @@ jobs:
           $commits | ForEach-Object {
             $commitHeadlines += $_."messageHeadline"
           }
-          Write-Output $commits
-          
-          # create a new release notes file
-          New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -Force -ErrorAction SilentlyContinue
+
+          Write-Output "Headlines"
+          Write-Output $commitHeadlines
 
           # set the Markdown content for the release notes file
           $markdownContent = @(
@@ -173,7 +172,11 @@ jobs:
             $markdownContent += $_
           }
 
-          # write the Markdown content to the release notes file
+          Write-Output "Markdown"
+          Write-Output $markdownContent
+
+          # create a new release notes file and write the Markdown content to it
+          New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -Force -ErrorAction SilentlyContinue
           $markdownContent | Set-Content -Path "D:\a\Package\release_notes.md"
           
           # create the release
