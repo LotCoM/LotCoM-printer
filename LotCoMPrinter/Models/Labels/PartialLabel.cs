@@ -168,30 +168,5 @@ public class PartialLabel {
             Surface.Flush();
         });
     }
-
-    
-    /// <summary>
-    /// Adds the print timestamp to the bottom-left corner of the Label.
-    /// </summary>
-    /// <returns></returns>
-    public async Task AddLabelPrintTimestampAsync() {
-        // start a new thread to apply the timestamp to the LabelBase
-        await Task.Run(() => {
-            // use DateTime to retrieve the current time from the system
-            string Timestamp = "Label Printed: " +
-                               $"{DateTime.Now.Month}/{DateTime.Now.Day}/{DateTime.Now.Year}" +
-                               $"-{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second}";
-            // create a drawing surface to draw the text with
-            Graphics Surface = Graphics.FromImage(_image);
-            // set the quality properties of the Surface
-            Surface.SmoothingMode = SmoothingMode.AntiAlias;
-            Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-            // draw the Heading text
-            Surface.DrawString(Timestamp, _fontSmall, Brushes.Black, TimestampX, TimestampY);
-            Surface.Flush();
-        });
-    }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
