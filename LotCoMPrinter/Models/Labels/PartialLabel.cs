@@ -26,7 +26,7 @@ public class PartialLabel {
     // horizontal position of the label part name text
     private const int LabelPartNameX = LabelInternalPadding;
     // vertical position of the label part name text
-    private const int LabelPartNameY = 0;
+    private const int LabelPartNameY = CodePositionY1 - (TextSizeMedium * 2);
     // vertical position of the label heading text
     private const int LabelHeadingY = -72 + LabelInternalPadding;
     // left X coordinate of Code
@@ -37,10 +37,6 @@ public class PartialLabel {
     private const int LabelFieldsX = LabelInternalPadding;
     // vertical position of the Label's information fields
     private const int LabelFieldsY = CodePositionY1 + (LabelInternalPadding * 3);
-    // horizontal position of the Label's print timestamp
-    private const int TimestampX = LabelInternalPadding;
-    // vertical position of the Label's print timestamp
-    private const int TimestampY = LabelDimension - (TextSizeSmall * 2) - LabelInternalPadding;
 
     // private class properties
     private readonly Bitmap _image;
@@ -113,6 +109,27 @@ public class PartialLabel {
     }
 
     /// <summary>
+    /// Writes PartName text below the Label Header.
+    /// </summary>
+    /// <param name="PartName"></param>
+    /// <returns></returns>
+    public async Task AddPartNameAsync(string PartName) {
+        // start a new CPU thread to apply the part name to the LabelBase
+        await Task.Run(() => {
+            // create a drawing surface to draw the text with
+            Graphics Surface = Graphics.FromImage(_image);
+            // set the quality properties of the Surface
+            Surface.SmoothingMode = SmoothingMode.AntiAlias;
+            Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            // draw the Part Name text
+            Surface.DrawString(PartName, _fontMedium, Brushes.Black, LabelPartNameX, LabelPartNameY);
+            Surface.Flush();
+        });
+    }
+
+    /// <summary>
     /// Adds a QR Code, as an image, to the top-right corner of the Label.
     /// </summary>
     /// <param name="LabelCode"></param>
@@ -151,7 +168,7 @@ public class PartialLabel {
                 // if the field is in the Partial Label Fields list, add it to the Label
                 if (PartialLabelFields.Any(_field.Contains)) {
                     // remove part indicator (space constraint)
-                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "").Replace("Date: ", "");
+                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "");
                     // add the field to the data body
                     LabelFieldsBody += FormattedField + "\n";
                 }
