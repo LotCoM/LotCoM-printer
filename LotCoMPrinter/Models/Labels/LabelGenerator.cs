@@ -76,6 +76,20 @@ public static class LabelGenerator {
         } catch (SystemException _ex) {
             throw new LabelBuildException($"Failed to construct new Label due to the following exception:\n{_ex.Message}");
         }
+        // add the generation timestamp to the Production Date field
+        string Hour = $"{DateTime.Now.Hour}";
+        if (Hour.Length < 2) {
+            Hour = "0" + Hour;
+        }
+        string Minute = $"{DateTime.Now.Minute}";
+        if (Minute.Length < 2) {
+            Minute = "0" + Minute;
+        }
+        string Second = $"{DateTime.Now.Second}";
+        if (Second.Length < 2) {
+            Second = "0" + Second;
+        }
+        LabelData[LabelData.Count - 3] = LabelData[LabelData.Count - 3] + $"-{Hour}:{Minute}:{Second}";
         // copy only the values of the data fields to the QR Code data
         List<string> QRCodeData = ["PARTIAL"];
         foreach(string _field in LabelData) {
