@@ -34,13 +34,9 @@ public class Label {
     // top Y coordinate of Code
     private const int CodePositionY1 = LabelInternalPadding;
     // horizontal position of the Label's information fields
-    private const int LabelFieldsX = LabelInternalPadding;
+    private const int LabelFieldsX = LabelInternalPadding * 2;
     // vertical position of the Label's information fields
-    private const int LabelFieldsY = CodeDimension + TextSizeSmall + LabelInternalPadding;
-    // horizontal position of the Label's print timestamp
-    private const int TimestampX = LabelInternalPadding;
-    // vertical position of the Label's print timestamp
-    private const int TimestampY = LabelDimension - (TextSizeSmall * 2) - LabelInternalPadding;
+    private const int LabelFieldsY = CodeDimension + TextSizeMedium + (LabelInternalPadding * 4);
 
     // private class properties
     private readonly Bitmap _image;
@@ -170,8 +166,12 @@ public class Label {
                 // if the field is the operator ID, do not include in the shown text
                 if (_field.Contains("Operator")) {
                     continue;
+                // if the field is the Part info, do not include the Part Name
+                } else if (_field.Contains("Part")) {
+                    LabelFieldsBody += $"{_field.Split("\n")[0]}\n";
+                // add the field as normal
                 } else {
-                    LabelFieldsBody += _field + "\n";
+                    LabelFieldsBody += $"{_field}\n";
                 }
             }
             // create a drawing surface to draw the text with
