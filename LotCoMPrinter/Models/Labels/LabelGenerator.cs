@@ -39,6 +39,7 @@ public static class LabelGenerator {
         await NewLabel.AddHeaderAsync(LabelHeader);
         await NewLabel.AddQRCodeAsync(LabelCode);
         await NewLabel.AddLabelFieldsAsync(LabelData);
+        await NewLabel.AddLabelPrintTimestamp();
         // return the Label image
         return NewLabel.GetImage();
     }
@@ -78,6 +79,7 @@ public static class LabelGenerator {
         await NewLabel.AddHeaderAsync(LabelHeader);
         await NewLabel.AddQRCodeAsync(LabelCode);
         await NewLabel.AddLabelFieldsAsync(LabelData);
+        await NewLabel.AddLabelPrintTimestamp();
         // return the Label image
         return NewLabel.GetImage();
     }

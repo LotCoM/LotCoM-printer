@@ -34,7 +34,7 @@ public class PartialLabel {
     // horizontal position of the Label's print timestamp
     private const int TimestampX = LabelInternalPadding;
     // vertical position of the Label's print timestamp
-    private const int TimestampY = LabelDimension - TextSizeSmall - LabelInternalPadding;
+    private const int TimestampY = LabelDimension - (TextSizeSmall * 2) - LabelInternalPadding;
 
     // private class properties
     private readonly Bitmap _image;
