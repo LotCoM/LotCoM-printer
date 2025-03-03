@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Printing;
+using LotCoMPrinter.Models.Serialization;
 using LotCoMPrinter.Models.Validators;
 
 namespace LotCoMPrinter.ViewModels;
@@ -70,7 +72,17 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(DisplayedLotNumber));
         }
     }
-
+    private string _basketType = "Full";
+    public string BasketType {
+        get {return _basketType;}
+        set {
+            _basketType = value;
+            OnPropertyChanged(nameof(_basketType));
+            OnPropertyChanged(nameof(BasketType));
+        }
+    }
+    
+    
     // full constructor
     public MainPageViewModel() {}
 
@@ -132,55 +144,6 @@ public partial class MainPageViewModel : ObservableObject {
         } catch {
             throw new ArgumentException($"Could not configure the Model # for the Part {SelectedPart}.");
         }
-    }
-
-    /// <summary>
-    /// Attempts to return a serialized identifier (JBK or Lot #) for the Label.
-    /// </summary>
-    /// <param name="SerializeMode">The data field that serializes this Process' labels (either "JBK" or "Lot").</param>
-    /// <returns></returns>
-    /// <exception cref="SystemException"></exception>
-    private async Task<string> AssignSerialNumber(string SerializeMode) {
-        string SerialNumber = await Task.Run(async () => {
-            // attempt to assign a JBK number
-            if (SerializeMode == "JBK") {
-                try {
-                    // read the queued JBK number
-                    int _awaited = await JBKQueue.QueuedAsync(DisplayedModel);
-                    string Queued = _awaited.ToString();
-                    // add leading zeroes to enforce 3-digit format
-                    while (Queued.Length < 3) {
-                        Queued = "0" + Queued;
-                    }
-                    DisplayedJBKNumber = Queued;
-                    return Queued;
-                // the JBK queue for this Model could not be read
-                } catch (Exception _ex) {
-                    DisplayedJBKNumber = "";
-                    throw new SystemException("Failed to assign a JBK # to this Label. Please see management to resolve this issue."
-                                              + $"\n\nException Message(s): {_ex.Message}");
-                }
-            // else attempt to assign a Lot number
-            } else {
-                try {
-                    // read the queued Lot number
-                    int _awaited = await LotQueue.QueuedAsync(DisplayedModel);
-                    string Queued = _awaited.ToString();
-                    // add leading zeroes to enforce 9-digit format
-                    while (Queued.Length < 9) {
-                        Queued = "0" + Queued;
-                    }
-                    DisplayedLotNumber = Queued;
-                    return Queued;
-                // the Lot queue for this Model could not be read
-                } catch (ArgumentException _ex) {
-                    DisplayedLotNumber = "";
-                    throw new SystemException("Failed to assign a Lot # to this Label. Please see management to resolve this issue."
-                                              + $"\n\nException Message(s): {_ex.Message}");
-                }
-            }
-        });
-        return SerialNumber;
     }
 
     /// <summary>
@@ -250,7 +213,18 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
-    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+        // attempt to validate the current UI status
+        List<string> UICapture;
+        try {
+			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
+				PartPicker, QuantityEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, 
+                ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+        // something was not valid in the UI
+		} catch (FormatException) {
+            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
+            return;
+        }
         // get the serialize mode for this Label
         string SerializeMode;
         if (JBKNumberEntry.IsVisible) {
@@ -258,28 +232,29 @@ public partial class MainPageViewModel : ObservableObject {
 		} else {
 			SerializeMode = "Lot";
 		}
-        // attempt to apply a serial number to the Label being generated (JBK/Lot #)
-        string SerialNumber;
-        try {
-            SerialNumber = await AssignSerialNumber(SerializeMode);
-        } catch (Exception _ex) {
-            throw new SystemException($"Failed to assign a {SerializeMode} # to this Label. Please see management to resolve this issue."
-                                      + $"\n\nException Message(s): {_ex.Message}");
+        // assign/retrieve a cached serial number for this label
+        Serializer LabelSerializer = new Serializer();
+        string? SerialNumber = await LabelSerializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
+        if (SerialNumber == null) {
+            throw new LabelBuildException("Failed to assign a Serial Number to the Label");
         }
-        // attempt to validate the current UI status
-        List<string> UICapture;
-        try {
-			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
-				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-				DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-        // something was not valid in the UI
-		} catch (FormatException) {
-            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
-            return;
-        }
+        // assign the Serial Number to the JBK/Lot # field
+        UICapture[3] = $"{SerializeMode}: {SerialNumber}";
         // create and run a Label print job
-        LabelPrintJob Job = new LabelPrintJob(UICapture, SerializeMode, DisplayedModel);
+        LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType);
         await Job.Run();
+    }
+
+    /// <summary>
+    /// Updates the Page's Selected Basket Type (Full/Partial).
+    /// </summary>
+    /// <param name="BasketType">'Full' or 'Partial', as selected in the UI.</param>
+    /// <returns></returns>
+    public async Task UpdateBasketType(string BasketType) {
+        // update the BasketType property
+        await Task.Run(() => {
+            this.BasketType = BasketType;
+        });
     }
 
     /// <summary>
@@ -290,6 +265,7 @@ public partial class MainPageViewModel : ObservableObject {
         DisplayedModel = "";
         DisplayedJBKNumber = "";
         DisplayedLotNumber = "";
+        BasketType = "Full";
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility

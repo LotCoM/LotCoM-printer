@@ -2,10 +2,7 @@ name: .NET CI/CD
 
 on:
   push:
-    branches: main
-    tags:
-      - '*.*.*'
-      - '*.*.*.*'
+    branches: stable
 
 permissions:
   contents: write
@@ -39,13 +36,13 @@ jobs:
       run: dotnet workload install maui-windows
       
     - name: Build
-      run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
+      run: dotnet publish -sc true -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
 
     - name: Copy MSIX to known path
       shell: pwsh
       run: |
         # find the MSIX package
-        $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+        $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
 
         # copy the MSIX to a set path
         New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
@@ -76,7 +73,7 @@ jobs:
       shell: pwsh
       run: |
         # Save MSIX directory
-        $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+        $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
 
         # Save certificate directories (encoded and decoded)
         $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
@@ -108,13 +105,13 @@ jobs:
 
   release:
   
-    name: Auto-Release pushed tag
+    name: auto-release
     needs: sign
     runs-on: windows-2022
     
     steps:
       - uses: actions/checkout@v3
-      - name: Retrieve PR
+      - name: Retrieve PR tag
         id: merged-pr-info
         uses: coin-tracker/get-merged-pull-request@v1.1
         with: 
@@ -123,7 +120,7 @@ jobs:
       - name: Download MSIX package
         uses: actions/download-artifact@v4
         with:
-          name: latest-windows-package
+          name: latest-windows-signed
           path: |
             D:\a\Package
 
@@ -131,7 +128,7 @@ jobs:
         shell: pwsh
         run: |
           # find the MSIX package
-          $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
 
           # copy the MSIX to a set path
           New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
@@ -151,7 +148,7 @@ jobs:
 
           # set the Markdown content for the release notes file
           $markdownContent = @(
-              "## What's Changed in `${tag}`"
+              "## What's Changed in ${tag}"
               "#### This release was generated automatically. It may not be complete or accurate."
               "#### Full notes may or may not be written in the future."
           )
@@ -170,6 +167,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
         shell: pwsh
         run: |
-          $msix = Get-ChildItem -Path "D:\a\Package" -Filter *.msix -Recurse -ErrorAction SilentlyContinue
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix
+          # locate the MSIX file and rename it
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
+          Write-Host "MSIX: $msix"
+          Write-Host "MSIX Full Path:" 
+          Write-Host $msix.FullName
+          Rename-Item -Path $msix.FullName -NewName "LotCoMPrinter_x64.msix"
+          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
+
+          # upload the MSIX to the release
+          gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix.FullName
 

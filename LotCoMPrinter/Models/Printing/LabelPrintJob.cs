@@ -1,5 +1,5 @@
 using System.Drawing;
-using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Serialization;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Labels;
 
@@ -9,14 +9,14 @@ namespace LotCoMPrinter.Models.Printing;
 /// Creates a Print Job that can generate a Bitmap image Label and spool a print job to the printing system.
 /// </summary>
 /// <param name="LabelInformation">The Data to be encoded in the Label's QR Code and shown on the Label itself (a validated UI Capture from InterfaceCaptureValidator).</param>
-public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, string ModelNumber) {
+/// <param name="LabelType">Either 'Full' or 'Partial' (from the UI BasketTypePicker control).</param>
+public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
     // private class properties to hold Label data and generated Label Bitmap
     private List<string> _labelInformation = LabelInformation;
     // split out the JBK # value to apply as the header
     private string _header = LabelInformation[3].Split(":")[1].Replace(" ", "");
     private Bitmap? _label = null;
-    private string _serializeMode = SerializeMode;
-    private string _modelNumber = ModelNumber;
+    private string _labelType = LabelType;
 
     /// <summary>
     /// Creates a Label object and Bitmap image from the Job's saved information. Stores the generated Bitmap image in _label property.
@@ -24,7 +24,13 @@ public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, 
     /// <returns></returns>
     private async Task GenerateLabelImage() {
         try {
-            _label = await LabelGenerator.GenerateLabelAsync(_header, _labelInformation);
+            // full label
+            if (_labelType == "Full") {
+                _label = await LabelGenerator.GenerateFullLabelAsync(_header, _labelInformation);
+            // partial label
+            } else {
+                _label = await LabelGenerator.GeneratePartialLabelAsync(_header, _labelInformation);
+            }
         // there was an unexpected error in the Label generation
         } catch (LabelBuildException _ex) {
             App.AlertSvc!.ShowAlert(
@@ -59,10 +65,11 @@ public class LabelPrintJob(List<string> LabelInformation, string SerializeMode, 
             }
             // consume the queued serializing number (only if the print was successful)
             if (Printed) {
-                if (_serializeMode == "JBK") {
-                    await JBKQueue.ConsumeAsync(_modelNumber);
-                } else {
-                    await LotQueue.ConsumeAsync(_modelNumber);
+                // remove the cached serial number here if the label was full
+                if (_labelType == "Full") {
+                    string SerialNumber = _labelInformation[3].Replace("JBK: ", "").Replace("Lot: ", "");
+                    string PartNumber = _labelInformation[1].Split("\n")[0].Replace("Part: ", "");
+                    await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
                 }
             }
         }

@@ -15,6 +15,9 @@ public partial class MainPage : ContentPage {
 
 		// show the window from XAML
 		InitializeComponent();
+
+		// force the basket type to be full on start-up
+		BasketTypePicker.SelectedIndex = 0;
 	}
 
 	/// <summary>
@@ -111,11 +114,24 @@ public partial class MainPage : ContentPage {
 	/// <param name="e"></param>
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// call the ViewModel's Print Request method
-		await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-									  DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, 
-									  OperatorIDEntry);
+		await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, 
+									  ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
 		// reset the UI
 		Reset();
+	}
+
+	/// <summary>
+	/// Handler for the Item Selected event from the BasketTypePicker.
+	/// </summary>
+	/// <param name="Sender"></param>
+	/// <param name="e"></param>
+	public async void OnBasketTypeSelection(object Sender, EventArgs e) {
+		// update the BasketType ViewModel property
+		Picker BasketTypePicker = (Picker)Sender;
+		string? BasketType = (string?)BasketTypePicker.ItemsSource[BasketTypePicker.SelectedIndex];
+		if (BasketType != null) {
+			await _viewModel.UpdateBasketType(BasketType);
+		}
 	}
 
 	/// <summary>
@@ -124,6 +140,9 @@ public partial class MainPage : ContentPage {
 	public void Reset() {
 		// reset viewmodel properties
 		_viewModel.Reset();
+		// Basket Type Picker reset
+		BasketTypePicker.SelectedIndex = 0;
+		BasketTypePicker.IsEnabled = true;
 		// Part Picker reset
 		PartPicker.SelectedIndex = -1;
 		PartPicker.IsEnabled = true;
