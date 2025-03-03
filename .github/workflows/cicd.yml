@@ -2,7 +2,7 @@ name: .NET CI/CD
 
 on:
   push:
-    branches: main
+    branches: stable
 
 permissions:
   contents: write
@@ -18,7 +18,7 @@ jobs:
   build:
 
     name: build-windows
-    if: ${{ github.event_name }} == 'pull_request' && ${{ github.event.action }} == 'closed' && ${{ github.event.pull_request.merged }} == true
+    if: ${{ github.event_name }} == 'pull_request'
     runs-on: windows-2022
 
     steps:
@@ -138,42 +138,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
           tag: ${{ steps.merged-pr-info.outputs.title }}
-          pr_number: ${{ steps.merged-pr-info.outputs.number }}
+          # pr_number: ${{ steps.merged-pr-info.outputs.number }}
         shell: pwsh
         run: |
           # save the tag & pr number from env
           $tag = "$env:tag"
-          $prNumber = "$env:pr_number"
+          # $prNumber = "$env:pr_number"
 
           # gather the commits from the PR
-          $commits = gh pr view $prNumber --json commits
-          $commits = ConvertFrom-Json $commits
+          # $commits = gh pr view $prNumber --json commits
+          # $commits = ConvertFrom-Json $commits
 
           # get the headline for each commit in the commits list
-          $commitHeadlines = @()
-          $commits | ForEach-Object {
-            $commitHeadlines += $_."messageHeadline"
-          }
-
-          Write-Output "Headlines"
-          Write-Output $commitHeadlines
+          # $commitHeadlines = @()
+          # $commits | ForEach-Object {
+            # $commitHeadlines += $_."messageHeadline"
+          # }
 
           # set the Markdown content for the release notes file
           $markdownContent = @(
               "## What's Changed in ${tag}"
               "#### This release was generated automatically. It may not be complete or accurate."
               "#### Full notes may or may not be written in the future."
-              ""
-              "### Changes"
           )
 
           # add the commits to the markdown content
-          $commitHeadlines | ForEach-Object {
-            $markdownContent += $_
-          }
-
-          Write-Output "Markdown"
-          Write-Output $markdownContent
+          # $commitHeadlines | ForEach-Object {
+            # $markdownContent += $_
+          # }
 
           # create a new release notes file and write the Markdown content to it
           New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -Force -ErrorAction SilentlyContinue
