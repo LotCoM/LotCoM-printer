@@ -44,7 +44,7 @@ public partial class MainPage : ContentPage {
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
 			try {
-				Requirements = ProcessRequirements.GetProcessRequirements(_viewModel.SelectedProcess.Replace(" ", ""));
+				Requirements = ProcessRequirements.GetProcessRequirements(_viewModel.SelectedProcess);
 			// the selected Process was invalid (uncommon)
 			} catch (ArgumentException) {
 				// show a warning

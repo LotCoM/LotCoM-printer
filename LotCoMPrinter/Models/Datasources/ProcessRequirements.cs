@@ -28,13 +28,13 @@ public static class ProcessRequirements {
         }
         // create a dictionary to convert from Process to Property
         Dictionary<string, List<string>> Conversions = new Dictionary<string, List<string>> {
-            {"Diecast", _diecastRequirements},
-            {"Deburr", _deburrRequirements},
-            {"PivotHousingMC", _pivotHousingMCRequirements},
-            {"UppershaftMC", _uppershaftMCRequirements},
-            {"TiltBracketWeld", _tiltBracketWeldRequirements},
-            {"PipeWeld", _pipeWeldRequirements},
-            {"ShaftClinch", _shaftClinchRequirements}
+            {"4420 - Diecast", _diecastRequirements},
+            {"4470 - Deburr", _deburrRequirements},
+            {"4159 - Uppershaft MC", _uppershaftMCRequirements},
+            {"4165 - CIV PH MC", _pivotHousingMCRequirements},
+            {"4155 - CIV T. Brkt. Weld", _tiltBracketWeldRequirements},
+            {"4155 - CIV Pipe Weld", _pipeWeldRequirements},
+            {"4162 - CIV Shaft Clinch", _shaftClinchRequirements}
         };
         // start with the universal requirement set
         List<string> Requirements = _universalRequirements.ToList();

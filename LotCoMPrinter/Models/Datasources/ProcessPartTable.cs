@@ -6,7 +6,7 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="Process"></param>
 public class ProcessPartTable(string Process) {
     // private class properties
-    private readonly string _filePath = $"\\\\144.133.122.1\\Lot Control Management\\Part Control\\{Process.Replace(" ", "")}.txt";
+    private readonly string _filePath = $"\\\\144.133.122.1\\Lot Control Management\\Part Control\\{Process}.txt";
 
     // public class properties
     public string Process = Process;
