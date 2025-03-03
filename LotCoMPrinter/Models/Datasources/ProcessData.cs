@@ -8,10 +8,10 @@ public static class ProcessData {
     // master list of processes
     private static readonly List<string> _processMasterList = [
         // Raw Material/In-House Mfg.
-        "Diecast - 4420", "Deburr - 4470",
-        "Uppershaft MC - 4159",
+        "4420 - Diecast", "4470 - Deburr",
+        "4159 - Uppershaft MC",
         // Civic Steering Column
-        "CIV PH MC - 4165", "CIV T. Brkt. Weld - 4155", "CIV Pipe Weld - 4155", "CIV Shaft Clinch - 4162"
+        "4165 - CIV PH MC", "4155 - CIV T. Brkt. Weld", "4155 - CIV Pipe Weld", "4162 - CIV Shaft Clinch"
     ];
     public static List<string> ProcessMasterList {
         get {return _processMasterList;}
