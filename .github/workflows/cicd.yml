@@ -18,7 +18,7 @@ jobs:
   build:
 
     name: build-windows
-    if: ${{ github.event_name }} == 'pull_request'
+    if: ${{ github.event_name }} == 'pull_request' && ${{ github.event.action }} == 'closed' && ${{ github.event.pull_request.merged }} == true
     runs-on: windows-2022
 
     steps:
