@@ -2,7 +2,7 @@ name: .NET CI/CD
 
 on:
   push:
-    branches: main
+    branches: stable
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
       run: dotnet workload install maui-windows
       
     - name: Build
-      run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
+      run: dotnet publish -sc true -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true
 
     - name: Copy MSIX to known path
       shell: pwsh
@@ -105,13 +105,13 @@ jobs:
 
   release:
   
-    name: Auto-Release pushed tag
+    name: auto-release
     needs: sign
     runs-on: windows-2022
     
     steps:
       - uses: actions/checkout@v3
-      - name: Retrieve PR
+      - name: Retrieve PR tag
         id: merged-pr-info
         uses: coin-tracker/get-merged-pull-request@v1.1
         with: 
