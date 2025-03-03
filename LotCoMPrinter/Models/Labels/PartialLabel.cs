@@ -15,12 +15,18 @@ public class PartialLabel {
     private const int CodeDimension = 750;
     // size of small text on label (36)
     private const int TextSizeSmall = 48;
+    // size of medium text on label
+    private const int TextSizeMedium = 96;
     // size of large text on label (306)
     private const int TextSizeLarge = 240;
     // padding of objects on the label (18) 
     private const int LabelInternalPadding = 16;
     // horizontal position of the label heading text
     private const int LabelHeadingX = -72 + LabelInternalPadding;
+    // horizontal position of the label part name text
+    private const int LabelPartNameX = LabelInternalPadding;
+    // vertical position of the label part name text
+    private const int LabelPartNameY = CodePositionY1 - (TextSizeMedium * 2);
     // vertical position of the label heading text
     private const int LabelHeadingY = -72 + LabelInternalPadding;
     // left X coordinate of Code
@@ -35,6 +41,7 @@ public class PartialLabel {
     // private class properties
     private readonly Bitmap _image;
     private readonly System.Drawing.Font _fontSmall;
+    private readonly System.Drawing.Font _fontMedium;
     private readonly System.Drawing.Font _fontLarge;
     
     /// <summary>
@@ -53,6 +60,7 @@ public class PartialLabel {
             throw new SystemException("Could not find Arial Font Group in the System.");
         }
         _fontSmall = new System.Drawing.Font(Arial!, TextSizeSmall);
+        _fontMedium = new System.Drawing.Font(Arial!, TextSizeMedium);
         _fontLarge = new System.Drawing.Font(Arial!, TextSizeLarge);
     }
 
@@ -101,6 +109,27 @@ public class PartialLabel {
     }
 
     /// <summary>
+    /// Writes PartName text below the Label Header.
+    /// </summary>
+    /// <param name="PartName"></param>
+    /// <returns></returns>
+    public async Task AddPartNameAsync(string PartName) {
+        // start a new CPU thread to apply the part name to the LabelBase
+        await Task.Run(() => {
+            // create a drawing surface to draw the text with
+            Graphics Surface = Graphics.FromImage(_image);
+            // set the quality properties of the Surface
+            Surface.SmoothingMode = SmoothingMode.AntiAlias;
+            Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            // draw the Part Name text
+            Surface.DrawString(PartName, _fontMedium, Brushes.Black, LabelPartNameX, LabelPartNameY);
+            Surface.Flush();
+        });
+    }
+
+    /// <summary>
     /// Adds a QR Code, as an image, to the top-right corner of the Label.
     /// </summary>
     /// <param name="LabelCode"></param>
@@ -139,7 +168,7 @@ public class PartialLabel {
                 // if the field is in the Partial Label Fields list, add it to the Label
                 if (PartialLabelFields.Any(_field.Contains)) {
                     // remove part indicator (space constraint)
-                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "").Replace("Date: ", "");
+                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "");
                     // add the field to the data body
                     LabelFieldsBody += FormattedField + "\n";
                 }

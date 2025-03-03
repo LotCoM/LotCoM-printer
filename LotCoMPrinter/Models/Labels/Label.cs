@@ -15,6 +15,8 @@ public class Label {
     private const int CodeDimension = 750;
     // size of small text on label (36)
     private const int TextSizeSmall = 54;
+    // size of medium text on label
+    private const int TextSizeMedium = 96;
     // size of large text on label (306)
     private const int TextSizeLarge = 320;
     // padding of objects on the label (18) 
@@ -23,18 +25,23 @@ public class Label {
     private const int LabelHeadingX = -72 + LabelInternalPadding;
     // vertical position of the label heading text
     private const int LabelHeadingY = -72 + LabelInternalPadding;
+    // horizontal position of the label part name text
+    private const int LabelPartNameX = LabelInternalPadding;
+    // vertical position of the label part name text
+    private const int LabelPartNameY = CodeDimension;
     // left X coordinate of Code
     private const int CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
     // top Y coordinate of Code
     private const int CodePositionY1 = LabelInternalPadding;
     // horizontal position of the Label's information fields
-    private const int LabelFieldsX = LabelInternalPadding;
+    private const int LabelFieldsX = LabelInternalPadding * 2;
     // vertical position of the Label's information fields
-    private const int LabelFieldsY = CodeDimension + TextSizeSmall + LabelInternalPadding;
+    private const int LabelFieldsY = CodeDimension + TextSizeMedium + (LabelInternalPadding * 4);
 
     // private class properties
     private readonly Bitmap _image;
     private readonly System.Drawing.Font _fontSmall;
+    private readonly System.Drawing.Font _fontMedium;
     private readonly System.Drawing.Font _fontLarge;
     
     /// <summary>
@@ -53,6 +60,7 @@ public class Label {
             throw new SystemException("Could not find Arial Font Group in the System.");
         }
         _fontSmall = new System.Drawing.Font(Arial!, TextSizeSmall);
+        _fontMedium = new System.Drawing.Font(Arial!, TextSizeMedium);
         _fontLarge = new System.Drawing.Font(Arial!, TextSizeLarge);
     }
 
@@ -101,6 +109,27 @@ public class Label {
     }
 
     /// <summary>
+    /// Writes PartName text below the Label Header.
+    /// </summary>
+    /// <param name="PartName"></param>
+    /// <returns></returns>
+    public async Task AddPartNameAsync(string PartName) {
+        // start a new CPU thread to apply the part name to the LabelBase
+        await Task.Run(() => {
+            // create a drawing surface to draw the text with
+            Graphics Surface = Graphics.FromImage(_image);
+            // set the quality properties of the Surface
+            Surface.SmoothingMode = SmoothingMode.AntiAlias;
+            Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            // draw the Part Name text
+            Surface.DrawString(PartName, _fontMedium, Brushes.Black, LabelPartNameX, LabelPartNameY);
+            Surface.Flush();
+        });
+    }
+
+    /// <summary>
     /// Adds a QR Code, as an image, to the top-right corner of the Label.
     /// </summary>
     /// <param name="LabelCode"></param>
@@ -137,8 +166,12 @@ public class Label {
                 // if the field is the operator ID, do not include in the shown text
                 if (_field.Contains("Operator")) {
                     continue;
+                // if the field is the Part info, do not include the Part Name
+                } else if (_field.Contains("Part")) {
+                    LabelFieldsBody += $"{_field.Split("\n")[0]}\n";
+                // add the field as normal
                 } else {
-                    LabelFieldsBody += _field + "\n";
+                    LabelFieldsBody += $"{_field}\n";
                 }
             }
             // create a drawing surface to draw the text with

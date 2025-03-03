@@ -7,7 +7,11 @@ namespace LotCoMPrinter.Models.Datasources;
 public static class ProcessData {
     // master list of processes
     private static readonly List<string> _processMasterList = [
-        "Diecast", "Deburr", "Pivot Housing MC", "Uppershaft MC", "Tilt Bracket Weld", "Pipe Weld", "Shaft Clinch"
+        // Raw Material/In-House Mfg.
+        "4420 - Diecast", "4470 - Deburr",
+        "4159 - Uppershaft MC",
+        // Civic Steering Column
+        "4165 - CIV PH MC", "4155 - CIV T. Brkt. Weld", "4155 - CIV Pipe Weld", "4162 - CIV Shaft Clinch"
     ];
     public static List<string> ProcessMasterList {
         get {return _processMasterList;}

@@ -217,7 +217,7 @@ public partial class MainPageViewModel : ObservableObject {
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
-			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess.Replace(" ", ""), 
+			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess, 
 				PartPicker, QuantityEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, 
                 ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // something was not valid in the UI
