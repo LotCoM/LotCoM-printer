@@ -5,8 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:LotCoMPrinter"
     xmlns:views="clr-namespace:LotCoMPrinter.Views"
-    Shell.FlyoutBehavior="Disabled"
-    Title="WIP Labels">
+    Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
         Title="Print Labels"

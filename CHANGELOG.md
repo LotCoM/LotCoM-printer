@@ -102,3 +102,8 @@ Approach 2:
   - `CachedSerialNumber.cs`: represents a simple `Part Number`: `Serial Number` pair with basic methods.
   - `SerialCache.cs`: controls interaction with the Serial Caching file system and contents.
   - `Serializer.cs`: assigns Serial Numbers to new Labels (both `Full` and `Partial`).
+### `0.5.1.1`
+- Refactor CI/CD pipeline to: 
+  - Activate on pushes to `stable` instead of `main`;
+  - Ensure that the `.NET runtime` is packaged with the application.
+- Add application version to window title bar.
