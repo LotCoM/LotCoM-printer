@@ -138,23 +138,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_1 }}
           tag: ${{ steps.merged-pr-info.outputs.title }}
-          pr_number: ${{ steps.merged-pr-info.outputs.number }}
         shell: pwsh
         run: |
-          # save the tag & pr number from env
+          # save the tag from env
           $tag = "$env:tag"
-          $prNumber = "$env:pr_number"
-
-          # gather the commits from the PR
-          $commits = gh pr view $prNumber --json commits
-          $commits = ConvertFrom-Json $commits
-
-          # get the headline for each commit in the commits list
-          $commitHeadlines = @()
-          $commits | ForEach-Object {
-            $commitHeadlines += $_."messageHeadline"
-          }
-          Write-Output $commits
           
           # create a new release notes file
           New-Item -ItemType file -Path "D:\a\Package\release_notes.md" -Force -ErrorAction SilentlyContinue
@@ -164,14 +151,7 @@ jobs:
               "## What's Changed in ${tag}"
               "#### This release was generated automatically. It may not be complete or accurate."
               "#### Full notes may or may not be written in the future."
-              ""
-              "### Changes"
           )
-
-          # add the commits to the markdown content
-          $commitHeadlines | ForEach-Object {
-            $markdownContent += $_
-          }
 
           # write the Markdown content to the release notes file
           $markdownContent | Set-Content -Path "D:\a\Package\release_notes.md"

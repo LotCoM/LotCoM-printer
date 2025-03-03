@@ -107,5 +107,3 @@ Approach 2:
   - Activate on pushes to `stable` instead of `main`;
   - Ensure that the `.NET runtime` is packaged with the application.
 - Add application version to window title bar.
-### `0.5.1.3`
-- Auto-release notes generation.
