@@ -114,3 +114,9 @@ Approach 2:
 - Add timestamp (print time) to Labels.
 - Move part name above process and make it larger.
 - Add Die # to required fields for Deburr process.
+
+## `0.5.3`
+#### Serialization, UI Optimization
+- Fix for [#77](https://github.com/LotCoM/LotCoM-printer/issues/77).
+- Fix for [#27](https://github.com/LotCoM/LotCoM-printer/issues/27).
+- Fix for [#59](https://github.com/LotCoM/LotCoM-printer/issues/59).

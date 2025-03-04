@@ -213,7 +213,7 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
-    public async Task PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+    public async Task<bool> PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
@@ -223,7 +223,7 @@ public partial class MainPageViewModel : ObservableObject {
         // something was not valid in the UI
 		} catch (FormatException) {
             // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
-            return;
+            return false;
         }
         // get the serialize mode for this Label
         string SerializeMode;
@@ -233,8 +233,7 @@ public partial class MainPageViewModel : ObservableObject {
 			SerializeMode = "Lot";
 		}
         // assign/retrieve a cached serial number for this label
-        Serializer LabelSerializer = new Serializer();
-        string? SerialNumber = await LabelSerializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
+        string? SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
         if (SerialNumber == null) {
             throw new LabelBuildException("Failed to assign a Serial Number to the Label");
         }
@@ -242,7 +241,9 @@ public partial class MainPageViewModel : ObservableObject {
         UICapture[3] = $"{SerializeMode}: {SerialNumber}";
         // create and run a Label print job
         LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType);
-        await Job.Run();
+        bool Printed = await Job.Run();
+        // return the print success state
+        return Printed;
     }
 
     /// <summary>
