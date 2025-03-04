@@ -243,7 +243,6 @@ public partial class MainPageViewModel : ObservableObject {
         // create and run a Label print job
         LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType);
         bool Printed = await Job.Run();
-        Console.WriteLine($"Printed: {Printed}");
         // return the print success state
         return Printed;
     }
