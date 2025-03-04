@@ -233,8 +233,7 @@ public partial class MainPageViewModel : ObservableObject {
 			SerializeMode = "Lot";
 		}
         // assign/retrieve a cached serial number for this label
-        Serializer LabelSerializer = new Serializer();
-        string? SerialNumber = await LabelSerializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
+        string? SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
         if (SerialNumber == null) {
             throw new LabelBuildException("Failed to assign a Serial Number to the Label");
         }
