@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace LotCoMPrinter.Models.Serialization;
 
-public class SerialCache {
+public class SerialCacheController {
     // Cache system paths
     private static readonly string _cacheDir = Path.Join(FileSystem.AppDataDirectory, "SerialCache");
     private static readonly string _cacheFile = Path.Join(_cacheDir, "serial_cache.json");
@@ -16,7 +16,7 @@ public class SerialCache {
     /// <summary>
     /// Creates a controlled interface with the Serial Cache File system for the Application instance.
     /// </summary>
-    public SerialCache() {
+    public SerialCacheController() {
         // create the cache directory
         if (!Directory.Exists(_cacheDir)) {
             Directory.CreateDirectory(_cacheDir);
