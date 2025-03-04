@@ -44,14 +44,14 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
     /// Runs the Print Job (creates a Handler for the Job and spools it to the system's printing system).
     /// </summary>
     /// <returns></returns>
-    public async Task Run() {
+    public async Task<bool> Run() {
         // generate a Label from the saved Label information
         await GenerateLabelImage();
         // create a PrintHandler object for the new Label
+        bool Printed = false;
         if (_label != null) {
             PrintHandler LabelPrinter = new PrintHandler(_label);
             // try to print the Label
-            bool Printed;
             try {
                 await LabelPrinter.PrintLabelAsync();
                 Printed = true;
@@ -61,7 +61,6 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
                     "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
                     + $"\n\nException Message(s): {_ex.InnerException}"
                 );
-                Printed = false;
             }
             // consume the queued serializing number (only if the print was successful)
             if (Printed) {
@@ -73,5 +72,6 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
                 }
             }
         }
+        return Printed;
     }
 }

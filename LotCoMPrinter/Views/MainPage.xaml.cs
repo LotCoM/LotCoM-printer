@@ -114,10 +114,13 @@ public partial class MainPage : ContentPage {
 	/// <param name="e"></param>
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// call the ViewModel's Print Request method
-		await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, 
-									  ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-		// reset the UI
-		Reset();
+		bool Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, DeburrJBKNumberEntry, 
+													 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, 
+													 ProductionShiftPicker, OperatorIDEntry);
+		// reset UI if print was successful
+		if (Printed) {
+			Reset();
+		}
 	}
 
 	/// <summary>
