@@ -22,7 +22,7 @@ public static class ProcessData {
         "4420 - Diecast",
         "4159 - Uppershaft MC",
         // Civic Steering Column
-        "4155 - CIV T. Brkt. Weld", "4155 - CIV Pipe Weld", "4162 - CIV Shaft Clinch"
+        "4165 - CIV PH MC", "4155 - CIV T. Brkt. Weld", "4155 - CIV Pipe Weld", "4162 - CIV Shaft Clinch"
     ];
 
     /// <summary>
