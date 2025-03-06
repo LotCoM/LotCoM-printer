@@ -7,7 +7,7 @@ namespace LotCoMPrinter.Models.Labels;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 
-public class Label {
+public class FullLabel {
     // label dimension constants; (value) = default
     // dimension (square dimension) of label (900)
     private const int LabelDimension = 1800;
@@ -48,7 +48,7 @@ public class Label {
     /// Creates a new Image of a Production Lot Tracing Label that can be sent to Print Spooling.
     /// </summary>
     /// <exception cref="SystemException"></exception>
-    public Label() {
+    public FullLabel() {
         // load a new Label base
         _image = LoadBase();
         
