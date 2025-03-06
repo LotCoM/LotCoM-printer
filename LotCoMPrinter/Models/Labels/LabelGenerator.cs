@@ -15,9 +15,9 @@ public static class LabelGenerator {
     /// <exception cref="LabelBuildException"></exception>
     public static async Task<Bitmap> GenerateFullLabelAsync(string LabelHeader, List<string> LabelData) {    
         // create a new Label
-        Label? NewLabel;
+        FullLabel? NewLabel;
         try {
-            NewLabel = new Label();
+            NewLabel = new FullLabel();
         // the Label failed to configure its fonts from the System
         } catch (SystemException _ex) {
             throw new LabelBuildException($"Failed to construct new Label due to the following exception:\n{_ex.Message}");
