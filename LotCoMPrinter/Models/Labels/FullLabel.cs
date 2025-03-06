@@ -7,7 +7,7 @@ namespace LotCoMPrinter.Models.Labels;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 
-public class Label {
+public class FullLabel {
     // label dimension constants; (value) = default
     // dimension (square dimension) of label (900)
     private const int LabelDimension = 1800;
@@ -18,13 +18,13 @@ public class Label {
     // size of medium text on label
     private const int TextSizeMedium = 96;
     // size of large text on label (306)
-    private const int TextSizeLarge = 320;
+    private const int TextSizeLarge = 240;
     // padding of objects on the label (18) 
     private const int LabelInternalPadding = 16;
     // horizontal position of the label heading text
     private const int LabelHeadingX = -72 + LabelInternalPadding;
     // vertical position of the label heading text
-    private const int LabelHeadingY = -72 + LabelInternalPadding;
+    private const int LabelHeadingY = -36 + LabelInternalPadding;
     // horizontal position of the label part name text
     private const int LabelPartNameX = LabelInternalPadding;
     // vertical position of the label part name text
@@ -48,7 +48,7 @@ public class Label {
     /// Creates a new Image of a Production Lot Tracing Label that can be sent to Print Spooling.
     /// </summary>
     /// <exception cref="SystemException"></exception>
-    public Label() {
+    public FullLabel() {
         // load a new Label base
         _image = LoadBase();
         

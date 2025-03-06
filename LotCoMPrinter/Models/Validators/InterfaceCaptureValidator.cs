@@ -56,6 +56,30 @@ public static class InterfaceCaptureValidator {
         return Value;
     }
 
+    private static string ValidateLotNumber(Entry LotNumberEntry) {
+        // validate that the entry has a value and that it only contains alnum characters
+        string Value = LotNumberEntry.Text;
+        if (Value == "") {
+            // show a warning
+            App.AlertSvc!.ShowAlert("Invalid Lot #", "Please enter a Lot # before printing Labels.");
+            throw new FormatException();
+        } else {
+            // set a regex pattern for 1+ alphanumerical characters
+            string LotPattern = @"^[a-zA-Z0-9]+$";
+            Regex LotRegex = new Regex(LotPattern);
+            // ensure the value matches the regex requirement
+            if (!LotRegex.IsMatch(Value)) {
+                App.AlertSvc!.ShowAlert("Invalid Lot #", "Please enter a valid Lot # before printing Labels.");
+                throw new FormatException();
+            }
+            // add leading zeroes to create 9-length format and return the lot #
+            while (Value.Length < 9) {
+                Value = $"0{Value}";
+            }
+            return Value;
+        }
+    }
+
     private static string ValidateOperatorID(Entry OperatorIDEntry) {
         // validate that the entry has a value and that it only contains characters
         string Value = OperatorIDEntry.Text;
@@ -104,6 +128,8 @@ public static class InterfaceCaptureValidator {
     /// <param name="Process"></param>
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
+    /// <param name="JBKNumberEntry"></param>
+    /// <param name="LotNumberEntry"></param>
     /// <param name="DeburrJBKNumberEntry"></param>
     /// <param name="DieNumberEntry"></param>
     /// <param name="ModelNumberEntry"></param>
@@ -112,8 +138,8 @@ public static class InterfaceCaptureValidator {
     /// <returns>A Dictionary of data captured from the UI Controls, keyed by their respective Control names.</returns>
     /// <exception cref="FormatException">Raises if any of the required checks are failed.</exception>
     public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
-        Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, 
-        Picker ProductionShiftPicker, Entry OperatorIDEntry
+        Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, 
+        Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
         // retrieve the Process requirements
         List<string> Requirements = [];
@@ -151,14 +177,30 @@ public static class InterfaceCaptureValidator {
                 Quantity = ValidateAsDigits(QuantityEntry, "Quantity");
                 UIResults.Add($"Quantity: {Quantity!}");
             };
-            // validate jbk number (not needed; Serializer assigns valid numbers)
+            // validate jbk number
             if (Requirements.Contains("JBKNumberEntry")) {
-                JBKNumber = "000";
+                // check if the JBK number is needed
+                if (ProcessData.IsOriginator(Process)) {
+                    // JBK is assigned by serialization system and will be valid
+                    JBKNumber = "000";
+                } else {
+                    // JBK was entered by operator; validate
+                    JBKNumber = ValidateJBKNumber(JBKNumberEntry, "JBK Number");
+                }
+                // add the JBK Number to the UI Results
                 UIResults.Add($"JBK #: {JBKNumber!}");
             };
-            // validate lot number (not needed; Serializer assigns valid numbers)
+            // validate lot number
             if (Requirements.Contains("LotNumberEntry")) {
-                LotNumber = "000000000";
+                // check if the JBK number is needed
+                if (ProcessData.IsOriginator(Process)) {
+                    // Lot is assigned by serialization system and will be valid
+                    LotNumber = "000000000";
+                } else {
+                    // Lot was entered by operator; validate
+                    LotNumber = ValidateLotNumber(LotNumberEntry);
+                }
+                // add the Lot Number to the UI Results
                 UIResults.Add($"Lot #: {LotNumber!}");
             };
             // validate deburr jbk number

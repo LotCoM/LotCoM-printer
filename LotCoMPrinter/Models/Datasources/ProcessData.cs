@@ -16,6 +16,14 @@ public static class ProcessData {
     public static List<string> ProcessMasterList {
         get {return _processMasterList;}
     }
+    // list of origination processes (processes that produce serialization)
+    private static List<string> _originationProcesses = [
+        // Raw Material/In-House Mfg.
+        "4420 - Diecast",
+        "4159 - Uppershaft MC",
+        // Civic Steering Column
+        "4165 - CIV PH MC", "4155 - CIV T. Brkt. Weld", "4155 - CIV Pipe Weld", "4162 - CIV Shaft Clinch"
+    ];
 
     /// <summary>
     /// Formats the Part passed into a two-line, newline-split Part String, which can be displayed.
@@ -56,5 +64,15 @@ public static class ProcessData {
             return PartDictionary;
         });
         return ProcessParts;
+    }
+
+    /// <summary>
+    /// Checks if a Process is an originator (a process that creates new parts and requires serialization).
+    /// </summary>
+    /// <param name="Process">Process Title to check (including code prefix).</param>
+    /// <returns>bool</returns>
+    public static bool IsOriginator(string Process) {
+        // check whether the process is an originator or not
+        return _originationProcesses.Contains(Process);
     }
 }

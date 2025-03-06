@@ -10,11 +10,11 @@ namespace LotCoMPrinter.Models.Printing;
 /// </summary>
 /// <param name="LabelInformation">The Data to be encoded in the Label's QR Code and shown on the Label itself (a validated UI Capture from InterfaceCaptureValidator).</param>
 /// <param name="LabelType">Either 'Full' or 'Partial' (from the UI BasketTypePicker control).</param>
-public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
+public class LabelPrintJob(List<string> LabelInformation, string LabelType, string Header) {
     // private class properties to hold Label data and generated Label Bitmap
     private List<string> _labelInformation = LabelInformation;
     // split out the JBK # value to apply as the header
-    private string _header = LabelInformation[3].Split(":")[1].Replace(" ", "");
+    private string _header = Header;
     private Bitmap? _label = null;
     private string _labelType = LabelType;
 
@@ -23,6 +23,7 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType) {
     /// </summary>
     /// <returns></returns>
     private async Task GenerateLabelImage() {
+        // elicit the header (JBK # if serialization is JBK, MM/DD of date if serialization is Lot)
         try {
             // full label
             if (_labelType == "Full") {

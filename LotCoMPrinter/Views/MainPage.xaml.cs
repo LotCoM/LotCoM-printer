@@ -60,6 +60,16 @@ public partial class MainPage : ContentPage {
 					_pair.Value[1].IsVisible = false;
 				}
 			}
+        	// confirm whether this label needs to be serialized or considered "pass-through"
+			if (_viewModel.IsOriginator) {
+				// disable serial number inputs
+				JBKNumberEntry.IsEnabled = false;
+				LotNumberEntry.IsEnabled = false;
+			} else {
+				// enable serial number inputs
+				JBKNumberEntry.IsEnabled = true;
+				LotNumberEntry.IsEnabled = true;
+			}
 		}
     }
 
@@ -98,11 +108,9 @@ public partial class MainPage : ContentPage {
 			App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Part/Model # could not be retrieved. Please see management to resolve this issue."
 									+ $"\n\nError: {_ex.Message}");
 		}
-		// disable the Model and JBK Number controls if the implication was successful
+		// disable the Model Number control if the implication was successful
 		if (PartSelection) {
 			ModelNumberEntry.IsEnabled = false;
-			JBKNumberEntry.IsEnabled = false;
-			LotNumberEntry.IsEnabled = false;
 		}
 	}
 
@@ -114,9 +122,9 @@ public partial class MainPage : ContentPage {
 	/// <param name="e"></param>
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// call the ViewModel's Print Request method
-		bool Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, DeburrJBKNumberEntry, 
-													 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, 
-													 ProductionShiftPicker, OperatorIDEntry);
+		bool Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, 
+													 DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, 
+													 ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
 		// reset UI if print was successful
 		if (Printed) {
 			Reset();
@@ -152,12 +160,6 @@ public partial class MainPage : ContentPage {
 		// Quantity Input reset
 		QuantityEntry.Text = "";
 		QuantityEntry.IsEnabled = true;
-		// JBK Input reset
-		JBKNumberEntry.Text = "";
-		JBKNumberEntry.IsEnabled = false;
-		// Lot Input reset
-		LotNumberEntry.Text = "";
-		LotNumberEntry.IsEnabled = false;
 		// Deburr JBK Input reset
 		DeburrJBKNumberEntry.Text = "";
 		DeburrJBKNumberEntry.IsEnabled = true;
@@ -176,6 +178,15 @@ public partial class MainPage : ContentPage {
 		// Operator Initials Entry reset
 		OperatorIDEntry.Text = "";
 		OperatorIDEntry.IsEnabled = true;
+		// re-enable serial number inputs if serialization is not needed
+		if (!_viewModel.IsOriginator) {
+			// JBK Input reset
+			JBKNumberEntry.Text = "";
+			JBKNumberEntry.IsEnabled = true;
+			// Lot Input reset
+			LotNumberEntry.Text = "";
+			LotNumberEntry.IsEnabled = true;
+		}
 	}
 }
 

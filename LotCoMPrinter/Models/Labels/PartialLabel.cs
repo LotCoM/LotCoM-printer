@@ -161,14 +161,14 @@ public class PartialLabel {
         // start a new CPU thread to apply the Label Fields to the LabelBase
         await Task.Run(() => {
             // create a list of Partial Label fields
-            List<string> PartialLabelFields = ["JBK #", "Lot #", "Part", "Quantity", "Production Date", "Production Shift"];
+            List<string> PartialLabelFields = ["Process", "JBK #", "Lot #", "Part", "Quantity", "Production Date", "Production Shift"];
             // combine the LabelFields into a string deliniated by newlines
             string LabelFieldsBody = "";
             foreach (string _field in LabelFields) {
                 // if the field is in the Partial Label Fields list, add it to the Label
                 if (PartialLabelFields.Any(_field.Contains)) {
                     // remove part indicator (space constraint)
-                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "");
+                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "").Replace("Process: ", "");
                     // add the field to the data body
                     LabelFieldsBody += FormattedField + "\n";
                 }
