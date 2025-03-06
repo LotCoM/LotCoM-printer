@@ -206,7 +206,6 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
     /// <param name="JBKNumberEntry"></param>
-    /// <param name="LotNumberEntry"></param>
     /// <param name="DeburrJBKNumberEntry"></param>
     /// <param name="DieNumberEntry"></param>
     /// <param name="ModelNumberEntry"></param>
@@ -239,8 +238,24 @@ public partial class MainPageViewModel : ObservableObject {
         }
         // assign the Serial Number to the JBK/Lot # field
         UICapture[3] = $"{SerializeMode}: {SerialNumber}";
+        // decide to use the JBK or Date as the header
+        string Header = "";
+        if (SerializeMode == "JBK") {
+            // header is the JBK # (remove "JBK #: ")
+            Header = UICapture[3].Split(":")[1].Replace(" ", "");
+        } else {
+            // header is the MM/DD of the Production Date 
+            // retrieve the Date from the UI Capture
+            string Date = UICapture[UICapture.Count - 3];
+            // remove the "Production Date: " field tag
+            Date = Date.Split(":")[1].Replace(" ", "");
+            // split the date into its MM/DD/YY-HH:MM:SS segments
+            string[] SplitDate = Date.Split("/");
+            // set the header to use the MM and DD fields
+            Header = $"{SplitDate[0]}/{SplitDate[1]}";
+        }
         // create and run a Label print job
-        LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType);
+        LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType, Header);
         bool Printed = await Job.Run();
         // return the print success state
         return Printed;
