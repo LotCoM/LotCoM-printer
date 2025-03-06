@@ -120,3 +120,9 @@ Approach 2:
 - Fix for [#77](https://github.com/LotCoM/LotCoM-printer/issues/77).
 - Fix for [#27](https://github.com/LotCoM/LotCoM-printer/issues/27).
 - Fix for [#59](https://github.com/LotCoM/LotCoM-printer/issues/59).
+
+## `0.5.4`
+#### More Serialization bug fixes
+- Resolve [#76](https://github.com/LotCoM/LotCoM-printer/issues/76).
+- Resolve [#74](https://github.com/LotCoM/LotCoM-printer/issues/74).
+- Resolve [#22](https://github.com/LotCoM/LotCoM-printer/issues/22).
