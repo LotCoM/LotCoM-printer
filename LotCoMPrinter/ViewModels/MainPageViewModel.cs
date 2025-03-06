@@ -81,7 +81,15 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(BasketType));
         }
     }
-    
+    private bool _isOriginator = false;
+    public bool IsOriginator {
+        get {return _isOriginator;}
+        set {
+            _isOriginator = value;
+            OnPropertyChanged(nameof(_isOriginator));
+            OnPropertyChanged(nameof(IsOriginator));
+        }
+    }
     
     // full constructor
     public MainPageViewModel() {}
@@ -145,6 +153,21 @@ public partial class MainPageViewModel : ObservableObject {
             throw new ArgumentException($"Could not configure the Model # for the Part {SelectedPart}.");
         }
     }
+
+    /// <summary>
+	/// Checks if the current SelectedProcess is an originator.
+	/// </summary>
+	public async Task<bool> IsCurrentProcessOriginator() {
+		// confirm whether this label needs to be serialized or considered "pass-through"
+        await Task.Run(() => {
+            if (ProcessData.IsOriginator(SelectedProcess)) {
+                IsOriginator = true;
+            } else {
+                IsOriginator = false;
+            }
+        });
+        return IsOriginator;
+	}
 
     /// <summary>
     /// Updates the Page's Selected Process and its Part Data.

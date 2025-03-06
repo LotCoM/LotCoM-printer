@@ -21,23 +21,10 @@ public partial class MainPage : ContentPage {
 	}
 
 	/// <summary>
-	/// Checks if the Process currently in ViewModel.SelectedProcess is an originator. 
-	/// Disables the Serial Number inputs if the Process is an originator.
-	/// </summary>
-	private void IsCurrentProcessOriginator() {
-		// confirm whether this label needs to be serialized or considered "pass-through"
-		if (ProcessData.IsOriginator(_viewModel.SelectedProcess)) {
-			// disable serial # inputs
-			JBKNumberEntry.IsEnabled = false;
-			LotNumberEntry.IsEnabled = false;
-		}
-	}
-
-	/// <summary>
 	/// Changes the visibility of Input Elements based on the Process selection.
 	/// </summary>
 	/// <returns></returns>
-	public void ChangeDisplayedInputs() {
+	public async void ChangeDisplayedInputs() {
         // confirm there was a valid selection made in the Picker
         if (_viewModel.SelectedProcess != null) {
             // create a conversion dictionary for string names to control objects
@@ -74,7 +61,11 @@ public partial class MainPage : ContentPage {
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"
-			IsCurrentProcessOriginator();
+			if (await _viewModel.IsCurrentProcessOriginator()) {
+				// disable serial number inputs
+				JBKNumberEntry.IsEnabled = false;
+				LotNumberEntry.IsEnabled = false;
+			}
 		}
     }
 
