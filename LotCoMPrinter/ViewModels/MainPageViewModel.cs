@@ -155,6 +155,64 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
+    /// Checks if the Process requires Serialization (is an origination process).
+    /// If so, elicits the SerializeMode, checks for Cached Serial Numbers, and assigns a Serial Number to the Label.
+    /// </summary>
+    /// <param name="JBKNumberEntry"></param>
+    /// <param name="UICapture"></param>
+    /// <returns>Tuple holding the SerializeMode (null if not serialized) and an updated UICapture List.</returns>
+    /// <exception cref="LabelBuildException"></exception>
+    private async Task<Tuple<string, List<string>>> SerializeLabel(Entry JBKNumberEntry, List<string> UICapture) {
+        // get the serialize mode for this Label
+        string SerializeMode = "Lot";
+        if (JBKNumberEntry.IsVisible) {
+            SerializeMode = "JBK";
+        }
+        // serialize the label if needed
+        if (IsOriginator) {
+            string? SerialNumber;
+            // assign/retrieve a cached serial number for this label
+            SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
+            if (SerialNumber == null) {
+                throw new LabelBuildException("Failed to assign a Serial Number to the Label");
+            }
+            // assign the Serial Number to the JBK/Lot # field
+            UICapture[3] = $"{SerializeMode}: {SerialNumber}";
+        }
+        // return the SerializeMode and the updated UICapture
+        return new Tuple<string, List<string>>(SerializeMode, UICapture);
+    }
+
+    /// <summary>
+    /// Decides how to Head the Label, formats that field as a Header, and returns that string.
+    /// </summary>
+    /// <param name="SerializeMode"></param>
+    /// <param name="UICapture"></param>
+    /// <returns>string</returns>
+    private static async Task<string> FormatLabelHeader(string SerializeMode, List<string> UICapture) {
+        string LabelHeader = await Task.Run(() => {
+            // decide to use the JBK or Date as the header
+            string Header;
+            if (SerializeMode == "JBK") {
+                // header is the JBK # (remove "JBK #: ")
+                Header = UICapture[3].Split(":")[1].Replace(" ", "");
+            } else {
+                // header is the MM/DD of the Production Date 
+                // retrieve the Date from the UI Capture
+                string Date = UICapture[^3];
+                // remove the "Production Date: " field tag
+                Date = Date.Split(":")[1].Replace(" ", "");
+                // split the date into its MM/DD/YY-HH:MM:SS segments
+                string[] SplitDate = Date.Split("/");
+                // set the header to use the MM and DD fields
+                Header = $"{SplitDate[0]}/{SplitDate[1]}";
+            }
+            return Header;
+        });
+        return LabelHeader;
+    }
+
+    /// <summary>
 	/// Checks if the current SelectedProcess is an originator.
 	/// </summary>
 	public async Task<bool> IsCurrentProcessOriginator() {
@@ -229,54 +287,32 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
     /// <param name="JBKNumberEntry"></param>
+    /// <param name="LotNumberEntry"></param>
     /// <param name="DeburrJBKNumberEntry"></param>
     /// <param name="DieNumberEntry"></param>
     /// <param name="ModelNumberEntry"></param>
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <returns></returns>
-    public async Task<bool> PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+    public async Task<bool> PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
 			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess, 
-				PartPicker, QuantityEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, 
-                ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
+                DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // something was not valid in the UI
 		} catch (FormatException) {
             // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
             return false;
         }
-        // get the serialize mode for this Label
-        string SerializeMode;
-        if (JBKNumberEntry.IsVisible) {
-			SerializeMode = "JBK";
-		} else {
-			SerializeMode = "Lot";
-		}
-        // assign/retrieve a cached serial number for this label
-        string? SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
-        if (SerialNumber == null) {
-            throw new LabelBuildException("Failed to assign a Serial Number to the Label");
-        }
-        // assign the Serial Number to the JBK/Lot # field
-        UICapture[3] = $"{SerializeMode}: {SerialNumber}";
-        // decide to use the JBK or Date as the header
-        string Header = "";
-        if (SerializeMode == "JBK") {
-            // header is the JBK # (remove "JBK #: ")
-            Header = UICapture[3].Split(":")[1].Replace(" ", "");
-        } else {
-            // header is the MM/DD of the Production Date 
-            // retrieve the Date from the UI Capture
-            string Date = UICapture[UICapture.Count - 3];
-            // remove the "Production Date: " field tag
-            Date = Date.Split(":")[1].Replace(" ", "");
-            // split the date into its MM/DD/YY-HH:MM:SS segments
-            string[] SplitDate = Date.Split("/");
-            // set the header to use the MM and DD fields
-            Header = $"{SplitDate[0]}/{SplitDate[1]}";
-        }
+        // check for serialization
+        Tuple<string, List<string>> SerializationResults = await SerializeLabel(JBKNumberEntry, UICapture);
+        // get the Serialization mode and the modified UICapture
+        string SerializeMode = SerializationResults.Item1;
+        UICapture = SerializationResults.Item2;
+        // format the Label's header
+        string Header = await FormatLabelHeader(SerializeMode, UICapture);
         // create and run a Label print job
         LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType, Header);
         bool Printed = await Job.Run();
