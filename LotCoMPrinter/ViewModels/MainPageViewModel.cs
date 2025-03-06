@@ -235,6 +235,8 @@ public partial class MainPageViewModel : ObservableObject {
         // update the SelectedProcess properties
         await Task.Run(async () => {
             SelectedProcess = Process;
+            // update the originator state
+            await IsCurrentProcessOriginator();
             // get the Process Parts for the Picked Process and convert those parts to strings
             Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
             try {

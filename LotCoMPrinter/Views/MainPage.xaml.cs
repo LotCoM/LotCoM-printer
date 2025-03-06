@@ -24,7 +24,7 @@ public partial class MainPage : ContentPage {
 	/// Changes the visibility of Input Elements based on the Process selection.
 	/// </summary>
 	/// <returns></returns>
-	public async void ChangeDisplayedInputs() {
+	public void ChangeDisplayedInputs() {
         // confirm there was a valid selection made in the Picker
         if (_viewModel.SelectedProcess != null) {
             // create a conversion dictionary for string names to control objects
@@ -61,10 +61,14 @@ public partial class MainPage : ContentPage {
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"
-			if (await _viewModel.IsCurrentProcessOriginator()) {
+			if (_viewModel.IsOriginator) {
 				// disable serial number inputs
 				JBKNumberEntry.IsEnabled = false;
 				LotNumberEntry.IsEnabled = false;
+			} else {
+				// enable serial number inputs
+				JBKNumberEntry.IsEnabled = true;
+				LotNumberEntry.IsEnabled = true;
 			}
 		}
     }
@@ -156,12 +160,6 @@ public partial class MainPage : ContentPage {
 		// Quantity Input reset
 		QuantityEntry.Text = "";
 		QuantityEntry.IsEnabled = true;
-		// JBK Input reset
-		JBKNumberEntry.Text = "";
-		JBKNumberEntry.IsEnabled = true;
-		// Lot Input reset
-		LotNumberEntry.Text = "";
-		LotNumberEntry.IsEnabled = true;
 		// Deburr JBK Input reset
 		DeburrJBKNumberEntry.Text = "";
 		DeburrJBKNumberEntry.IsEnabled = true;
@@ -180,6 +178,15 @@ public partial class MainPage : ContentPage {
 		// Operator Initials Entry reset
 		OperatorIDEntry.Text = "";
 		OperatorIDEntry.IsEnabled = true;
+		// re-enable serial number inputs if serialization is not needed
+		if (!_viewModel.IsOriginator) {
+			// JBK Input reset
+			JBKNumberEntry.Text = "";
+			JBKNumberEntry.IsEnabled = true;
+			// Lot Input reset
+			LotNumberEntry.Text = "";
+			LotNumberEntry.IsEnabled = true;
+		}
 	}
 }
 
