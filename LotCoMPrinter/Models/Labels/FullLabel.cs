@@ -18,13 +18,13 @@ public class FullLabel {
     // size of medium text on label
     private const int TextSizeMedium = 96;
     // size of large text on label (306)
-    private const int TextSizeLarge = 320;
+    private const int TextSizeLarge = 240;
     // padding of objects on the label (18) 
     private const int LabelInternalPadding = 16;
     // horizontal position of the label heading text
     private const int LabelHeadingX = -72 + LabelInternalPadding;
     // vertical position of the label heading text
-    private const int LabelHeadingY = -72 + LabelInternalPadding;
+    private const int LabelHeadingY = -36 + LabelInternalPadding;
     // horizontal position of the label part name text
     private const int LabelPartNameX = LabelInternalPadding;
     // vertical position of the label part name text
