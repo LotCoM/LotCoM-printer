@@ -1,6 +1,6 @@
 # LotCoM WIP Printer
 
-[![CI/CD](https://github.com/LotCoM/LotCoM-printer/actions/workflows/cicd.yml/badge.svg)](https://github.com/LotCoM/LotCoM-printer/actions/workflows/cicd.yml)
+[![CI/CD](https://github.com/LotCoM/LotCoM-printer/actions/workflows/cicd.yml/badge.svg)](https://github.com/LotCoM/LotCoM-printer/actions/workflows/cicd.yml) [![CodeQL](https://github.com/LotCoM/LotCoM-printer/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/LotCoM/LotCoM-printer/actions/workflows/github-code-scanning/codeql)
 
 [LotCoM](https://github.com/LotCoM) System dedicated Work-in-Progress part Label Printing application.
 
