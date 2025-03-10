@@ -128,3 +128,5 @@ Approach 2:
 - Resolve [#22](https://github.com/LotCoM/LotCoM-printer/issues/22).
 ### `0.5.4.2`
 Fix for a silent crash, outlined and documented in [#81](https://github.com/LotCoM/LotCoM-printer/issues/81).
+### `0.5.4.3`
+Refactor database access paths to mirror schema change.
