@@ -173,6 +173,7 @@ public partial class MainPageViewModel : ObservableObject {
             string? SerialNumber;
             // assign/retrieve a cached serial number for this label
             SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
+            // no serial number was assigned; this is fatal
             if (SerialNumber == null) {
                 throw new LabelBuildException("Failed to assign a Serial Number to the Label");
             }
@@ -309,7 +310,13 @@ public partial class MainPageViewModel : ObservableObject {
             return false;
         }
         // check for serialization
-        Tuple<string, List<string>> SerializationResults = await SerializeLabel(JBKNumberEntry, UICapture);
+        Tuple<string, List<string>> SerializationResults;
+        try {
+            SerializationResults = await SerializeLabel(JBKNumberEntry, UICapture);
+        // failed to cache a new serial number or assign a serial number at all
+        } catch (Exception _ex) {
+            throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}");
+        }
         // get the Serialization mode and the modified UICapture
         string SerializeMode = SerializationResults.Item1;
         UICapture = SerializationResults.Item2;
