@@ -23,7 +23,7 @@ public class SerialCacheController {
         }
         // create the cache file
         if (!File.Exists(_cacheFile)) {
-            File.Create(_cacheFile);
+            File.Create(_cacheFile).Close();
         }
     }
 
