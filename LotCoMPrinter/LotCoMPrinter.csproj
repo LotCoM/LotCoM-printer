@@ -43,6 +43,9 @@
 	
 		<!-- Restore NuGet packages with packages.lock.json file -->
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+		<!-- Debug Symbols package path -->
+        <MsPdbCmfExeFullpath>..\\tools\\MsPdbCmf.exe</MsPdbCmfExeFullpath>
 	</PropertyGroup>
 
 	<ItemGroup>
