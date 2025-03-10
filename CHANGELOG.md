@@ -126,3 +126,5 @@ Approach 2:
 - Resolve [#76](https://github.com/LotCoM/LotCoM-printer/issues/76).
 - Resolve [#74](https://github.com/LotCoM/LotCoM-printer/issues/74).
 - Resolve [#22](https://github.com/LotCoM/LotCoM-printer/issues/22).
+### `0.5.4.2`
+Fix for a silent crash, outlined and documented in [#81](https://github.com/LotCoM/LotCoM-printer/issues/81).

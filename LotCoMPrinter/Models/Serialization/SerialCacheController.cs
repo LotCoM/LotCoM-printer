@@ -23,7 +23,9 @@ public class SerialCacheController {
         }
         // create the cache file
         if (!File.Exists(_cacheFile)) {
-            File.Create(_cacheFile);
+            File.Create(_cacheFile).Close();
+            // add JSON braces
+            File.WriteAllText(_cacheFile, "{}");
         }
     }
 
@@ -44,13 +46,6 @@ public class SerialCacheController {
                 throw new JsonException($"Failed to deserialize the Serial Cache.");
             }
         });
-        // check that there was something in the cache
-        try {
-            bool _ = CacheDictionary.Keys.Count > 0;
-        // the key access failed; the dict is empty
-        } catch {
-            throw new FileLoadException("The Cache file was empty.");
-        }
     }
 
     /// <summary>
@@ -125,7 +120,13 @@ public class SerialCacheController {
     private async Task Remove(string SerialNumber, string PartNumber) {
         // convert the Cache Dictionary into a List
         List<CachedSerialNumber> CacheList = await BuildCacheList();
-        // remove the matching cached object
+        // if the cache is empty, don't waste time
+        try {
+            bool _ = CacheDictionary.Keys.Count > 0;
+        } catch {
+            return;
+        }
+        // something exists in the cache; remove the matching cached object (if found)
         for (int i = 0; i < CacheList.Count; i += 1) {
             CachedSerialNumber _cached = CacheList[i];
             // if the numbers match, remove the cached item
