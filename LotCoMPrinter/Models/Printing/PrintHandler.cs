@@ -15,6 +15,17 @@ public class PrintHandler(Bitmap LabelImage) {
     private readonly Bitmap _labelImage = LabelImage;
 
     /// <summary>
+    /// Loads the Label Image onto the PrintDocument.
+    /// </summary>
+    /// <param name="Sender"></param>
+    /// <param name="e"></param>
+    private void LoadLabelImage(object Sender, PrintPageEventArgs e) {
+        // draw the Label Image onto the PrintDocument Graphic
+        Bitmap Resized = Resizer.ResizeImage(_labelImage, 350, 350);
+        e.Graphics!.DrawImage(Resized, new System.Drawing.Point(0, 0));
+    }
+
+    /// <summary>
     /// Prints the Label passed to the PrintHandler.
     /// </summary>
     /// <exception cref="PrintRequestException"></exception>
@@ -51,17 +62,6 @@ public class PrintHandler(Bitmap LabelImage) {
                 );
             }
         });
-    }
-
-    /// <summary>
-    /// Loads the Label Image onto the PrintDocument.
-    /// </summary>
-    /// <param name="Sender"></param>
-    /// <param name="e"></param>
-    private void LoadLabelImage(object Sender, PrintPageEventArgs e) {
-        // draw the Label Image onto the PrintDocument Graphic
-        Bitmap Resized = Resizer.ResizeImage(_labelImage, 350, 350);
-        e.Graphics!.DrawImage(Resized, new System.Drawing.Point(0, 0));
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility

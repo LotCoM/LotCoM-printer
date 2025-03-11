@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Services;
 
 namespace LotCoMPrinter.Models.Labels;
@@ -8,35 +9,35 @@ namespace LotCoMPrinter.Models.Labels;
 # pragma warning disable CA1416 // Validate platform compatibility
 
 public class PartialLabel {
-    // label dimension constants; (value) = default
-    // dimension (square dimension) of label (900)
-    private const int LabelDimension = 1800;
-    // dimension (square dimension) of QR Code on label (375)
-    private const int CodeDimension = 750;
-    // size of small text on label (36)
-    private const int TextSizeSmall = 48;
+    // label dimension constants; // value = default
+    // dimension (square dimension) of label
+    private int LabelDimension = 1440; // 1440
+    // dimension (square dimension) of QR Code on label
+    private int CodeDimension = 600; // 600
+    // size of small text on label
+    private int TextSizeSmall = 42; // 42
     // size of medium text on label
-    private const int TextSizeMedium = 96;
-    // size of large text on label (306)
-    private const int TextSizeLarge = 240;
-    // padding of objects on the label (18) 
-    private const int LabelInternalPadding = 16;
+    private int TextSizeMedium = 76; // 76
+    // size of large text on label
+    private int TextSizeLarge = 192; // 192
+    // padding of objects on the label
+    private int LabelInternalPadding = 12; // 12
     // horizontal position of the label heading text
-    private const int LabelHeadingX = -72 + LabelInternalPadding;
-    // horizontal position of the label part name text
-    private const int LabelPartNameX = LabelInternalPadding;
-    // vertical position of the label part name text
-    private const int LabelPartNameY = CodePositionY1 - (TextSizeMedium * 2);
+    private int LabelHeadingX;
     // vertical position of the label heading text
-    private const int LabelHeadingY = -72 + LabelInternalPadding;
+    private int LabelHeadingY;
+    // horizontal position of the label part name text
+    private int LabelPartNameX;
+    // vertical position of the label part name text
+    private int LabelPartNameY;
     // left X coordinate of Code
-    private const int CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
+    private int CodePositionX1;
     // top Y coordinate of Code
-    private const int CodePositionY1 = LabelDimension - CodeDimension - LabelInternalPadding;
+    private int CodePositionY1;
     // horizontal position of the Label's information fields
-    private const int LabelFieldsX = LabelInternalPadding;
+    private int LabelFieldsX;
     // vertical position of the Label's information fields
-    private const int LabelFieldsY = CodePositionY1 + (LabelInternalPadding * 3);
+    private int LabelFieldsY;
 
     // private class properties
     private readonly Bitmap _image;
@@ -49,6 +50,9 @@ public class PartialLabel {
     /// </summary>
     /// <exception cref="SystemException"></exception>
     public PartialLabel() {
+        // scale the Label dimensions to the current Device's Dpi Scale
+        ConfigureLabelDimensions();
+
         // load a new Label base
         _image = LoadBase();
         
@@ -62,6 +66,31 @@ public class PartialLabel {
         _fontSmall = new System.Drawing.Font(Arial!, TextSizeSmall);
         _fontMedium = new System.Drawing.Font(Arial!, TextSizeMedium);
         _fontLarge = new System.Drawing.Font(Arial!, TextSizeLarge);
+    }
+
+    /// <summary>
+    /// Converts the Label's internal dimension values to match the DPI scaling of the Device.
+    /// Multiplies the default values by the set DPI scale.
+    /// </summary>
+    private void ConfigureLabelDimensions() {
+        // retreive the DPI scale for the device's display
+        double DpiScale = DpiUtilities.GetDeviceDpiScale();
+
+        // scale the Label's dimensions to the DPI
+        LabelDimension = Convert.ToInt32(LabelDimension * DpiScale);
+        CodeDimension = Convert.ToInt32(CodeDimension * DpiScale);
+        TextSizeSmall = Convert.ToInt32(TextSizeSmall * DpiScale);
+        TextSizeMedium = Convert.ToInt32(TextSizeMedium * DpiScale);
+        TextSizeLarge = Convert.ToInt32(TextSizeLarge * DpiScale);
+        LabelInternalPadding = Convert.ToInt32(LabelInternalPadding * DpiScale);
+        LabelHeadingX = Convert.ToInt32(-56 * DpiScale + LabelInternalPadding);
+        LabelHeadingY = Convert.ToInt32(-56 * DpiScale + LabelInternalPadding); 
+        LabelPartNameX = LabelInternalPadding;
+        LabelPartNameY = CodePositionY1 - (TextSizeMedium * 2);
+        CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
+        CodePositionY1 = LabelDimension - CodeDimension - LabelInternalPadding;
+        LabelFieldsX = LabelInternalPadding;
+        LabelFieldsY = CodePositionY1 + (LabelInternalPadding * 3);
     }
 
     /// <summary>

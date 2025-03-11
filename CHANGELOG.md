@@ -130,3 +130,8 @@ Approach 2:
 Fix for a silent crash, outlined and documented in [#81](https://github.com/LotCoM/LotCoM-printer/issues/81).
 ### `0.5.4.3`
 Refactor database access paths to mirror schema change.
+
+## `0.5.5`
+#### DPI Scaling (Label print uniformity)
+- Implement `DpiUtilites.cs` class to retrieve DPI scale.
+- Use DPI scale to calculate scaling Label dimensions.
