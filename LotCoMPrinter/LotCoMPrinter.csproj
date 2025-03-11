@@ -46,6 +46,9 @@
 
 		<!-- Debug Symbols package path -->
         <MsPdbCmfExeFullpath>..\\tools\\MsPdbCmf.exe</MsPdbCmfExeFullpath>
+
+		<!-- DPI Awareness (scaling for printing) -->
+		<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
 	</PropertyGroup>
 
 	<ItemGroup>
