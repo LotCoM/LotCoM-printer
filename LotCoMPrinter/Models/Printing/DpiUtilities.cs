@@ -12,7 +12,6 @@ public static class DpiUtilities {
     public static double GetDeviceDpiScale() {
         // retrieve the scale for the current device
         double Scale = DeviceDisplay.Current.MainDisplayInfo.Density;
-        Console.WriteLine($"Current Display Density: {Scale}; {Scale * 100}%.");
         return Scale;
     }
 
