@@ -136,6 +136,10 @@ public partial class MainPage : ContentPage {
 		// reset UI if print was successful
 		if (Printed) {
 			Reset();
+		// the print failed for some reason
+		} else {
+			// show a warning
+			App.AlertSvc!.ShowAlert("Failed to Print", "The system failed to print this Label. Please try again or see management to resolve this issue.");
 		}
 	}
 
