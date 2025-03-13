@@ -18,6 +18,10 @@ public partial class MainPage : ContentPage {
 
 		// force the basket type to be full on start-up
 		BasketTypePicker.SelectedIndex = 0;
+
+		// hide the process type card on start-up
+		ProcessTypeCard.IsVisible = false;
+		ProcessTypeLabel.IsVisible = false;
 	}
 
 	/// <summary>
@@ -91,6 +95,9 @@ public partial class MainPage : ContentPage {
 			await _viewModel.UpdateSelectedProcess(PickedProcess);
 			ChangeDisplayedInputs();
 		}
+		// show the process type card
+		ProcessTypeCard.IsVisible = true;
+		ProcessTypeLabel.IsVisible = true;
 	}
 
 	/// <summary>

@@ -66,24 +66,26 @@
             </Border>
             <!-- Originator/Pass-through Indicator -->
             <Border
-                Margin="5"
-                HorizontalOptions="Center"
+                x:Name="ProcessTypeCard"
+                Margin="7.5"
+                HorizontalOptions="Start"
                 VerticalOptions="Start"
-                HeightRequest="30"
-                WidthRequest="100"
+                HeightRequest="25"
+                WidthRequest="85"
                 Grid.Row="0"
                 Grid.Column="2"
                 Stroke="#00ACACAC"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 10,10,10,10"
-                Background="{StaticResource Primary}"
+                Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                 >
                 <Label
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     x:Name="ProcessTypeLabel"
                     Text="{Binding ProcessType}"
-                    TextColor="{StaticResource White}"/>
+                    TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+                    FontSize="11"/>
             </Border>
         </Grid>
         <!-- Basket Type Selection (Full/Partial) -->
