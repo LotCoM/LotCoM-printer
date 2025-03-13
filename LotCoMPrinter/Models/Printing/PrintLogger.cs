@@ -12,16 +12,19 @@ public static class PrintLogger {
     private static async Task<string> CreateEventString(List<string> LabelInformation) {
         // use multi-threading to avoid blocking the UI while print logging occurs
         string PrintEvent = await Task.Run(() => {
-            // get the timestamp of the print event
-            string Timestamp = DateTime.Now.ToLongDateString();
-            string Formatted = Timestamp;
+            // get the timestamp of the print job
+            string Formatted = LabelInformation[^3].Replace("Production Date: ", "");
             // format the Label Information as a readable string
             foreach(string _field in LabelInformation) {
-                Formatted += $", {_field}";
+                // remove any commas, replace the newline in Part with a comma, then remove all spaces
+                string _formattedField = _field.Replace(",", "").Replace(" ", "").Replace("\n", ",");
+                // remove the field prefixes and add the field value to the formatted string
+                _formattedField = _formattedField.Split(":")[1].Replace(" ", "");
+                Formatted += $",{_formattedField}";
             }
             return Formatted;
         });
-        return PrintEvent;
+        return $"{PrintEvent}\n";
     }
 
     /// <summary>
