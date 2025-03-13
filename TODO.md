@@ -7,3 +7,4 @@
 - [ ] Implement print history logging.
 - [x] Improve stand-out of entries and dropdowns in the UI.
 - [ ] Change UI title from "Print Labels" => "Print WIP Labels".
+- [ ] Add Originator/Pass-through indication.
