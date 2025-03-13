@@ -130,20 +130,29 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
+		// start the Printing Indicator
+		_viewModel.Printing = true;
+		await Task.Delay(600);
 		bool Printed = false;
 		// call the ViewModel's Print Request method
 		try {
 			Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
 		// serialization failed; this is fatal; show a warning
 		} catch (Exception _ex) {
+			// stop printing indicator
+			_viewModel.Printing = false;
 			App.AlertSvc!.ShowAlert("Unexpected Error", $"Failed to Serialize the Label. Please see management to resolve this issue.\n\nError: {_ex.Message}");
 		}
 		// reset UI, show a confirmation if print was successful
 		if (Printed) {
 			Reset();
+			// stop printing indicator
+			_viewModel.Printing = false;
 			App.AlertSvc!.ShowAlert("Label Printed", "The Label was printed successfully.");
 		// the print failed for some reason; show a warning
 		} else {
+			// stop printing indicator
+			_viewModel.Printing = false;
 			App.AlertSvc!.ShowAlert("Failed to Print", "The system failed to print this Label. Please try again or see management to resolve this issue.");
 		}
 	}

@@ -99,6 +99,15 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(ProcessType));
         }
     }
+    private bool _printing = false;
+    public bool Printing {
+        get {return _printing;}
+        set {
+            _printing = value;
+            OnPropertyChanged(nameof(_printing));
+            OnPropertyChanged(nameof(Printing));
+        }
+    }
     
     // full constructor
     public MainPageViewModel() {}

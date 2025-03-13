@@ -63,20 +63,20 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType, stri
                     + $"\n\nException Message(s): {_ex.InnerException}"
                 );
             }
-            // consume the queued serializing number (only if the print was successful)
+            // prepare the serial number and the serial cache for the end of the print job
+            string SerialNumber = _labelInformation[3].Replace("JBK: ", "").Replace("Lot: ", "");
+            string PartNumber = _labelInformation[1].Split("\n")[0].Replace("Part: ", "");
+            SerialCacheController SerialCache = new SerialCacheController();
+            // the print job was successful
             if (Printed) {
                 // remove the cached serial number here if the label was full
                 if (_labelType == "Full") {
-                    string SerialNumber = _labelInformation[3].Replace("JBK: ", "").Replace("Lot: ", "");
-                    string PartNumber = _labelInformation[1].Split("\n")[0].Replace("Part: ", "");
-                    SerialCacheController SerialCache = new SerialCacheController();
                     await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
                 }
+                // log the successful print job
+                await PrintLogger.LogPrintEvent(_labelInformation);
             // the print failed; cache the serial number
             } else {
-                string SerialNumber = _labelInformation[3].Replace("JBK: ", "").Replace("Lot: ", "");
-                string PartNumber = _labelInformation[1].Split("\n")[0].Replace("Part: ", "");
-                SerialCacheController SerialCache = new SerialCacheController();
                 await SerialCache.CacheSerialNumber(SerialNumber, PartNumber);
             }
         }

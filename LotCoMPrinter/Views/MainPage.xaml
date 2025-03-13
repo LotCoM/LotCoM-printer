@@ -474,5 +474,30 @@
                 Text="Print Label"
                 Pressed="OnPrintButtonPressed"/>
         </Border>
+        <!-- Printing Activity Indicator -->
+        <Border
+            x:Name="PrintingIndicatorOverlay"
+            IsVisible="{Binding Printing}"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="-200"
+            Stroke="#5A000000"
+            StrokeThickness="0"
+            StrokeShape="Rectangle"
+            Background="#5A000000"
+            >
+            <ActivityIndicator
+                x:Name="PrintingIndicator"
+                IsRunning="{Binding Printing}"
+                IsVisible="{Binding Printing}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="200"
+                HeightRequest="200"
+                Color="{StaticResource Secondary}"
+                />
+        </Border>
     </Grid>
 </ContentPage>
