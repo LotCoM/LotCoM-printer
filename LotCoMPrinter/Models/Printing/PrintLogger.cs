@@ -2,7 +2,7 @@ namespace LotCoMPrinter.Models.Printing;
 
 public static class PrintLogger {
     // print log path
-    private const string _logPath = "\\\\Lot Control Management\\database\\logs\\print_history.log";
+    private const string _logPath = "\\\\144.133.122.1\\Lot Control Management\\database\\logs\\print_history.log";
 
     /// <summary>
     /// Converts LabelInformation into a Print Event string, including the print timestamp.
@@ -33,6 +33,6 @@ public static class PrintLogger {
         // create a print event from the Label Information
         string PrintEvent = await CreateEventString(LabelInformation);
         // open the print history .log file and append the new event to the file
-        await File.WriteAllTextAsync(_logPath, PrintEvent);
+        await File.AppendAllTextAsync(_logPath, PrintEvent);
     }
 }
