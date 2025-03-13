@@ -477,16 +477,16 @@
         <!-- Printing Activity Indicator -->
         <ActivityIndicator
             x:Name="PrintingIndicator"
+            IsRunning="{Binding Printing}"
+            IsVisible="{Binding Printing}"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            WidthRequest="200"
+            HeightRequest="200"
             Grid.Row="0"
             Grid.RowSpan="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            IsRunning="False"
-            IsVisible="True"
-            WidthRequest="300"
-            HeightRequest="300"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
             Color="{StaticResource Secondary}"
             />
     </Grid>
