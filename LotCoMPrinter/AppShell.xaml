@@ -8,7 +8,7 @@
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Print Labels"
+        Title="Print WIP Labels"
         ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage" />
 

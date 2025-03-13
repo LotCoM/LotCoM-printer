@@ -31,28 +31,62 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="125"/>
             </Grid.ColumnDefinitions>
+            <!-- Process Selection -->
             <Label
                 x:Name="ProcessLabel"
                 Margin="10"
+                HorizontalOptions="Start"
                 VerticalOptions="Start"
                 HeightRequest="40"
                 Grid.Row="0"
                 Grid.Column="0"
                 Text="Process"/>
-            <Picker
-                x:Name="ProcessPicker"
+            <Border
+                x:Name="ProcessControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="0"
                 Grid.Column="1"
-                ItemsSource="{Binding Processes}"
-                SelectedIndex="-1"
-                SelectedIndexChanged="OnProcessSelection">
-            </Picker>
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Picker
+                    x:Name="ProcessPicker"
+                    ItemsSource="{Binding Processes}"
+                    SelectedIndex="-1"
+                    SelectedIndexChanged="OnProcessSelection">
+                </Picker>
+            </Border>
+            <!-- Originator/Pass-through Indicator -->
+            <Border
+                x:Name="ProcessTypeCard"
+                Margin="7.5"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                HeightRequest="25"
+                WidthRequest="85"
+                Grid.Row="0"
+                Grid.Column="2"
+                Stroke="#00ACACAC"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                >
+                <Label
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    x:Name="ProcessTypeLabel"
+                    Text="{Binding ProcessType}"
+                    TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+                    FontSize="11"/>
+            </Border>
         </Grid>
         <!-- Basket Type Selection (Full/Partial) -->
         <Grid
@@ -73,22 +107,30 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Text="Basket Type"/>
-            <Picker
-                x:Name="BasketTypePicker"
+            <Border
+                x:Name="BasketTypeControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="0"
                 Grid.Column="1"
-                SelectedIndexChanged="OnBasketTypeSelection">
-                <Picker.ItemsSource>
-                    <x:Array Type="{x:Type x:String}">
-                        <x:String>Full</x:String>
-                        <x:String>Partial</x:String>
-                    </x:Array>
-                </Picker.ItemsSource>
-            </Picker>
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Picker
+                    x:Name="BasketTypePicker"
+                    SelectedIndexChanged="OnBasketTypeSelection">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Full</x:String>
+                            <x:String>Partial</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+            </Border>
         </Grid>
         <!-- Left-Side Sub-Grid (Stack of Input Elements) allows control over label/input positions-->
         <Grid
@@ -176,79 +218,135 @@
                 Text="Model #"/>
             <!-- Stack Inputs -->
             <!-- Part Number -->
-            <Picker
-                x:Name="PartPicker"
-                ItemsSource="{Binding SelectedProcessParts}"
-                SelectedIndex="-1"
-                SelectedIndexChanged="OnPartSelection"
+            <Border
+                x:Name="PartControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="1"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Picker
+                    x:Name="PartPicker"
+                    ItemsSource="{Binding SelectedProcessParts}"
+                    SelectedIndex="-1"
+                    SelectedIndexChanged="OnPartSelection"/>
+            </Border>
             <!-- Quantity -->
-            <Entry
-                x:Name="QuantityEntry"
+            <Border
+                x:Name="QuantityControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="2"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    x:Name="QuantityEntry"/>
+            </Border>
             <!-- JBK Number -->
-            <Entry
-                IsEnabled="false"
-                x:Name="JBKNumberEntry"
-                Text="{Binding DisplayedJBKNumber}"
-                MaxLength="3"
+            <Border
+                x:Name="JBKNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="3"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    IsEnabled="false"
+                    x:Name="JBKNumberEntry"
+                    Text="{Binding DisplayedJBKNumber}"
+                    MaxLength="3"/>
+            </Border>
             <!-- Lot Number -->
-            <Entry
-                IsEnabled="false"
-                x:Name="LotNumberEntry"
-                Text="{Binding DisplayedLotNumber}"
+            <Border
+                x:Name="LotNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="4"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    IsEnabled="false"
+                    x:Name="LotNumberEntry"
+                    Text="{Binding DisplayedLotNumber}"/>
+            </Border>
             <!-- Deburr JBK Number -->
-            <Entry
-                x:Name="DeburrJBKNumberEntry"
-                MaxLength="3"
+            <Border
+                x:Name="DeburrJBKNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="5"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    x:Name="DeburrJBKNumberEntry"
+                    MaxLength="3"/>
+            </Border>
             <!-- Die Number -->
-            <Entry
-                x:Name="DieNumberEntry"
-                MaxLength="3"
+            <Border
+                x:Name="DieNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="6"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    x:Name="DieNumberEntry"
+                    MaxLength="3"/>
+            </Border>
             <!-- Model Number -->
-            <Entry
-                x:Name="ModelNumberEntry"
-                Text="{Binding DisplayedModel}"
+            <Border
+                x:Name="ModelNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="7"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    x:Name="ModelNumberEntry"
+                    Text="{Binding DisplayedModel}"/>
+            </Border>
         </Grid>
         <!-- Right-Side Sub-Grid (Production Time Inputs) allows control over label/input positions -->
         <Grid
@@ -296,52 +394,85 @@
                 Text="Operator Initials"/>
             <!-- Stack Inputs -->
             <!-- Production Date -->
-            <DatePicker
-                x:Name="ProductionDatePicker"
+            <Border
+                x:Name="ProductionDateControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="0"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <DatePicker
+                    x:Name="ProductionDatePicker"/>
+            </Border>
             <!-- Production Shift -->
-            <Picker
-                x:Name="ProductionShiftPicker"
+            <Border
+                x:Name="ProductionShiftControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="1"
-                Grid.Column="1">
-                <Picker.ItemsSource>
-                    <x:Array Type ="{x:Type x:String}">
-                        <x:String>1</x:String>
-                        <x:String>2</x:String>
-                        <x:String>3</x:String>
-                    </x:Array>
-                </Picker.ItemsSource>
-            </Picker>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Picker
+                    x:Name="ProductionShiftPicker">
+                    <Picker.ItemsSource>
+                        <x:Array Type ="{x:Type x:String}">
+                            <x:String>1</x:String>
+                            <x:String>2</x:String>
+                            <x:String>3</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+            </Border>
             <!-- Operator Identification -->
-            <Entry
-                x:Name="OperatorIDEntry"
-                MaxLength="3"
+            <Border
+                x:Name="OperatorIDControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
                 Grid.Row="2"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    x:Name="OperatorIDEntry"
+                    MaxLength="3"/>
+            </Border>
         </Grid>
         <!-- Print Button -->
-        <Button
-            x:Name="PrintButton"
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
+        <Border
+            x:Name="PrintButtonControl"
             HorizontalOptions="Center"
             VerticalOptions="Center"
             WidthRequest="300"
-            Text="Print Label"
-            Pressed="OnPrintButtonPressed"/>
+            HeightRequest="50"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Stroke="#88ACACAC"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            Background="#00000000"
+            >
+            <Button
+                x:Name="PrintButton"
+                Text="Print Label"
+                Pressed="OnPrintButtonPressed"/>
+        </Border>
     </Grid>
 </ContentPage>

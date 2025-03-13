@@ -18,6 +18,10 @@ public partial class MainPage : ContentPage {
 
 		// force the basket type to be full on start-up
 		BasketTypePicker.SelectedIndex = 0;
+
+		// hide the process type card on start-up
+		ProcessTypeCard.IsVisible = false;
+		ProcessTypeLabel.IsVisible = false;
 	}
 
 	/// <summary>
@@ -29,17 +33,17 @@ public partial class MainPage : ContentPage {
         if (_viewModel.SelectedProcess != null) {
             // create a conversion dictionary for string names to control objects
             Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> {
-                {"ProcessPicker", new List<View> {ProcessPicker, ProcessLabel}},
-                {"JBKNumberEntry", new List<View> {JBKNumberEntry, JBKNumberLabel}},
-                {"LotNumberEntry", new List<View> {LotNumberEntry, LotNumberLabel}},
-                {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
-                {"DieNumberEntry", new List<View> {DieNumberEntry, DieNumberLabel}},
-                {"PartPicker", new List<View> {PartPicker, PartLabel}},
-                {"ModelNumberEntry", new List<View> {ModelNumberEntry, ModelNumberLabel}},
-                {"QuantityEntry", new List<View> {QuantityEntry, QuantityLabel}},
-                {"ProductionDatePicker", new List<View> {ProductionDatePicker, ProductionDateLabel}},
-                {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}},
-				{"OperatorIDEntry", new List<View> {OperatorIDEntry, OperatorIDLabel}}
+                {"ProcessPicker", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
+                {"JBKNumberEntry", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
+                {"LotNumberEntry", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
+                {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
+                {"DieNumberEntry", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
+                {"PartPicker", new List<View> {PartControl, PartPicker, PartLabel}},
+                {"ModelNumberEntry", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
+                {"QuantityEntry", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
+                {"ProductionDatePicker", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
+                {"ProductionShiftPicker", new List<View> {ProductionShiftControl, ProductionShiftPicker, ProductionShiftLabel}},
+				{"OperatorIDEntry", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
             };
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
@@ -55,9 +59,11 @@ public partial class MainPage : ContentPage {
 				if (Requirements.Contains(_pair.Key)) {
 					_pair.Value[0].IsVisible = true;
 					_pair.Value[1].IsVisible = true;
+					_pair.Value[2].IsVisible = true;
 				} else {
 					_pair.Value[0].IsVisible = false;
 					_pair.Value[1].IsVisible = false;
+					_pair.Value[2].IsVisible = false;
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"
@@ -89,6 +95,9 @@ public partial class MainPage : ContentPage {
 			await _viewModel.UpdateSelectedProcess(PickedProcess);
 			ChangeDisplayedInputs();
 		}
+		// show the process type card
+		ProcessTypeCard.IsVisible = true;
+		ProcessTypeLabel.IsVisible = true;
 	}
 
 	/// <summary>
@@ -124,18 +133,18 @@ public partial class MainPage : ContentPage {
 		bool Printed = false;
 		// call the ViewModel's Print Request method
 		try {
-			Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, 
-													DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, 
-													ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-		// serialization failed; this is fatal
+			Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+		// serialization failed; this is fatal; show a warning
 		} catch (Exception _ex) {
-			// show a warning
-			App.AlertSvc!.ShowAlert("Unexpected Error", "Failed to Serialize the Label. Please see management to resolve this issue."
-									+ $"\n\nError: {_ex.Message}");
+			App.AlertSvc!.ShowAlert("Unexpected Error", $"Failed to Serialize the Label. Please see management to resolve this issue.\n\nError: {_ex.Message}");
 		}
-		// reset UI if print was successful
+		// reset UI, show a confirmation if print was successful
 		if (Printed) {
 			Reset();
+			App.AlertSvc!.ShowAlert("Label Printed", "The Label was printed successfully.");
+		// the print failed for some reason; show a warning
+		} else {
+			App.AlertSvc!.ShowAlert("Failed to Print", "The system failed to print this Label. Please try again or see management to resolve this issue.");
 		}
 	}
 
