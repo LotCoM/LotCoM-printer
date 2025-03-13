@@ -2,7 +2,7 @@ name: .NET CI/CD
 
 on:
   push:
-    branches: main
+    branches: stable
 
 permissions:
   contents: write
@@ -18,7 +18,6 @@ jobs:
   build:
 
     name: build-windows
-    if: ${{ github.event_name }} == 'pull_request' && ${{ github.event.head_commit.message }} == '*.*.*.*-release'
     runs-on: windows-2022
 
     steps:
@@ -143,6 +142,10 @@ jobs:
         run: |
           # save the tag from env
           $tag = "$env:tag"
+          # remove the feature/ prefix if it exists
+          $tag = $tag -replace "feature/", ""
+          # remove the hotfix/ prefix if it exists
+          $tag = $tag -replace "hotfix/", ""
           # $prNumber = "$env:pr_number"
 
           # gather the commits from the PR
@@ -192,4 +195,3 @@ jobs:
 
           # upload the MSIX to the release
           gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix.FullName
-
