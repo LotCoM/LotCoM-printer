@@ -135,3 +135,13 @@ Refactor database access paths to mirror schema change.
 #### DPI Scaling (Label print uniformity)
 - Implement `DpiUtilites.cs` class to retrieve DPI scale.
 - Use DPI scale to calculate scaling Label dimensions.
+
+# `0.6`
+### UI Stylizing & Print Reporting
+
+## `0.6.0`
+#### UI Stylizing
+- Implement print confirmation message (resolve [#85](https://github.com/LotCoM/LotCoM-printer/issues/85)).
+- Improve stand-out of entries and dropdowns in the UI.
+- Change UI title from "Print Labels" => "Print WIP Labels".
+- Add Originator/Pass-through indication.
