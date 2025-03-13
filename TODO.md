@@ -5,3 +5,5 @@
 - ~~Implement print failed - offline - message (resolve [#86](https://github.com/LotCoM/LotCoM-printer/issues/86)).~~
   - See [#86](https://github.com/LotCoM/LotCoM-printer/issues/86) for details.
 - [ ] Implement print history logging.
+- [ ] Improve stand-out of entries and dropdowns in the UI.
+- [ ] Change UI title from "Print Labels" => "Print WIP Labels".
