@@ -145,3 +145,8 @@ Refactor database access paths to mirror schema change.
 - Improve stand-out of entries and dropdowns in the UI.
 - Change UI title from "Print Labels" => "Print WIP Labels".
 - Add Originator/Pass-through indication.
+
+## `feature/0.6.1`
+#### Print Logging
+- Implement print history logging.
+- Implement an activity indicator from print button click to print job completion.
