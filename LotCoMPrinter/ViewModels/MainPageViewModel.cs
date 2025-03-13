@@ -90,6 +90,15 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(IsOriginator));
         }
     }
+    private string _processType = "";
+    public string ProcessType {
+        get {return _processType;}
+        set {
+            _processType = value;
+            OnPropertyChanged(nameof(_processType));
+            OnPropertyChanged(nameof(ProcessType));
+        }
+    }
     
     // full constructor
     public MainPageViewModel() {}
@@ -221,8 +230,10 @@ public partial class MainPageViewModel : ObservableObject {
         await Task.Run(() => {
             if (ProcessData.IsOriginator(SelectedProcess)) {
                 IsOriginator = true;
+                ProcessType = "Origination";
             } else {
                 IsOriginator = false;
+                ProcessType = "Pass-through";
             }
         });
         return IsOriginator;

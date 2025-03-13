@@ -31,11 +31,14 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="125"/>
             </Grid.ColumnDefinitions>
+            <!-- Process Selection -->
             <Label
                 x:Name="ProcessLabel"
                 Margin="10"
+                HorizontalOptions="Start"
                 VerticalOptions="Start"
                 HeightRequest="40"
                 Grid.Row="0"
@@ -60,6 +63,27 @@
                     SelectedIndex="-1"
                     SelectedIndexChanged="OnProcessSelection">
                 </Picker>
+            </Border>
+            <!-- Originator/Pass-through Indicator -->
+            <Border
+                Margin="5"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"
+                HeightRequest="30"
+                WidthRequest="100"
+                Grid.Row="0"
+                Grid.Column="2"
+                Stroke="#00ACACAC"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="{StaticResource Primary}"
+                >
+                <Label
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    x:Name="ProcessTypeLabel"
+                    Text="{Binding ProcessType}"
+                    TextColor="{StaticResource White}"/>
             </Border>
         </Grid>
         <!-- Basket Type Selection (Full/Partial) -->
