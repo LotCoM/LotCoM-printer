@@ -29,17 +29,17 @@ public partial class MainPage : ContentPage {
         if (_viewModel.SelectedProcess != null) {
             // create a conversion dictionary for string names to control objects
             Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> {
-                {"ProcessPicker", new List<View> {ProcessPicker, ProcessLabel}},
-                {"JBKNumberEntry", new List<View> {JBKNumberEntry, JBKNumberLabel}},
-                {"LotNumberEntry", new List<View> {LotNumberEntry, LotNumberLabel}},
-                {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
-                {"DieNumberEntry", new List<View> {DieNumberEntry, DieNumberLabel}},
-                {"PartPicker", new List<View> {PartPicker, PartLabel}},
-                {"ModelNumberEntry", new List<View> {ModelNumberEntry, ModelNumberLabel}},
-                {"QuantityEntry", new List<View> {QuantityEntry, QuantityLabel}},
-                {"ProductionDatePicker", new List<View> {ProductionDatePicker, ProductionDateLabel}},
-                {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}},
-				{"OperatorIDEntry", new List<View> {OperatorIDEntry, OperatorIDLabel}}
+                {"ProcessPicker", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
+                {"JBKNumberEntry", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
+                {"LotNumberEntry", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
+                {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
+                {"DieNumberEntry", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
+                {"PartPicker", new List<View> {PartControl, PartPicker, PartLabel}},
+                {"ModelNumberEntry", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
+                {"QuantityEntry", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
+                {"ProductionDatePicker", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
+                {"ProductionShiftPicker", new List<View> {ProductionShiftControl, ProductionShiftPicker, ProductionShiftLabel}},
+				{"OperatorIDEntry", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
             };
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
@@ -55,9 +55,11 @@ public partial class MainPage : ContentPage {
 				if (Requirements.Contains(_pair.Key)) {
 					_pair.Value[0].IsVisible = true;
 					_pair.Value[1].IsVisible = true;
+					_pair.Value[2].IsVisible = true;
 				} else {
 					_pair.Value[0].IsVisible = false;
 					_pair.Value[1].IsVisible = false;
+					_pair.Value[2].IsVisible = false;
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"

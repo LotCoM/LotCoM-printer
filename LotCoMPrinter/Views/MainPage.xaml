@@ -42,6 +42,7 @@
                 Grid.Column="0"
                 Text="Process"/>
             <Border
+                x:Name="ProcessControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -81,6 +82,7 @@
                 Grid.Column="0"
                 Text="Basket Type"/>
             <Border
+                x:Name="BasketTypeControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -191,6 +193,7 @@
             <!-- Stack Inputs -->
             <!-- Part Number -->
             <Border
+                x:Name="PartControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -210,6 +213,7 @@
             </Border>
             <!-- Quantity -->
             <Border
+                x:Name="QuantityControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -226,6 +230,7 @@
             </Border>
             <!-- JBK Number -->
             <Border
+                x:Name="JBKNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -245,6 +250,7 @@
             </Border>
             <!-- Lot Number -->
             <Border
+                x:Name="LotNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -263,6 +269,7 @@
             </Border>
             <!-- Deburr JBK Number -->
             <Border
+                x:Name="DeburrJBKNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -280,6 +287,7 @@
             </Border>
             <!-- Die Number -->
             <Border
+                x:Name="DieNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -297,6 +305,7 @@
             </Border>
             <!-- Model Number -->
             <Border
+                x:Name="ModelNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -360,6 +369,7 @@
             <!-- Stack Inputs -->
             <!-- Production Date -->
             <Border
+                x:Name="ProductionDateControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -376,6 +386,7 @@
             </Border>
             <!-- Production Shift -->
             <Border
+                x:Name="ProductionShiftControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -400,6 +411,7 @@
             </Border>
             <!-- Operator Identification -->
             <Border
+                x:Name="OperatorIDControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -418,6 +430,7 @@
         </Grid>
         <!-- Print Button -->
         <Border
+            x:Name="PrintButtonControl"
             HorizontalOptions="Center"
             VerticalOptions="Center"
             WidthRequest="300"
