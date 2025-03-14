@@ -93,12 +93,21 @@ public partial class MainPage : ContentPage {
 		Reset();
 		// update the SelectedProcess and change the visible UI elements
 		if (PickedProcess != null) {
-			await _viewModel.UpdateSelectedProcess(PickedProcess);
+			try {
+				await _viewModel.UpdateSelectedProcess(PickedProcess);
+				// show the process type card
+				ProcessTypeCard.IsVisible = true;
+				ProcessTypeLabel.IsVisible = true;
+			// there was some error involving the Process file
+			} catch (FileLoadException) {
+				App.AlertSvc!.ShowAlert("Failed to Retrieve Data", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue.");
+			// there are no Parts assigned to the Process
+			} catch (ArgumentException) {
+				App.AlertSvc!.ShowAlert("Failed to Retrieve Data", "There are no Parts assigned to this Process.");
+			}
+			// update the inputs either way
 			ChangeDisplayedInputs();
 		}
-		// show the process type card
-		ProcessTypeCard.IsVisible = true;
-		ProcessTypeLabel.IsVisible = true;
 	}
 
 	/// <summary>
