@@ -132,7 +132,6 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// start the Printing Indicator
 		_viewModel.Printing = true;
-		await Task.Delay(600);
 		bool Printed = false;
 		// call the ViewModel's Print Request method
 		try {
