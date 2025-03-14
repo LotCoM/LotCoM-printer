@@ -355,6 +355,7 @@ public partial class MainPageViewModel : ObservableObject {
     /// <exception cref="ArgumentException">Thrown if the Process Data could not be retrieved.</exception>
     /// <exception cref="FormatException">Thrown if there was a failed validation.</exception>
     /// <exception cref="LabelBuildException">Thrown if there was an error creating, formatting, serializing, or printing the Label.</exception>
+    /// <exception cref="PrintRequestException">Thrown if there was an error communicating with the Printer or the Printing System.</exception>
     public async Task<bool> PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
         List<string> UICapture;
@@ -378,7 +379,7 @@ public partial class MainPageViewModel : ObservableObject {
             SerializationResults = await SerializeLabel(JBKNumberEntry, UICapture);
         // failed to cache a new serial number or assign a serial number at all
         } catch (Exception _ex) {
-            throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}");
+            throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}.");
         }
         // UI state is valid and can be used to produce a label for the selected process
         // get the Serialization mode and the modified UICapture
@@ -391,12 +392,15 @@ public partial class MainPageViewModel : ObservableObject {
         LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType, Header);
         try { 
             Printed = await Job.Run();
-        // the print job failed to create a Label object or failed for another reason
+        // the print job failed
         } catch (Exception _ex) {
-            App.AlertSvc!.ShowAlert(
-                "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
-                + $"\n\nMessage(s): {_ex.Message}"
-            );
+            if (_ex is LabelBuildException) {
+                // there was an error while constructing the Label to print
+                throw new LabelBuildException($"There was an error creating this Label:\n {_ex}: {_ex.Message}.");
+            } else if (_ex is PrintRequestException) {
+                // there was an error while communicating with the Printer or Printing System
+                throw new PrintRequestException($"There was an error communicating with the Printer:\n {_ex}: {_ex.Message}.");
+            }
         }
         // return the print success state
         return Printed;
