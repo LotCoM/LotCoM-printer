@@ -285,6 +285,9 @@ public partial class MainPageViewModel : ObservableObject {
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
     /// <param name="Process">The Process name to configure the UI for.</param>
+    /// <returns></returns>
+    /// <exception cref="FileLoadException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public async Task UpdateSelectedProcess(string Process) {
         // update the SelectedProcess properties
         await Task.Run(async () => {
@@ -295,12 +298,14 @@ public partial class MainPageViewModel : ObservableObject {
             Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
             try {
                 ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
-            } catch (AggregateException _ex) {
-                App.AlertSvc!.ShowAlert(
-                    "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
-                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
-                );
+            // the Process file couldn't be read or didn't exist
+            } catch (FileLoadException _ex) {
+                throw new FileLoadException(_ex.Message);
+            // there are no Parts assigned to this Process
+            } catch (ArgumentException _ex) {
+                throw new ArgumentException(_ex.Message);
             }
+            // Parts were found for the Process
             List<string> DisplayableParts = [];
             foreach (KeyValuePair<string, string> _pair in ProcessParts) {
                 DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
