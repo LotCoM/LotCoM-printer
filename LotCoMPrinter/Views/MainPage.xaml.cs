@@ -1,4 +1,5 @@
-﻿using LotCoMPrinter.Models.Datasources;
+﻿using CommunityToolkit.Maui.Views;
+using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;
 
@@ -53,7 +54,8 @@ public partial class MainPage : ContentPage {
 			// the selected Process was invalid (uncommon)
 			} catch (ArgumentException) {
 				// show a warning
-				App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+				BasicPopup Popup = new("Unexpected Error", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
 			}
 			// show all necessary UI input elements
 			foreach (KeyValuePair<string, List<View>> _pair in Conversions) {
@@ -100,10 +102,12 @@ public partial class MainPage : ContentPage {
 				ProcessTypeLabel.IsVisible = true;
 			// there was some error involving the Process file
 			} catch (FileLoadException) {
-				App.AlertSvc!.ShowAlert("Failed to Retrieve Data", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue.");
+				BasicPopup Popup = new("Failed to Retrieve Data", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
 			// there are no Parts assigned to the Process
 			} catch (ArgumentException) {
-				App.AlertSvc!.ShowAlert("Failed to Retrieve Data", "There are no Parts assigned to this Process.");
+				BasicPopup Popup = new("Failed to Retrieve Data", "There are no Parts assigned to this Process.");
+				this.ShowPopup(Popup);
 			}
 			// update the inputs either way
 			ChangeDisplayedInputs();
@@ -124,8 +128,8 @@ public partial class MainPage : ContentPage {
 		// the Model Number was either unimplied or the JBK # Queue could not be accessed
 		} catch (Exception _ex) {
 			// show a warning
-			App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Part/Model # could not be retrieved. Please see management to resolve this issue."
-									+ $"\n\nError: {_ex.Message}");
+			BasicPopup Popup = new("Unexpected Error", $"The selected Part/Model # could not be retrieved. Please see management to resolve this issue.\n\nError: {_ex.Message}");
+			this.ShowPopup(Popup);
 		}
 		// disable the Model Number control if the implication was successful
 		if (PartSelection) {
@@ -152,19 +156,24 @@ public partial class MainPage : ContentPage {
 			// show a message based on the exception type
 			if (_ex is NullProcessException) {
 				// there was no process selection made
-				App.AlertSvc!.ShowAlert("Failed to Print", "Please select a Process before printing Labels.");
+				BasicPopup Popup = new("Failed to Print", "Please select a Process before printing Labels.");
+				this.ShowPopup(Popup);
 			} else if (_ex is ArgumentException) {
 				// there was an error retrieving the process data
-				App.AlertSvc!.ShowAlert("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+				BasicPopup Popup = new("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
 			} else if (_ex is FormatException) {
 				// there was a failed UI validation
-				App.AlertSvc!.ShowAlert("Invalid Production Data.", _ex.Message);
+				BasicPopup Popup = new("Invalid Production Data.", _ex.Message);
+				this.ShowPopup(Popup);
 			} else if (_ex is LabelBuildException) {
 				// there was an error serializing the Label
-				App.AlertSvc!.ShowAlert("Failed to Print", "Could not apply a Serial Number to the Label. Please see management to resolve this issue.");
+				BasicPopup Popup = new("Failed to Print", "Could not apply a Serial Number to the Label. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
 			} else if (_ex is PrintRequestException) {
 				// there was an error communicating with the Printer or Printing System
-				App.AlertSvc!.ShowAlert("Failed to Print", "Could not connect to the printer. Please see management to resolve this issue.");
+				BasicPopup Popup = new("Failed to Print", "Could not connect to the printer. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
 			}
 			// escape the handler
 			return;
@@ -174,12 +183,14 @@ public partial class MainPage : ContentPage {
 			Reset();
 			// stop printing indicator
 			_viewModel.Printing = false;
-			App.AlertSvc!.ShowAlert("Label Printed", "The Label was printed successfully.");
+			BasicPopup Popup = new("Label Printed", "The Label was printed successfully.");
+			this.ShowPopup(Popup);
 		// the print failed for some reason; show a warning
 		} else {
 			// stop printing indicator
 			_viewModel.Printing = false;
-			App.AlertSvc!.ShowAlert("Failed to Print", "The system failed to print this Label. Please try again or see management to resolve this issue.");
+			BasicPopup Popup = new("Failed to Print", "The system failed to print this Label. Please try again or see management to resolve this issue.");
+			this.ShowPopup(Popup);
 		}
 	}
 
