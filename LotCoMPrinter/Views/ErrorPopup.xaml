@@ -1,10 +1,100 @@
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:views="clr-namespace:LotCoMPrinter.Views"
                x:Class="LotCoMPrinter.Views.ErrorPopup">
-
-    <VerticalStackLayout>
-        <Label Text="This is a very important message!" />
-    </VerticalStackLayout>
+    
+    <!-- Style the Popup Window -->
+    <toolkit:Popup.Resources>
+        <Style TargetType="{x:Type views:ErrorPopup}">
+            <Setter Property="Color" Value="Transparent" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Start" />
+            <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
+        </Style>
+    </toolkit:Popup.Resources>
+    
+    <!-- Use a Grid Layout to create a Windows-like Popup Window -->
+    <!-- Apply a Thin Border -->
+    <Border
+        StrokeThickness=".25"
+        StrokeShape="RoundRectangle 10,10,10,10"
+        Stroke="{AppThemeBinding Light={StaticResource OffBlack}, Dark={StaticResource White}}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Header Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Body Row -->
+                <RowDefinition Height="*"/>
+                <!-- Button (Footer) Row -->
+                <RowDefinition Height="75"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Expand Columns to add more Controls -->
+                <ColumnDefinition Width="400"/>
+            </Grid.ColumnDefinitions>
+            <!-- Add a Border to Fill the Header Row -->
+            <Border
+                StrokeThickness="0"
+                StrokeShape="Rectangle"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Black}}"
+                Grid.Row="0"
+                Grid.Column="0">
+                <!-- Add an Error Title Label -->
+                <Label
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Margin="10,5,5,5"
+                    Text="Error Title"
+                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                    FontSize="28"
+                    FontAttributes="Bold"/>
+            </Border>
+            <!-- Use a ScrollView in the Body to Allow Lengthy Messages -->
+            <ScrollView
+                Grid.Row="1"
+                Grid.Column="0">
+                <!-- Add a Border to Fill the Body Row -->
+                <Border
+                    StrokeThickness="0"
+                    StrokeShape="Rectangle"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+                    Grid.Row="1"
+                    Grid.Column="0">
+                    <!-- Add an Error Message Body Label -->
+                    <Label
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="10"
+                        Text="Error Body Text. This is an error!!!"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+                </Border>
+            </ScrollView>
+            <!-- Add a Border to Fill the Footer Row -->
+            <Border
+                StrokeThickness="0"
+                StrokeShape="Rectangle"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+                Grid.Row="2"
+                Grid.Column="0">
+                <!-- Add an OK Button -->
+                <Button
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    WidthRequest="75"
+                    HeightRequest="40"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="10,5,5,5"
+                    Text="OK"
+                    TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+                    BorderColor="#88ACACAC"
+                    BorderWidth="1"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+            </Border>
+        </Grid>
+    </Border>
     
 </toolkit:Popup>
