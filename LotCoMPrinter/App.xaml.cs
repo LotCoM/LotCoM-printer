@@ -1,6 +1,4 @@
-﻿using LotCoMPrinter.Models.Services;
-
-namespace LotCoMPrinter;
+﻿namespace LotCoMPrinter;
 
 public partial class App : Application {
 
