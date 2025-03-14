@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using LotCoMPrinter.Models.Services;
+using CommunityToolkit.Maui;
 
 namespace LotCoMPrinter;
 
@@ -10,6 +11,7 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
+			.UseMauiCommunityToolkit()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
