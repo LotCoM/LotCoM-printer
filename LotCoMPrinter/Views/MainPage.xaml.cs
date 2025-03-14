@@ -1,4 +1,5 @@
 ﻿using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
@@ -132,15 +133,29 @@ public partial class MainPage : ContentPage {
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
 		// start the Printing Indicator
 		_viewModel.Printing = true;
-		bool Printed = false;
+		bool Printed;
 		// call the ViewModel's Print Request method
 		try {
 			Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-		// serialization failed; this is fatal; show a warning
 		} catch (Exception _ex) {
-			// stop printing indicator
+			// stop the Printing Indicator
 			_viewModel.Printing = false;
-			App.AlertSvc!.ShowAlert("Unexpected Error", $"Failed to Serialize the Label. Please see management to resolve this issue.\n\nError: {_ex.Message}");
+			// show a message based on the exception type
+			if (_ex is NullProcessException) {
+				// there was no process selection made
+				App.AlertSvc!.ShowAlert("Failed to Print", "Please select a Process before printing Labels.");
+			} else if (_ex is ArgumentException) {
+				// there was an error retrieving the process data
+				App.AlertSvc!.ShowAlert("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+			} else if (_ex is FormatException) {
+				// there was a failed UI validation
+				App.AlertSvc!.ShowAlert("Invalid Production Data.", _ex.Message);
+			} else if (_ex is LabelBuildException) {
+				// there was an error serializing the Label
+				App.AlertSvc!.ShowAlert("Failed to Print", "Could not apply a Serial Number to the Label. Please see management to resolve this issue.");
+			}
+			// escape the handler
+			return;
 		}
 		// reset UI, show a confirmation if print was successful
 		if (Printed) {
