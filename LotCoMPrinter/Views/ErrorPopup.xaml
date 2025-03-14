@@ -84,6 +84,8 @@
                 Grid.Column="0">
                 <!-- Add an OK Button -->
                 <Button
+                    x:Name="ConfirmationButton"
+                    Clicked="OnConfirmation"
                     HorizontalOptions="End"
                     VerticalOptions="End"
                     WidthRequest="75"

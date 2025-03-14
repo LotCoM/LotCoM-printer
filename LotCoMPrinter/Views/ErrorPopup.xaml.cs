@@ -29,7 +29,11 @@ public partial class ErrorPopup : Popup {
         }
     }
 
-    
+    /// <summary>
+    /// Creates a Simple Popup that contains a Title, a Message, and a single "OK" Button.
+    /// </summary>
+    /// <param name="ErrorTitle"></param>
+    /// <param name="ErrorMessage"></param>
     public ErrorPopup(string ErrorTitle, string ErrorMessage) {
         // create the popup
         InitializeComponent();
@@ -39,5 +43,14 @@ public partial class ErrorPopup : Popup {
         Message = ErrorMessage;
         PopupTitleLabel.Text = ErrorTitle;
         PopupMessageLabel.Text = ErrorMessage;
+    }
+
+    /// <summary>
+    /// Handler for the Clicked event from the ConfirmationButton.
+    /// </summary>
+    /// <param name="Sender"></param>
+    /// <param name="e"></param>
+    private void OnConfirmation(object sender, EventArgs e) {
+        Close();
     }
 }
