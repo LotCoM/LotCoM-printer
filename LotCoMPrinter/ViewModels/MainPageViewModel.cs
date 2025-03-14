@@ -324,9 +324,20 @@ public partial class MainPageViewModel : ObservableObject {
 			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess, 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
                 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-        // something was not valid in the UI
-		} catch (FormatException) {
-            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
+        // there was no process selected
+		} catch (NullProcessException) {
+            // show a warning
+            App.AlertSvc!.ShowAlert("Failed to Print", "Please select a Process before printing Labels.");
+            return false;
+        // there was a problem retrieving the process data
+        } catch (ArgumentException) {
+            // show a warning
+            App.AlertSvc!.ShowAlert("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+            return false;
+        // there was some invalid UI entry
+        } catch (FormatException _ex) {
+            // show a warning using the error message from the failed validation method
+            App.AlertSvc!.ShowAlert("Invalid Production Data.", _ex.Message);
             return false;
         }
         // check for serialization
@@ -337,6 +348,7 @@ public partial class MainPageViewModel : ObservableObject {
         } catch (Exception _ex) {
             throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}");
         }
+        // UI state is valid and can be used to produce a label for the selected process
         // get the Serialization mode and the modified UICapture
         string SerializeMode = SerializationResults.Item1;
         UICapture = SerializationResults.Item2;
