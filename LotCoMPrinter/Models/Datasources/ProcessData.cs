@@ -41,6 +41,7 @@ public static class ProcessData {
     /// <param name="Process"></param>
     /// <returns></returns>
     /// <exception cref="FileLoadException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public static async Task<Dictionary<string, string>> GetProcessPartData(string Process) {
         // create a new CPU thread to read the file on
         Dictionary<string, string> ProcessParts = await Task.Run(() => {
@@ -50,8 +51,13 @@ public static class ProcessData {
             // read the Table
             try {
                 Parts = Source.Read();
+            // the Table file could not be read
             } catch (FileLoadException) {
-                Parts = [];
+                throw new FileLoadException($"The Part data for {Process} could not be found.");
+            }
+            // confirm that there were parts in the file
+            if (Parts.Length < 1) {
+                throw new ArgumentException($"There are no Parts assigned to {Process}.");
             }
             // convert the Part List into a dictionary of Part # key : Part Name value format
             Dictionary<string, string> PartDictionary = new Dictionary<string, string> {};
