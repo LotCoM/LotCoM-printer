@@ -337,8 +337,8 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
-    /// Processes a Print Request from the user 
-    /// (captures the interface and validates it, then creates a new Label object from that captured data).
+    /// Processes a Print Request from the user. 
+    /// Captures the interface and validates it, then creates a new Label object from that captured data.
     /// </summary>
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
@@ -349,7 +349,12 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ModelNumberEntry"></param>
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
+    /// <param name="OperatorIDEntry"></param>
     /// <returns></returns>
+    /// <exception cref="NullProcessException">Thrown if there was no selection in the ProcessPicker Control.</exception>
+    /// <exception cref="ArgumentException">Thrown if the Process Data could not be retrieved.</exception>
+    /// <exception cref="FormatException">Thrown if there was a failed validation.</exception>
+    /// <exception cref="LabelBuildException">Thrown if there was an error creating, formatting, serializing, or printing the Label.</exception>
     public async Task<bool> PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
         List<string> UICapture;
@@ -359,19 +364,13 @@ public partial class MainPageViewModel : ObservableObject {
                 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // there was no process selected
 		} catch (NullProcessException) {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Failed to Print", "Please select a Process before printing Labels.");
-            return false;
+            throw new NullProcessException();
         // there was a problem retrieving the process data
         } catch (ArgumentException) {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
-            return false;
+            throw new ArgumentException();
         // there was some invalid UI entry
         } catch (FormatException _ex) {
-            // show a warning using the error message from the failed validation method
-            App.AlertSvc!.ShowAlert("Invalid Production Data.", _ex.Message);
-            return false;
+            throw new FormatException(_ex.Message);
         }
         // check for serialization
         Tuple<string, List<string>> SerializationResults;
