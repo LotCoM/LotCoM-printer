@@ -387,8 +387,17 @@ public partial class MainPageViewModel : ObservableObject {
         // format the Label's header
         string Header = await FormatLabelHeader(SerializeMode, UICapture);
         // create and run a Label print job
+        bool Printed = false;
         LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType, Header);
-        bool Printed = await Job.Run();
+        try { 
+            Printed = await Job.Run();
+        // the print job failed to create a Label object or failed for another reason
+        } catch (Exception _ex) {
+            App.AlertSvc!.ShowAlert(
+                "Failed to Print", "There was an error Printing the Label. Please see management to resolve this issue."
+                + $"\n\nMessage(s): {_ex.Message}"
+            );
+        }
         // return the print success state
         return Printed;
     }
