@@ -153,6 +153,9 @@ public partial class MainPage : ContentPage {
 			} else if (_ex is LabelBuildException) {
 				// there was an error serializing the Label
 				App.AlertSvc!.ShowAlert("Failed to Print", "Could not apply a Serial Number to the Label. Please see management to resolve this issue.");
+			} else if (_ex is PrintRequestException) {
+				// there was an error communicating with the Printer or Printing System
+				App.AlertSvc!.ShowAlert("Failed to Print", "Could not connect to the printer. Please see management to resolve this issue.");
 			}
 			// escape the handler
 			return;
