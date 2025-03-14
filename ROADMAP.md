@@ -11,6 +11,7 @@
 ## `0.6.0`
 - UI stylizing.
 - Print History Logging.
+- Branch Standards development.
 
 ## `v0.7.0`
 - Reprinting (from print history).

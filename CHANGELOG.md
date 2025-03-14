@@ -138,6 +138,11 @@ Refactor database access paths to mirror schema change.
 
 # `0.6`
 ### UI Stylizing & Print Reporting
+- Begin use of new Branching Standards.
+- Based on: 
+  - [digitaljhelms](https://gist.github.com/digitaljhelms) @ [Gist](https://gist.github.com/digitaljhelms/4287848).
+  - [GitKracken](https://www.gitkraken.com/learn/git/best-practices/git-branch-strategy).
+- See diagram [here](https://lucid.app/lucidchart/aaad2061-1fc2-465e-b62e-4bc48873cd14/edit?viewport_loc=-60%2C-283%2C1975%2C905%2C0_0&invitationId=inv_e0923549-1df8-43c7-9948-0dc45259f632).
 
 ## `0.6.0`
 #### UI Stylizing
