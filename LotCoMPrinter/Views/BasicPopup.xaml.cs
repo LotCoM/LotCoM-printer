@@ -2,7 +2,7 @@ using CommunityToolkit.Maui.Views;
 
 namespace LotCoMPrinter.Views;
 
-public partial class ErrorPopup : Popup {
+public partial class BasicPopup : Popup {
     // binding properties
     private string _title = "";
     /// <summary>
@@ -32,17 +32,17 @@ public partial class ErrorPopup : Popup {
     /// <summary>
     /// Creates a Simple Popup that contains a Title, a Message, and a single "OK" Button.
     /// </summary>
-    /// <param name="ErrorTitle"></param>
-    /// <param name="ErrorMessage"></param>
-    public ErrorPopup(string ErrorTitle, string ErrorMessage) {
+    /// <param name="PopupTitle"></param>
+    /// <param name="PopupMessage"></param>
+    public BasicPopup(string PopupTitle, string PopupMessage) {
         // create the popup
         InitializeComponent();
 
         // assign properties
-        Title = ErrorTitle;
-        Message = ErrorMessage;
-        PopupTitleLabel.Text = ErrorTitle;
-        PopupMessageLabel.Text = ErrorMessage;
+        Title = PopupTitle;
+        Message = PopupMessage;
+        PopupTitleLabel.Text = PopupTitle;
+        PopupMessageLabel.Text = PopupMessage;
     }
 
     /// <summary>
