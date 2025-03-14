@@ -12,33 +12,24 @@ public static class InterfaceCaptureValidator {
     private static string? ValidatePicker(Picker PickerControl, string DataField) {
         // validate that the Picker has a selection
         if ((PickerControl.SelectedIndex == -1) || (PickerControl.SelectedItem == null)) {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Invalid Production Data", $"Please select a {DataField} before printing Labels.");
-            throw new FormatException();
-        } else {
-            // capture the value selected in the PickerControl
-            return (string?)PickerControl.ItemsSource[PickerControl.SelectedIndex];
+            throw new FormatException($"Please select a {DataField} before printing Labels.");
         }
+        // capture the value selected in the PickerControl
+        return (string?)PickerControl.ItemsSource[PickerControl.SelectedIndex];
     }
 
     private static string ValidateAsDigits(Entry EntryControl, string DataField) {
         // validate that the entry has a value and that it only contains digits
         string Value = EntryControl.Text;
         if (Value == "") {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Invalid Production Data", $"Please enter a {DataField} before printing Labels.");
-            throw new FormatException();
-        } else {
-            // remove whitespace and commas
-            Value = Value.Replace(",", "").Replace(" ", "");
-            if (int.TryParse(Value, out int _)) {
-                return Value;
-            } else {
-                // show a warning
-                App.AlertSvc!.ShowAlert("Invalid Production Data", $"Please enter a valid {DataField} before printing Labels.");
-                throw new FormatException();
-            }
+            throw new FormatException($"Please enter a {DataField} before printing Labels.");
         }
+        // remove whitespace and commas
+        Value = Value.Replace(",", "").Replace(" ", "");
+        if (int.TryParse(Value, out int _)) {
+            return Value;
+        }
+        throw new FormatException($"Please enter a valid {DataField} before printing Labels.");
     }
 
     private static string ValidateJBKNumber(Entry EntryControl, string JBKType) {
@@ -46,8 +37,8 @@ public static class InterfaceCaptureValidator {
         string Value;
         try {
             Value = ValidateAsDigits(EntryControl, JBKType);
-        } catch (FormatException) {
-            throw new FormatException();
+        } catch (FormatException _ex) {
+            throw new FormatException(_ex.Message);
         }
         // add leading zeroes to enforce formatting (3-length digit)
         while (Value.Length < 3) {
@@ -60,70 +51,58 @@ public static class InterfaceCaptureValidator {
         // validate that the entry has a value and that it only contains alnum characters
         string Value = LotNumberEntry.Text;
         if (Value == "") {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Invalid Lot #", "Please enter a Lot # before printing Labels.");
-            throw new FormatException();
-        } else {
-            // set a regex pattern for 1+ alphanumerical characters
-            string LotPattern = @"^[a-zA-Z0-9]+$";
-            Regex LotRegex = new Regex(LotPattern);
-            // ensure the value matches the regex requirement
-            if (!LotRegex.IsMatch(Value)) {
-                App.AlertSvc!.ShowAlert("Invalid Lot #", "Please enter a valid Lot # before printing Labels.");
-                throw new FormatException();
-            }
-            // add leading zeroes to create 9-length format and return the lot #
-            while (Value.Length < 9) {
-                Value = $"0{Value}";
-            }
-            return Value;
+            throw new FormatException("Please enter a Lot # before printing Labels.");
         }
+        // set a regex pattern for 1+ alphanumerical characters
+        string LotPattern = @"^[a-zA-Z0-9]+$";
+        Regex LotRegex = new Regex(LotPattern);
+        // ensure the value matches the regex requirement
+        if (!LotRegex.IsMatch(Value)) {
+            throw new FormatException("Please enter a valid Lot # before printing Labels.");
+        }
+        // add leading zeroes to create 9-length format and return the lot #
+        while (Value.Length < 9) {
+            Value = $"0{Value}";
+        }
+        return Value;
     }
 
     private static string ValidateOperatorID(Entry OperatorIDEntry) {
         // validate that the entry has a value and that it only contains characters
         string Value = OperatorIDEntry.Text;
         if (Value == "") {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Invalid Operator Initials", "Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
-            throw new FormatException();
-        } else {
-            // set a regex pattern for 2 or 3 alphabetical characters
-            string InitialPattern = @"^[a-zA-Z][a-zA-Z][a-zA-Z]?$";
-            Regex InitialRegex = new Regex(InitialPattern);
-            // ensure the value matches the regex requirement
-            if (!InitialRegex.IsMatch(Value)) {
-                App.AlertSvc!.ShowAlert("Invalid Operator Initials", "Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
-                throw new FormatException();
-            }
-            // cast the string to Uppercase and return it
-            return Value.ToUpper();
+            throw new FormatException("Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
         }
+        // set a regex pattern for 2 or 3 alphabetical characters
+        string InitialPattern = @"^[a-zA-Z][a-zA-Z][a-zA-Z]?$";
+        Regex InitialRegex = new Regex(InitialPattern);
+        // ensure the value matches the regex requirement
+        if (!InitialRegex.IsMatch(Value)) {
+            throw new FormatException("Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
+        }
+        // cast the string to Uppercase and return it
+        return Value.ToUpper();
     }
 
     private static string ValidateModelEntry(Entry ModelNumberEntry) {
         // validate that the entry has a value and that it only contains alnum characters
         string Value = ModelNumberEntry.Text;
         if (Value == "") {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Invalid Model #", "Please enter a Model # before printing Labels.");
-            throw new FormatException();
-        } else {
-            // set a regex pattern for 3 alphanumerical characters
-            string ModelPattern = @"^[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]$";
-            Regex ModelRegex = new Regex(ModelPattern);
-            // ensure the value matches the regex requirement
-            if (!ModelRegex.IsMatch(Value)) {
-                App.AlertSvc!.ShowAlert("Invalid Model #", "Please enter a valid Model # before printing Labels.");
-                throw new FormatException();
-            }
-            // cast the string to Uppercase and return it
-            return Value.ToUpper();
+            throw new FormatException("Please enter a Model # before printing Labels.");
         }
+        // set a regex pattern for 3 alphanumerical characters
+        string ModelPattern = @"^[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]$";
+        Regex ModelRegex = new Regex(ModelPattern);
+        // ensure the value matches the regex requirement
+        if (!ModelRegex.IsMatch(Value)) {
+            throw new FormatException("Please enter a valid Model # before printing Labels.");
+        }
+        // cast the string to Uppercase and return it
+        return Value.ToUpper();
     }
-
+    
     /// <summary>
-    /// Validates the PartValidator's UI Control states and Entries.
+    /// Validates the UI Control states and entry values.
     /// </summary>
     /// <param name="Process"></param>
     /// <param name="PartPicker"></param>
@@ -135,24 +114,25 @@ public static class InterfaceCaptureValidator {
     /// <param name="ModelNumberEntry"></param>
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
+    /// <param name="OperatorIDEntry"></param>
     /// <returns>A Dictionary of data captured from the UI Controls, keyed by their respective Control names.</returns>
-    /// <exception cref="FormatException">Raises if any of the required checks are failed.</exception>
+    /// <exception cref="NullProcessException">Thrown if there is no selection in the ProcessPicker Control.</exception>
+    /// <exception cref="ArgumentException">Thrown if the Process Requirements could not be retrieved.</exception>
+    /// <exception cref="FormatException">Thrown if there is a validation failure.</exception>
     public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
         Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, 
         Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
         // retrieve the Process requirements
-        List<string> Requirements = [];
+        List<string> Requirements;
         try {
             Requirements = ProcessRequirements.GetProcessRequirements(Process);
         // the Process selection was null
         } catch (NullProcessException) {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Failed to Print", "Please select a Process before printing Labels.");
+            throw new NullProcessException();
         // the selected Process was invalid (uncommon)
         } catch (ArgumentException) {
-            // show a warning
-            App.AlertSvc!.ShowAlert("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+            throw new ArgumentException();
         }
         List<string> UIResults = [$"Process: {Process}"];
         // create values for each of the UI entries
@@ -232,8 +212,9 @@ public static class InterfaceCaptureValidator {
             }
             // return the constructed UI Dictionary
             return UIResults;
-        } catch {
-            throw new FormatException();
+        // a validation failed; pass the fail message to the view model
+        } catch (FormatException _ex) {
+            throw new FormatException(_ex.Message);
         }
     }
 }

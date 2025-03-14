@@ -1,3 +1,5 @@
+using LotCoMPrinter.Models.Exceptions;
+
 namespace LotCoMPrinter.Models.Datasources;
 
 public static class ProcessRequirements {
@@ -23,8 +25,8 @@ public static class ProcessRequirements {
     /// <exception cref="ArgumentException"></exception>
     public static List<string> GetProcessRequirements(string Process) {
         // ensure non-null Process value
-        if (Process == null) {
-            throw new ArgumentException("Process must not be null.");
+        if (Process == null || Process.Equals("")) {
+            throw new NullProcessException();
         }
         // create a dictionary to convert from Process to Property
         Dictionary<string, List<string>> Conversions = new Dictionary<string, List<string>> {
