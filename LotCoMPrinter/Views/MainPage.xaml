@@ -274,6 +274,14 @@
                     Text="{Binding DisplayedJBKNumber}"
                     MaxLength="3"/>
             </Border>
+            <!-- Lock Icon Image (Displays Locked State) -->
+            <Image
+                x:Name="JBKLockedIndicator"
+                Source="{AppThemeBinding Light=lockedinputblack.svg, Dark=lockedinputwhite.svg}"
+                IsVisible="False"
+                Grid.Row="3"
+                Grid.Column="1"
+                />
             <!-- Lot Number -->
             <Border
                 x:Name="LotNumberControl"
@@ -293,6 +301,14 @@
                     x:Name="LotNumberEntry"
                     Text="{Binding DisplayedLotNumber}"/>
             </Border>
+            <!-- Lock Icon Image (Displays Locked State) -->
+            <Image
+                x:Name="LotLockedIndicator"
+                Source="{AppThemeBinding Light=lockedinputblack.svg, Dark=lockedinputwhite.svg}"
+                IsVisible="False"
+                Grid.Row="4"
+                Grid.Column="1"
+                />
             <!-- Deburr JBK Number -->
             <Border
                 x:Name="DeburrJBKNumberControl"
