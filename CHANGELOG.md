@@ -145,13 +145,23 @@ Refactor database access paths to mirror schema change.
 - See diagram [here](https://lucid.app/lucidchart/aaad2061-1fc2-465e-b62e-4bc48873cd14/edit?viewport_loc=-60%2C-283%2C1975%2C905%2C0_0&invitationId=inv_e0923549-1df8-43c7-9948-0dc45259f632).
 
 ## `0.6.0`
-#### UI Stylizing
-- Implement print confirmation message (resolve [#85](https://github.com/LotCoM/LotCoM-printer/issues/85)).
-- Improve stand-out of entries and dropdowns in the UI.
-- Change UI title from "Print Labels" => "Print WIP Labels".
-- Add Originator/Pass-through indication.
-
-## `feature/0.6.1`
-#### Print Logging
-- Implement print history logging.
-- Implement an activity indicator from print button click to print job completion.
+#### Print Logging; UI Optimization and Stylizing
+- [0.6.0](https://github.com/LotCoM/LotCoM-printer/pull/87)
+  - Implement print confirmation message (resolve [#85](https://github.com/LotCoM/LotCoM-printer/issues/85)).
+  - Improve stand-out of entries and dropdowns in the UI.
+  - Change UI title from "Print Labels" => "Print WIP Labels".
+  - Add Originator/Pass-through indication.
+- [feature/0.6.1](https://github.com/LotCoM/LotCoM-printer/pull/94)
+  - Implement print history logging.
+  - Implement an activity indicator from print button click to print job completion.
+- [bug/91](https://github.com/LotCoM/LotCoM-printer/pull/96)
+  - Resolve crash on empty form print attempt.
+- [bug/92](https://github.com/LotCoM/LotCoM-printer/pull/98)
+  - Resolve double error messages (actual error cause + failed print message).
+- [bug/95](https://github.com/LotCoM/LotCoM-printer/pull/99)
+  - Uniform alert raising location (code-behind `MainPage.xaml.cs`).
+- [bug/93](https://github.com/LotCoM/LotCoM-printer/pull/100)
+  - Refactor from `IAlertService` implementation to `CommunityToolkit.Maui.Views.Popup` dependency.
+  - Improve Popup styles.
+- [feature/97](https://github.com/LotCoM/LotCoM-printer/pull/103)
+  - Improve clarity of locked entry controls.
