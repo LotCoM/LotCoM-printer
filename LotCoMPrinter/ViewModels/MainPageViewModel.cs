@@ -141,30 +141,6 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(Printing));
         }
     }
-    private bool _jbkEntryLocked = false;
-    /// <summary>
-    /// Serves the logic to show and hide the Locked field icons for JBK Number Entry Controls.
-    /// </summary>
-    public bool JBKEntryLocked {
-        get {return _jbkEntryLocked;}
-        set {
-            _jbkEntryLocked = value;
-            OnPropertyChanged(nameof(_jbkEntryLocked));
-            OnPropertyChanged(nameof(JBKEntryLocked));
-        }
-    }
-    private bool _lotEntryLocked = false;
-    /// <summary>
-    /// Serves the logic to show and hide the Locked field icons for Lot Number Entry Controls.
-    /// </summary>
-    public bool LotEntryLocked {
-        get {return _lotEntryLocked;}
-        set {
-            _lotEntryLocked = value;
-            OnPropertyChanged(nameof(_lotEntryLocked));
-            OnPropertyChanged(nameof(LotEntryLocked));
-        }
-    }
     
     // full constructor
     public MainPageViewModel() {}
