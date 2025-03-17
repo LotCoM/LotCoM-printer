@@ -15,10 +15,16 @@ namespace LotCoMPrinter.ViewModels;
 public partial class MainPageViewModel : ObservableObject {
     // public class properties
     private List<string> _processes = ProcessData.ProcessMasterList;
+    /// <summary>
+    /// Serves the Process masterlist to the ProcessPicker Control.
+    /// </summary>
     public List<string> Processes {
         get {return _processes;}
     }
     private string _selectedProcess = "";
+    /// <summary>
+    /// Serves ProcessPicker's selected value. 
+    /// </summary>
     public string SelectedProcess {
         get {return _selectedProcess;}
         set {
@@ -28,6 +34,9 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     private List<string> _selectedProcessParts = [];
+    /// <summary>
+    /// Serves the Part Data associated with the Process in SelectedProcess.
+    /// </summary>
     public List<string> SelectedProcessParts {
         get {return _selectedProcessParts;}
         set {
@@ -37,6 +46,9 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     private string _selectedPart = "";
+    /// <summary>
+    /// Serves PartPicker's selected value.
+    /// </summary>
     public string SelectedPart {
         get {return _selectedPart;}
         set {
@@ -46,6 +58,9 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     private string _displayedModel = "";
+    /// <summary>
+    /// Serves the Model Number currently displayed (when programmatically assigned).
+    /// </summary>
     public string DisplayedModel {
         get {return _displayedModel;}
         set {
@@ -55,6 +70,9 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     private string _displayedJBKNumber = "";
+    /// <summary>
+    /// Serves the JBK Number currently displayed (when programmatically assigned).
+    /// </summary>
     public string DisplayedJBKNumber {
         get {return _displayedJBKNumber;}
         set {
@@ -64,6 +82,9 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     private string _displayedLotNumber = "";
+    /// <summary>
+    /// Serves the Lot Number currently displayed (when programmatically assigned).
+    /// </summary>
     public string DisplayedLotNumber {
         get {return _displayedLotNumber;}
         set {
@@ -73,6 +94,9 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     private string _basketType = "Full";
+    /// <summary>
+    /// Serves BasketTypePicker's selected value.
+    /// </summary>
     public string BasketType {
         get {return _basketType;}
         set {
@@ -82,12 +106,39 @@ public partial class MainPageViewModel : ObservableObject {
         }
     }
     private bool _isOriginator = false;
+    /// <summary>
+    /// Serves the boolean evaluation of whether SelectedProcess is an Origination Process.
+    /// </summary>
     public bool IsOriginator {
         get {return _isOriginator;}
         set {
             _isOriginator = value;
             OnPropertyChanged(nameof(_isOriginator));
             OnPropertyChanged(nameof(IsOriginator));
+        }
+    }
+    private string _processType = "";
+    /// <summary>
+    /// Serves the value of SelectedProcess' type (Origination/Process) to the ProcessTypeLabel.
+    /// </summary>
+    public string ProcessType {
+        get {return _processType;}
+        set {
+            _processType = value;
+            OnPropertyChanged(nameof(_processType));
+            OnPropertyChanged(nameof(ProcessType));
+        }
+    }
+    private bool _printing = false;
+    /// <summary>
+    /// Serves the current status of the application (true if a LabelPrintJob is running; false if not).
+    /// </summary>
+    public bool Printing {
+        get {return _printing;}
+        set {
+            _printing = value;
+            OnPropertyChanged(nameof(_printing));
+            OnPropertyChanged(nameof(Printing));
         }
     }
     
@@ -221,8 +272,10 @@ public partial class MainPageViewModel : ObservableObject {
         await Task.Run(() => {
             if (ProcessData.IsOriginator(SelectedProcess)) {
                 IsOriginator = true;
+                ProcessType = "Origination";
             } else {
                 IsOriginator = false;
+                ProcessType = "Pass-through";
             }
         });
         return IsOriginator;
@@ -232,6 +285,9 @@ public partial class MainPageViewModel : ObservableObject {
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
     /// <param name="Process">The Process name to configure the UI for.</param>
+    /// <returns></returns>
+    /// <exception cref="FileLoadException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public async Task UpdateSelectedProcess(string Process) {
         // update the SelectedProcess properties
         await Task.Run(async () => {
@@ -242,12 +298,14 @@ public partial class MainPageViewModel : ObservableObject {
             Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
             try {
                 ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
-            } catch (AggregateException _ex) {
-                App.AlertSvc!.ShowAlert(
-                    "Unexpected Error", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue."
-                    + $"\n\nException Message(s): {_ex.InnerExceptions}"
-                );
+            // the Process file couldn't be read or didn't exist
+            } catch (FileLoadException _ex) {
+                throw new FileLoadException(_ex.Message);
+            // there are no Parts assigned to this Process
+            } catch (ArgumentException _ex) {
+                throw new ArgumentException(_ex.Message);
             }
+            // Parts were found for the Process
             List<string> DisplayableParts = [];
             foreach (KeyValuePair<string, string> _pair in ProcessParts) {
                 DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
@@ -284,8 +342,8 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
-    /// Processes a Print Request from the user 
-    /// (captures the interface and validates it, then creates a new Label object from that captured data).
+    /// Processes a Print Request from the user. 
+    /// Captures the interface and validates it, then creates a new Label object from that captured data.
     /// </summary>
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
@@ -296,7 +354,13 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="ModelNumberEntry"></param>
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
+    /// <param name="OperatorIDEntry"></param>
     /// <returns></returns>
+    /// <exception cref="NullProcessException">Thrown if there was no selection in the ProcessPicker Control.</exception>
+    /// <exception cref="ArgumentException">Thrown if the Process Data could not be retrieved.</exception>
+    /// <exception cref="FormatException">Thrown if there was a failed validation.</exception>
+    /// <exception cref="LabelBuildException">Thrown if there was an error creating, formatting, serializing, or printing the Label.</exception>
+    /// <exception cref="PrintRequestException">Thrown if there was an error communicating with the Printer or the Printing System.</exception>
     public async Task<bool> PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // attempt to validate the current UI status
         List<string> UICapture;
@@ -304,10 +368,15 @@ public partial class MainPageViewModel : ObservableObject {
 			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess, 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
                 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-        // something was not valid in the UI
-		} catch (FormatException) {
-            // warnings are handled by the CaptureValidator; escape method as the print request cannot continue
-            return false;
+        // there was no process selected
+		} catch (NullProcessException) {
+            throw new NullProcessException();
+        // there was a problem retrieving the process data
+        } catch (ArgumentException) {
+            throw new ArgumentException();
+        // there was some invalid UI entry
+        } catch (FormatException _ex) {
+            throw new FormatException(_ex.Message);
         }
         // check for serialization
         Tuple<string, List<string>> SerializationResults;
@@ -315,16 +384,29 @@ public partial class MainPageViewModel : ObservableObject {
             SerializationResults = await SerializeLabel(JBKNumberEntry, UICapture);
         // failed to cache a new serial number or assign a serial number at all
         } catch (Exception _ex) {
-            throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}");
+            throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}.");
         }
+        // UI state is valid and can be used to produce a label for the selected process
         // get the Serialization mode and the modified UICapture
         string SerializeMode = SerializationResults.Item1;
         UICapture = SerializationResults.Item2;
         // format the Label's header
         string Header = await FormatLabelHeader(SerializeMode, UICapture);
         // create and run a Label print job
+        bool Printed = false;
         LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType, Header);
-        bool Printed = await Job.Run();
+        try { 
+            Printed = await Job.Run();
+        // the print job failed
+        } catch (Exception _ex) {
+            if (_ex is LabelBuildException) {
+                // there was an error while constructing the Label to print
+                throw new LabelBuildException($"There was an error creating this Label:\n {_ex}: {_ex.Message}.");
+            } else if (_ex is PrintRequestException) {
+                // there was an error while communicating with the Printer or Printing System
+                throw new PrintRequestException($"There was an error communicating with the Printer:\n {_ex}: {_ex.Message}.");
+            }
+        }
         // return the print success state
         return Printed;
     }

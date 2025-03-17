@@ -1,4 +1,6 @@
-﻿using LotCoMPrinter.Models.Datasources;
+﻿using CommunityToolkit.Maui.Views;
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
@@ -18,6 +20,10 @@ public partial class MainPage : ContentPage {
 
 		// force the basket type to be full on start-up
 		BasketTypePicker.SelectedIndex = 0;
+
+		// hide the process type card on start-up
+		ProcessTypeCard.IsVisible = false;
+		ProcessTypeLabel.IsVisible = false;
 	}
 
 	/// <summary>
@@ -29,17 +35,17 @@ public partial class MainPage : ContentPage {
         if (_viewModel.SelectedProcess != null) {
             // create a conversion dictionary for string names to control objects
             Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> {
-                {"ProcessPicker", new List<View> {ProcessPicker, ProcessLabel}},
-                {"JBKNumberEntry", new List<View> {JBKNumberEntry, JBKNumberLabel}},
-                {"LotNumberEntry", new List<View> {LotNumberEntry, LotNumberLabel}},
-                {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
-                {"DieNumberEntry", new List<View> {DieNumberEntry, DieNumberLabel}},
-                {"PartPicker", new List<View> {PartPicker, PartLabel}},
-                {"ModelNumberEntry", new List<View> {ModelNumberEntry, ModelNumberLabel}},
-                {"QuantityEntry", new List<View> {QuantityEntry, QuantityLabel}},
-                {"ProductionDatePicker", new List<View> {ProductionDatePicker, ProductionDateLabel}},
-                {"ProductionShiftPicker", new List<View> {ProductionShiftPicker, ProductionShiftLabel}},
-				{"OperatorIDEntry", new List<View> {OperatorIDEntry, OperatorIDLabel}}
+                {"ProcessPicker", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
+                {"JBKNumberEntry", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
+                {"LotNumberEntry", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
+                {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
+                {"DieNumberEntry", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
+                {"PartPicker", new List<View> {PartControl, PartPicker, PartLabel}},
+                {"ModelNumberEntry", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
+                {"QuantityEntry", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
+                {"ProductionDatePicker", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
+                {"ProductionShiftPicker", new List<View> {ProductionShiftControl, ProductionShiftPicker, ProductionShiftLabel}},
+				{"OperatorIDEntry", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
             };
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
@@ -48,16 +54,19 @@ public partial class MainPage : ContentPage {
 			// the selected Process was invalid (uncommon)
 			} catch (ArgumentException) {
 				// show a warning
-				App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+				BasicPopup Popup = new("Unexpected Error", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
 			}
 			// show all necessary UI input elements
 			foreach (KeyValuePair<string, List<View>> _pair in Conversions) {
 				if (Requirements.Contains(_pair.Key)) {
 					_pair.Value[0].IsVisible = true;
 					_pair.Value[1].IsVisible = true;
+					_pair.Value[2].IsVisible = true;
 				} else {
 					_pair.Value[0].IsVisible = false;
 					_pair.Value[1].IsVisible = false;
+					_pair.Value[2].IsVisible = false;
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"
@@ -86,7 +95,21 @@ public partial class MainPage : ContentPage {
 		Reset();
 		// update the SelectedProcess and change the visible UI elements
 		if (PickedProcess != null) {
-			await _viewModel.UpdateSelectedProcess(PickedProcess);
+			try {
+				await _viewModel.UpdateSelectedProcess(PickedProcess);
+				// show the process type card
+				ProcessTypeCard.IsVisible = true;
+				ProcessTypeLabel.IsVisible = true;
+			// there was some error involving the Process file
+			} catch (FileLoadException) {
+				BasicPopup Popup = new("Failed to Retrieve Data", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
+			// there are no Parts assigned to the Process
+			} catch (ArgumentException) {
+				BasicPopup Popup = new("Failed to Retrieve Data", "There are no Parts assigned to this Process.");
+				this.ShowPopup(Popup);
+			}
+			// update the inputs either way
 			ChangeDisplayedInputs();
 		}
 	}
@@ -105,8 +128,8 @@ public partial class MainPage : ContentPage {
 		// the Model Number was either unimplied or the JBK # Queue could not be accessed
 		} catch (Exception _ex) {
 			// show a warning
-			App.AlertSvc!.ShowAlert("Unexpected Error", "The selected Part/Model # could not be retrieved. Please see management to resolve this issue."
-									+ $"\n\nError: {_ex.Message}");
+			BasicPopup Popup = new("Unexpected Error", $"The selected Part/Model # could not be retrieved. Please see management to resolve this issue.\n\nError: {_ex.Message}");
+			this.ShowPopup(Popup);
 		}
 		// disable the Model Number control if the implication was successful
 		if (PartSelection) {
@@ -121,21 +144,53 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnPrintButtonPressed(object Sender, EventArgs e) {
-		bool Printed = false;
+		// start the Printing Indicator
+		_viewModel.Printing = true;
+		bool Printed;
 		// call the ViewModel's Print Request method
 		try {
-			Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, 
-													DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, 
-													ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-		// serialization failed; this is fatal
+			Printed = await _viewModel.PrintRequest(PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
 		} catch (Exception _ex) {
-			// show a warning
-			App.AlertSvc!.ShowAlert("Unexpected Error", "Failed to Serialize the Label. Please see management to resolve this issue."
-									+ $"\n\nError: {_ex.Message}");
+			// stop the Printing Indicator
+			_viewModel.Printing = false;
+			// show a message based on the exception type
+			if (_ex is NullProcessException) {
+				// there was no process selection made
+				BasicPopup Popup = new("Failed to Print", "Please select a Process before printing Labels.");
+				this.ShowPopup(Popup);
+			} else if (_ex is ArgumentException) {
+				// there was an error retrieving the process data
+				BasicPopup Popup = new("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
+			} else if (_ex is FormatException) {
+				// there was a failed UI validation
+				BasicPopup Popup = new("Invalid Production Data.", _ex.Message);
+				this.ShowPopup(Popup);
+			} else if (_ex is LabelBuildException) {
+				// there was an error serializing the Label
+				BasicPopup Popup = new("Failed to Print", "Could not apply a Serial Number to the Label. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
+			} else if (_ex is PrintRequestException) {
+				// there was an error communicating with the Printer or Printing System
+				BasicPopup Popup = new("Failed to Print", "Could not connect to the printer. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
+			}
+			// escape the handler
+			return;
 		}
-		// reset UI if print was successful
+		// reset UI, show a confirmation if print was successful
 		if (Printed) {
 			Reset();
+			// stop printing indicator
+			_viewModel.Printing = false;
+			BasicPopup Popup = new("Label Printed", "The Label was printed successfully.");
+			this.ShowPopup(Popup);
+		// the print failed for some reason; show a warning
+		} else {
+			// stop printing indicator
+			_viewModel.Printing = false;
+			BasicPopup Popup = new("Failed to Print", "The system failed to print this Label. Please try again or see management to resolve this issue.");
+			this.ShowPopup(Popup);
 		}
 	}
 
