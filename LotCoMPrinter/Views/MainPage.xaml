@@ -278,7 +278,7 @@
             <Image
                 x:Name="JBKLockedIndicator"
                 Source="{AppThemeBinding Light=lockedinputblack.svg, Dark=lockedinputwhite.svg}"
-                IsVisible="False"
+                IsVisible="{Binding JBKEntryLocked}"
                 Grid.Row="3"
                 Grid.Column="1"
                 />
@@ -305,7 +305,7 @@
             <Image
                 x:Name="LotLockedIndicator"
                 Source="{AppThemeBinding Light=lockedinputblack.svg, Dark=lockedinputwhite.svg}"
-                IsVisible="False"
+                IsVisible="{Binding LotEntryLocked}"
                 Grid.Row="4"
                 Grid.Column="1"
                 />
