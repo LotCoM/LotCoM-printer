@@ -14,9 +14,9 @@ public static class ProcessData {
     /// <returns>"Originator" || "Pass-through".</returns>
     public static async Task<string> IsOriginator(string ProcessFullName) {
         // load the Process' data
-        Process ProcessData = await ProcessMasterlist.GetIndividualProcess(ProcessFullName);
+        Process Data = await ProcessMasterlist.GetIndividualProcess(ProcessFullName);
         // check whether the process is an originator or not
-        return ProcessData.Type;
+        return Data.Type;
     }
 
     /// <summary>
