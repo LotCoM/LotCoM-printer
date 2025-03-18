@@ -21,12 +21,23 @@ public static class ProcessMasterlist {
     }
 
     /// <summary>
+    /// Synchronously loads the data from the Process Masterlist data source.
+    /// </summary>
+    /// <returns>A JSON dictionary containing the Process Masterlist data.</returns>
+    /// <exception cref="JsonException"></exception>
+    private static JObject LoadData() {
+        // read the masterlist file
+        JObject Masterlist = JObject.Parse(File.ReadAllText(_path));
+        return Masterlist;
+    }
+
+    /// <summary>
     /// Synchronously retrieves a list of Process Full Names ("Code-Title").
     /// </summary>
     /// <returns></returns>
-    public static async Task<List<string>> GetProcessNames() {
+    public static List<string> GetProcessNames() {
         // load the data from the Masterlist
-        JObject FullData = await LoadDataAsync();
+        JObject FullData = LoadData();
         // create a List of all Process Names
         List<string> Processes = [];
         foreach(JToken _process in FullData["Processes"]!) {
@@ -45,12 +56,13 @@ public static class ProcessMasterlist {
         // load the data from the Masterlist
         JObject FullData = await LoadDataAsync();
         // attempt to access the data for the passed Process
-        JToken? SelectedData = FullData["Processes"]!.Where(x => x["FullName"]!.Equals(ProcessFullName)).First();
-        // check for a result and return
-        if (SelectedData.Equals(null)) {
-            throw new ArgumentException($"Could not retrieve data for process '{ProcessFullName}'.");
-        } else {
-            return SelectedData;
+        JToken SelectedData;
+        try {
+            SelectedData = FullData["Processes"]!.Where(x => x["FullName"]!.ToString() == ProcessFullName).First();
+        // no processes matched the name
+        } catch {
+            throw new ArgumentException($"Could not resolve process '{ProcessFullName}'.");
         }
+        return SelectedData;
     } 
 }
