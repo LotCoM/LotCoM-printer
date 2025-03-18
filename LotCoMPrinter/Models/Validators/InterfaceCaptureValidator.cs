@@ -119,7 +119,7 @@ public static class InterfaceCaptureValidator {
     /// <exception cref="NullProcessException">Thrown if there is no selection in the ProcessPicker Control.</exception>
     /// <exception cref="ArgumentException">Thrown if the Process Requirements could not be retrieved.</exception>
     /// <exception cref="FormatException">Thrown if there is a validation failure.</exception>
-    public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
+    public static async Task<List<string>> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
         Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, 
         Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
@@ -160,7 +160,7 @@ public static class InterfaceCaptureValidator {
             // validate jbk number
             if (Requirements.Contains("JBKNumberEntry")) {
                 // check if the JBK number is needed
-                if (ProcessData.IsOriginator(Process)) {
+                if (await ProcessData.IsOriginator(Process)) {
                     // JBK is assigned by serialization system and will be valid
                     JBKNumber = "000";
                 } else {
@@ -173,7 +173,7 @@ public static class InterfaceCaptureValidator {
             // validate lot number
             if (Requirements.Contains("LotNumberEntry")) {
                 // check if the JBK number is needed
-                if (ProcessData.IsOriginator(Process)) {
+                if (await ProcessData.IsOriginator(Process)) {
                     // Lot is assigned by serialization system and will be valid
                     LotNumber = "000000000";
                 } else {
