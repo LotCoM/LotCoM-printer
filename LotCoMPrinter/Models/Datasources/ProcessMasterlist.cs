@@ -21,6 +21,21 @@ public static class ProcessMasterlist {
     }
 
     /// <summary>
+    /// Synchronously retrieves a list of Process Full Names ("Code-Title").
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetProcessNames() {
+        // load the data from the Masterlist
+        JObject FullData = LoadDataAsync().Result;
+        // create a List of all Process Names
+        List<string> Processes = [];
+        foreach(JToken _process in FullData["Processes"]!) {
+            Processes.Add(_process["FullName"]!.ToString());
+        }
+        return Processes;
+    }
+
+    /// <summary>
     /// Loads and queries the Process Masterlist data for data connected to ProcessFullName.
     /// </summary>
     /// <param name="ProcessFullName">The FULL name of a Process ("Code-Title") to query for.</param>
