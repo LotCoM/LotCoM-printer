@@ -104,7 +104,7 @@ public static class InterfaceCaptureValidator {
     /// <summary>
     /// Validates the UI Control states and entry values.
     /// </summary>
-    /// <param name="Process"></param>
+    /// <param name="SelectedProcess"></param>
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
     /// <param name="JBKNumberEntry"></param>
@@ -119,14 +119,14 @@ public static class InterfaceCaptureValidator {
     /// <exception cref="NullProcessException">Thrown if there is no selection in the ProcessPicker Control.</exception>
     /// <exception cref="ArgumentException">Thrown if the Process Requirements could not be retrieved.</exception>
     /// <exception cref="FormatException">Thrown if there is a validation failure.</exception>
-    public static async Task<List<string>> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
+    public static List<string> Validate(Process SelectedProcess, Picker PartPicker, Entry QuantityEntry, 
         Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, 
         Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
         // retrieve the Process requirements
         List<string> Requirements;
         try {
-            Requirements = ProcessRequirements.GetProcessRequirements(Process);
+            Requirements = ProcessRequirements.GetProcessRequirements(SelectedProcess.FullName);
         // the Process selection was null
         } catch (NullProcessException) {
             throw new NullProcessException();
@@ -134,7 +134,7 @@ public static class InterfaceCaptureValidator {
         } catch (ArgumentException) {
             throw new ArgumentException();
         }
-        List<string> UIResults = [$"Process: {Process}"];
+        List<string> UIResults = [$"Process: {SelectedProcess.FullName}"];
         // create values for each of the UI entries
         string? Part;
         string? Quantity;
@@ -160,7 +160,7 @@ public static class InterfaceCaptureValidator {
             // validate jbk number
             if (Requirements.Contains("JBKNumberEntry")) {
                 // check if the JBK number is needed
-                if (await ProcessData.IsOriginator(Process)) {
+                if (SelectedProcess.Type.Equals("Originator")) {
                     // JBK is assigned by serialization system and will be valid
                     JBKNumber = "000";
                 } else {
@@ -173,7 +173,7 @@ public static class InterfaceCaptureValidator {
             // validate lot number
             if (Requirements.Contains("LotNumberEntry")) {
                 // check if the JBK number is needed
-                if (await ProcessData.IsOriginator(Process)) {
+                if (SelectedProcess.Type.Equals("Originator")) {
                     // Lot is assigned by serialization system and will be valid
                     LotNumber = "000000000";
                 } else {

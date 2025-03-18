@@ -291,7 +291,7 @@ public partial class MainPageViewModel : ObservableObject {
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
-			UICapture = await InterfaceCaptureValidator.Validate(SelectedProcess!.FullName, 
+			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess!, 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
                 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // there was no process selected
