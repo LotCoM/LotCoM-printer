@@ -158,14 +158,14 @@ public partial class MainPageViewModel : ObservableObject {
                 return false;
             }
             // get the PartPicker's selected item
-            var PickedPart = (string?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
+            Part? PickedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
             // ensure the picked Part index is not a null object
             if (PickedPart!.Equals(null)) {
                 SelectedPart = null;
                 return false;
             }
             // update the SelectedPart property and return successful
-            SelectedPart = await PartData.GetPartData(SelectedProcess!.FullName, PickedPart);
+            SelectedPart = await PartData.GetPartData(SelectedProcess!.FullName, PickedPart.PartName);
             return true;
         });
         // return the validity of the Part selection
