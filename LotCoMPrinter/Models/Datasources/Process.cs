@@ -7,7 +7,7 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="Title">The linguistic title (descriptor) assigned to the Process.</param>
 /// <param name="Type">The Process' serialization type (Originator || Pass-through).</param>
 /// <param name="Parts">The Parts assigned to the Process.</param>
-public class Process(string Code, string Title, string Type, List<Dictionary<string, string>> Parts) {
+public class Process(string Code, string Title, string Type, List<Part> Parts) {
     /// <summary>
     /// The four-digit Process Code assigned to the Process.
     /// </summary>
