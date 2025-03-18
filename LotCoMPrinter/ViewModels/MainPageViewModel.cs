@@ -14,7 +14,7 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject {
     // public class properties
-    private List<string> _processes = ProcessData.ProcessMasterList;
+    private List<string> _processes;
     /// <summary>
     /// Serves the Process masterlist to the ProcessPicker Control.
     /// </summary>
@@ -269,8 +269,8 @@ public partial class MainPageViewModel : ObservableObject {
 	/// </summary>
 	public async Task<bool> IsCurrentProcessOriginator() {
 		// confirm whether this label needs to be serialized or considered "pass-through"
-        await Task.Run(() => {
-            if (ProcessData.IsOriginator(SelectedProcess)) {
+        await Task.Run(async () => {
+            if (await ProcessData.IsOriginator(SelectedProcess)) {
                 IsOriginator = true;
                 ProcessType = "Origination";
             } else {
@@ -365,7 +365,7 @@ public partial class MainPageViewModel : ObservableObject {
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
-			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess, 
+			UICapture = await InterfaceCaptureValidator.Validate(SelectedProcess, 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
                 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // there was no process selected
