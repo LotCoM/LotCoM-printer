@@ -7,7 +7,7 @@ namespace LotCoMPrinter.Models.Datasources;
 /// Provides controlled access to the Process Masterlist data source.
 /// </summary>
 public static class ProcessMasterlist {
-    private const string _path = "\\\\144.133.122.1\\Lot Control Management\\Database\\part_control\\_process_masterlist";
+    private const string _path = "\\\\144.133.122.1\\Lot Control Management\\Database\\process_control\\_process_masterlist.json";
 
     /// <summary>
     /// Asynchronously loads the data from the Process Masterlist data source.
@@ -24,9 +24,9 @@ public static class ProcessMasterlist {
     /// Synchronously retrieves a list of Process Full Names ("Code-Title").
     /// </summary>
     /// <returns></returns>
-    public static List<string> GetProcessNames() {
+    public static async Task<List<string>> GetProcessNames() {
         // load the data from the Masterlist
-        JObject FullData = LoadDataAsync().Result;
+        JObject FullData = await LoadDataAsync();
         // create a List of all Process Names
         List<string> Processes = [];
         foreach(JToken _process in FullData["Processes"]!) {
