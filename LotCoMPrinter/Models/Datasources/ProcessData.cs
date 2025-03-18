@@ -8,25 +8,25 @@ namespace LotCoMPrinter.Models.Datasources;
 /// </summary>
 public static class ProcessData {
     /// <summary>
-    /// Checks if a Process is an originator (a process that creates new parts and requires serialization).
+    /// Retrieves ProcessFullName's serialization status.
     /// </summary>
     /// <param name="ProcessFullName">Process FULL Name ("Code-Title") to check.</param>
-    /// <returns>bool</returns>
-    public static async Task<bool> IsOriginator(string ProcessFullName) {
+    /// <returns>"Originator" || "Pass-through".</returns>
+    public static async Task<string> IsOriginator(string ProcessFullName) {
         // load the Process' data
-        JToken ProcessData = await ProcessMasterlist.GetIndividualProcessData(ProcessFullName);
+        Process ProcessData = await ProcessMasterlist.GetIndividualProcess(ProcessFullName);
         // check whether the process is an originator or not
-        return ProcessData["Type"]!.Equals("Originator");
+        return ProcessData.Type;
     }
 
     /// <summary>
     /// Retrieves ProcessFullName's data utilizing the Process Masterlist data source.
     /// </summary>
     /// <param name="ProcessFullName">Process FULL Name ("Code-Title") to retrieve data for.</param>
-    /// <returns></returns>
-    public static async Task<JToken> GetIndividualProcessData(string ProcessFullName) {
+    /// <returns>A Process object.</returns>
+    public static async Task<Process> GetIndividualProcessData(string ProcessFullName) {
         // invoke the Masterlist method to retrieve the Process' data
-        return await ProcessMasterlist.GetIndividualProcessData(ProcessFullName);
+        return await ProcessMasterlist.GetIndividualProcess(ProcessFullName);
     }
 
     /// <summary>
@@ -193,12 +193,13 @@ public static class ProcessData {
         }
 
         /// <summary>
-        /// Loads and queries the Process Masterlist data for data connected to ProcessFullName.
+        /// Loads and queries the Process Masterlist data for data connected to ProcessFullName. 
+        /// Returns a Process object constructed from the first found match.
         /// </summary>
         /// <param name="ProcessFullName">The FULL name of a Process ("Code-Title") to query for.</param>
-        /// <returns>A JToken object containing the Process' data.</returns>
+        /// <returns>A Process object.</returns>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task<JToken> GetIndividualProcessData(string ProcessFullName) {
+        public static async Task<Process> GetIndividualProcess(string ProcessFullName) {
             // load the data from the Masterlist
             JObject FullData = await LoadDataAsync();
             // attempt to access the data for the passed Process
@@ -209,7 +210,16 @@ public static class ProcessData {
             } catch {
                 throw new ArgumentException($"Could not resolve process '{ProcessFullName}'.");
             }
-            return SelectedData;
+            // resolve the Token to a Process
+            Process ResolvedProcess;
+            try {
+                ResolvedProcess = ResolveProcessFromToken(SelectedData);
+            // the Token could not be resolved to a Process
+            } catch {
+                throw new FormatException($"Could not resolve '{SelectedData}' to a Process object.");
+            }
+            // return the resolved Process object
+            return ResolvedProcess;
         } 
     }
 }
