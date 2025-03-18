@@ -20,23 +20,13 @@ public static class ProcessData {
     }
 
     /// <summary>
-    /// Retrieves the Process Part list for the specified Process.
+    /// Retrieves ProcessFullName's data utilizing the Process Masterlist data source.
     /// </summary>
-    /// <param name="ProcessFullName">Process FULL Name ("Code-Title") to retrieve Part Data for.</param>
+    /// <param name="ProcessFullName">Process FULL Name ("Code-Title") to retrieve data for.</param>
     /// <returns></returns>
-    /// <exception cref="FileLoadException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    public static async Task<JToken> GetProcessParts(string ProcessFullName) {
-        // load the Process' data
-        JToken ProcessData = await ProcessMasterlist.GetProcessData(ProcessFullName);
-        // pull the Part data
-        JToken PartData = ProcessData["Parts"]!;
-        // no Part data was read
-        if (PartData.Equals(null)) {
-            throw new ArgumentException($"No Part data found for the Process '{ProcessFullName}'.");
-        } 
-        // return the Part data
-        return PartData;
+    public static async Task<JToken> GetProcessData(string ProcessFullName) {
+        // invoke the Masterlist method to retrieve the Process' data
+        return await ProcessMasterlist.GetProcessData(ProcessFullName);
     }
 
     /// <summary>
