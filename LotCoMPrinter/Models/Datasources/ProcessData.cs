@@ -30,6 +30,15 @@ public static class ProcessData {
     }
 
     /// <summary>
+    /// Retrieves the full list of Processes utilizing the Process Masterlist data source.
+    /// </summary>
+    /// <returns>A JToken object containing the full list of Processes.</returns>
+    public static JToken GetProcesses() {
+        // invoke the Masterlist method to retrieve the Processes
+        return ProcessMasterlist.GetProcesses();
+    }
+
+    /// <summary>
     /// Retrieves a list of Process Names utilizing the Process Masterlist data source.
     /// </summary>
     /// <returns></returns>
@@ -64,6 +73,21 @@ public static class ProcessData {
             // read the masterlist file
             JObject Masterlist = JObject.Parse(File.ReadAllText(_path));
             return Masterlist;
+        }
+
+        /// <summary>
+        /// Retrieves the list of Processes, as full data Tokens, from the Process Masterlist.
+        /// </summary>
+        /// <returns>A JToken object holding the Processes data.</returns>
+        /// <exception cref="FileLoadException"></exception>
+        public static JToken GetProcesses() {
+            // load the data from the Masterlist
+            JObject FullData = LoadData();
+            // return the list of Processes in the Masterlist
+            if (FullData["Processes"]!.Equals(null)) {
+                throw new FileLoadException("Failed to load the Processes from the Process Masterlist data source.");
+            }
+            return FullData["Processes"]!;
         }
 
         /// <summary>
