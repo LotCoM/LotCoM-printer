@@ -14,7 +14,7 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject {
     // public class properties
-    private List<string> _processes;
+    private List<string> _processes = ProcessMasterlist.GetProcessNames();
     /// <summary>
     /// Serves the Process masterlist to the ProcessPicker Control.
     /// </summary>
