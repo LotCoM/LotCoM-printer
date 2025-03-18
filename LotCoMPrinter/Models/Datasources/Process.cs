@@ -27,5 +27,5 @@ public class Process(string Code, string Title, string Type, List<Part> Parts) {
     /// <summary>
     /// The Parts assigned to the Process.
     /// </summary>
-    public readonly List<Dictionary<string, string>> Parts = Parts;
+    public readonly List<Part> Parts = Parts;
 }
