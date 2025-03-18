@@ -30,6 +30,15 @@ public static class ProcessData {
     }
 
     /// <summary>
+    /// Retrieves a list of Process Names utilizing the Process Masterlist data source.
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetProcessNames() {
+        // invoke the Masterlist method to retrieve the Process list
+        return ProcessMasterlist.GetProcessNames();
+    }
+
+    /// <summary>
     /// Provides ProcessData controlled access to the Process Masterlist data source.
     /// </summary>
     private static class ProcessMasterlist {
