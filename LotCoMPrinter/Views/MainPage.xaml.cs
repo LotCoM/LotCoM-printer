@@ -50,7 +50,7 @@ public partial class MainPage : ContentPage {
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
 			try {
-				Requirements = ProcessRequirements.GetProcessRequirements(_viewModel.SelectedProcess);
+				Requirements = ProcessRequirements.GetProcessRequirements(_viewModel.SelectedProcess.FullName);
 			// the selected Process was invalid (uncommon)
 			} catch (ArgumentException) {
 				// show a warning
@@ -90,13 +90,13 @@ public partial class MainPage : ContentPage {
 	public async void OnProcessSelection(object Sender, EventArgs e) {
 		// retrieve the picked process
 		Picker ProcessPicker = (Picker)Sender;
-		string? PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
+		Process? PickedProcess = (Process?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
 		// reset the Page
 		Reset();
 		// update the SelectedProcess and change the visible UI elements
 		if (PickedProcess != null) {
 			try {
-				await _viewModel.UpdateSelectedProcess(PickedProcess);
+				await _viewModel.UpdateSelectedProcess(PickedProcess.FullName);
 				// show the process type card
 				ProcessTypeCard.IsVisible = true;
 				ProcessTypeLabel.IsVisible = true;
