@@ -347,7 +347,7 @@
                 >
                 <Entry
                     x:Name="ModelNumberEntry"
-                    Text="{Binding SelectedPart.ModelNumber}"/>
+                    Text="{Binding DisplayedModelNumber}"/>
             </Border>
         </Grid>
         <!-- Right-Side Sub-Grid (Production Time Inputs) allows control over label/input positions -->
