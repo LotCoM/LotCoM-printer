@@ -129,8 +129,6 @@ public partial class MainPage : ContentPage {
 		}
 		// disable the Model Number control 
 		ModelNumberEntry.IsEnabled = false;
-		// debug
-		Console.WriteLine(_viewModel.DisplayedModelNumber);
 	}
 
 	/// <summary>
