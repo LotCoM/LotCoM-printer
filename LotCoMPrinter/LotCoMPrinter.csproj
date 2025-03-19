@@ -49,6 +49,9 @@
 
 		<!-- DPI Awareness (scaling for printing) -->
 		<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+
+		<!-- Enable Preview Language Mode -->
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

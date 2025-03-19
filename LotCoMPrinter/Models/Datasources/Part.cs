@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
@@ -7,48 +9,28 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="PartNumber">The Part Number assigned to the Part.</param>
 /// <param name="PartName">The Part Name assigned to the Part.</param>
 /// <param name="ModelNumber">The Model Number the Part is associated with.</param>
-public class Part(string ParentProcess, string PartNumber, string PartName, string ModelNumber) {
-    /// <summary>
-    /// The Process that the Part is assigned to.
-    /// </summary>
-    private readonly string _parentProcess = ParentProcess; 
+public partial class Part(string ParentProcess, string PartNumber, string PartName, string ModelNumber): ObservableObject {
     /// <summary>
     /// [Observable] The Process that the Part is assigned to.
     /// </summary>
-    public string ParentProcess {
-        get {return _parentProcess;}
-    }
+    [ObservableProperty]
+    public partial string ParentProcess {get; set;} = ParentProcess;
 
-    /// <summary>
-    /// The Part Number assigned to the Part.
-    /// </summary>
-    private readonly string _partNumber = PartNumber;
     /// <summary>
     /// [Observable] The Part Number assigned to the Part.
     /// </summary>
-    public string PartNumber {
-        get {return _partNumber;}
-    }
+    [ObservableProperty]
+    public partial string PartNumber {get; set;} = PartNumber;
 
-    /// <summary>
-    /// The Part Name assigned to the Part.
-    /// </summary>
-    private readonly string _partName = PartName;
     /// <summary>
     /// [Observable] The Part Name assigned to the Part.
     /// </summary>
-    public string PartName {
-        get {return _partName;}
-    }
+    [ObservableProperty]
+    public partial string PartName {get; set;} = PartName;
 
-    /// <summary>
-    /// The Model Number the Part is associated with.
-    /// </summary>
-    private readonly string _modelNumber = ModelNumber;
     /// <summary>
     /// [Observable] The Model Number the Part is associated with.
     /// </summary>
-    public string ModelNumber {
-        get {return _modelNumber;}
-    }
+    [ObservableProperty]
+    public partial string ModelNumber {get; set;} = ModelNumber;
 }
