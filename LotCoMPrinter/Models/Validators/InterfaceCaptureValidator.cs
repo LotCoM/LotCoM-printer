@@ -9,13 +9,13 @@ namespace LotCoMPrinter.Models.Validators;
 /// </summary>
 public static class InterfaceCaptureValidator {
 
-    private static string? ValidatePicker(Picker PickerControl, string DataField) {
+    private static Part? ValidatePartPicker(Picker PartPicker, string DataField) {
         // validate that the Picker has a selection
-        if ((PickerControl.SelectedIndex == -1) || (PickerControl.SelectedItem == null)) {
+        if ((PartPicker.SelectedIndex == -1) || (PartPicker.SelectedItem == null)) {
             throw new FormatException($"Please select a {DataField} before printing Labels.");
         }
         // capture the value selected in the PickerControl
-        return (string?)PickerControl.ItemsSource[PickerControl.SelectedIndex];
+        return (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
     }
 
     private static string ValidateAsDigits(Entry EntryControl, string DataField) {
@@ -100,11 +100,20 @@ public static class InterfaceCaptureValidator {
         // cast the string to Uppercase and return it
         return Value.ToUpper();
     }
+
+    private static string? ValidateProductionShiftPicker(Picker ProductionShiftPicker) {
+        // validate that the Picker has a selection
+        if ((ProductionShiftPicker.SelectedIndex == -1) || (ProductionShiftPicker.SelectedItem == null)) {
+            throw new FormatException($"Please select a Production Shift before printing Labels.");
+        }
+        // capture the value selected in the PickerControl
+        return (string?)ProductionShiftPicker.ItemsSource[ProductionShiftPicker.SelectedIndex];
+    }
     
     /// <summary>
     /// Validates the UI Control states and entry values.
     /// </summary>
-    /// <param name="Process"></param>
+    /// <param name="SelectedProcess"></param>
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
     /// <param name="JBKNumberEntry"></param>
@@ -119,14 +128,14 @@ public static class InterfaceCaptureValidator {
     /// <exception cref="NullProcessException">Thrown if there is no selection in the ProcessPicker Control.</exception>
     /// <exception cref="ArgumentException">Thrown if the Process Requirements could not be retrieved.</exception>
     /// <exception cref="FormatException">Thrown if there is a validation failure.</exception>
-    public static List<string> Validate(string Process, Picker PartPicker, Entry QuantityEntry, 
+    public static List<string> Validate(Process SelectedProcess, Picker PartPicker, Entry QuantityEntry, 
         Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, 
         Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry
     ) {
         // retrieve the Process requirements
         List<string> Requirements;
         try {
-            Requirements = ProcessRequirements.GetProcessRequirements(Process);
+            Requirements = ProcessRequirements.GetProcessRequirements(SelectedProcess.FullName);
         // the Process selection was null
         } catch (NullProcessException) {
             throw new NullProcessException();
@@ -134,9 +143,9 @@ public static class InterfaceCaptureValidator {
         } catch (ArgumentException) {
             throw new ArgumentException();
         }
-        List<string> UIResults = [$"Process: {Process}"];
+        List<string> UIResults = [$"Process: {SelectedProcess.FullName}"];
         // create values for each of the UI entries
-        string? Part;
+        Part? Part;
         string? Quantity;
         string? JBKNumber;
         string? LotNumber;
@@ -149,8 +158,8 @@ public static class InterfaceCaptureValidator {
         try {
             // validate part
             if (Requirements.Contains("PartPicker")) {
-                Part = ValidatePicker(PartPicker, "Part");
-                UIResults.Add($"Part: {Part!}");
+                Part = ValidatePartPicker(PartPicker, "Part");
+                UIResults.Add($"Part: {Part!.PartNumber}\n{Part!.PartName}");
             };
             // validate quantity
             if (Requirements.Contains("QuantityEntry")) {
@@ -160,7 +169,7 @@ public static class InterfaceCaptureValidator {
             // validate jbk number
             if (Requirements.Contains("JBKNumberEntry")) {
                 // check if the JBK number is needed
-                if (ProcessData.IsOriginator(Process)) {
+                if (SelectedProcess.Type.Equals("Originator")) {
                     // JBK is assigned by serialization system and will be valid
                     JBKNumber = "000";
                 } else {
@@ -173,7 +182,7 @@ public static class InterfaceCaptureValidator {
             // validate lot number
             if (Requirements.Contains("LotNumberEntry")) {
                 // check if the JBK number is needed
-                if (ProcessData.IsOriginator(Process)) {
+                if (SelectedProcess.Type.Equals("Originator")) {
                     // Lot is assigned by serialization system and will be valid
                     LotNumber = "000000000";
                 } else {
@@ -202,7 +211,7 @@ public static class InterfaceCaptureValidator {
             UIResults.Add($"Production Date: {ProductionDatePicker.Date.ToShortDateString()!}");
             // validate production shift
             if (Requirements.Contains("ProductionShiftPicker")) {
-                ProductionShift = ValidatePicker(ProductionShiftPicker, "Production Shift");
+                ProductionShift = ValidateProductionShiftPicker(ProductionShiftPicker);
                 UIResults.Add($"Production Shift: {ProductionShift!}");
             };
             // validate the operator initials

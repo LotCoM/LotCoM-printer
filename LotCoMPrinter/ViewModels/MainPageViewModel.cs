@@ -14,30 +14,30 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject {
     // public class properties
-    private List<string> _processes = ProcessData.ProcessMasterList;
+    private List<Process> _processes = ProcessData.GetProcesses();
     /// <summary>
     /// Serves the Process masterlist to the ProcessPicker Control.
     /// </summary>
-    public List<string> Processes {
+    public List<Process> Processes {
         get {return _processes;}
     }
-    private string _selectedProcess = "";
+    private Process? _selectedProcess = null;
     /// <summary>
-    /// Serves ProcessPicker's selected value. 
+    /// Serves ProcessPicker's selected value as a Process object. 
     /// </summary>
-    public string SelectedProcess {
+    public Process? SelectedProcess {
         get {return _selectedProcess;}
         set {
-            OnPropertyChanged(_selectedProcess);
-            OnPropertyChanged(SelectedProcess);
+            OnPropertyChanged(nameof(_selectedProcess));
+            OnPropertyChanged(nameof(SelectedProcess));
             _selectedProcess = value;
         }
     }
-    private List<string> _selectedProcessParts = [];
+    private List<Part>? _selectedProcessParts = null;
     /// <summary>
     /// Serves the Part Data associated with the Process in SelectedProcess.
     /// </summary>
-    public List<string> SelectedProcessParts {
+    public List<Part>? SelectedProcessParts {
         get {return _selectedProcessParts;}
         set {
             _selectedProcessParts = value;
@@ -45,28 +45,16 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(SelectedProcessParts));
         }
     }
-    private string _selectedPart = "";
+    private Part? _selectedPart = null;
     /// <summary>
-    /// Serves PartPicker's selected value.
+    /// Serves PartPicker's selected value as a Part object.
     /// </summary>
-    public string SelectedPart {
+    public Part? SelectedPart {
         get {return _selectedPart;}
         set {
             _selectedPart = value;
             OnPropertyChanged(nameof(_selectedPart));
             OnPropertyChanged(nameof(SelectedPart));
-        }
-    }
-    private string _displayedModel = "";
-    /// <summary>
-    /// Serves the Model Number currently displayed (when programmatically assigned).
-    /// </summary>
-    public string DisplayedModel {
-        get {return _displayedModel;}
-        set {
-            _displayedModel = value;
-            OnPropertyChanged(nameof(_displayedModel));
-            OnPropertyChanged(nameof(DisplayedModel));
         }
     }
     private string _displayedJBKNumber = "";
@@ -93,6 +81,18 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(DisplayedLotNumber));
         }
     }
+    private string _displayedModelNumber = "";
+    /// <summary>
+    /// Serves the Model Number that the current SelectedPart is associated with.
+    /// </summary>
+    public string DisplayedModelNumber {
+        get {return _displayedModelNumber;}
+        set {
+            _displayedModelNumber = value;
+            OnPropertyChanged(nameof(_displayedModelNumber));
+            OnPropertyChanged(nameof(DisplayedModelNumber));
+        }
+    }
     private string _basketType = "Full";
     /// <summary>
     /// Serves BasketTypePicker's selected value.
@@ -103,30 +103,6 @@ public partial class MainPageViewModel : ObservableObject {
             _basketType = value;
             OnPropertyChanged(nameof(_basketType));
             OnPropertyChanged(nameof(BasketType));
-        }
-    }
-    private bool _isOriginator = false;
-    /// <summary>
-    /// Serves the boolean evaluation of whether SelectedProcess is an Origination Process.
-    /// </summary>
-    public bool IsOriginator {
-        get {return _isOriginator;}
-        set {
-            _isOriginator = value;
-            OnPropertyChanged(nameof(_isOriginator));
-            OnPropertyChanged(nameof(IsOriginator));
-        }
-    }
-    private string _processType = "";
-    /// <summary>
-    /// Serves the value of SelectedProcess' type (Origination/Process) to the ProcessTypeLabel.
-    /// </summary>
-    public string ProcessType {
-        get {return _processType;}
-        set {
-            _processType = value;
-            OnPropertyChanged(nameof(_processType));
-            OnPropertyChanged(nameof(ProcessType));
         }
     }
     private bool _printing = false;
@@ -146,66 +122,6 @@ public partial class MainPageViewModel : ObservableObject {
     public MainPageViewModel() {}
 
     /// <summary>
-    /// Uses the SelectedPart property to attempt to imply the Model number.
-    /// </summary>
-    /// <returns>Model # if implication is successful; raises ArgumentException if not.</returns>
-    /// <exception cref="ArgumentException"></exception>"
-    private async Task<string> AttemptModelNumberImplication() {
-        // get the Part's Model number and update the SelectedModel property
-        string Model;
-        try {
-            Model = await ModelData.AttemptModelFromPart(SelectedPart);
-        } catch (AggregateException _ex) {
-            // could not automatically determine Model number from Part selection
-            throw new ArgumentException($"Could not imply Model # from {SelectedPart} due to the following exception(s):"
-                                        + $"\n{_ex.InnerExceptions}");
-        }
-        // Model implication did not fail; return
-        return Model;
-    }
-
-    /// <summary>
-    /// Configures the PartPicker control and the SelectedPart ViewModel property.
-    /// </summary>
-    /// <param name="PartPicker">The UI's Picker control for the Part.</param>
-    /// <returns>true if the selected part is valid; false if not.</returns>
-    private async Task<bool> ConfigureSelectedPart(Picker PartPicker) {
-        bool Result = await Task.Run(() => {
-            // get the PartPicker's selected item
-            if (PartPicker.SelectedIndex >= 0) {
-                var PickedPart = (string?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
-                // update the SelectedPart properties
-                if (PickedPart != null) {
-                    SelectedPart = PickedPart;
-                    return true;
-                } else {
-                    SelectedPart = "";
-                    return false;
-                }
-            } else {
-                SelectedPart = "";
-                return false;
-            }
-        });
-        return Result;
-    }
-
-    /// <summary>
-    /// Configures the ModelNumberEntry control and the DisplayedModel ViewModel property using the SelectedPart property.
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    private async Task ConfigureSelectedModelNumber() {
-        // get the Part's Model number and update the DisplayedModel property to only include the implied Model
-        try {
-            string ModelNumber = await AttemptModelNumberImplication();
-            DisplayedModel = ModelNumber;
-        } catch {
-            throw new ArgumentException($"Could not configure the Model # for the Part {SelectedPart}.");
-        }
-    }
-
-    /// <summary>
     /// Checks if the Process requires Serialization (is an origination process).
     /// If so, elicits the SerializeMode, checks for Cached Serial Numbers, and assigns a Serial Number to the Label.
     /// </summary>
@@ -220,10 +136,10 @@ public partial class MainPageViewModel : ObservableObject {
             SerializeMode = "JBK";
         }
         // serialize the label if needed
-        if (IsOriginator) {
+        if (SelectedProcess!.Type.Equals("Originator")) {
             string? SerialNumber;
             // assign/retrieve a cached serial number for this label
-            SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
+            SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), SelectedPart!.ModelNumber, SerializeMode, BasketType);
             // no serial number was assigned; this is fatal
             if (SerialNumber == null) {
                 throw new LabelBuildException("Failed to assign a Serial Number to the Label");
@@ -265,80 +181,54 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
-	/// Checks if the current SelectedProcess is an originator.
-	/// </summary>
-	public async Task<bool> IsCurrentProcessOriginator() {
-		// confirm whether this label needs to be serialized or considered "pass-through"
-        await Task.Run(() => {
-            if (ProcessData.IsOriginator(SelectedProcess)) {
-                IsOriginator = true;
-                ProcessType = "Origination";
-            } else {
-                IsOriginator = false;
-                ProcessType = "Pass-through";
-            }
-        });
-        return IsOriginator;
-	}
-
-    /// <summary>
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
     /// <param name="Process">The Process name to configure the UI for.</param>
     /// <returns></returns>
-    /// <exception cref="FileLoadException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    public async Task UpdateSelectedProcess(string Process) {
-        // update the SelectedProcess properties
-        await Task.Run(async () => {
-            SelectedProcess = Process;
-            // update the originator state
-            await IsCurrentProcessOriginator();
-            // get the Process Parts for the Picked Process and convert those parts to strings
-            Dictionary<string, string> ProcessParts = new Dictionary<string, string> {};
-            try {
-                ProcessParts = await ProcessData.GetProcessPartData(SelectedProcess);
-            // the Process file couldn't be read or didn't exist
-            } catch (FileLoadException _ex) {
-                throw new FileLoadException(_ex.Message);
-            // there are no Parts assigned to this Process
-            } catch (ArgumentException _ex) {
-                throw new ArgumentException(_ex.Message);
+    /// <exception cref="ArgumentException"></exception>"
+    public async Task UpdateSelectedProcess(Picker ProcessPicker) {
+        await Task.Run(() => {
+            // retrieve the selected Process
+		    Process? PickedProcess = (Process?)Processes[ProcessPicker.SelectedIndex];
+            // update the SelectedProcess properties
+            if (ProcessPicker.SelectedIndex == -1) {
+                return;
             }
-            // Parts were found for the Process
-            List<string> DisplayableParts = [];
-            foreach (KeyValuePair<string, string> _pair in ProcessParts) {
-                DisplayableParts = DisplayableParts.Append(ProcessData.GetPartAsDisplayable(_pair)).ToList();
+            if (PickedProcess == null) {
+                throw new ArgumentException("Process was not found in Process masterlist.");
             }
-            // assign the new list of string parts to the SelectedProcessParts list
-            SelectedProcessParts = DisplayableParts;
+            // update SelectedProcess and assign the new list of Parts (as objects) to the SelectedProcessParts list
+            SelectedProcess = PickedProcess;
+            SelectedProcessParts = SelectedProcess.Parts;
         });
     }
 
     /// <summary>
     /// Updates the Page's Selected Part and Model Number.
-    /// Attempts to automatically assign a Model Number to the Model Picker UI control.
     /// </summary>
     /// <param name="PartPicker">The Picker UI Control that allows the selection of a Part.</param>
-    /// <returns>Returns a boolean that indicates whether to disable the Model Picker (if the Model assignment was failed).</returns>
-    public async Task<bool> UpdateSelectedPart(Picker PartPicker) {
-        // configure the SelectedPart
-        bool PartResult = await ConfigureSelectedPart(PartPicker);
-        if (PartResult) {
-            // attempt to imply and configure the Model Number of the Part
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>"
+    public async Task UpdateSelectedPart(Picker PartPicker) {
+        await Task.Run(() => {
+            // configure the SelectedPart property
             try {
-                await ConfigureSelectedModelNumber();
-            // the Model Number implication failed (some fatal issue with part selection)
-            } catch (ArgumentException _ex) {
-                throw new SystemException("There was an unexpected error while retreiving the Model #. Please see management to resolve this issue."
-                                          + $"\n\nException Message(s): {_ex.Message}");
+                // get the PartPicker's selected item
+                if (PartPicker.SelectedIndex == -1) {
+                    return;
+                }
+                Part? PickedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
+                // update the SelectedPart property and the DisplayedModelNumber property
+                if (PickedPart == null) {
+                    throw new ArgumentException("Part was not found in Process Part list.");
+                }
+                SelectedPart = PickedPart;
+                DisplayedModelNumber = SelectedPart.ModelNumber;
+            // the selected part number was somehow invalid
+            } catch (ArgumentException) {
+                throw new ArgumentException("Part was not found in Process Part list.");
             }
-            // the part number was valid and all of its data was retrieved
-            return true;
-        // the selected part number was somehow invalid
-        } else {
-            return false;
-        }
+        });
     }
 
     /// <summary>
@@ -365,7 +255,7 @@ public partial class MainPageViewModel : ObservableObject {
         // attempt to validate the current UI status
         List<string> UICapture;
         try {
-			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess, 
+			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess!, 
 				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
                 DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // there was no process selected
@@ -427,8 +317,7 @@ public partial class MainPageViewModel : ObservableObject {
     /// Resets the ViewModel's public properties.
     /// </summary>
     public void Reset() {
-        SelectedPart = "";
-        DisplayedModel = "";
+        SelectedPart = null;
         DisplayedJBKNumber = "";
         DisplayedLotNumber = "";
         BasketType = "Full";

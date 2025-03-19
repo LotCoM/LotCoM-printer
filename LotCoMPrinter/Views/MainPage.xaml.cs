@@ -50,7 +50,7 @@ public partial class MainPage : ContentPage {
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
 			try {
-				Requirements = ProcessRequirements.GetProcessRequirements(_viewModel.SelectedProcess);
+				Requirements = ProcessRequirements.GetProcessRequirements(_viewModel.SelectedProcess.FullName);
 			// the selected Process was invalid (uncommon)
 			} catch (ArgumentException) {
 				// show a warning
@@ -70,7 +70,7 @@ public partial class MainPage : ContentPage {
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"
-			if (_viewModel.IsOriginator) {
+			if (_viewModel.SelectedProcess.Type.Equals("Originator")) {
 				// disable serial number inputs
 				JBKNumberEntry.IsEnabled = false;
 				LotNumberEntry.IsEnabled = false;
@@ -88,30 +88,27 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnProcessSelection(object Sender, EventArgs e) {
-		// retrieve the picked process
+		// update the SelectedProcess by invoking the ViewModel method
 		Picker ProcessPicker = (Picker)Sender;
-		string? PickedProcess = (string?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
+		await _viewModel.UpdateSelectedProcess(ProcessPicker);
 		// reset the Page
 		Reset();
 		// update the SelectedProcess and change the visible UI elements
-		if (PickedProcess != null) {
-			try {
-				await _viewModel.UpdateSelectedProcess(PickedProcess);
-				// show the process type card
-				ProcessTypeCard.IsVisible = true;
-				ProcessTypeLabel.IsVisible = true;
-			// there was some error involving the Process file
-			} catch (FileLoadException) {
-				BasicPopup Popup = new("Failed to Retrieve Data", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue.");
-				this.ShowPopup(Popup);
-			// there are no Parts assigned to the Process
-			} catch (ArgumentException) {
-				BasicPopup Popup = new("Failed to Retrieve Data", "There are no Parts assigned to this Process.");
-				this.ShowPopup(Popup);
-			}
-			// update the inputs either way
-			ChangeDisplayedInputs();
+		try {
+			// show the process type card
+			ProcessTypeCard.IsVisible = true;
+			ProcessTypeLabel.IsVisible = true;
+		// there was some error involving the Process file
+		} catch (FileLoadException) {
+			BasicPopup Popup = new("Failed to Retrieve Data", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue.");
+			this.ShowPopup(Popup);
+		// there are no Parts assigned to the Process
+		} catch (ArgumentException) {
+			BasicPopup Popup = new("Failed to Retrieve Data", "There are no Parts assigned to this Process.");
+			this.ShowPopup(Popup);
 		}
+		// update the inputs either way
+		ChangeDisplayedInputs();
 	}
 
 	/// <summary>
@@ -122,19 +119,16 @@ public partial class MainPage : ContentPage {
 	public async void OnPartSelection(object Sender, EventArgs e) {
 		// update the SelectedPart, DisplayedModel, and DisplayedJBKNumber properties
 		Picker PartPicker = (Picker)Sender;
-		bool PartSelection = false;
 		try {
-			PartSelection = await _viewModel.UpdateSelectedPart(PartPicker);
+			await _viewModel.UpdateSelectedPart(PartPicker);
 		// the Model Number was either unimplied or the JBK # Queue could not be accessed
 		} catch (Exception _ex) {
 			// show a warning
 			BasicPopup Popup = new("Unexpected Error", $"The selected Part/Model # could not be retrieved. Please see management to resolve this issue.\n\nError: {_ex.Message}");
 			this.ShowPopup(Popup);
 		}
-		// disable the Model Number control if the implication was successful
-		if (PartSelection) {
-			ModelNumberEntry.IsEnabled = false;
-		}
+		// disable the Model Number control 
+		ModelNumberEntry.IsEnabled = false;
 	}
 
 	/// <summary>
@@ -242,7 +236,10 @@ public partial class MainPage : ContentPage {
 		OperatorIDEntry.Text = "";
 		OperatorIDEntry.IsEnabled = true;
 		// re-enable serial number inputs if serialization is not needed
-		if (!_viewModel.IsOriginator) {
+		if (_viewModel.SelectedProcess == null) {
+			return;
+		}
+		if (!_viewModel.SelectedProcess.Type.Equals("Originator")) {
 			// JBK Input reset
 			JBKNumberEntry.Text = "";
 			JBKNumberEntry.IsEnabled = true;

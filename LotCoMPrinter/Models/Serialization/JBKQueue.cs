@@ -4,7 +4,7 @@ namespace LotCoMPrinter.Models.Serialization;
 
 public static class JBKQueue {
 
-    private const string _queuePath = "\\\\144.133.122.1\\Lot Control Management\\database\\part_control\\_jbk_queue.json";
+    private const string _queuePath = "\\\\144.133.122.1\\Lot Control Management\\Database\\process_control\\serial_queues\\_jbk_queue.json";
 
     /// <summary>
     /// Reads the JBK Queue file and deserializes it into a Queue Dictionary.
