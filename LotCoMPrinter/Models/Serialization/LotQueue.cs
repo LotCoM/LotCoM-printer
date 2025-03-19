@@ -4,7 +4,7 @@ namespace LotCoMPrinter.Models.Serialization;
 
 public static class LotQueue {
 
-    private const string _queuePath = "\\\\144.133.122.1\\Lot Control Management\\database\\part_control\\_lot_queue.json";
+    private const string _queuePath = "\\\\144.133.122.1\\Lot Control Management\\Database\\process_control\\serial_queues\\_lot_queue.json";
 
     /// <summary>
     /// Reads the Lot Queue file and deserializes it into a Queue Dictionary.
