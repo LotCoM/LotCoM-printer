@@ -11,17 +11,44 @@ public class Part(string ParentProcess, string PartNumber, string PartName, stri
     /// <summary>
     /// The Process that the Part is assigned to.
     /// </summary>
-    public readonly string ParentProcess = ParentProcess;
+    private readonly string _parentProcess = ParentProcess; 
+    /// <summary>
+    /// [Observable] The Process that the Part is assigned to.
+    /// </summary>
+    public string ParentProcess {
+        get {return _parentProcess;}
+    }
+
     /// <summary>
     /// The Part Number assigned to the Part.
     /// </summary>
-    public readonly string PartNumber = PartNumber;
+    private readonly string _partNumber = PartNumber;
+    /// <summary>
+    /// [Observable] The Part Number assigned to the Part.
+    /// </summary>
+    public string PartNumber {
+        get {return _partNumber;}
+    }
+
     /// <summary>
     /// The Part Name assigned to the Part.
     /// </summary>
-    public readonly string PartName = PartName;
+    private readonly string _partName = PartName;
+    /// <summary>
+    /// [Observable] The Part Name assigned to the Part.
+    /// </summary>
+    public string PartName {
+        get {return _partName;}
+    }
+
     /// <summary>
     /// The Model Number the Part is associated with.
     /// </summary>
-    public readonly string ModelNumber = ModelNumber;
+    private readonly string _modelNumber = ModelNumber;
+    /// <summary>
+    /// [Observable] The Model Number the Part is associated with.
+    /// </summary>
+    public string ModelNumber {
+        get {return _modelNumber;}
+    }
 }

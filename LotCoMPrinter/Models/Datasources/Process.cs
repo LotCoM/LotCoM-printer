@@ -11,21 +11,55 @@ public class Process(string Code, string Title, string Type, List<Part> Parts) {
     /// <summary>
     /// The four-digit Process Code assigned to the Process.
     /// </summary>
-    public readonly string Code = Code;
+    private readonly string _code = Code;
+    /// <summary>
+    /// [Observable] The four-digit Process Code assigned to the Process.
+    /// </summary>
+    public string Code {
+        get {return _code;}
+    }
+
     /// <summary>
     /// The linguistic title (descriptor) assigned to the Process.
     /// </summary>
-    public readonly string Title = Title;
+    private readonly string _title = Title;
+    /// <summary>
+    /// [Observable] The linguistic title (descriptor) assigned to the Process.
+    /// </summary>
+    public string Title {
+        get {return _title;}
+    }
+
     /// <summary>
     /// A reference-friendly Process name in the form of "Code-Title".
     /// </summary>
-    public readonly string FullName = $"{Code}-{Title}";
+    private readonly string _fullName = $"{Code}-{Title}";
+    /// <summary>
+    /// [Observable] A reference-friendly Process name in the form of "Code-Title".
+    /// </summary>
+    public string FullName {
+        get {return _fullName;}
+    }
+
     /// <summary>
     /// The Process' serialization type (Originator || Pass-through).
     /// </summary>
-    public readonly string Type = Type;
+    private readonly string _type = Type;
+    /// <summary>
+    /// [Observable] The Process' serialization type (Originator || Pass-through).
+    /// </summary>
+    public string Type {
+        get {return _type;}
+    }
+
     /// <summary>
     /// The Parts assigned to the Process.
     /// </summary>
-    public readonly List<Part> Parts = Parts;
+    private readonly List<Part> _parts = Parts;
+    /// <summary>
+    /// [Observable] The Parts assigned to the Process.
+    /// </summary>
+    public List<Part> Parts {
+        get {return _parts;}
+    }
 }
