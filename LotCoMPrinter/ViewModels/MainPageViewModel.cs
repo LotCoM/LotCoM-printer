@@ -21,6 +21,12 @@ public partial class MainPageViewModel : ObservableObject {
     public List<Process> Processes {
         get {return _processes;}
     }
+    /// <summary>
+    /// Serves the Process masterlist as a list of Process Full Name strings.
+    /// </summary>
+    public List<string> ProcessNames {
+        get => Processes.Select(x => x.FullName).ToList();
+    }
     private Process? _selectedProcess = null;
     /// <summary>
     /// Serves ProcessPicker's selected value as a Process object. 
@@ -43,6 +49,18 @@ public partial class MainPageViewModel : ObservableObject {
             _selectedProcessParts = value;
             OnPropertyChanged(nameof(_selectedProcessParts));
             OnPropertyChanged(nameof(SelectedProcessParts));
+        }
+    }
+    private List<string> _selectedProcessPartNames = [];
+    /// <summary>
+    /// Serves the Process Part list as a list of Parts as displayable strings.
+    /// </summary>
+    public List<string> SelectedProcessPartNames {
+        get {return _selectedProcessPartNames;}
+        set {
+            _selectedProcessPartNames = value;
+            OnPropertyChanged(nameof(_selectedProcessPartNames));
+            OnPropertyChanged(nameof(SelectedProcessPartNames));
         }
     }
     private Part? _selectedPart = null;
@@ -103,30 +121,6 @@ public partial class MainPageViewModel : ObservableObject {
             _basketType = value;
             OnPropertyChanged(nameof(_basketType));
             OnPropertyChanged(nameof(BasketType));
-        }
-    }
-    private bool _isOriginator = false;
-    /// <summary>
-    /// Serves the boolean evaluation of whether SelectedProcess is an Origination Process.
-    /// </summary>
-    public bool IsOriginator {
-        get {return _isOriginator;}
-        set {
-            _isOriginator = value;
-            OnPropertyChanged(nameof(_isOriginator));
-            OnPropertyChanged(nameof(IsOriginator));
-        }
-    }
-    private string _processType = "";
-    /// <summary>
-    /// Serves the value of SelectedProcess' type (Origination/Process) to the ProcessTypeLabel.
-    /// </summary>
-    public string ProcessType {
-        get {return _processType;}
-        set {
-            _processType = value;
-            OnPropertyChanged(nameof(_processType));
-            OnPropertyChanged(nameof(ProcessType));
         }
     }
     private bool _printing = false;
@@ -240,11 +234,11 @@ public partial class MainPageViewModel : ObservableObject {
         await Task.Run(async () => {
             // update the SelectedProcess properties
             SelectedProcess = await ProcessData.GetIndividualProcessData(Process);
-            IsOriginator = SelectedProcess.Type.Equals("Originator");
             // get the Process Parts for the Picked Process and convert those parts to strings
             List<string> ProcessPartStrings = await PartData.GetDisplayableProcessParts(SelectedProcess.FullName);
             // assign the new list of Part (as objects) to the SelectedProcessParts list
             SelectedProcessParts = SelectedProcess.Parts;
+            SelectedProcessPartNames = SelectedProcessParts.Select(x => $"{x.PartNumber}\n{x.PartName}").ToList();
         });
     }
 
