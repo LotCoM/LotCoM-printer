@@ -21,12 +21,6 @@ public partial class MainPageViewModel : ObservableObject {
     public List<Process> Processes {
         get {return _processes;}
     }
-    /// <summary>
-    /// Serves the Process masterlist as a list of Process Full Name strings.
-    /// </summary>
-    public List<string> ProcessNames {
-        get => Processes.Select(x => x.FullName).ToList();
-    }
     private Process? _selectedProcess = null;
     /// <summary>
     /// Serves ProcessPicker's selected value as a Process object. 
@@ -51,18 +45,6 @@ public partial class MainPageViewModel : ObservableObject {
             OnPropertyChanged(nameof(SelectedProcessParts));
         }
     }
-    private List<string> _selectedProcessPartNames = [];
-    /// <summary>
-    /// Serves the Process Part list as a list of Parts as displayable strings.
-    /// </summary>
-    public List<string> SelectedProcessPartNames {
-        get {return _selectedProcessPartNames;}
-        set {
-            _selectedProcessPartNames = value;
-            OnPropertyChanged(nameof(_selectedProcessPartNames));
-            OnPropertyChanged(nameof(SelectedProcessPartNames));
-        }
-    }
     private Part? _selectedPart = null;
     /// <summary>
     /// Serves PartPicker's selected value as a Part object.
@@ -73,18 +55,6 @@ public partial class MainPageViewModel : ObservableObject {
             _selectedPart = value;
             OnPropertyChanged(nameof(_selectedPart));
             OnPropertyChanged(nameof(SelectedPart));
-        }
-    }
-    private string _displayedModel = "";
-    /// <summary>
-    /// Serves the Model Number currently displayed (when programmatically assigned).
-    /// </summary>
-    public string DisplayedModel {
-        get {return _displayedModel;}
-        set {
-            _displayedModel = value;
-            OnPropertyChanged(nameof(_displayedModel));
-            OnPropertyChanged(nameof(DisplayedModel));
         }
     }
     private string _displayedJBKNumber = "";
@@ -159,7 +129,7 @@ public partial class MainPageViewModel : ObservableObject {
                 return false;
             }
             // update the SelectedPart property and return successful
-            SelectedPart = await PartData.GetPartData(SelectedProcess!.FullName, PickedPart.PartName);
+            SelectedPart = await PartData.GetPartData(SelectedProcess!.FullName, PickedPart.PartNumber);
             return true;
         });
         // return the validity of the Part selection
@@ -184,7 +154,7 @@ public partial class MainPageViewModel : ObservableObject {
         if (SelectedProcess!.Type.Equals("Originator")) {
             string? SerialNumber;
             // assign/retrieve a cached serial number for this label
-            SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), DisplayedModel, SerializeMode, BasketType);
+            SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), SelectedPart!.ModelNumber, SerializeMode, BasketType);
             // no serial number was assigned; this is fatal
             if (SerialNumber == null) {
                 throw new LabelBuildException("Failed to assign a Serial Number to the Label");
@@ -238,7 +208,6 @@ public partial class MainPageViewModel : ObservableObject {
             List<string> ProcessPartStrings = await PartData.GetDisplayableProcessParts(SelectedProcess.FullName);
             // assign the new list of Part (as objects) to the SelectedProcessParts list
             SelectedProcessParts = SelectedProcess.Parts;
-            SelectedProcessPartNames = SelectedProcessParts.Select(x => $"{x.PartNumber}\n{x.PartName}").ToList();
         });
     }
 
@@ -251,8 +220,6 @@ public partial class MainPageViewModel : ObservableObject {
         // configure the SelectedPart
         bool PartResult = await ConfigureSelectedPart(PartPicker);
         if (PartResult) {
-            // configure the DisplayedModelNumber
-            DisplayedModel = SelectedPart!.ModelNumber;
             // the part number was valid and all of its data was retrieved
             return true;
         // the selected part number was somehow invalid
@@ -348,7 +315,6 @@ public partial class MainPageViewModel : ObservableObject {
     /// </summary>
     public void Reset() {
         SelectedPart = null;
-        DisplayedModel = "";
         DisplayedJBKNumber = "";
         DisplayedLotNumber = "";
         BasketType = "Full";

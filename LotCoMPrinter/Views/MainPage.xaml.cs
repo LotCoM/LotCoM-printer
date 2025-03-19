@@ -70,7 +70,7 @@ public partial class MainPage : ContentPage {
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"
-			if (_viewModel.IsOriginator) {
+			if (_viewModel.SelectedProcess.Type.Equals("Originator")) {
 				// disable serial number inputs
 				JBKNumberEntry.IsEnabled = false;
 				LotNumberEntry.IsEnabled = false;
@@ -88,9 +88,9 @@ public partial class MainPage : ContentPage {
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
 	public async void OnProcessSelection(object Sender, EventArgs e) {
-		// retrieve the picked process
+		// retrieve the picked process before resetting the Picker
 		Picker ProcessPicker = (Picker)Sender;
-		Process? PickedProcess = (Process?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
+		Process? PickedProcess = (Process?)_viewModel.Processes[ProcessPicker.SelectedIndex];
 		// reset the Page
 		Reset();
 		// update the SelectedProcess and change the visible UI elements
@@ -242,7 +242,10 @@ public partial class MainPage : ContentPage {
 		OperatorIDEntry.Text = "";
 		OperatorIDEntry.IsEnabled = true;
 		// re-enable serial number inputs if serialization is not needed
-		if (!_viewModel.IsOriginator) {
+		if (_viewModel.SelectedProcess == null) {
+			return;
+		}
+		if (!_viewModel.SelectedProcess.Type.Equals("Originator")) {
 			// JBK Input reset
 			JBKNumberEntry.Text = "";
 			JBKNumberEntry.IsEnabled = true;

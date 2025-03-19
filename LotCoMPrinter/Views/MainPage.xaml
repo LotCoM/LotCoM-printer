@@ -60,6 +60,7 @@
                 <Picker
                     x:Name="ProcessPicker"
                     ItemsSource="{Binding Processes}"
+                    ItemDisplayBinding="{Binding FullName}"
                     SelectedIndex="-1"
                     SelectedIndexChanged="OnProcessSelection">
                 </Picker>
@@ -83,7 +84,7 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     x:Name="ProcessTypeLabel"
-                    Text="{Binding ProcessType}"
+                    Text="{Binding SelectedProcess.Type}"
                     TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
                     FontSize="11"/>
             </Border>
@@ -234,6 +235,7 @@
                 <Picker
                     x:Name="PartPicker"
                     ItemsSource="{Binding SelectedProcessParts}"
+                    ItemDisplayBinding="{Binding PartNumber}"
                     SelectedIndex="-1"
                     SelectedIndexChanged="OnPartSelection"/>
             </Border>
@@ -345,7 +347,7 @@
                 >
                 <Entry
                     x:Name="ModelNumberEntry"
-                    Text="{Binding DisplayedModel}"/>
+                    Text="{Binding SelectedPart.ModelNumber}"/>
             </Border>
         </Grid>
         <!-- Right-Side Sub-Grid (Production Time Inputs) allows control over label/input positions -->
