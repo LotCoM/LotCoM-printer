@@ -9,13 +9,13 @@ namespace LotCoMPrinter.Models.Validators;
 /// </summary>
 public static class InterfaceCaptureValidator {
 
-    private static string? ValidatePicker(Picker PickerControl, string DataField) {
+    private static Part? ValidatePartPicker(Picker PartPicker, string DataField) {
         // validate that the Picker has a selection
-        if ((PickerControl.SelectedIndex == -1) || (PickerControl.SelectedItem == null)) {
+        if ((PartPicker.SelectedIndex == -1) || (PartPicker.SelectedItem == null)) {
             throw new FormatException($"Please select a {DataField} before printing Labels.");
         }
         // capture the value selected in the PickerControl
-        return (string?)PickerControl.ItemsSource[PickerControl.SelectedIndex];
+        return (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
     }
 
     private static string ValidateAsDigits(Entry EntryControl, string DataField) {
@@ -100,6 +100,15 @@ public static class InterfaceCaptureValidator {
         // cast the string to Uppercase and return it
         return Value.ToUpper();
     }
+
+    private static string? ValidateProductionShiftPicker(Picker ProductionShiftPicker) {
+        // validate that the Picker has a selection
+        if ((ProductionShiftPicker.SelectedIndex == -1) || (ProductionShiftPicker.SelectedItem == null)) {
+            throw new FormatException($"Please select a Production Shift before printing Labels.");
+        }
+        // capture the value selected in the PickerControl
+        return (string?)ProductionShiftPicker.ItemsSource[ProductionShiftPicker.SelectedIndex];
+    }
     
     /// <summary>
     /// Validates the UI Control states and entry values.
@@ -136,7 +145,7 @@ public static class InterfaceCaptureValidator {
         }
         List<string> UIResults = [$"Process: {SelectedProcess.FullName}"];
         // create values for each of the UI entries
-        string? Part;
+        Part? Part;
         string? Quantity;
         string? JBKNumber;
         string? LotNumber;
@@ -149,8 +158,8 @@ public static class InterfaceCaptureValidator {
         try {
             // validate part
             if (Requirements.Contains("PartPicker")) {
-                Part = ValidatePicker(PartPicker, "Part");
-                UIResults.Add($"Part: {Part!}");
+                Part = ValidatePartPicker(PartPicker, "Part");
+                UIResults.Add($"Part: {Part.PartNumber}\n{Part.PartName}");
             };
             // validate quantity
             if (Requirements.Contains("QuantityEntry")) {
@@ -202,7 +211,7 @@ public static class InterfaceCaptureValidator {
             UIResults.Add($"Production Date: {ProductionDatePicker.Date.ToShortDateString()!}");
             // validate production shift
             if (Requirements.Contains("ProductionShiftPicker")) {
-                ProductionShift = ValidatePicker(ProductionShiftPicker, "Production Shift");
+                ProductionShift = ValidateProductionShiftPicker(ProductionShiftPicker);
                 UIResults.Add($"Production Shift: {ProductionShift!}");
             };
             // validate the operator initials
