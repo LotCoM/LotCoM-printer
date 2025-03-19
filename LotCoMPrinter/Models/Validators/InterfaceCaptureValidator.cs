@@ -159,7 +159,7 @@ public static class InterfaceCaptureValidator {
             // validate part
             if (Requirements.Contains("PartPicker")) {
                 Part = ValidatePartPicker(PartPicker, "Part");
-                UIResults.Add($"Part: {Part.PartNumber}\n{Part.PartName}");
+                UIResults.Add($"Part: {Part!.PartNumber}\n{Part!.PartName}");
             };
             // validate quantity
             if (Requirements.Contains("QuantityEntry")) {
