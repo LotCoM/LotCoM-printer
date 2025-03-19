@@ -191,6 +191,9 @@ public partial class MainPageViewModel : ObservableObject {
             // retrieve the selected Process
 		    Process? PickedProcess = (Process?)Processes[ProcessPicker.SelectedIndex];
             // update the SelectedProcess properties
+            if (ProcessPicker.SelectedIndex == -1) {
+                return;
+            }
             if (PickedProcess == null) {
                 throw new ArgumentException("Process was not found in Process masterlist.");
             }
@@ -211,6 +214,9 @@ public partial class MainPageViewModel : ObservableObject {
             // configure the SelectedPart property
             try {
                 // get the PartPicker's selected item
+                if (PartPicker.SelectedIndex == -1) {
+                    return;
+                }
                 Part? PickedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
                 // update the SelectedPart property and the DisplayedModelNumber property
                 if (PickedPart == null) {
