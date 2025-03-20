@@ -8,38 +8,6 @@ namespace LotCoMPrinter.Models.Labels;
 
 public static class LabelGenerator {
     /// <summary>
-    /// Formats a DateTime object as a string like MM/DD/YYYY-HH:MM:SS.
-    /// </summary>
-    /// <param name="Date"></param>
-    /// <returns></returns>
-    private static string GetAsTimestamp(DateTime Date) {
-        // retrieve and format each timestamp field
-        string Month = $"{DateTime.Now.Month}";
-        if (Month.Length < 2) {
-            Month = "0" + Month;
-        }
-        string Day = $"{DateTime.Now.Day}";
-        if (Day.Length < 2) {
-            Day = "0" + Day;
-        }
-        string Year = $"{DateTime.Now.Year}";
-        string Hour = $"{DateTime.Now.Hour}";
-        if (Hour.Length < 2) {
-            Hour = "0" + Hour;
-        }
-        string Minute = $"{DateTime.Now.Minute}";
-        if (Minute.Length < 2) {
-            Minute = "0" + Minute;
-        }
-        string Second = $"{DateTime.Now.Second}";
-        if (Second.Length < 2) {
-            Second = "0" + Second;
-        }
-        // return the timestamp as a string
-        return $"{Month}/{Day}/{Year}-{Hour}:{Minute}:{Second}";
-    }
-
-    /// <summary>
     /// Compiles the required data for the Process into a List of strings.
     /// </summary>
     /// <param name="Capture"></param>
@@ -64,7 +32,7 @@ public static class LabelGenerator {
                         QRCodeData.Add(Capture.SelectedPart!.PartName);
                     // retrieve the mm/dd/yyyy-hh:mm:ss string from ProductionDate
                     } else if (_name.Equals("ProductionDate")) {
-                        QRCodeData.Add(GetAsTimestamp(Capture.ProductionDate));
+                        QRCodeData.Add(new Timestamp(Capture.ProductionDate).Stamp);
                     // just add the value of the property on the Capture object
                     } else {
                         QRCodeData.Add((string)_property.GetValue(Capture)!);
@@ -97,7 +65,7 @@ public static class LabelGenerator {
                         LabelFields.Add(Capture.SelectedPart!.PartNumber);
                     // retrieve the mm/dd/yyyy-hh:mm:ss string from ProductionDate
                     } else if (_name.Equals("ProductionDate")) {
-                        LabelFields.Add(GetAsTimestamp(Capture.ProductionDate));
+                        LabelFields.Add(new Timestamp(Capture.ProductionDate).Stamp);
                     // just add the value of the property on the Capture object
                     } else {
                         LabelFields.Add((string)_property.GetValue(Capture)!);
