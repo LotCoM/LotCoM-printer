@@ -8,8 +8,9 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="Code">The four-digit Process Code assigned to the Process.</param>
 /// <param name="Title">The linguistic title (descriptor) assigned to the Process.</param>
 /// <param name="Type">The Process' serialization type (Originator || Pass-through).</param>
+/// <param name="Serialization">The Process' serialization mode (JBK || Lot || null [pass-through only])</param>
 /// <param name="Parts">The Parts assigned to the Process.</param>
-public partial class Process(string Code, string Title, string Type, List<Part> Parts): ObservableObject {
+public partial class Process(string Code, string Title, string Type, string Serialization, List<Part> Parts): ObservableObject {
     /// <summary>
     /// [Observable] The four-digit Process Code assigned to the Process.
     /// </summary>
@@ -33,6 +34,12 @@ public partial class Process(string Code, string Title, string Type, List<Part> 
     /// </summary>
     [ObservableProperty]
     public partial string Type {get; set;} = Type;
+
+    /// <summary>
+    /// The Process' serialization mode (JBK || Lot).
+    /// </summary>
+    [ObservableProperty]
+    public partial string Serialization {get; set;} = Serialization;
 
     /// <summary>
     /// [Observable] The Parts assigned to the Process.
