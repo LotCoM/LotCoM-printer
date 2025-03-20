@@ -123,57 +123,54 @@ public partial class MainPageViewModel : ObservableObject {
 
     /// <summary>
     /// Checks if the Process requires Serialization (is an origination process).
-    /// If so, elicits the SerializeMode, checks for Cached Serial Numbers, and assigns a Serial Number to the Label.
+    /// If so, elicits the Serialization Mode, checks for Cached Serial Numbers, and assigns a Serial Number to the Label.
     /// </summary>
-    /// <param name="JBKNumberEntry"></param>
-    /// <param name="UICapture"></param>
-    /// <returns>Tuple holding the SerializeMode (null if not serialized) and an updated UICapture List.</returns>
+    /// <param name="Capture"></param>
+    /// <returns>An updated InterfaceCapture object.</returns>
     /// <exception cref="LabelBuildException"></exception>
-    private async Task<Tuple<string, List<string>>> SerializeLabel(Entry JBKNumberEntry, List<string> UICapture) {
-        // get the serialize mode for this Label
-        string SerializeMode = "Lot";
-        if (JBKNumberEntry.IsVisible) {
-            SerializeMode = "JBK";
+    private async Task<InterfaceCapture> SerializeLabel(InterfaceCapture Capture) {
+        // retrieve values to save processing time (will not be null here; post-validation)
+        Process SelectedProcess = Capture.SelectedProcess!;
+        string Serialization = SelectedProcess.Serialization;
+        // check if the SelectedProcess is an Originator; if not, just return the passed Capture
+        if (!SelectedProcess.Type.Equals("Originator")) {
+            return Capture;
         }
-        // serialize the label if needed
-        if (SelectedProcess!.Type.Equals("Originator")) {
-            string? SerialNumber;
-            // assign/retrieve a cached serial number for this label
-            SerialNumber = await Serializer.Serialize(UICapture[1].Replace("Part: ", ""), SelectedPart!.ModelNumber, SerializeMode, BasketType);
-            // no serial number was assigned; this is fatal
-            if (SerialNumber == null) {
-                throw new LabelBuildException("Failed to assign a Serial Number to the Label");
-            }
-            // assign the Serial Number to the JBK/Lot # field
-            UICapture[3] = $"{SerializeMode}: {SerialNumber}";
+        // serialize the Label using the Process' Serialization Mode
+        string? SerialNumber = await Serializer.Serialize(Capture.SelectedPart, Serialization, Capture.BasketType);
+        // no serial number was assigned; this is fatal
+        if (SerialNumber == null) {
+            throw new LabelBuildException("Failed to assign a Serial Number to the Label");
         }
-        // return the SerializeMode and the updated UICapture
-        return new Tuple<string, List<string>>(SerializeMode, UICapture);
+        // update the Serialized Number in the Capture object
+        if (Serialization == "JBK") {
+            Capture.JBKNumber = SerialNumber;
+        } else {
+            Capture.LotNumber = SerialNumber;
+        }
+        // return the updated Capture object
+        return Capture;
     }
 
     /// <summary>
     /// Decides how to Head the Label, formats that field as a Header, and returns that string.
     /// </summary>
-    /// <param name="SerializeMode"></param>
-    /// <param name="UICapture"></param>
-    /// <returns>string</returns>
-    private static async Task<string> FormatLabelHeader(string SerializeMode, List<string> UICapture) {
+    /// <param name="Capture"></param>
+    /// <returns>A string to use as the Label Header text.</returns>
+    private static async Task<string> FormatLabelHeader(InterfaceCapture Capture) {
         string LabelHeader = await Task.Run(() => {
+            // retrieve values to improve processing time
+            Process SelectedProcess = Capture.SelectedProcess!;
+            string Serialization = SelectedProcess.Serialization;
             // decide to use the JBK or Date as the header
             string Header;
-            if (SerializeMode == "JBK") {
+            if (Serialization.Equals("JBK")) {
                 // header is the JBK # (remove "JBK #: ")
-                Header = UICapture[3].Split(":")[1].Replace(" ", "");
+                Header = Capture.JBKNumber!;
             } else {
-                // header is the MM/DD of the Production Date 
-                // retrieve the Date from the UI Capture
-                string Date = UICapture[^3];
-                // remove the "Production Date: " field tag
-                Date = Date.Split(":")[1].Replace(" ", "");
-                // split the date into its MM/DD/YY-HH:MM:SS segments
-                string[] SplitDate = Date.Split("/");
-                // set the header to use the MM and DD fields
-                Header = $"{SplitDate[0]}/{SplitDate[1]}";
+                // header is the MM/DD of the Production Date; retrieve the Date from the UI Capture
+                DateTime Date = Capture.ProductionDate;
+                Header = $"{Date.Month}/{Date.Day}";
             }
             return Header;
         });
@@ -181,9 +178,49 @@ public partial class MainPageViewModel : ObservableObject {
     }
 
     /// <summary>
+    /// Creates, validates, and formats an InterfaceCapture object from the current UI status.
+    /// </summary>
+    /// <param name="ProcessPicker"></param>
+    /// <param name="PartPicker"></param>
+    /// <param name="QuantityEntry"></param>
+    /// <param name="JBKNumberEntry"></param>
+    /// <param name="LotNumberEntry"></param>
+    /// <param name="DeburrJBKNumberEntry"></param>
+    /// <param name="DieNumberEntry"></param>
+    /// <param name="ModelNumberEntry"></param>
+    /// <param name="BasketTypePicker"></param>
+    /// <param name="ProductionDatePicker"></param>
+    /// <param name="ProductionShiftPicker"></param>
+    /// <param name="OperatorIDEntry"></param>
+    /// <returns>An InterfaceCapture object.</returns>
+    /// <exception cref="NullProcessException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="FormatException"></exception>
+    private static async Task<InterfaceCapture> CreateCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+        // create an interface capture for this UI state
+        InterfaceCapture Capture = new InterfaceCapture();
+        await Capture.Capture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+        // validate the Capture
+        try {
+            Capture = await InterfaceCaptureValidator.Validate(Capture);
+        // there was no process selected
+		} catch (NullProcessException) {
+            throw new NullProcessException();
+        // there was a problem retrieving the process data
+        } catch (ArgumentException) {
+            throw new ArgumentException();
+        // there was some invalid UI entry
+        } catch (FormatException _ex) {
+            throw new FormatException(_ex.Message);
+        }
+        // the Capture is valid and processed; return it
+        return Capture;
+    }
+
+    /// <summary>
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
-    /// <param name="Process">The Process name to configure the UI for.</param>
+    /// <param name="ProcessPicker"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>"
     public async Task UpdateSelectedProcess(Picker ProcessPicker) {
@@ -200,6 +237,18 @@ public partial class MainPageViewModel : ObservableObject {
             // update SelectedProcess and assign the new list of Parts (as objects) to the SelectedProcessParts list
             SelectedProcess = PickedProcess;
             SelectedProcessParts = SelectedProcess.Parts;
+        });
+    }
+
+    /// <summary>
+    /// Updates the Page's Selected Basket Type (Full/Partial).
+    /// </summary>
+    /// <param name="BasketType">'Full' or 'Partial', as selected in the UI.</param>
+    /// <returns></returns>
+    public async Task UpdateBasketType(string BasketType) {
+        // update the BasketType property
+        await Task.Run(() => {
+            this.BasketType = BasketType;
         });
     }
 
@@ -235,6 +284,14 @@ public partial class MainPageViewModel : ObservableObject {
     /// Processes a Print Request from the user. 
     /// Captures the interface and validates it, then creates a new Label object from that captured data.
     /// </summary>
+    /// <remarks>
+    /// Throws NullProcessException if there was no selection in the ProcessPicker Control.
+    /// Throws ArgumentException if the Process Data could not be retrieved.
+    /// Throws FormatException if there was a failed validation.
+    /// Throws LabelBuildException if there was an error creating, formatting, serializing, or printing the Label.
+    /// Throws PrintRequestException if there was an error communicating with the Printer or the Printing System.
+    /// </remarks>
+    /// <param name="ProcessPicker"></param>
     /// <param name="PartPicker"></param>
     /// <param name="QuantityEntry"></param>
     /// <param name="JBKNumberEntry"></param>
@@ -242,49 +299,43 @@ public partial class MainPageViewModel : ObservableObject {
     /// <param name="DeburrJBKNumberEntry"></param>
     /// <param name="DieNumberEntry"></param>
     /// <param name="ModelNumberEntry"></param>
+    /// <param name="BasketTypePicker"></param>
     /// <param name="ProductionDatePicker"></param>
     /// <param name="ProductionShiftPicker"></param>
     /// <param name="OperatorIDEntry"></param>
     /// <returns></returns>
-    /// <exception cref="NullProcessException">Thrown if there was no selection in the ProcessPicker Control.</exception>
-    /// <exception cref="ArgumentException">Thrown if the Process Data could not be retrieved.</exception>
-    /// <exception cref="FormatException">Thrown if there was a failed validation.</exception>
-    /// <exception cref="LabelBuildException">Thrown if there was an error creating, formatting, serializing, or printing the Label.</exception>
-    /// <exception cref="PrintRequestException">Thrown if there was an error communicating with the Printer or the Printing System.</exception>
-    public async Task<bool> PrintRequest(Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
-        // attempt to validate the current UI status
-        List<string> UICapture;
+    /// <exception cref="NullProcessException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="FormatException"></exception>
+    /// <exception cref="LabelBuildException"></exception>
+    /// <exception cref="PrintRequestException"></exception>
+    public async Task<bool> PrintRequest(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+        // capture the interface
+        InterfaceCapture Capture;
         try {
-			UICapture = InterfaceCaptureValidator.Validate(SelectedProcess!, 
-				PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, 
-                DieNumberEntry, ModelNumberEntry, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-        // there was no process selected
-		} catch (NullProcessException) {
+            Capture = await CreateCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+        // there was no process selection made
+        } catch (NullProcessException) {
             throw new NullProcessException();
-        // there was a problem retrieving the process data
+        // there was a problem retrieving process data for the selected process
         } catch (ArgumentException) {
             throw new ArgumentException();
-        // there was some invalid UI entry
+        // a validation failed
         } catch (FormatException _ex) {
             throw new FormatException(_ex.Message);
         }
-        // check for serialization
-        Tuple<string, List<string>> SerializationResults;
+        // serialize the label (if needed)
         try {
-            SerializationResults = await SerializeLabel(JBKNumberEntry, UICapture);
+            Capture = await SerializeLabel(Capture);
         // failed to cache a new serial number or assign a serial number at all
         } catch (Exception _ex) {
             throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}.");
         }
-        // UI state is valid and can be used to produce a label for the selected process
-        // get the Serialization mode and the modified UICapture
-        string SerializeMode = SerializationResults.Item1;
-        UICapture = SerializationResults.Item2;
-        // format the Label's header
-        string Header = await FormatLabelHeader(SerializeMode, UICapture);
+        // UI state is valid; format the Label's header
+        string Header = await FormatLabelHeader(Capture);
         // create and run a Label print job
         bool Printed = false;
-        LabelPrintJob Job = new LabelPrintJob(UICapture, BasketType, Header);
+        LabelPrintJob Job = new LabelPrintJob(Capture, Header);
         try { 
             Printed = await Job.Run();
         // the print job failed
@@ -299,18 +350,6 @@ public partial class MainPageViewModel : ObservableObject {
         }
         // return the print success state
         return Printed;
-    }
-
-    /// <summary>
-    /// Updates the Page's Selected Basket Type (Full/Partial).
-    /// </summary>
-    /// <param name="BasketType">'Full' or 'Partial', as selected in the UI.</param>
-    /// <returns></returns>
-    public async Task UpdateBasketType(string BasketType) {
-        // update the BasketType property
-        await Task.Run(() => {
-            this.BasketType = BasketType;
-        });
     }
 
     /// <summary>
