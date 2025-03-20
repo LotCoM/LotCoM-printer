@@ -77,22 +77,19 @@ public class InterfaceCapture {
     /// <param name="ProductionShiftPicker"></param>
     /// <param name="OperatorIDEntry"></param>
     /// <returns></returns>
-    public async Task Capture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
-        // use multi-threading to avoid blocking the UI thread
-        await Task.Run(() => {
-            // capture the values stored in all of the UI control elements
-            SelectedProcess = (Process?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
-            SelectedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
-            Quantity = QuantityEntry.Text;
-            JBKNumber = JBKNumberEntry.Text;
-            LotNumber = LotNumberEntry.Text;
-            DeburrJBKNumber = DeburrJBKNumberEntry.Text;
-            DieNumber = DieNumberEntry.Text;
-            ModelNumber = ModelNumberEntry.Text;
-            BasketType = (string?)BasketTypePicker.ItemsSource[BasketTypePicker.SelectedIndex];
-            ProductionDate = ProductionDatePicker.Date;
-            ProductionShift = (string?)ProductionShiftPicker.ItemsSource[ProductionShiftPicker.SelectedIndex];
-            OperatorID = OperatorIDEntry.Text;
-        });
+    public void Capture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+        // capture the values stored in all of the UI control elements
+        SelectedProcess = (Process?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex];
+        SelectedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
+        Quantity = QuantityEntry.Text;
+        JBKNumber = JBKNumberEntry.Text;
+        LotNumber = LotNumberEntry.Text;
+        DeburrJBKNumber = DeburrJBKNumberEntry.Text;
+        DieNumber = DieNumberEntry.Text;
+        ModelNumber = ModelNumberEntry.Text;
+        BasketType = (string?)BasketTypePicker.ItemsSource[BasketTypePicker.SelectedIndex];
+        ProductionDate = ProductionDatePicker.Date;
+        ProductionShift = (string?)ProductionShiftPicker.ItemsSource[ProductionShiftPicker.SelectedIndex];
+        OperatorID = OperatorIDEntry.Text;
     }
 }
