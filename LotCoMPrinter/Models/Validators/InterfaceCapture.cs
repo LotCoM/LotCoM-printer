@@ -46,7 +46,7 @@ public class InterfaceCapture {
     /// <summary>
     /// The DateTime object selected in the ProductionDatePicker control at the time of this capture.
     /// </summary>
-    public DateTime? ProductionDate;
+    public DateTime ProductionDate;
     /// <summary>
     /// The Shift Number value selected in the ProductionShiftPicker control at the time of this capture.
     /// </summary>
@@ -90,7 +90,7 @@ public class InterfaceCapture {
             DieNumber = DieNumberEntry.Text;
             ModelNumber = ModelNumberEntry.Text;
             BasketType = (string?)BasketTypePicker.ItemsSource[BasketTypePicker.SelectedIndex];
-            ProductionDate = (DateTime?)ProductionDatePicker.Date;
+            ProductionDate = ProductionDatePicker.Date;
             ProductionShift = (string?)ProductionShiftPicker.ItemsSource[ProductionShiftPicker.SelectedIndex];
             OperatorID = OperatorIDEntry.Text;
         });
