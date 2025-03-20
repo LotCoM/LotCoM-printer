@@ -29,10 +29,10 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header) {
         try {
             // full label
             if (_capture.BasketType!.Equals("Full")) {
-                _label = await LabelGenerator.GenerateFullLabelAsync(_header, _capture);
+                _label = await LabelGenerator.GenerateFullLabelAsync(_capture, _header);
             // partial label
             } else {
-                _label = await LabelGenerator.GeneratePartialLabelAsync(_header, _capture);
+                _label = await LabelGenerator.GeneratePartialLabelAsync(_capture, _header);
             }
         // there was an unexpected error in the Label generation
         } catch (LabelBuildException _ex) {

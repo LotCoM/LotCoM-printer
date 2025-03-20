@@ -137,7 +137,7 @@ public partial class MainPageViewModel : ObservableObject {
             return Capture;
         }
         // serialize the Label using the Process' Serialization Mode
-        string? SerialNumber = await Serializer.Serialize(Capture.SelectedPart, Serialization, Capture.BasketType);
+        string? SerialNumber = await Serializer.Serialize(Capture);
         // no serial number was assigned; this is fatal
         if (SerialNumber == null) {
             throw new LabelBuildException("Failed to assign a Serial Number to the Label");
