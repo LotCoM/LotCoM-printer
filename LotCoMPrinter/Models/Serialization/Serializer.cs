@@ -66,7 +66,7 @@ public static class Serializer {
     public static async Task<string?> Serialize(InterfaceCapture Capture) {
         // retrieve values from the Capture to improve processing time
         string Serialization = Capture.SelectedProcess!.Serialization;
-        Part SelectedPart = Capture.SelectedPart!.PartNumber;
+        Part SelectedPart = Capture.SelectedPart!;
         string PartNumber = SelectedPart!.PartNumber;
         // get the serial number for this label
         string? SerialNumber = await GetSerialNumber(PartNumber, SelectedPart.ModelNumber, Serialization);

@@ -54,9 +54,9 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header) {
         // retrieve the Serial Number from the Capture data
         string SerialNumber;
         if (Serialization.Equals("JBK")) {
-            SerialNumber = SelectedProcess.JBKNumber;
+            SerialNumber = _capture.JBKNumber!;
         } else {
-            SerialNumber = SelectedProcess.LotNumber;
+            SerialNumber = _capture.LotNumber!;
         }
         // prepare the serial cache for the end of the print job
         SerialCacheController SerialCache = new SerialCacheController();
