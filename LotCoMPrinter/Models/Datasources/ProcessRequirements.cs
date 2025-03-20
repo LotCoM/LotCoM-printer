@@ -6,16 +6,16 @@ public static class ProcessRequirements {
     // data requirements for each process
     // Universal requirements
     private static readonly List<string> _universalRequirements = [
-        "ProcessPicker", "PartPicker", "QuantityEntry", "ProductionDatePicker", "ProductionShiftPicker", "OperatorIDEntry"
+        "SelectedProcess", "SelectedPart", "Quantity", "ProductionDate", "ProductionShift", "OperatorID"
     ];
     // individual process requirements
-    private static readonly List<string> _diecastRequirements = ["JBKNumberEntry", "DieNumberEntry"];
-    private static readonly List<string> _deburrRequirements = ["JBKNumberEntry", "DieNumberEntry"];
-    private static readonly List<string> _pivotHousingMCRequirements = ["JBKNumberEntry", "DeburrJBKNumberEntry"];
-    private static readonly List<string> _tiltBracketWeldRequirements = ["LotNumberEntry"];
-    private static readonly List<string> _pipeWeldRequirements = ["LotNumberEntry", "ModelNumberEntry"];
-    private static readonly List<string> _shaftClinchRequirements = ["LotNumberEntry", "ModelNumberEntry"];
-    private static readonly List<string> _uppershaftMCRequirements = ["LotNumberEntry"];
+    private static readonly List<string> _diecastRequirements = ["JBKNumber", "DieNumber"];
+    private static readonly List<string> _deburrRequirements = ["JBKNumber", "DieNumber"];
+    private static readonly List<string> _pivotHousingMCRequirements = ["JBKNumber", "DeburrJBKNumber"];
+    private static readonly List<string> _tiltBracketWeldRequirements = ["LotNumber"];
+    private static readonly List<string> _pipeWeldRequirements = ["LotNumber", "ModelNumber"];
+    private static readonly List<string> _shaftClinchRequirements = ["LotNumber", "ModelNumber"];
+    private static readonly List<string> _uppershaftMCRequirements = ["LotNumber"];
 
     /// <summary>
     /// Allows access to a Process' requirements from a string.

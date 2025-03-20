@@ -290,24 +290,24 @@ public static class InterfaceCaptureValidator {
             await ValidateProductionShiftPicker(Capture.ProductionShift);
             Capture.OperatorID = await ValidateOperatorID(Capture.OperatorID);
             // validate jbk number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("JBKNumberEntry")) {
+            if (Requirements.Contains("JBKNumber")) {
                 Capture.JBKNumber = await ValidateJBKNumber(Capture.JBKNumber, Capture.SelectedProcess.Type);
             };
             // validate lot number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("LotNumberEntry")) {
+            if (Requirements.Contains("LotNumber")) {
                 Capture.LotNumber = await ValidateLotNumber(Capture.LotNumber, Capture.SelectedProcess.Type);
             };
             // validate deburr jbk number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("DeburrJBKNumberEntry")) {
+            if (Requirements.Contains("DeburrJBKNumber")) {
                 // pass ProcessType as "Pass-through" to force non-serialized check
                 Capture.DeburrJBKNumber = await ValidateJBKNumber(Capture.DeburrJBKNumber, "Pass-through");
             };
             // validate die number if required
-            if (Requirements.Contains("DieNumberEntry")) {
+            if (Requirements.Contains("DieNumber")) {
                 await ValidateDieNumber(Capture.DieNumber);
             };
             // validate model number if required
-            if (Requirements.Contains("ModelNumberEntry")) {
+            if (Requirements.Contains("ModelNumber")) {
                 await ValidateModelNumber(Capture.ModelNumber);
             };
         // a validation failed; pass the fail message to the view model

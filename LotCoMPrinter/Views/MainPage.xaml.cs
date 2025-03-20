@@ -35,17 +35,17 @@ public partial class MainPage : ContentPage {
         if (_viewModel.SelectedProcess != null) {
             // create a conversion dictionary for string names to control objects
             Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> {
-                {"ProcessPicker", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
-                {"JBKNumberEntry", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
-                {"LotNumberEntry", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
-                {"DeburrJBKNumberEntry", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
-                {"DieNumberEntry", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
-                {"PartPicker", new List<View> {PartControl, PartPicker, PartLabel}},
-                {"ModelNumberEntry", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
-                {"QuantityEntry", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
-                {"ProductionDatePicker", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
-                {"ProductionShiftPicker", new List<View> {ProductionShiftControl, ProductionShiftPicker, ProductionShiftLabel}},
-				{"OperatorIDEntry", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
+                {"SelectedProcess", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
+                {"JBKNumber", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
+                {"LotNumber", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
+                {"DeburrJBKNumber", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
+                {"DieNumber", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
+                {"SelectedPart", new List<View> {PartControl, PartPicker, PartLabel}},
+                {"ModelNumber", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
+                {"Quantity", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
+                {"ProductionDate", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
+                {"ProductionShift", new List<View> {ProductionShiftControl, ProductionShiftPicker, ProductionShiftLabel}},
+				{"OperatorID", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
             };
 			// get the process requirements for the currently selected Process
 			List<string> Requirements = [];
