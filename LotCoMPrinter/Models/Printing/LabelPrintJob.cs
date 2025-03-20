@@ -10,11 +10,11 @@ namespace LotCoMPrinter.Models.Printing;
 /// <summary>
 /// Creates a Print Job that can generate a Bitmap image Label and spool a print job to the printing system.
 /// </summary>
-/// <param name="ValidatedCapture">A validated InterfaceCapture object.</param>
+/// <param name="Capture">A validated InterfaceCapture object.</param>
 /// <param name="Header">The string to use as the Label's Header text.</param>
-public class LabelPrintJob(InterfaceCapture ValidatedCapture, string Header) {
+public class LabelPrintJob(InterfaceCapture Capture, string Header) {
     // private class properties to hold Label data, header, and generated Label Bitmap
-    private InterfaceCapture _capture = ValidatedCapture;
+    private InterfaceCapture _capture = Capture;
     private string _header = Header;
     private Bitmap? _label = null;
 
@@ -62,7 +62,7 @@ public class LabelPrintJob(InterfaceCapture ValidatedCapture, string Header) {
         SerialCacheController SerialCache = new SerialCacheController();
         // the print was successful; remove the cached serial number here (if the label was full)
         if (PrintResult) {
-            if (Capture.BasketType!.Equals("Full")) {
+            if (_capture.BasketType!.Equals("Full")) {
                 await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
             }
         // the print failed; cache the serial number
