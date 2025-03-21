@@ -115,18 +115,22 @@ public static class ProcessData {
         /// <exception cref="FormatException"></exception>
         private static Process ResolveProcessFromToken(JToken Token) {
             // hold variables for each Process object property
-            string Code;
+            string LineCode;
+            string Line;
             string Title;
             string Type;
             string Serialization;
             JToken Parts;
+            JToken Requirements;
             // attempt to access each field of Data from the Process Token
             try {
-                Code = Token["Code"]!.ToString();
+                LineCode = Token["LineCode"]!.ToString();
+                Line = Token["Line"]!.ToString();
                 Title = Token["Title"]!.ToString();
                 Type = Token["Type"]!.ToString();
                 Serialization = Token["Serialization"]!.ToString();
                 Parts = Token["Parts"]!;
+                Requirements = Token["RequiredFields"]!;
             // one of the needed fields was not accessible
             } catch {
                 throw new FormatException($"Could not resolve '{Token}' to a Process object.");
@@ -136,16 +140,26 @@ public static class ProcessData {
             try {
                 // resolve a Part object from each Token
                 foreach (JToken _part in Parts) {
-                    PartObjects.Add(ResolvePartFromToken(_part, $"{Code}-{Title}"));
+                    PartObjects.Add(ResolvePartFromToken(_part, $"{LineCode}-{Line}-{Title}"));
                 }
             // one of the Tokens could not be resolved to a Part
             } catch (Exception _ex) {
                 throw new FormatException($"Could not resolve '{Token}' to a Process object, due to the following Part resolution failure: {_ex.Message}");
             }
-            // attempt to construct the Part object from the resolved data
+            // create requirements list; add first set of universal fields
+            List<string> RequiredFields = ["SelectedProcess", "SelectedPart", "Quantity"];
+            // add variable (process-dependent) fields
+            foreach (JToken _field in Requirements) {
+                RequiredFields.Add(_field.ToString());
+            }
+            // add the second set of universal fields
+            RequiredFields.Add("ProductionDate");
+            RequiredFields.Add("ProductionShift");
+            RequiredFields.Add("OperatorID");
+            // attempt to construct the Process object from the resolved data
             Process ResolvedProcess;
             try {
-                ResolvedProcess = new Process(Code, Title, Type, Serialization, PartObjects);
+                ResolvedProcess = new Process(LineCode, Line, Title, Type, Serialization, PartObjects, RequiredFields);
             } catch {
                 throw new FormatException($"Could not resolve '{Token}' to a Process object.");
             }
