@@ -1,3 +1,7 @@
+using System.Reflection;
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Validators;
+
 namespace LotCoMPrinter.Models.Printing;
 
 public static class PrintLogger {
@@ -7,20 +11,28 @@ public static class PrintLogger {
     /// <summary>
     /// Converts LabelInformation into a Print Event string, including the print timestamp.
     /// </summary>
-    /// <param name="LabelInformation">LabelInformation from the LabelPrintJob.</param>
+    /// <param name="Capture">An InterfaceCapture object.</param>
     /// <returns></returns>
-    private static async Task<string> CreateEventString(List<string> LabelInformation) {
+    private static async Task<string> CreateEventString(InterfaceCapture Capture) {
         // use multi-threading to avoid blocking the UI while print logging occurs
         string PrintEvent = await Task.Run(() => {
             // get the timestamp of the print job
-            string Formatted = LabelInformation[^3].Replace("Production Date: ", "");
+            string Formatted = $"{new Timestamp(Capture.ProductionDate).Stamp}";
             // format the Label Information as a readable string
-            foreach(string _field in LabelInformation) {
-                // remove any commas, replace the newline in Part with a comma, then remove all spaces
-                string _formattedField = _field.Replace(",", "").Replace(" ", "").Replace("\n", ",");
-                // remove the field prefixes and add the field value to the formatted string
-                _formattedField = _formattedField.Split(":")[1].Replace(" ", "");
-                Formatted += $",{_formattedField}";
+            foreach (PropertyInfo _property in Capture.GetType().GetProperties()) {
+                // save the property name
+                string _name = _property.Name;
+                // retrieve the Process Name from the SelectedProcess
+                if (_name.Equals("SelectedProcess")) {
+                    Formatted += $",{Capture.SelectedProcess!.FullName}";
+                // retrieve the Part Number from SelectedPart
+                } else if (_name.Equals("SelectedPart")) {
+                    Formatted += $",{Capture.SelectedPart!.PartNumber}";
+                    Formatted += $",{Capture.SelectedPart!.PartName}";
+                // just add the value of the property on the Capture object
+                } else {
+                    Formatted += $",{(string)_property.GetValue(Capture)!}";
+                }
             }
             return Formatted;
         });
@@ -30,11 +42,11 @@ public static class PrintLogger {
     /// <summary>
     /// Logs a LabelPrintJob's information to the database.
     /// </summary>
-    /// <param name="LabelInformation">LabelInformation from the LabelPrintJob.</param>
+    /// <param name="Capture">An InterfaceCapture object.</param>
     /// <returns></returns>
-    public static async Task LogPrintEvent(List<string> LabelInformation) {
+    public static async Task LogPrintEvent(InterfaceCapture Capture) {
         // create a print event from the Label Information
-        string PrintEvent = await CreateEventString(LabelInformation);
+        string PrintEvent = await CreateEventString(Capture);
         // open the print history .log file and append the new event to the file
         await File.AppendAllTextAsync(_logPath, PrintEvent);
     }

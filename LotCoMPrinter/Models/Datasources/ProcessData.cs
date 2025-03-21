@@ -118,12 +118,14 @@ public static class ProcessData {
             string Code;
             string Title;
             string Type;
+            string Serialization;
             JToken Parts;
             // attempt to access each field of Data from the Process Token
             try {
                 Code = Token["Code"]!.ToString();
                 Title = Token["Title"]!.ToString();
                 Type = Token["Type"]!.ToString();
+                Serialization = Token["Serialization"]!.ToString();
                 Parts = Token["Parts"]!;
             // one of the needed fields was not accessible
             } catch {
@@ -143,7 +145,7 @@ public static class ProcessData {
             // attempt to construct the Part object from the resolved data
             Process ResolvedProcess;
             try {
-                ResolvedProcess = new Process(Code, Title, Type, PartObjects);
+                ResolvedProcess = new Process(Code, Title, Type, Serialization, PartObjects);
             } catch {
                 throw new FormatException($"Could not resolve '{Token}' to a Process object.");
             }

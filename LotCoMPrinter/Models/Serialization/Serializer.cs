@@ -1,3 +1,6 @@
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Validators;
+
 namespace LotCoMPrinter.Models.Serialization;
 
 public static class Serializer {
@@ -52,28 +55,26 @@ public static class Serializer {
         return SerialNumber;
     }
 
-
     /// <summary>
     /// Assigns a Serial Number to use for a new Label.
     /// If the LabelType is Partial, checks if there is a Serial Number cached for the Part Number.
     /// If not, consumes and caches the queued Serial Number.
     /// If the LabelType is Full, consumes the queued Serial Number.
     /// </summary>
-    /// <param name="Part">Selection from the PartPicker control.</param>
-    /// <param name="ModelNumber">Text from the ModelNumber control.</param>
-    /// <param name="SerializeMode">Either 'JBK' or 'Lot'.</param>
-    /// <param name="LabelType">Selection from the BasketTypePicker control.</param>
-    /// <returns></returns>
-    public static async Task<string?> Serialize(string Part, string ModelNumber, string SerializeMode, string LabelType) {
-        // remove the part name from the part info
-        string PartNumber = Part.Split("\n")[0];
-        // run a new CPU thread to get the serial number for this label
-        string? SerialNumber = await GetSerialNumber(PartNumber, ModelNumber, SerializeMode);
+    /// <param name="Capture">An InterfaceCapture object to use as a source for serialization information.</param>
+    /// <returns>A Serial Number string.</returns>
+    public static async Task<string?> Serialize(InterfaceCapture Capture) {
+        // retrieve values from the Capture to improve processing time
+        string Serialization = Capture.SelectedProcess!.Serialization;
+        Part SelectedPart = Capture.SelectedPart!;
+        string PartNumber = SelectedPart!.PartNumber;
+        // get the serial number for this label
+        string? SerialNumber = await GetSerialNumber(PartNumber, SelectedPart.ModelNumber, Serialization);
         // format the Serial Number
-        SerialNumber = FormatSerialNumber(SerialNumber!, SerializeMode);
+        SerialNumber = FormatSerialNumber(SerialNumber!, Serialization);
         // if the label is a Partial; cache the Serial Number under the part number
         SerialCacheController SerialCache = new SerialCacheController();
-        if (LabelType == "Partial") {
+        if (Capture.BasketType == "Partial") {
             await SerialCache.CacheSerialNumber(SerialNumber, PartNumber);
         // the label is a full label; remove its serial number from the Cache
         } else {

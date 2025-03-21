@@ -2,36 +2,37 @@ using System.Drawing;
 using LotCoMPrinter.Models.Serialization;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Labels;
+using LotCoMPrinter.Models.Validators;
+using LotCoMPrinter.Models.Datasources;
 
 namespace LotCoMPrinter.Models.Printing;
 
 /// <summary>
 /// Creates a Print Job that can generate a Bitmap image Label and spool a print job to the printing system.
 /// </summary>
-/// <param name="LabelInformation">The Data to be encoded in the Label's QR Code and shown on the Label itself (a validated UI Capture from InterfaceCaptureValidator).</param>
-/// <param name="LabelType">Either 'Full' or 'Partial' (from the UI BasketTypePicker control).</param>
-public class LabelPrintJob(List<string> LabelInformation, string LabelType, string Header) {
-    // private class properties to hold Label data and generated Label Bitmap
-    private List<string> _labelInformation = LabelInformation;
-    // split out the JBK # value to apply as the header
+/// <param name="Capture">A validated InterfaceCapture object.</param>
+/// <param name="Header">The string to use as the Label's Header text.</param>
+public class LabelPrintJob(InterfaceCapture Capture, string Header) {
+    // private class properties to hold Label data, header, and generated Label Bitmap
+    private InterfaceCapture _capture = Capture;
     private string _header = Header;
     private Bitmap? _label = null;
-    private string _labelType = LabelType;
 
     /// <summary>
-    /// Creates a Label object and Bitmap image from the Job's saved information. Stores the generated Bitmap image in _label property.
+    /// Creates a Label object and Bitmap image from the Job's saved information. 
+    /// Stores the generated Bitmap image in _label property.
     /// </summary>
     /// <returns></returns>
     /// <exception cref="LabelBuildException">Thrown if the LabelGenerator failed to create a Label.</exception>
     private async Task GenerateLabelImage() {
-        // elicit the header (JBK # if serialization is JBK, MM/DD of date if serialization is Lot)
+        // generate a new Label image and store it in the _label property
         try {
             // full label
-            if (_labelType == "Full") {
-                _label = await LabelGenerator.GenerateFullLabelAsync(_header, _labelInformation);
+            if (_capture.BasketType!.Equals("Full")) {
+                _label = await LabelGenerator.GenerateFullLabelAsync(_capture, _header);
             // partial label
             } else {
-                _label = await LabelGenerator.GeneratePartialLabelAsync(_header, _labelInformation);
+                _label = await LabelGenerator.GeneratePartialLabelAsync(_capture, _header);
             }
         // there was an unexpected error in the Label generation
         } catch (LabelBuildException _ex) {
@@ -40,11 +41,46 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType, stri
     }
 
     /// <summary>
+    /// Performs Serial Number processing logic at the end of a Print Job. 
+    /// Calculates whether to consume or cache the Serial Number. 
+    /// </summary>
+    /// <param name="PrintResult"></param>
+    /// <returns></returns>
+    private async Task ProcessSerialNumber(bool PrintResult) {
+        // retrieve data from the Capture to improve processing time
+        Process SelectedProcess = _capture.SelectedProcess!;
+        string PartNumber = _capture.SelectedPart!.PartNumber;
+        string Serialization = SelectedProcess.Serialization;
+        // retrieve the Serial Number from the Capture data
+        string SerialNumber;
+        if (Serialization.Equals("JBK")) {
+            SerialNumber = _capture.JBKNumber!;
+        } else {
+            SerialNumber = _capture.LotNumber!;
+        }
+        // prepare the serial cache for the end of the print job
+        SerialCacheController SerialCache = new SerialCacheController();
+        // the print was successful; remove the cached serial number here (if the label was full)
+        if (PrintResult) {
+            if (_capture.BasketType!.Equals("Full")) {
+                await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
+            }
+        // the print failed; cache the serial number
+        } else {
+            await SerialCache.CacheSerialNumber(SerialNumber, PartNumber);
+        }
+    }
+
+    /// <summary>
     /// Runs the Print Job (creates a Handler for the Job and spools it to the OS' printing system).
     /// </summary>
+    /// <remarks>
+    /// Throws LabelBuildException if the LabelGenerator failed to create a Label.
+    /// Throws PrintRequestException if there was an error communicating with the Printer or Printing System.
+    /// </remarks>
     /// <returns></returns>
-    /// <exception cref="LabelBuildException">Thrown if the LabelGenerator failed to create a Label.</exception>
-    /// <exception cref="PrintRequestException">Thrown if there was an error communicating with the Printer or Printing System.</exception>
+    /// <exception cref="LabelBuildException"></exception>
+    /// <exception cref="PrintRequestException"></exception>
     public async Task<bool> Run() {
         // generate a Label from the saved Label information
         try {
@@ -55,32 +91,20 @@ public class LabelPrintJob(List<string> LabelInformation, string LabelType, stri
         }
         // create a PrintHandler object for the new Label
         bool Printed = false;
-        if (_label != null) {
-            PrintHandler LabelPrinter = new PrintHandler(_label);
-            // try to print the Label
-            try {
-                await LabelPrinter.PrintLabelAsync();
-                Printed = true;
-            // handle errors thrown by the PrintLabelAsync() method
-            } catch (PrintRequestException _ex){
-                throw new PrintRequestException(_ex.Message);
-            }
-            // prepare the serial number and the serial cache for the end of the print job
-            string SerialNumber = _labelInformation[3].Replace("JBK: ", "").Replace("Lot: ", "");
-            string PartNumber = _labelInformation[1].Split("\n")[0].Replace("Part: ", "");
-            SerialCacheController SerialCache = new SerialCacheController();
-            // the print job was successful
-            if (Printed) {
-                // remove the cached serial number here if the label was full
-                if (_labelType == "Full") {
-                    await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
-                }
-                // log the successful print job
-                await PrintLogger.LogPrintEvent(_labelInformation);
-            // the print failed; cache the serial number
-            } else {
-                await SerialCache.CacheSerialNumber(SerialNumber, PartNumber);
-            }
+        PrintHandler LabelPrinter = new PrintHandler(_label!);
+        // try to print the Label
+        try {
+            await LabelPrinter.PrintLabelAsync();
+            Printed = true;
+        // handle errors thrown by the PrintLabelAsync() method
+        } catch (PrintRequestException _ex){
+            throw new PrintRequestException(_ex.Message);
+        }
+        // process the serial number attached to this Label
+        await ProcessSerialNumber(Printed);
+        // log successful print jobs
+        if (Printed) {
+            await PrintLogger.LogPrintEvent(_capture);
         }
         return Printed;
     }
