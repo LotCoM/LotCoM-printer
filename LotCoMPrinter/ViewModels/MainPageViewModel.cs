@@ -196,13 +196,12 @@ public partial class MainPageViewModel : ObservableObject {
     /// <exception cref="NullProcessException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="FormatException"></exception>
-    private static async Task<InterfaceCapture> CreateCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+    private static InterfaceCapture CreateCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
         // create an interface capture for this UI state
-        InterfaceCapture Capture = new InterfaceCapture();
-        Capture.Capture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+        InterfaceCapture Capture = new InterfaceCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // validate the Capture
         try {
-            Capture = await InterfaceCaptureValidator.Validate(Capture);
+            Capture = InterfaceCaptureValidator.Validate(Capture);
         // there was no process selected
 		} catch (NullProcessException) {
             throw new NullProcessException();
@@ -313,7 +312,7 @@ public partial class MainPageViewModel : ObservableObject {
         // capture the interface
         InterfaceCapture Capture;
         try {
-            Capture = await CreateCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+            Capture = CreateCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
         // there was no process selection made
         } catch (NullProcessException) {
             throw new NullProcessException();
