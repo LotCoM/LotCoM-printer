@@ -48,15 +48,7 @@ public partial class MainPage : ContentPage {
 				{"OperatorID", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
             };
 			// get the process requirements for the currently selected Process
-			List<string> Requirements = [];
-			try {
-				Requirements = ProcessRequirements.GetProcessRequirements(_viewModel.SelectedProcess.FullName);
-			// the selected Process was invalid (uncommon)
-			} catch (ArgumentException) {
-				// show a warning
-				BasicPopup Popup = new("Unexpected Error", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
-				this.ShowPopup(Popup);
-			}
+			List<string> Requirements = _viewModel.SelectedProcess.RequiredFields;
 			// show all necessary UI input elements
 			foreach (KeyValuePair<string, List<View>> _pair in Conversions) {
 				if (Requirements.Contains(_pair.Key)) {

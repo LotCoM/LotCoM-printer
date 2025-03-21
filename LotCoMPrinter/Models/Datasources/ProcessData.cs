@@ -130,7 +130,7 @@ public static class ProcessData {
                 Type = Token["Type"]!.ToString();
                 Serialization = Token["Serialization"]!.ToString();
                 Parts = Token["Parts"]!;
-                Requirements = Token["RequiredFields"]!;
+                Requirements = Token["Requirements"]!;
             // one of the needed fields was not accessible
             } catch {
                 throw new FormatException($"Could not resolve '{Token}' to a Process object.");
