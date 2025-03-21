@@ -19,9 +19,9 @@ public class PartialLabel {
     // size of medium text on label
     private int TextSizeMedium = 76; // 76
     // size of large text on label
-    private int TextSizeLarge = 192; // 192
+    private int TextSizeLarge = 160; // 192
     // padding of objects on the label
-    private int LabelInternalPadding = 12; // 12
+    private int LabelInternalPadding = 36; // 12
     // horizontal position of the label heading text
     private int LabelHeadingX;
     // vertical position of the label heading text
@@ -85,12 +85,12 @@ public class PartialLabel {
         LabelInternalPadding = Convert.ToInt32(LabelInternalPadding * DpiScale);
         LabelHeadingX = Convert.ToInt32(-56 * DpiScale + LabelInternalPadding);
         LabelHeadingY = Convert.ToInt32(-56 * DpiScale + LabelInternalPadding); 
-        LabelPartNameX = LabelInternalPadding;
-        LabelPartNameY = CodePositionY1 - (TextSizeMedium * 2);
         CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
-        CodePositionY1 = LabelDimension - CodeDimension - LabelInternalPadding;
+        CodePositionY1 = LabelHeadingY + TextSizeLarge + (LabelInternalPadding * 3);
+        LabelPartNameX = LabelInternalPadding;
+        LabelPartNameY = CodePositionY1 + CodeDimension;
         LabelFieldsX = LabelInternalPadding;
-        LabelFieldsY = CodePositionY1 + (LabelInternalPadding * 3);
+        LabelFieldsY = LabelPartNameY + (TextSizeMedium * 2) + LabelInternalPadding;
     }
 
     /// <summary>
@@ -189,18 +189,11 @@ public class PartialLabel {
     public async Task AddLabelFieldsAsync(List<string> LabelFields) {
         // start a new CPU thread to apply the Label Fields to the LabelBase
         await Task.Run(() => {
-            // create a list of Partial Label fields
-            List<string> PartialLabelFields = ["Process", "JBK #", "Lot #", "Part", "Quantity", "Production Date", "Production Shift"];
             // combine the LabelFields into a string deliniated by newlines
             string LabelFieldsBody = "";
             foreach (string _field in LabelFields) {
-                // if the field is in the Partial Label Fields list, add it to the Label
-                if (PartialLabelFields.Any(_field.Contains)) {
-                    // remove part indicator (space constraint)
-                    string FormattedField = _field.Replace("Part: ", "").Replace("Production ", "").Replace("Process: ", "");
-                    // add the field to the data body
-                    LabelFieldsBody += FormattedField + "\n";
-                }
+                // add the field to the data body
+                LabelFieldsBody += _field + "\n";
             }
             // create a drawing surface to draw the text with
             Graphics Surface = Graphics.FromImage(_image);
