@@ -107,25 +107,13 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
     /// <returns></returns>
     public List<string> FormatAsLabelBodyText() {
         // create a List of Capture fields to include in a Label's body text
-        List<string> LabelBodyData;
+        List<string> LabelBodyData = [];
         // format Label body based on Label type
         bool IsPartial = BasketType.Equals("Partial");
         // add universal label fields (front)
-        if (IsPartial) {
-            // Partial Label field formatting
-            LabelBodyData = [
-                $"{SelectedProcess.FullName}",
-                $"{SelectedPart.PartNumber}",
-                $"Quantity: {Quantity}"
-            ];  
-        } else {
-            // Full Label field formatting
-            LabelBodyData = [
-                $"Process: {SelectedProcess.FullName}",
-                $"Part #: {SelectedPart.PartNumber}",
-                $"Quantity: {Quantity}"
-            ];
-        }
+        LabelBodyData.Add($"Process: {SelectedProcess.FullName}");
+        LabelBodyData.Add($"Part #: {SelectedPart.PartNumber}");
+        LabelBodyData.Add($"Quantity: {Quantity}");
         // add inner (variable) Capture data if Label is full
         if (!IsPartial) {
             // retrieve the Process Requirements
@@ -148,19 +136,10 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
             }
         }
         // add universal label fields (back)
-        if (IsPartial) {
-            // Partial Label field formatting
-            LabelBodyData.AddRange([
-                $"Date: {new Timestamp(ProductionDate).Stamp}",
-                $"Shift: {ProductionShift}"
-            ]);
-        } else {
-            // Full Label field formatting
-            LabelBodyData.AddRange([
-                $"Prod. Date: {new Timestamp(ProductionDate).Stamp}",
-                $"Prod. Shift: {ProductionShift}"
-            ]);
-        }
+        Console.WriteLine($"Adding Date {new Timestamp(ProductionDate).Stamp}.");
+        LabelBodyData.Add($"Prod. Date: {new Timestamp(ProductionDate).Stamp}");
+        Console.WriteLine($"Adding Shift {ProductionShift}.");
+        LabelBodyData.Add($"Prod. Shift: {ProductionShift}");
         // return the Label body fields
         return LabelBodyData;
     }
