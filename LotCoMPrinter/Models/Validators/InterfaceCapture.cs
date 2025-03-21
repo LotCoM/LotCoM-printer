@@ -85,12 +85,12 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
         QRCodeData.Add(SelectedPart.PartNumber);
         QRCodeData.Add(SelectedPart.PartName);
         // retrieve the Process Requirements
-        List<string> Requirements = ProcessRequirements.GetProcessRequirements(SelectedProcess.FullName);
+        List<string> RequiredFields = SelectedProcess.RequiredFields;
         // add inner (variable) Capture data
         List<string> InnerData = [JBKNumber, LotNumber, DeburrJBKNumber, DieNumber, ModelNumber];
         foreach (string _data in InnerData) {
             // only add if the field has a value and is in the Process Requirements
-            if (_data != "" && Requirements.Contains(nameof(_data))) {
+            if (_data != "" && RequiredFields.Contains(nameof(_data))) {
                 QRCodeData.Add(_data);
             }
         }
@@ -117,21 +117,21 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
         // add inner (variable) Capture data if Label is full
         if (!IsPartial) {
             // retrieve the Process Requirements
-            List<string> Requirements = ProcessRequirements.GetProcessRequirements(SelectedProcess.FullName);
+            List<string> RequiredFields = SelectedProcess.RequiredFields;
             // add inner (variable) Capture data
-            if (JBKNumber != "" && Requirements.Contains("JBKNumber")) {
+            if (JBKNumber != "" && RequiredFields.Contains("JBKNumber")) {
                 LabelBodyData.Add($"JBK #: {JBKNumber}");
             }
-            if (LotNumber != "" && Requirements.Contains("LotNumber")) {
+            if (LotNumber != "" && RequiredFields.Contains("LotNumber")) {
                 LabelBodyData.Add($"Lot #: {LotNumber}");
             }
-            if (DeburrJBKNumber != "" && Requirements.Contains("DeburrJBKNumber")) {
+            if (DeburrJBKNumber != "" && RequiredFields.Contains("DeburrJBKNumber")) {
                 LabelBodyData.Add($"Deburr JBK #: {DeburrJBKNumber}");
             }
-            if (DieNumber != "" && Requirements.Contains("DieNumber")) {
+            if (DieNumber != "" && RequiredFields.Contains("DieNumber")) {
                 LabelBodyData.Add($"Die #: {DieNumber}");
             }
-            if (ModelNumber != "" && Requirements.Contains("ModelNumber")) {
+            if (ModelNumber != "" && RequiredFields.Contains("ModelNumber")) {
                 LabelBodyData.Add($"Model #: {ModelNumber}");
             }
         }

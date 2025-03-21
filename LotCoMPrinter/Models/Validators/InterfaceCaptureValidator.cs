@@ -212,32 +212,6 @@ public static class InterfaceCaptureValidator {
         // cast the string to Uppercase and return it
         return ModelNumber.ToUpper();
     }
-
-    /// <summary>
-    /// Retrieves the requirements for SelectedProcess.
-    /// </summary>
-    /// <param name="SelectedProcess"></param>
-    /// <returns></returns>
-    /// <exception cref="NullProcessException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    private static List<string> GetRequirements(Process? SelectedProcess) {
-        // ensure Process is non-null
-        if (SelectedProcess == null) {
-            throw new NullProcessException();
-        }
-        // retrieve the Process requirements for the Process in the Capture
-        List<string> Reqs;
-        try {
-            Reqs = ProcessRequirements.GetProcessRequirements(SelectedProcess.FullName);
-        // the Process selection was null
-        } catch (NullProcessException) {
-            throw new NullProcessException();
-        // the selected Process was invalid (uncommon)
-        } catch (ArgumentException) {
-            throw new ArgumentException();
-        }
-        return Reqs;
-    }
     
     /// <summary>
     /// Validates an InterfaceCapture object. 
@@ -250,7 +224,7 @@ public static class InterfaceCaptureValidator {
     /// <exception cref="FormatException">Thrown if there is a validation failure.</exception>
     public static InterfaceCapture Validate(InterfaceCapture Capture) {
         // retrieve the Process requirements for the Process in the Capture
-        List<string> Requirements = GetRequirements(Capture.SelectedProcess);
+        List<string> Requirements = Capture.SelectedProcess.RequiredFields;
         // attempt validations for every required field
         try {
             // validate universally required fields
