@@ -146,6 +146,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <!-- Labels -->
@@ -208,13 +209,22 @@
                 Grid.Row="6"
                 Grid.Column="0"
                 Text="Die #"/>
+            <!-- Heat Number -->
+            <Label
+                x:Name="HeatNumberLabel"
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="7"
+                Grid.Column="0"
+                Text="Heat #"/>
             <!-- Model Number -->
             <Label
                 x:Name="ModelNumberLabel"
                 Margin="10"
                 VerticalOptions="Start"
                 HeightRequest="40"
-                Grid.Row="7"
+                Grid.Row="8"
                 Grid.Column="0"
                 Text="Model #"/>
             <!-- Stack Inputs -->
@@ -331,6 +341,23 @@
                     x:Name="DieNumberEntry"
                     MaxLength="3"/>
             </Border>
+            <!-- Heat Number -->
+            <Border
+                x:Name="HeatNumberControl"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="7"
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
+                    x:Name="HeatNumberEntry"/>
+            </Border>
             <!-- Model Number -->
             <Border
                 x:Name="ModelNumberControl"
@@ -338,7 +365,7 @@
                 VerticalOptions="Start"
                 WidthRequest="300"
                 HeightRequest="40"
-                Grid.Row="7"
+                Grid.Row="8"
                 Grid.Column="1"
                 Stroke="#88ACACAC"
                 StrokeThickness="1"
