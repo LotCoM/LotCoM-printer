@@ -135,7 +135,7 @@ public partial class MainPage : ContentPage {
 		bool Printed;
 		// call the ViewModel's Print Request method
 		try {
-			Printed = await _viewModel.PrintRequest(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+			Printed = await _viewModel.PrintRequest(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
 		} catch (Exception _ex) {
 			// stop the Printing Indicator
 			_viewModel.Printing = false;
