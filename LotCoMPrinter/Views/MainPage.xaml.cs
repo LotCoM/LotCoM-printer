@@ -215,6 +215,9 @@ public partial class MainPage : ContentPage {
 		// Die Number Input reset
 		DieNumberEntry.Text = "";
 		DieNumberEntry.IsEnabled = true;
+		// Heat Number Input reset
+		HeatNumberEntry.Text = "";
+		HeatNumberEntry.IsEnabled = true;
 		// Model Number Picker reset
 		ModelNumberEntry.Text = "";
 		ModelNumberEntry.IsEnabled = true;
