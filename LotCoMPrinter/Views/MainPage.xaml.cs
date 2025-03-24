@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui.Views;
-using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;
 
@@ -36,13 +35,14 @@ public partial class MainPage : ContentPage {
             // create a conversion dictionary for string names to control objects
             Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> {
                 {"SelectedProcess", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
+                {"SelectedPart", new List<View> {PartControl, PartPicker, PartLabel}},
+                {"Quantity", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
                 {"JBKNumber", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
                 {"LotNumber", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
                 {"DeburrJBKNumber", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
                 {"DieNumber", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
-                {"SelectedPart", new List<View> {PartControl, PartPicker, PartLabel}},
+				{"HeatNumber", new List<View> {HeatNumberControl, HeatNumberEntry, HeatNumberLabel}},
                 {"ModelNumber", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
-                {"Quantity", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
                 {"ProductionDate", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
                 {"ProductionShift", new List<View> {ProductionShiftControl, ProductionShiftPicker, ProductionShiftLabel}},
 				{"OperatorID", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
@@ -135,7 +135,7 @@ public partial class MainPage : ContentPage {
 		bool Printed;
 		// call the ViewModel's Print Request method
 		try {
-			Printed = await _viewModel.PrintRequest(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+			Printed = await _viewModel.PrintRequest(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
 		} catch (Exception _ex) {
 			// stop the Printing Indicator
 			_viewModel.Printing = false;
@@ -215,6 +215,9 @@ public partial class MainPage : ContentPage {
 		// Die Number Input reset
 		DieNumberEntry.Text = "";
 		DieNumberEntry.IsEnabled = true;
+		// Heat Number Input reset
+		HeatNumberEntry.Text = "";
+		HeatNumberEntry.IsEnabled = true;
 		// Model Number Picker reset
 		ModelNumberEntry.Text = "";
 		ModelNumberEntry.IsEnabled = true;

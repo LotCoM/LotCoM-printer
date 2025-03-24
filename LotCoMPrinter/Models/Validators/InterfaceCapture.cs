@@ -12,13 +12,14 @@ namespace LotCoMPrinter.Models.Validators;
 /// <param name="LotNumberEntry"></param>
 /// <param name="DeburrJBKNumberEntry"></param>
 /// <param name="DieNumberEntry"></param>
+/// <param name="HeatNumberEntry"></param>
 /// <param name="ModelNumberEntry"></param>
 /// <param name="BasketTypePicker"></param>
 /// <param name="ProductionDatePicker"></param>
 /// <param name="ProductionShiftPicker"></param>
 /// <param name="OperatorIDEntry"></param>
 /// <returns></returns>
-public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry HeatNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
     /// <summary>
     /// The Process object selected in the ProcessPicker control at the time of this capture.
     /// </summary>
@@ -48,6 +49,10 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
     /// The Die Number value entered in the DieNumberEntry control at the time of this capture.
     /// </summary>
     public string DieNumber = DieNumberEntry.Text;
+    /// <summary>
+    /// The Heat Number value entered in the HeatNumberEntry control at the time of this capture.
+    /// </summary>
+    public string HeatNumber = HeatNumberEntry.Text;
     /// <summary>
     /// The Model Number value entered in the ModelNumberEntry control at the time of this capture.
     /// </summary>
@@ -131,14 +136,15 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
             if (DieNumber != "" && RequiredFields.Contains("DieNumber")) {
                 LabelBodyData.Add($"Die #: {DieNumber}");
             }
+            if (HeatNumber != "" && RequiredFields.Contains("HeatNumber")) {
+                LabelBodyData.Add($"Heat #: {HeatNumber}");
+            }
             if (ModelNumber != "" && RequiredFields.Contains("ModelNumber")) {
                 LabelBodyData.Add($"Model #: {ModelNumber}");
             }
         }
         // add universal label fields (back)
-        Console.WriteLine($"Adding Date {new Timestamp(ProductionDate).Stamp}.");
         LabelBodyData.Add($"Prod. Date: {new Timestamp(ProductionDate).Stamp}");
-        Console.WriteLine($"Adding Shift {ProductionShift}.");
         LabelBodyData.Add($"Prod. Shift: {ProductionShift}");
         // return the Label body fields
         return LabelBodyData;
