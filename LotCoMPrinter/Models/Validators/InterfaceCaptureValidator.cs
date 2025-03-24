@@ -186,9 +186,29 @@ public static class InterfaceCaptureValidator {
         // ensure that the processed Die Number contains at least one digit
         if (DieNumber.Length < 0) {
             throw new FormatException($"Please enter a valid Die Number before printing Labels.");
-        // add leading zeroes to enforce nine-length format
         }
         return DieNumber;
+    }
+
+    /// <summary>
+    /// Validates a string as non-null, non-empty. Ensures at least one digit format.
+    /// </summary>
+    /// <param name="HeatNumber"></param>
+    /// <returns>The string as only digits.</returns>
+    /// <exception cref="FormatException"></exception>
+    private static string ValidateHeatNumber(string? HeatNumber) {
+        // validate and format the Heat Number string
+        try {
+            HeatNumber = ValidateDigitBase(HeatNumber);
+        // the Heat Number was null
+        } catch (NullReferenceException) {
+            throw new FormatException($"Please enter a Heat Number before printing Labels.");
+        }
+        // ensure that the processed Heat Number contains at least one digit
+        if (HeatNumber.Length < 0) {
+            throw new FormatException($"Please enter a valid Heat Number before printing Labels.");
+        }
+        return HeatNumber;
     }
 
     /// <summary>
@@ -249,6 +269,10 @@ public static class InterfaceCaptureValidator {
             // validate die number if required
             if (Requirements.Contains("DieNumber")) {
                 ValidateDieNumber(Capture.DieNumber);
+            };
+            // validate heat number if required
+            if (Requirements.Contains("HeatNumber")) {
+                ValidateHeatNumber(Capture.HeatNumber);
             };
             // validate model number if required
             if (Requirements.Contains("ModelNumber")) {
