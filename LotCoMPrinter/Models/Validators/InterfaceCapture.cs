@@ -136,9 +136,7 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
             }
         }
         // add universal label fields (back)
-        Console.WriteLine($"Adding Date {new Timestamp(ProductionDate).Stamp}.");
         LabelBodyData.Add($"Prod. Date: {new Timestamp(ProductionDate).Stamp}");
-        Console.WriteLine($"Adding Shift {ProductionShift}.");
         LabelBodyData.Add($"Prod. Shift: {ProductionShift}");
         // return the Label body fields
         return LabelBodyData;
