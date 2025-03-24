@@ -1,4 +1,3 @@
-using System.Reflection;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Validators;
 
@@ -16,25 +15,32 @@ public static class PrintLogger {
     private static async Task<string> CreateEventString(InterfaceCapture Capture) {
         // use multi-threading to avoid blocking the UI while print logging occurs
         string PrintEvent = await Task.Run(() => {
-            // get the timestamp of the print job
-            string Formatted = $"{new Timestamp(Capture.ProductionDate).Stamp}";
-            // format the Label Information as a readable string
-            foreach (PropertyInfo _property in Capture.GetType().GetProperties()) {
-                // save the property name
-                string _name = _property.Name;
-                // retrieve the Process Name from the SelectedProcess
-                if (_name.Equals("SelectedProcess")) {
-                    Formatted += $",{Capture.SelectedProcess!.FullName}";
-                // retrieve the Part Number from SelectedPart
-                } else if (_name.Equals("SelectedPart")) {
-                    Formatted += $",{Capture.SelectedPart!.PartNumber}";
-                    Formatted += $",{Capture.SelectedPart!.PartName}";
-                // just add the value of the property on the Capture object
-                } else {
-                    Formatted += $",{(string)_property.GetValue(Capture)!}";
-                }
+            // retrieve the Process' requirements
+            List<string> Requirements = Capture.SelectedProcess.RequiredFields;
+            // add universal requirements (front)
+            string Log = $"{Capture.SelectedProcess.FullName},{Capture.SelectedPart.PartNumber},{Capture.SelectedPart.PartName},{Capture.Quantity}";
+            // add internal, variable fields
+            if (Requirements.Contains("JBKNumber")) {
+                Log = $"{Log},{Capture.JBKNumber}";
             }
-            return Formatted;
+            if (Requirements.Contains("LotNumber")) {
+                Log = $"{Log},{Capture.LotNumber}";
+            }
+            if (Requirements.Contains("DeburrJBKNumber")) {
+                Log = $"{Log},{Capture.DeburrJBKNumber}";
+            }
+            if (Requirements.Contains("DieNumber")) {
+                Log = $"{Log},{Capture.DieNumber}";
+            }
+            if (Requirements.Contains("HeatNumber")) {
+                Log = $"{Log},{Capture.HeatNumber}";
+            }
+            if (Requirements.Contains("ModelNumber")) {
+                Log = $"{Log},{Capture.ModelNumber}";
+            }
+            // add universal requirements (back)
+            Log = $"{Log},{new Timestamp(Capture.ProductionDate).Stamp},{Capture.ProductionShift},{Capture.OperatorID}";
+            return Log;
         });
         return $"{PrintEvent}\n";
     }
