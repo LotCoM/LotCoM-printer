@@ -11,7 +11,7 @@ public static class Serializer {
     /// <param name="ModelNumber"></param>
     /// <param name="SerializeMode"></param>
     /// <returns></returns>
-    private static async Task<string?> GetSerialNumber(string PartNumber, string ModelNumber, string SerializeMode) {
+    private static async Task<string?> GetSerialNumber(string PartNumber, string SerializeMode) {
         // run the serial number retrieval on a new CPU thread
         string SerialNumber = await Task.Run(async () => {
             // create a new SerialCacheController to interact with the Serial Cache Files
@@ -22,10 +22,10 @@ public static class Serializer {
             if (Number == null) {
                 if (SerializeMode == "JBK") {
                     // consume the queued JBK number for this Model
-                    Number = await JBKQueue.ConsumeAsync(ModelNumber);
+                    Number = await JBKQueue.ConsumeAsync(PartNumber);
                 } else {
                     // consume the queued Lot number for this Model and cache it under the part number
-                    Number = await LotQueue.ConsumeAsync(ModelNumber);
+                    Number = await LotQueue.ConsumeAsync(PartNumber);
                 }
             }
             return Number;
@@ -69,7 +69,7 @@ public static class Serializer {
         Part SelectedPart = Capture.SelectedPart!;
         string PartNumber = SelectedPart!.PartNumber;
         // get the serial number for this label
-        string? SerialNumber = await GetSerialNumber(PartNumber, SelectedPart.ModelNumber, Serialization);
+        string? SerialNumber = await GetSerialNumber(PartNumber, Serialization);
         // format the Serial Number
         SerialNumber = FormatSerialNumber(SerialNumber!, Serialization);
         // if the label is a Partial; cache the Serial Number under the part number
