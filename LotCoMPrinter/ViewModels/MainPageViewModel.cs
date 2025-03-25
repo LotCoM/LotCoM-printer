@@ -345,6 +345,9 @@ public partial class MainPageViewModel : ObservableObject {
             } else if (_ex is PrintRequestException) {
                 // there was an error while communicating with the Printer or Printing System
                 throw new PrintRequestException($"There was an error communicating with the Printer:\n {_ex}: {_ex.Message}.");
+            } else if (_ex is PrintLogException) {
+                // the print logger failed to log to the specific process table and was forced to default
+                throw new PrintLogException(_ex.Message);
             }
         }
         // return the print success state
