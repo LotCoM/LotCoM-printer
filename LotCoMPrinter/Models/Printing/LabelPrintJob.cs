@@ -104,7 +104,12 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header) {
         await ProcessSerialNumber(Printed);
         // log successful print jobs
         if (Printed) {
-            await PrintLogger.LogPrintEvent(_capture);
+            try {
+                await PrintLogger.LogPrintEvent(_capture);
+            // the print logging was forced to default on its bulk logging; report this to user
+            } catch (Exception _ex) {
+                throw new PrintLogException(_ex.Message);
+            }
         }
         return Printed;
     }

@@ -149,4 +149,37 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
         // return the Label body fields
         return LabelBodyData;
     }
+
+    /// <summary>
+    /// Formats the InterfaceCapture as a comma-separated value (CSV line). The Line includes all required data fields.
+    /// </summary>
+    /// <returns></returns>
+    public string FormatAsCSV() {
+        // retrieve the Process' requirements
+        List<string> Requirements = SelectedProcess.RequiredFields;
+        // add universal requirements (front)
+        string Log = $"{SelectedProcess.FullName},{SelectedPart.PartNumber},{SelectedPart.PartName},{Quantity}";
+        // add internal, variable fields
+        if (Requirements.Contains("JBKNumber")) {
+            Log = $"{Log},{JBKNumber}";
+        }
+        if (Requirements.Contains("LotNumber")) {
+            Log = $"{Log},{LotNumber}";
+        }
+        if (Requirements.Contains("DeburrJBKNumber")) {
+            Log = $"{Log},{DeburrJBKNumber}";
+        }
+        if (Requirements.Contains("DieNumber")) {
+            Log = $"{Log},{DieNumber}";
+        }
+        if (Requirements.Contains("HeatNumber")) {
+            Log = $"{Log},{HeatNumber}";
+        }
+        if (Requirements.Contains("ModelNumber")) {
+            Log = $"{Log},{ModelNumber}";
+        }
+        // add universal requirements (back)
+        Log = $"{Log},{new Timestamp(ProductionDate).Stamp},{ProductionShift},{OperatorID}";
+        return Log;
+    }
 }

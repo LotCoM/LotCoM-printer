@@ -160,6 +160,10 @@ public partial class MainPage : ContentPage {
 				// there was an error communicating with the Printer or Printing System
 				BasicPopup Popup = new("Failed to Print", "Could not connect to the printer. Please see management to resolve this issue.");
 				this.ShowPopup(Popup);
+			} else if (_ex is PrintLogException) {
+				// the print logger failed to log to the specific process table and was forced to default
+				BasicPopup Popup = new("Label Printed but Not Logged", "The Label was printed successfully, but the system failed to record the printed Label. Please see management to resolve this issue.");
+				this.ShowPopup(Popup);
 			}
 			// escape the handler
 			return;
