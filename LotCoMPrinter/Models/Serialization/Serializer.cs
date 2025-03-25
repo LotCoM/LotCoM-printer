@@ -22,10 +22,10 @@ public static class Serializer {
             if (Number == null) {
                 if (SerializeMode == "JBK") {
                     // consume the queued JBK number for this Model
-                    Number = await JBKQueue.ConsumeAsync(PartNumber);
+                    Number = await new JBKQueue().ConsumeAsync(PartNumber);
                 } else {
                     // consume the queued Lot number for this Model and cache it under the part number
-                    Number = await LotQueue.ConsumeAsync(PartNumber);
+                    Number = await new LotQueue().ConsumeAsync(PartNumber);
                 }
             }
             return Number;
