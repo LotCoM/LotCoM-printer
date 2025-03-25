@@ -1,3 +1,4 @@
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Validators;
 
 namespace LotCoMPrinter.Models.Printing;
@@ -15,11 +16,14 @@ public static class PrintLogger {
         // create a print event string from the Label Information
         string PrintEvent = Capture.FormatAsCSV();
         // try to open and append the print event to the print datatable for the Selected Process
+        string DatatablePath = $"{_printDatabase}\\{Capture.SelectedProcess.FullName}.txt";
         try {
-            string DatatablePath = $"{_printDatabase}\\{Capture.SelectedProcess.FullName}.txt";
             await File.AppendAllTextAsync(DatatablePath, $"{PrintEvent}\n");
-        } catch {
-
+        // there was an error opening and writing the print event to the appropriate table
+        } catch (Exception _ex) {
+            // log the print to the bulk dump database table
+            await File.AppendAllTextAsync($"{_printDatabase}\\_failed_logs.log", $"{PrintEvent}\n");
+            throw new PrintLogException(_ex.Message);
         }
         
     }
