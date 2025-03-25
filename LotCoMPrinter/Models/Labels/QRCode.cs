@@ -19,10 +19,6 @@ public class QRCode {
     /// <param name="LabelFields">The Fields of information to encode in the QR Code.</param>
     /// <exception cref="ArgumentException"></exception>
     public QRCode(IEnumerable<string> LabelFields) {
-        // ensure there was some data passed
-        if (!LabelFields.Any()) {
-            throw new ArgumentException("LabelFields must contain at least one field of data to pass into the QR Code encoded data.");
-        }
         // create a new QR Code generator
         QRCodeGenerator Coder = new();
         // format the QR Code data

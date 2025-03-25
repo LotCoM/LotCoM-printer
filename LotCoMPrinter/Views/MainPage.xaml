@@ -60,6 +60,7 @@
                 <Picker
                     x:Name="ProcessPicker"
                     ItemsSource="{Binding Processes}"
+                    ItemDisplayBinding="{Binding FullName}"
                     SelectedIndex="-1"
                     SelectedIndexChanged="OnProcessSelection">
                 </Picker>
@@ -83,7 +84,7 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     x:Name="ProcessTypeLabel"
-                    Text="{Binding ProcessType}"
+                    Text="{Binding SelectedProcess.Type}"
                     TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
                     FontSize="11"/>
             </Border>
@@ -137,6 +138,7 @@
             Grid.Row="1"
             Grid.Column="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -207,13 +209,22 @@
                 Grid.Row="6"
                 Grid.Column="0"
                 Text="Die #"/>
+            <!-- Heat Number -->
+            <Label
+                x:Name="HeatNumberLabel"
+                Margin="10"
+                VerticalOptions="Start"
+                HeightRequest="40"
+                Grid.Row="7"
+                Grid.Column="0"
+                Text="Heat #"/>
             <!-- Model Number -->
             <Label
                 x:Name="ModelNumberLabel"
                 Margin="10"
                 VerticalOptions="Start"
                 HeightRequest="40"
-                Grid.Row="7"
+                Grid.Row="8"
                 Grid.Column="0"
                 Text="Model #"/>
             <!-- Stack Inputs -->
@@ -234,6 +245,7 @@
                 <Picker
                     x:Name="PartPicker"
                     ItemsSource="{Binding SelectedProcessParts}"
+                    ItemDisplayBinding="{Binding PartNumber}"
                     SelectedIndex="-1"
                     SelectedIndexChanged="OnPartSelection"/>
             </Border>
@@ -329,9 +341,9 @@
                     x:Name="DieNumberEntry"
                     MaxLength="3"/>
             </Border>
-            <!-- Model Number -->
+            <!-- Heat Number -->
             <Border
-                x:Name="ModelNumberControl"
+                x:Name="HeatNumberControl"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 WidthRequest="300"
@@ -344,8 +356,25 @@
                 Background="#00000000"
                 >
                 <Entry
+                    x:Name="HeatNumberEntry"/>
+            </Border>
+            <!-- Model Number -->
+            <Border
+                x:Name="ModelNumberControl"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="300"
+                HeightRequest="40"
+                Grid.Row="8"
+                Grid.Column="1"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Entry
                     x:Name="ModelNumberEntry"
-                    Text="{Binding DisplayedModel}"/>
+                    Text="{Binding DisplayedModelNumber}"/>
             </Border>
         </Grid>
         <!-- Right-Side Sub-Grid (Production Time Inputs) allows control over label/input positions -->

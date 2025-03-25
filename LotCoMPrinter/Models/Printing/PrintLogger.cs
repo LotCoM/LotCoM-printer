@@ -1,41 +1,30 @@
+using LotCoMPrinter.Models.Exceptions;
+using LotCoMPrinter.Models.Validators;
+
 namespace LotCoMPrinter.Models.Printing;
 
 public static class PrintLogger {
     // print log path
-    private const string _logPath = "\\\\144.133.122.1\\Lot Control Management\\database\\logs\\print_history.log";
-
-    /// <summary>
-    /// Converts LabelInformation into a Print Event string, including the print timestamp.
-    /// </summary>
-    /// <param name="LabelInformation">LabelInformation from the LabelPrintJob.</param>
-    /// <returns></returns>
-    private static async Task<string> CreateEventString(List<string> LabelInformation) {
-        // use multi-threading to avoid blocking the UI while print logging occurs
-        string PrintEvent = await Task.Run(() => {
-            // get the timestamp of the print job
-            string Formatted = LabelInformation[^3].Replace("Production Date: ", "");
-            // format the Label Information as a readable string
-            foreach(string _field in LabelInformation) {
-                // remove any commas, replace the newline in Part with a comma, then remove all spaces
-                string _formattedField = _field.Replace(",", "").Replace(" ", "").Replace("\n", ",");
-                // remove the field prefixes and add the field value to the formatted string
-                _formattedField = _formattedField.Split(":")[1].Replace(" ", "");
-                Formatted += $",{_formattedField}";
-            }
-            return Formatted;
-        });
-        return $"{PrintEvent}\n";
-    }
+    private const string _printDatabase = "\\\\144.133.122.1\\Lot Control Management\\Database\\data_tables\\prints";
 
     /// <summary>
     /// Logs a LabelPrintJob's information to the database.
     /// </summary>
-    /// <param name="LabelInformation">LabelInformation from the LabelPrintJob.</param>
+    /// <param name="Capture">An InterfaceCapture object.</param>
     /// <returns></returns>
-    public static async Task LogPrintEvent(List<string> LabelInformation) {
-        // create a print event from the Label Information
-        string PrintEvent = await CreateEventString(LabelInformation);
-        // open the print history .log file and append the new event to the file
-        await File.AppendAllTextAsync(_logPath, PrintEvent);
+    public static async Task LogPrintEvent(InterfaceCapture Capture) {
+        // create a print event string from the Label Information
+        string PrintEvent = Capture.FormatAsCSV();
+        // try to open and append the print event to the print datatable for the Selected Process
+        string DatatablePath = $"{_printDatabase}\\{Capture.SelectedProcess.FullName}.txt";
+        try {
+            await File.AppendAllTextAsync(DatatablePath, $"{PrintEvent}\n");
+        // there was an error opening and writing the print event to the appropriate table
+        } catch (Exception _ex) {
+            // log the print to the bulk dump database table
+            await File.AppendAllTextAsync($"{_printDatabase}\\_failed_logs.log", $"{PrintEvent}\n");
+            throw new PrintLogException(_ex.Message);
+        }
+        
     }
 }

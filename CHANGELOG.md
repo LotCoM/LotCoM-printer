@@ -146,22 +146,59 @@ Refactor database access paths to mirror schema change.
 
 ## `0.6.0`
 #### Print Logging; UI Optimization and Stylizing
-- [0.6.0](https://github.com/LotCoM/LotCoM-printer/pull/87)
+- [`0.6.0`](https://github.com/LotCoM/LotCoM-printer/pull/87)
   - Implement print confirmation message (resolve [#85](https://github.com/LotCoM/LotCoM-printer/issues/85)).
   - Improve stand-out of entries and dropdowns in the UI.
   - Change UI title from "Print Labels" => "Print WIP Labels".
   - Add Originator/Pass-through indication.
-- [feature/0.6.1](https://github.com/LotCoM/LotCoM-printer/pull/94)
+- [`feature/0.6.1`](https://github.com/LotCoM/LotCoM-printer/pull/94)
   - Implement print history logging.
   - Implement an activity indicator from print button click to print job completion.
-- [bug/91](https://github.com/LotCoM/LotCoM-printer/pull/96)
+- [`bug/91`](https://github.com/LotCoM/LotCoM-printer/pull/96)
   - Resolve crash on empty form print attempt.
-- [bug/92](https://github.com/LotCoM/LotCoM-printer/pull/98)
+- [`bug/92`](https://github.com/LotCoM/LotCoM-printer/pull/98)
   - Resolve double error messages (actual error cause + failed print message).
-- [bug/95](https://github.com/LotCoM/LotCoM-printer/pull/99)
+- [`bug/95`](https://github.com/LotCoM/LotCoM-printer/pull/99)
   - Uniform alert raising location (code-behind `MainPage.xaml.cs`).
-- [bug/93](https://github.com/LotCoM/LotCoM-printer/pull/100)
+- [`bug/93`](https://github.com/LotCoM/LotCoM-printer/pull/100)
   - Refactor from `IAlertService` implementation to `CommunityToolkit.Maui.Views.Popup` dependency.
   - Improve Popup styles.
-- [feature/97](https://github.com/LotCoM/LotCoM-printer/pull/103)
+- [`feature/97`](https://github.com/LotCoM/LotCoM-printer/pull/103)
   - Improve clarity of locked entry controls.
+
+## `0.6.1`
+#### 
+- [`feature/106`](https://github.com/LotCoM/LotCoM-printer/pull/111)
+  - Bring datasource classes to parity with new Database schemas ([#106](https://github.com/LotCoM/LotCoM-printer/issues/106)).
+    - Process masterlist with Names, Part Lists, etc.
+  - Resolve issue with Model Number logic not disabling/enabling on Part selection as expected ([#107](https://github.com/LotCoM/LotCoM-printer/issues/107)).
+  - New Datasources:
+    - `Process.cs`: Represents a Process in the WIP process-flow.
+    - `ProcessData.cs`: Exposes methods for interaction with the Process datasource.
+    - `Part.cs`: Represents a Part in the WIP process-flow. 
+    - `PartData.cs`: Exposes methods for interaction with the Parts in the Process datasource.
+  - Pass more explicit data through MVVM architecture (less processing time, more security and resillience).
+- [`feature/110`](https://github.com/LotCoM/LotCoM-printer/pull/112)
+  - Implement a new UI Capture class to replace the previous (flimsy) dictionary approach ([#110](https://github.com/LotCoM/LotCoM-printer/issues/110)).
+  - Resolve issue with missing Part Name on Partial Label ([#109](https://github.com/LotCoM/LotCoM-printer/issues/109)).
+  - Partially integrate printing process with Process/Part classes ([#108](https://github.com/LotCoM/LotCoM-printer/issues/108)).
+  - Slight tweaks to Partial Label formatting.
+  - New classes:
+    - `InterfaceCapture.cs`: Captures and holds the data input in the UI controls at the time of creation.
+    - `Timestamp.cs`: Provides quick and uniform formatting of a `DateTime` object to the desired system format `MM/DD/YYYY-HH:MM:SS`.
+- [`bug/113`](https://github.com/LotCoM/LotCoM-printer/pull/119)
+  - Resolve issue with missing data in Print Logs ([#113](https://github.com/LotCoM/LotCoM-printer/issues/113)).
+- [`feature/114`](https://github.com/LotCoM/LotCoM-printer/pull/116)
+  - Bring Process datasource classes to parity with new Database schema ([#114](https://github.com/LotCoM/LotCoM-printer/issues/114)).
+    - Add each Process' Requirements into the database.
+- [`feature/117`](https://github.com/LotCoM/LotCoM-printer/pull/118)
+  - Implement new Heat Number UI control element ([#117](https://github.com/LotCoM/LotCoM-printer/issues/117)).
+- [`feature/120`](https://github.com/LotCoM/LotCoM-printer/pull/124)
+  - Change Print Logging function to report printing to individual Process datatables ([#120](https://github.com/LotCoM/LotCoM-printer/issues/120)).
+  - New classes:
+    - `PrintLogException.cs`: Custom exception thrown when Print Logging fails and defaults to a dump file.
+- [`feature/122`](https://github.com/LotCoM/LotCoM-printer/pull/123)
+  - Change serialization from Model-based to Part-based ([#122](https://github.com/LotCoM/LotCoM-printer/issues/122)).
+  - New classes:
+    - `SerialQueue.cs`: Abstraction of methods and properties from `JBKQueue.cs` and `LotQueue.cs`.
+      - These classes have been refactored to extend from `SerialQueue.cs`.
