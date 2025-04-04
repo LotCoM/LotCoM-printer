@@ -89,19 +89,32 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
         QRCodeData.Add(SelectedProcess.FullName);
         QRCodeData.Add(SelectedPart.PartNumber);
         QRCodeData.Add(SelectedPart.PartName);
+        QRCodeData.Add(Quantity);
         // retrieve the Process Requirements
         List<string> RequiredFields = SelectedProcess.RequiredFields;
         // add inner (variable) Capture data
-        List<string> InnerData = [JBKNumber, LotNumber, DeburrJBKNumber, DieNumber, ModelNumber];
-        foreach (string _data in InnerData) {
-            // only add if the field has a value and is in the Process Requirements
-            if (_data != "" && RequiredFields.Contains(nameof(_data))) {
-                QRCodeData.Add(_data);
-            }
+        if (JBKNumber != "" && RequiredFields.Contains("JBKNumber")) {
+            QRCodeData.Add(JBKNumber);
+        }
+        if (LotNumber != "" && RequiredFields.Contains("LotNumber")) {
+            QRCodeData.Add(LotNumber);
+        }
+        if (DeburrJBKNumber != "" && RequiredFields.Contains("DeburrJBKNumber")) {
+            QRCodeData.Add(DeburrJBKNumber);
+        }
+        if (DieNumber != "" && RequiredFields.Contains("DieNumber")) {
+            QRCodeData.Add(DieNumber);
+        }
+        if (HeatNumber != "" && RequiredFields.Contains("HeatNumber")) {
+            QRCodeData.Add(HeatNumber);
+        }
+        if (ModelNumber != "" && RequiredFields.Contains("ModelNumber")) {
+            QRCodeData.Add(ModelNumber);
         }
         // always add Production Date/Shift and Initials
         QRCodeData.Add(new Timestamp(ProductionDate).Stamp);
         QRCodeData.Add(ProductionShift);
+        QRCodeData.Add(OperatorID);
         // return the QR Code data
         return QRCodeData;
     } 
