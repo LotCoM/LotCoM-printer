@@ -202,3 +202,8 @@ Refactor database access paths to mirror schema change.
   - New classes:
     - `SerialQueue.cs`: Abstraction of methods and properties from `JBKQueue.cs` and `LotQueue.cs`.
       - These classes have been refactored to extend from `SerialQueue.cs`.
+
+## `0.6.1.1`
+#### Bugfix
+- [bug/126](https://github.com/LotCoM/LotCoM-printer/pull/127)
+- Resolve [#126](https://github.com/LotCoM/LotCoM-printer/issues/126).
