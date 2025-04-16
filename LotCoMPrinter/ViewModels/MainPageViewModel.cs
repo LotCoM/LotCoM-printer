@@ -161,16 +161,19 @@ public partial class MainPageViewModel : ObservableObject {
         string LabelHeader = await Task.Run(() => {
             // retrieve values to improve processing time
             Process SelectedProcess = Capture.SelectedProcess!;
-            string Serialization = SelectedProcess.Serialization;
             // decide to use the JBK or Date as the header
             string Header;
-            if (Serialization.Equals("JBK")) {
+            if ((SelectedProcess.PassThroughHeadingType != null && SelectedProcess.PassThroughHeadingType == "JBK") 
+                || SelectedProcess.Serialization.Equals("JBK")) {
                 // header is the JBK # (remove "JBK #: ")
                 Header = Capture.JBKNumber!;
-            } else {
+            } else if ((SelectedProcess.PassThroughHeadingType != null && SelectedProcess.PassThroughHeadingType == "Lot") 
+                || SelectedProcess.Serialization.Equals("Lot")) {
                 // header is the MM/DD of the Production Date; retrieve the Date from the UI Capture
                 DateTime Date = Capture.ProductionDate;
                 Header = $"{Date.Month}/{Date.Day}";
+            } else {
+                throw new LabelBuildException("There was no Header type assigned to this Process.");
             }
             return Header;
         });
@@ -331,7 +334,12 @@ public partial class MainPageViewModel : ObservableObject {
             throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}.");
         }
         // UI state is valid; format the Label's header
-        string Header = await FormatLabelHeader(Capture);
+        string Header; 
+        try {
+            Header = await FormatLabelHeader(Capture);
+        } catch (LabelBuildException _ex) {
+            throw new LabelBuildException(_ex.Message);
+        }
         // create and run a Label print job
         bool Printed = false;
         LabelPrintJob Job = new LabelPrintJob(Capture, Header);
