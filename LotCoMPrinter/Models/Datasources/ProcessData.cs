@@ -122,7 +122,7 @@ public static class ProcessData {
             string Serialization;
             JToken Parts;
             JToken Requirements;
-            string? PassThroughHeaderType;
+            string? PassThroughHeadingType;
             // attempt to access each field of Data from the Process Token
             try {
                 LineCode = Token["LineCode"]!.ToString();
@@ -132,7 +132,12 @@ public static class ProcessData {
                 Serialization = Token["Serialization"]!.ToString();
                 Parts = Token["Parts"]!;
                 Requirements = Token["Requirements"]!;
-                PassThroughHeaderType = Token["PassThroughHeaderType"]!.ToString();
+                var RawPassThroughHeadingType = Token["PassThroughHeadingType"]!;
+                if (RawPassThroughHeadingType != null) {
+                    PassThroughHeadingType = RawPassThroughHeadingType.ToString();
+                } else {
+                    PassThroughHeadingType = null;
+                }
             // one of the needed fields was not accessible
             } catch {
                 throw new FormatException($"Could not resolve '{Token}' to a Process object.");
@@ -161,7 +166,7 @@ public static class ProcessData {
             // attempt to construct the Process object from the resolved data
             Process ResolvedProcess;
             try {
-                ResolvedProcess = new Process(LineCode, Line, Title, Type, Serialization, PartObjects, RequiredFields, PassThroughHeaderType);
+                ResolvedProcess = new Process(LineCode, Line, Title, Type, Serialization, PartObjects, RequiredFields, PassThroughHeadingType);
             } catch {
                 throw new FormatException($"Could not resolve '{Token}' to a Process object.");
             }

@@ -13,7 +13,7 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="Parts">The Parts assigned to the Process.</param>
 /// <param name="RequiredFields">The data fields required by this Process.</param>
 /// <param name="PassThroughHeading">(Optional) For Processes with Type = "Pass-through", the type of Serialization Header to apply to the Label; "JBK" or "Lot".</param>
-public partial class Process(string LineCode, string Line, string Title, string Type, string Serialization, List<Part> Parts, List<string> RequiredFields, string? PassThroughHeaderType = null): ObservableObject {
+public partial class Process(string LineCode, string Line, string Title, string Type, string Serialization, List<Part> Parts, List<string> RequiredFields, string? PassThroughHeadingType = null): ObservableObject {
     /// <summary>
     /// [Observable] The four-digit Process Code assigned to the Process.
     /// </summary>
@@ -67,5 +67,5 @@ public partial class Process(string LineCode, string Line, string Title, string 
     /// For Processes with Type = "Origination", null.
     /// </summary>
     [ObservableProperty]
-    public partial string? PassThroughHeaderType {get; set;} = PassThroughHeaderType;
+    public partial string? PassThroughHeadingType {get; set;} = PassThroughHeadingType;
 }
