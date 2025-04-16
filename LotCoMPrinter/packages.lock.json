@@ -43,9 +43,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.3, )",
-        "resolved": "9.0.3",
-        "contentHash": "1rqGTfubVg0qj2PsK6esyq3PIxtYJYrN3LsYUV9RrvH3anmt3fT3ozYdAZZH4U8JU/pt5pPIUk8NBSu26wtekA=="
+        "requested": "[9.0.4, )",
+        "resolved": "9.0.4",
+        "contentHash": "xUdlUxiFwXhTYhB4VxKg/IA0+jlZXJPo70LYuMryWbJHdonIpZjw+7DO2B0pWwpXIOs6MlH5WVXPEtfrGEcVZA=="
       },
       "Newtonsoft.Json": {
         "type": "Direct",
@@ -1213,7 +1213,7 @@
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-ios18.2": {
+    "net9.0-ios18.4": {
       "CommunityToolkit.Maui": {
         "type": "Direct",
         "requested": "[11.1.0, )",
@@ -1255,9 +1255,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.3, )",
-        "resolved": "9.0.3",
-        "contentHash": "1rqGTfubVg0qj2PsK6esyq3PIxtYJYrN3LsYUV9RrvH3anmt3fT3ozYdAZZH4U8JU/pt5pPIUk8NBSu26wtekA=="
+        "requested": "[9.0.4, )",
+        "resolved": "9.0.4",
+        "contentHash": "xUdlUxiFwXhTYhB4VxKg/IA0+jlZXJPo70LYuMryWbJHdonIpZjw+7DO2B0pWwpXIOs6MlH5WVXPEtfrGEcVZA=="
       },
       "Newtonsoft.Json": {
         "type": "Direct",
@@ -1419,42 +1419,42 @@
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-ios18.2/android-arm64": {
+    "net9.0-ios18.4/android-arm64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-ios18.2/android-x64": {
+    "net9.0-ios18.4/android-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-ios18.2/iossimulator-x64": {
+    "net9.0-ios18.4/iossimulator-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-ios18.2/maccatalyst-x64": {
+    "net9.0-ios18.4/maccatalyst-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-ios18.2/win10-x64": {
+    "net9.0-ios18.4/win10-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-maccatalyst18.2": {
+    "net9.0-maccatalyst18.4": {
       "CommunityToolkit.Maui": {
         "type": "Direct",
         "requested": "[11.1.0, )",
@@ -1496,9 +1496,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.3, )",
-        "resolved": "9.0.3",
-        "contentHash": "1rqGTfubVg0qj2PsK6esyq3PIxtYJYrN3LsYUV9RrvH3anmt3fT3ozYdAZZH4U8JU/pt5pPIUk8NBSu26wtekA=="
+        "requested": "[9.0.4, )",
+        "resolved": "9.0.4",
+        "contentHash": "xUdlUxiFwXhTYhB4VxKg/IA0+jlZXJPo70LYuMryWbJHdonIpZjw+7DO2B0pWwpXIOs6MlH5WVXPEtfrGEcVZA=="
       },
       "Newtonsoft.Json": {
         "type": "Direct",
@@ -1660,35 +1660,35 @@
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-maccatalyst18.2/android-arm64": {
+    "net9.0-maccatalyst18.4/android-arm64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-maccatalyst18.2/android-x64": {
+    "net9.0-maccatalyst18.4/android-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-maccatalyst18.2/iossimulator-x64": {
+    "net9.0-maccatalyst18.4/iossimulator-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-maccatalyst18.2/maccatalyst-x64": {
+    "net9.0-maccatalyst18.4/maccatalyst-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
       }
     },
-    "net9.0-maccatalyst18.2/win10-x64": {
+    "net9.0-maccatalyst18.4/win10-x64": {
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "9.0.2",
