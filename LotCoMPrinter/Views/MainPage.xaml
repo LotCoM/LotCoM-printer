@@ -245,7 +245,7 @@
                 <Picker
                     x:Name="PartPicker"
                     ItemsSource="{Binding SelectedProcessParts}"
-                    ItemDisplayBinding="{Binding PartNumber}"
+                    ItemDisplayBinding="{Binding GetPartInfo}"
                     SelectedIndex="-1"
                     SelectedIndexChanged="OnPartSelection"/>
             </Border>
