@@ -184,6 +184,9 @@ public class SerialCacheController {
     /// <returns></returns>
     public async Task RemoveCachedSerialNumber(string SerialNumber, string PartNumber) {
         // remove leading zeroes (the cache file will not contain them)
+        if (SerialNumber == "") {
+            return;
+        }
         while (SerialNumber[0].Equals('0')) {
             SerialNumber = SerialNumber[1..];
         }
