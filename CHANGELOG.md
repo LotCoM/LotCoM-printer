@@ -205,5 +205,24 @@ Refactor database access paths to mirror schema change.
 
 ## `0.6.1.1`
 #### Bugfix
-- [bug/126](https://github.com/LotCoM/LotCoM-printer/pull/127)
-- Resolve [#126](https://github.com/LotCoM/LotCoM-printer/issues/126).
+- [bug/126](https://github.com/LotCoM/LotCoM-printer/pull/127).
+  - Resolve [#126](https://github.com/LotCoM/LotCoM-printer/issues/126).
+
+## `0.6.1.2`
+#### Bugfixes
+- [bug/128](https://github.com/LotCoM/LotCoM-printer/pull/134).
+  - Resolve [#128](https://github.com/LotCoM/LotCoM-printer/issues/128).
+  - Implements `GetPartInfo` computed property on `Part.cs`. 
+    - Formats `Part.PartNumber` and `Part.PartName` into a singular string that the `PartPicker.ItemDisplayBinding` property can bind to.
+- [bug/130](https://github.com/LotCoM/LotCoM-printer/pull/132).
+  - Resolve [#130](https://github.com/LotCoM/LotCoM-printer/issues/130).
+  - Implements `PassThroughHeadingType` property on `Process.cs`.
+    - Matches a new key in the Process Datasource.
+    - A `PassThroughHeadingType` value is assigned to Pass-through Processes and nullified on Originator Processes.
+    - This property makes Header formatting possible on Pass-through Processes, which do not have a Serialization value.
+  - Modifies `MainPageViewModel.FormatLabelHeader()` method to check both `Process.Serialization` and `Process.PassThroughHeadingType` for either `JBK` or `Lot` values before formatting the Label's header.
+- [bug/131](https://github.com/LotCoM/LotCoM-printer/pull/133).
+  - Resolve [#131](https://github.com/LotCoM/LotCoM-printer/issues/131).
+  - Allows `SerialCacheController.RemoveCachedSerialNumber()` to ignore and immediately return null when an empty string passed as the `SerialNumber` parameter.
+    - This was previously causing the method to throw an error because it was incapable of locating the empty string in the cache file.
+    - Pass-through Processes do not prompt for a Serial Number in the UI, so they pass an empty string as the `SerialNumber` parameter when invoking the `RemoveCachedSerialNumber()` method.
