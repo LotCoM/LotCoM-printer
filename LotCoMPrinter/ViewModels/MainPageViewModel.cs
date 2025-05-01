@@ -1,9 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Printing;
-using LotCoMPrinter.Models.Serialization;
-using LotCoMPrinter.Models.Validators;
 
 namespace LotCoMPrinter.ViewModels;
 

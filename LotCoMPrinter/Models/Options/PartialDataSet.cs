@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCoMPrinter.Models.Datasources;
 
 namespace LotCoMPrinter.Models.Options;
 
