@@ -3,7 +3,7 @@ using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
 
-public partial class PrintTicketView : View
+public partial class PrintTicketPage : ContentPage
 {
     /// <summary>
     /// The PrintTicketViewModel object that controls this View.
@@ -14,7 +14,7 @@ public partial class PrintTicketView : View
     /// Create a new PrintTicketView Element.
     /// </summary>
     /// <param name="PrintTicket"></param>
-    public PrintTicketView(PrintTicket PrintTicket)
+    public PrintTicketPage(PrintTicket PrintTicket)
     {
         ViewModel = new PrintTicketViewModel(PrintTicket);
         BindingContext = ViewModel;
