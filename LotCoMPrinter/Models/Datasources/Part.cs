@@ -33,9 +33,4 @@ public partial class Part(string ParentProcess, string PartNumber, string PartNa
     /// </summary>
     [ObservableProperty]
     public partial string ModelNumber {get; set;} = ModelNumber;
-
-    /// <summary>
-    /// A string formatted to conveniently display the Part's Number and Name together.
-    /// </summary>
-    public string GetPartInfo => $"{PartNumber}\n  {PartName}";
 }
