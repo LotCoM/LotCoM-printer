@@ -11,6 +11,11 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="ModelNumber">The Model Number the Part is associated with.</param>
 public partial class Part(string ParentProcess, string PartNumber, string PartName, string ModelNumber): ObservableObject {
     /// <summary>
+    /// Provides a formatted string to display in a ListView; includes the Part Number and Name.
+    /// </summary>
+    public string GetInfo => $"{PartNumber}\n  {PartName}";
+    
+    /// <summary>
     /// [Observable] The Process that the Part is assigned to.
     /// </summary>
     [ObservableProperty]
