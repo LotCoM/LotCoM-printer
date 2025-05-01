@@ -1,7 +1,4 @@
-using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Validators;
-
-namespace LotCoMPrinter.Models.Serialization;
+namespace LotCoMPrinter.Models.Datasources;
 
 public static class Serializer {
     /// <summary>

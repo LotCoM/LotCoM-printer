@@ -1,6 +1,4 @@
-using LotCoMPrinter.Models.Datasources;
-
-namespace LotCoMPrinter.Models.Validators;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Pulls and stores the current state of each Interface control element, "capturing" this unique Interface state.

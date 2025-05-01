@@ -1,8 +1,7 @@
 using System.Text.RegularExpressions;
-using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Validators;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Validates values contained in InterfaceCapture objects, based on their SelectedProcess value.

@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.Models.Printing;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Class providing Display and DPI utility methods.

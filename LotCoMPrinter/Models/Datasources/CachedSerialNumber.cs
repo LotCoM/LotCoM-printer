@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.Models.Serialization;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Represents a serial number cached in the serial number cache system.

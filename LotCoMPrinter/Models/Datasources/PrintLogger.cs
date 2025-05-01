@@ -1,7 +1,6 @@
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Validators;
 
-namespace LotCoMPrinter.Models.Printing;
+namespace LotCoMPrinter.Models.Datasources;
 
 public static class PrintLogger {
     // print log path

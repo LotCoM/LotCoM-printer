@@ -1,14 +1,13 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using LotCoMPrinter.Models.Printing;
 using LotCoMPrinter.Models.Services;
 
-namespace LotCoMPrinter.Models.Labels;
+namespace LotCoMPrinter.Models.Datasources;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 
-public class PartialLabel {
+public class FullLabel {
     // label dimension constants; // value = default
     // dimension (square dimension) of label
     private int LabelDimension = 1440; // 1440
@@ -19,9 +18,9 @@ public class PartialLabel {
     // size of medium text on label
     private int TextSizeMedium = 76; // 76
     // size of large text on label
-    private int TextSizeLarge = 160; // 192
+    private int TextSizeLarge = 192; // 192
     // padding of objects on the label
-    private int LabelInternalPadding = 36; // 12
+    private int LabelInternalPadding = 12; // 12
     // horizontal position of the label heading text
     private int LabelHeadingX;
     // vertical position of the label heading text
@@ -46,10 +45,10 @@ public class PartialLabel {
     private readonly System.Drawing.Font _fontLarge;
     
     /// <summary>
-    /// Creates a new Image of a PARTIAL Production Lot Tracing Label that can be sent to Print Spooling.
+    /// Creates a new Image of a Production Lot Tracing Label that can be sent to Print Spooling.
     /// </summary>
     /// <exception cref="SystemException"></exception>
-    public PartialLabel() {
+    public FullLabel() {
         // scale the Label dimensions to the current Device's Dpi Scale
         ConfigureLabelDimensions();
 
@@ -84,13 +83,13 @@ public class PartialLabel {
         TextSizeLarge = Convert.ToInt32(TextSizeLarge * DpiScale);
         LabelInternalPadding = Convert.ToInt32(LabelInternalPadding * DpiScale);
         LabelHeadingX = Convert.ToInt32(-56 * DpiScale + LabelInternalPadding);
-        LabelHeadingY = Convert.ToInt32(-56 * DpiScale + LabelInternalPadding); 
-        CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
-        CodePositionY1 = LabelHeadingY + TextSizeLarge + (LabelInternalPadding * 3);
+        LabelHeadingY = Convert.ToInt32(-28 * DpiScale + LabelInternalPadding); 
         LabelPartNameX = LabelInternalPadding;
-        LabelPartNameY = CodePositionY1 + CodeDimension;
-        LabelFieldsX = LabelInternalPadding;
-        LabelFieldsY = LabelPartNameY + (TextSizeMedium * 2) + LabelInternalPadding;
+        LabelPartNameY = CodeDimension;
+        CodePositionX1 = LabelDimension - CodeDimension - LabelInternalPadding;
+        CodePositionY1 = LabelInternalPadding;
+        LabelFieldsX = LabelInternalPadding * 2;
+        LabelFieldsY = CodeDimension + TextSizeMedium + (LabelInternalPadding * 4);
     }
 
     /// <summary>
@@ -109,7 +108,7 @@ public class PartialLabel {
     }
 
     /// <summary>
-    /// Access the current Bitmap image assigned to the PartialLabel object.
+    /// Access the current Bitmap image assigned to the Label object.
     /// </summary>
     /// <returns></returns>
     public Bitmap GetImage() {
@@ -132,7 +131,7 @@ public class PartialLabel {
             Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
             Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             // draw the Heading text
-            Surface.DrawString($"PARTIAL\n{HeadingText}", _fontLarge, Brushes.Black, LabelHeadingX, LabelHeadingY);
+            Surface.DrawString(HeadingText, _fontLarge, Brushes.Black, LabelHeadingX, LabelHeadingY);
             Surface.Flush();
         });
     }
@@ -192,8 +191,16 @@ public class PartialLabel {
             // combine the LabelFields into a string deliniated by newlines
             string LabelFieldsBody = "";
             foreach (string _field in LabelFields) {
-                // add the field to the data body
-                LabelFieldsBody += _field + "\n";
+                // if the field is the operator ID, do not include in the shown text
+                if (_field.Contains("Operator")) {
+                    continue;
+                // if the field is the Part info, do not include the Part Name
+                } else if (_field.Contains("Part")) {
+                    LabelFieldsBody += $"{_field.Split("\n")[0]}\n";
+                // add the field as normal
+                } else {
+                    LabelFieldsBody += $"{_field}\n";
+                }
             }
             // create a drawing surface to draw the text with
             Graphics Surface = Graphics.FromImage(_image);

@@ -1,11 +1,7 @@
 using System.Drawing;
-using LotCoMPrinter.Models.Serialization;
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Labels;
-using LotCoMPrinter.Models.Validators;
-using LotCoMPrinter.Models.Datasources;
 
-namespace LotCoMPrinter.Models.Printing;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Creates a Print Job that can generate a Bitmap image Label and spool a print job to the printing system.

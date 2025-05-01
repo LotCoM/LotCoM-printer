@@ -1,8 +1,7 @@
 using System.Drawing;
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Validators;
 
-namespace LotCoMPrinter.Models.Labels;
+namespace LotCoMPrinter.Models.Datasources;
 
 public static class LabelGenerator {
     /// <summary>

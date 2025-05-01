@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace LotCoMPrinter.Models.Serialization;
+namespace LotCoMPrinter.Models.Datasources;
 
 public class SerialCacheController {
     // Cache system paths
