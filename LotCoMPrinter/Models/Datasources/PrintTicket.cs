@@ -44,15 +44,35 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
     /// </summary>
     private Timestamp ProductionDate = ProductionDate;
 
+    private PartialDataSet? _firstPartialDataSet = null;
     /// <summary>
     /// The first of the Partial Production Data sets associated with this Print Ticket.
     /// </summary>
-    private PartialDataSet? FirstPartialDataSet = null;
+    public PartialDataSet? FirstPartialDataSet
+    {
+        get {return _firstPartialDataSet;}
+        set
+        {
+            _firstPartialDataSet = value;
+            OnPropertyChanged(nameof(_firstPartialDataSet));
+            OnPropertyChanged(nameof(FirstPartialDataSet));
+        }
+    }
 
+    private PartialDataSet? _secondPartialDataSet = null;
     /// <summary>
     /// The second of the Partial Production Data sets associated with this Print Ticket.
     /// </summary>
-    private PartialDataSet? SecondPartialDataSet = null;
+    public PartialDataSet? SecondPartialDataSet
+    {
+        get {return _secondPartialDataSet;}
+        set
+        {
+            _secondPartialDataSet = value;
+            OnPropertyChanged(nameof(_secondPartialDataSet));
+            OnPropertyChanged(nameof(SecondPartialDataSet));
+        }
+    }
 
     /// <summary>
     /// Returns whether the Print Ticket has one Partial Data Set associated with it.
@@ -94,7 +114,7 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
     {
         get
         {
-            return $"{Part.ModelNumber} {Part.PartName}: {SerialNumber}";
+            return $"{Part.ModelNumber} {Part.PartName} - {SerialNumber}";
         }
     }
 
