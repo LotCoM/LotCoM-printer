@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
+using LotCoMPrinter.Models.Options;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -11,102 +12,47 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject 
 {
-    private List<Process> _processes = new ProcessData().GetAllProcesses();
     /// <summary>
-    /// Provides a native accessor instance of Process Data in the LotCom Database.
+    /// The List of Open Print Tickets currently saved locally.
     /// </summary>
-    public List<Process> Processes 
+    private List<PrintTicket> OpenPrintTickets = [];
+
+    private readonly List<Process> _allProcesses = new ProcessData().GetAllProcesses();
+    /// <summary>
+    /// The List of Processes in the Database, captured at the time of instantiation.
+    /// </summary>
+    public List<Process> AllProcesses
     {
-        get {return _processes;}
+        get {return _allProcesses;}
     }
 
-    private Process? _selectedProcess = null;
+    private PrintTicket? _activePrintTicket = null;
     /// <summary>
-    /// Serves ProcessPicker's selected value as a Process object. 
+    /// The currently active PrintTicket object, the Ticket that is being edited currently.
     /// </summary>
-    public Process? SelectedProcess 
+    public PrintTicket? ActivePrintTicket
     {
-        get {return _selectedProcess;}
-        set 
+        get {return _activePrintTicket;}
+        set
         {
-            OnPropertyChanged(nameof(_selectedProcess));
-            OnPropertyChanged(nameof(SelectedProcess));
-            _selectedProcess = value;
+            _activePrintTicket = value;
+            OnPropertyChanged(nameof(_activePrintTicket));
+            OnPropertyChanged(nameof(ActivePrintTicket));
         }
     }
 
-    private List<Part>? _selectedProcessParts = null;
+    private MainPageOptions _options = new MainPageOptions();
     /// <summary>
-    /// Serves the Part Data associated with the Process in SelectedProcess.
+    /// The MainPageOptions structure that controls the UI state options of the MainPage.
     /// </summary>
-    public List<Part>? SelectedProcessParts 
+    public MainPageOptions Options
     {
-        get {return _selectedProcessParts;}
-        set 
+        get {return _options;}
+        set
         {
-            _selectedProcessParts = value;
-            OnPropertyChanged(nameof(_selectedProcessParts));
-            OnPropertyChanged(nameof(SelectedProcessParts));
-        }
-    }
-
-    private Part? _selectedPart = null;
-    /// <summary>
-    /// Serves PartPicker's selected value as a Part object.
-    /// </summary>
-    public Part? SelectedPart 
-    {
-        get {return _selectedPart;}
-        set 
-        {
-            _selectedPart = value;
-            OnPropertyChanged(nameof(_selectedPart));
-            OnPropertyChanged(nameof(SelectedPart));
-        }
-    }
-    
-    private string _displayedJBKNumber = "";
-    /// <summary>
-    /// Serves the JBK Number currently displayed (when programmatically assigned).
-    /// </summary>
-    public string DisplayedJBKNumber 
-    {
-        get {return _displayedJBKNumber;}
-        set 
-        {
-            _displayedJBKNumber = value;
-            OnPropertyChanged(nameof(_displayedJBKNumber));
-            OnPropertyChanged(nameof(DisplayedJBKNumber));
-        }
-    }
-
-    private string _displayedLotNumber = "";
-    /// <summary>
-    /// Serves the Lot Number currently displayed (when programmatically assigned).
-    /// </summary>
-    public string DisplayedLotNumber 
-    {
-        get {return _displayedLotNumber;}
-        set 
-        {
-            _displayedLotNumber = value;
-            OnPropertyChanged(nameof(_displayedLotNumber));
-            OnPropertyChanged(nameof(DisplayedLotNumber));
-        }
-    }
-
-    private string _displayedModelNumber = "";
-    /// <summary>
-    /// Serves the Model Number that the current SelectedPart is associated with.
-    /// </summary>
-    public string DisplayedModelNumber 
-    {
-        get {return _displayedModelNumber;}
-        set 
-        {
-            _displayedModelNumber = value;
-            OnPropertyChanged(nameof(_displayedModelNumber));
-            OnPropertyChanged(nameof(DisplayedModelNumber));
+            _options = value;
+            OnPropertyChanged(nameof(_options));
+            OnPropertyChanged(nameof(Options));
         }
     }
 
@@ -143,7 +89,15 @@ public partial class MainPageViewModel : ObservableObject
     // full constructor
     public MainPageViewModel() 
     {
-
+        ActivePrintTicket = new PrintTicket
+        (
+            new Department("Steel", "ST", []),
+            new Process("1111", "CIV", "Pivot-Housing-MC", "Originator", "JBK", [], []),
+            new Part("CIV-Pivot-Housing-MC", "YN-TST-PARTN-001-0001", "Test Part", "TST"),
+            SerializationModes.JBK,
+            "999",
+            new Timestamp(DateTime.Now)
+        );
     }
 
     /// <summary>
@@ -278,7 +232,7 @@ public partial class MainPageViewModel : ObservableObject
         await Task.Run(() => 
         {
             // retrieve the selected Process
-		    Process? PickedProcess = (Process?)Processes[ProcessPicker.SelectedIndex];
+		    Process? PickedProcess = (Process?)AllProcesses[ProcessPicker.SelectedIndex];
             // update the SelectedProcess properties
             if (ProcessPicker.SelectedIndex == -1) 
             {
@@ -289,8 +243,8 @@ public partial class MainPageViewModel : ObservableObject
                 throw new ArgumentException("Process was not found in Process masterlist.");
             }
             // update SelectedProcess and assign the new list of Parts (as objects) to the SelectedProcessParts list
-            SelectedProcess = PickedProcess;
-            SelectedProcessParts = SelectedProcess.Parts;
+            Options.SelectedProcess = PickedProcess;
+            Options.SelectedProcessParts = Options.SelectedProcess.Parts;
         });
     }
 
@@ -331,8 +285,8 @@ public partial class MainPageViewModel : ObservableObject
                 if (PickedPart == null) {
                     throw new ArgumentException("Part was not found in Process Part list.");
                 }
-                SelectedPart = PickedPart;
-                DisplayedModelNumber = SelectedPart.ModelNumber;
+                Options.SelectedPart = PickedPart;
+                Options.DisplayedVariableFields!.ModelNumber = Options.SelectedPart.ModelNumber;
             // the selected part number was somehow invalid
             } 
             catch (ArgumentException) 
@@ -449,9 +403,8 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public void Reset() 
     {
-        SelectedPart = null;
-        DisplayedJBKNumber = "";
-        DisplayedLotNumber = "";
+        Options.SelectedPart = null;
+        Options.DisplayedVariableFields = null;
         BasketType = "Full";
     }
 }
