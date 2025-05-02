@@ -56,21 +56,6 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
-    private string _basketType = "Full";
-    /// <summary>
-    /// Serves BasketTypePicker's selected value.
-    /// </summary>
-    public string BasketType 
-    {
-        get {return _basketType;}
-        set 
-        {
-            _basketType = value;
-            OnPropertyChanged(nameof(_basketType));
-            OnPropertyChanged(nameof(BasketType));
-        }
-    }
-
     private bool _printing = false;
     /// <summary>
     /// Serves the current status of the application (true if a LabelPrintJob is running; false if not).
@@ -249,20 +234,6 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Updates the Page's Selected Basket Type (Full/Partial).
-    /// </summary>
-    /// <param name="BasketType">'Full' or 'Partial', as selected in the UI.</param>
-    /// <returns></returns>
-    public async Task UpdateBasketType(string BasketType) 
-    {
-        // update the BasketType property
-        await Task.Run(() => 
-        {
-            this.BasketType = BasketType;
-        });
-    }
-
-    /// <summary>
     /// Updates the Page's Selected Part and Model Number.
     /// </summary>
     /// <param name="PartPicker">The Picker UI Control that allows the selection of a Part.</param>
@@ -405,7 +376,6 @@ public partial class MainPageViewModel : ObservableObject
     {
         Options.SelectedPart = null;
         Options.DisplayedVariableFields = null;
-        BasketType = "Full";
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
