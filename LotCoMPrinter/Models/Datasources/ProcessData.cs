@@ -92,23 +92,53 @@ public class ProcessData()
     private static Process ResolveProcessFromToken(JToken Token) 
     {
         // hold variables for each Process object property
-        string LineCode;
+        int LineCode;
         string Line;
         string Title;
-        string Type;
-        string Serialization;
+        OriginationTypes Type;
+        SerializationModes Mode;
         JToken Parts;
         JToken Requirements;
+        PassThroughTypes PassThroughType;
         // attempt to access each field of Data from the Process Token
         try 
         {
-            LineCode = Token["LineCode"]!.ToString();
+            LineCode = int.Parse(Token["LineCode"]!.ToString());
             Line = Token["Line"]!.ToString();
             Title = Token["Title"]!.ToString();
-            Type = Token["Type"]!.ToString();
-            Serialization = Token["Serialization"]!.ToString();
+            string RawType = Token["Type"]!.ToString();
+            if (RawType.Equals("Originator"))
+            {
+                Type = OriginationTypes.Originator;
+            }
+            else
+            {
+                Type = OriginationTypes.PassThrough;
+            }
+            string RawMode = Token["Serialization"]!.ToString();
+            if (RawMode.Equals("JBK"))
+            {
+                Mode = SerializationModes.JBK;
+            }
+            else
+            {
+                Mode = SerializationModes.Lot;
+            }
             Parts = Token["Parts"]!;
             Requirements = Token["Requirements"]!;
+            string RawPassThroughType = Token["PassThroughHeadingType"]!.ToString();
+            if (RawPassThroughType.Equals("null"))
+            {
+                PassThroughType = PassThroughTypes.None;
+            }
+            else if (RawPassThroughType.Equals("JBK"))
+            {
+                PassThroughType = PassThroughTypes.JBK;
+            }
+            else
+            {
+                PassThroughType = PassThroughTypes.Lot;
+            }
         // one of the needed fields was not accessible
         } 
         catch 
@@ -143,7 +173,7 @@ public class ProcessData()
         Process ResolvedProcess;
         try 
         {
-            ResolvedProcess = new Process(LineCode, Line, Title, Type, Serialization, PartObjects, RequiredFields);
+            ResolvedProcess = new Process(LineCode, Line, Title, Type, Mode, PartObjects, RequiredFields, PassThroughType);
         } 
         catch 
         {
