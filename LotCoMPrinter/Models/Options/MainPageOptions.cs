@@ -24,6 +24,7 @@ public partial class MainPageOptions(): ObservableObject()
     {
         public const PrintTicket? SelectedPrintTicket = null;
         public const int SelectedPrintTicketIndex = -1;
+        public const bool HasActivePrintTicket = false;
         public const Department? SelectedDepartment = null;
         public const int SelectedDepartmentIndex = -1;
         public const Process? SelectedProcess = null;
@@ -33,7 +34,14 @@ public partial class MainPageOptions(): ObservableObject()
         public const int SelectedPartIndex = -1;
         public const VariableFieldSet DisplayedVariableFields = null;
         public const OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
+        public const bool IsOpenPrintTicketsPanelShown = false;
     }
+
+    /// <summary>
+    /// Provides whether there is an active Print Ticket to display or not.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool HasActivePrintTicket {get; set;} = DefaultOptions.HasActivePrintTicket;
 
     /// <summary>
     /// Provides the currently selected PrintTicket in the Open Print Tickets Panel.
@@ -104,11 +112,18 @@ public partial class MainPageOptions(): ObservableObject()
     public partial OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth {get; set;} = DefaultOptions.OpenPrintTicketsPanelWidth;
 
     /// <summary>
+    /// Provides the Visibility state of the Open Print Tickets Panel.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsOpenPrintTicketsPanelShown {get; set;} = DefaultOptions.IsOpenPrintTicketsPanelShown;
+
+    /// <summary>
     /// Opens the Open Print Tickets Panel.
     /// </summary>
     public void RaiseOpenPrintTicketsPanel()
     {
         OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Open;
+        IsOpenPrintTicketsPanelShown = true;
     }
 
     /// <summary>
@@ -117,5 +132,6 @@ public partial class MainPageOptions(): ObservableObject()
     public void CollapseOpenPrintTicketsPanel()
     {
         OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
+        IsOpenPrintTicketsPanelShown = false;
     }
 }
