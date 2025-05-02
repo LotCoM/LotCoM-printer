@@ -5,528 +5,564 @@
              x:DataType="ViewModels:MainPageViewModel"
              x:Class="LotCoMPrinter.Views.MainPage">
 
-    <!-- Main Layout Grid -->
-    <Grid
-        Margin="10">
-        <Grid.RowDefinitions>
-            <!-- Process Selection Input Row -->
-            <RowDefinition Height="100"/>
-            <!-- Main Inputs Row -->
-            <RowDefinition Height="*"/>
-            <!-- Print Button Row -->
-            <RowDefinition Height="100"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <!-- Left-Side Column (main set of input elements) -->
-            <ColumnDefinition Width="*"/>
-            <!-- Right-Side Column (Date/shift input elements) -->
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <!-- Process Selection Sub-Grid-->
+    <!-- Horizontal Layout for the two UI Panels -->
+    <HorizontalStackLayout>
+        <!-- Main Layout Grid -->
         <Grid
-            Grid.Row="0"
-            Grid.Column="0">
+            Margin="10">
             <Grid.RowDefinitions>
+                <!-- Process Selection Input Row -->
+                <RowDefinition Height="100"/>
+                <!-- Main Inputs Row -->
                 <RowDefinition Height="*"/>
+                <!-- Print Button Row -->
+                <RowDefinition Height="100"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="125"/>
+                <!-- Left-Side Column (main set of input elements) -->
+                <ColumnDefinition Width="*"/>
+                <!-- Right-Side Column (Date/shift input elements) -->
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <!-- Process Selection -->
-            <Label
-                x:Name="ProcessLabel"
-                Margin="10"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                HeightRequest="40"
+            <!-- Process Selection Sub-Grid-->
+            <Grid
                 Grid.Row="0"
-                Grid.Column="0"
-                Text="Process"/>
-            <Border
-                x:Name="ProcessControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="0"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Picker
-                    x:Name="ProcessPicker"
-                    ItemsSource="{Binding Processes}"
-                    ItemDisplayBinding="{Binding FullName}"
-                    SelectedIndex="-1"
-                    SelectedIndexChanged="OnProcessSelection">
-                </Picker>
-            </Border>
-            <!-- Originator/Pass-through Indicator -->
-            <Border
-                x:Name="ProcessTypeCard"
-                Margin="7.5"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                HeightRequest="25"
-                WidthRequest="85"
-                Grid.Row="0"
-                Grid.Column="2"
-                Stroke="#00ACACAC"
-                StrokeThickness="0"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                >
+                Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="125"/>
+                </Grid.ColumnDefinitions>
+                <!-- Process Selection -->
                 <Label
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    x:Name="ProcessTypeLabel"
-                    Text="{Binding SelectedProcess.Type}"
-                    TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-                    FontSize="11"/>
-            </Border>
-        </Grid>
-        <!-- Basket Type Selection (Full/Partial) -->
-        <Grid
-            Grid.Row="0"
-            Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label
-                x:Name="BasketTypeLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
+                    x:Name="ProcessLabel"
+                    Margin="10"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Process"/>
+                <Border
+                    x:Name="ProcessControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Picker
+                        x:Name="ProcessPicker"
+                        ItemsSource="{Binding Processes}"
+                        ItemDisplayBinding="{Binding FullName}"
+                        SelectedIndex="-1"
+                        SelectedIndexChanged="OnProcessSelection">
+                    </Picker>
+                </Border>
+                <!-- Originator/Pass-through Indicator -->
+                <Border
+                    x:Name="ProcessTypeCard"
+                    Margin="7.5"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    HeightRequest="25"
+                    WidthRequest="85"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Stroke="#00ACACAC"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                    >
+                    <Label
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        x:Name="ProcessTypeLabel"
+                        Text="{Binding SelectedProcess.Type}"
+                        TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+                        FontSize="11"/>
+                </Border>
+            </Grid>
+            <!-- Basket Type Selection (Full/Partial) -->
+            <Grid
                 Grid.Row="0"
-                Grid.Column="0"
-                Text="Basket Type"/>
-            <Border
-                x:Name="BasketTypeControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="0"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Picker
-                    x:Name="BasketTypePicker"
-                    SelectedIndexChanged="OnBasketTypeSelection">
-                    <Picker.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Full</x:String>
-                            <x:String>Partial</x:String>
-                        </x:Array>
-                    </Picker.ItemsSource>
-                </Picker>
-            </Border>
-        </Grid>
-        <!-- Left-Side Sub-Grid (Stack of Input Elements) allows control over label/input positions-->
-        <Grid
-            Grid.Row="1"
-            Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <!-- Labels -->
-                <ColumnDefinition Width="150"/>
-                <!-- Inputs -->
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <!-- Stack Labels -->
-            <!-- Part Number -->
-            <Label
-                x:Name="PartLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
+                Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label
+                    x:Name="BasketTypeLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Basket Type"/>
+                <Border
+                    x:Name="BasketTypeControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Picker
+                        x:Name="BasketTypePicker"
+                        SelectedIndexChanged="OnBasketTypeSelection">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Full</x:String>
+                                <x:String>Partial</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                </Border>
+            </Grid>
+            <!-- Left-Side Sub-Grid (Stack of Input Elements) allows control over label/input positions-->
+            <Grid
                 Grid.Row="1"
-                Grid.Column="0"
-                Text="Part #/Name"/>
-            <!-- Quantity -->
-            <Label
-                x:Name="QuantityLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="2"
-                Grid.Column="0"
-                Text="Total Quantity"/>
-            <!-- JBK Number -->
-            <Label
-                x:Name="JBKNumberLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="3"
-                Grid.Column="0"
-                Text="JBK #"/>
-            <!-- Lot Number -->
-            <Label
-                x:Name="LotNumberLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="4"
-                Grid.Column="0"
-                Text="Lot #"/>
-            <!-- Deburr JBK Number -->
-            <Label
-                x:Name="DeburrJBKNumberLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="5"
-                Grid.Column="0"
-                Text="Deburr JBK #"/>
-            <!-- Die Number -->
-            <Label
-                x:Name="DieNumberLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="6"
-                Grid.Column="0"
-                Text="Die #"/>
-            <!-- Heat Number -->
-            <Label
-                x:Name="HeatNumberLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="7"
-                Grid.Column="0"
-                Text="Heat #"/>
-            <!-- Model Number -->
-            <Label
-                x:Name="ModelNumberLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="8"
-                Grid.Column="0"
-                Text="Model #"/>
-            <!-- Stack Inputs -->
-            <!-- Part Number -->
-            <Border
-                x:Name="PartControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
+                Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <!-- Labels -->
+                    <ColumnDefinition Width="150"/>
+                    <!-- Inputs -->
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!-- Stack Labels -->
+                <!-- Part Number -->
+                <Label
+                    x:Name="PartLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="Part #/Name"/>
+                <!-- Quantity -->
+                <Label
+                    x:Name="QuantityLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Text="Total Quantity"/>
+                <!-- JBK Number -->
+                <Label
+                    x:Name="JBKNumberLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Text="JBK #"/>
+                <!-- Lot Number -->
+                <Label
+                    x:Name="LotNumberLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Text="Lot #"/>
+                <!-- Deburr JBK Number -->
+                <Label
+                    x:Name="DeburrJBKNumberLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    Text="Deburr JBK #"/>
+                <!-- Die Number -->
+                <Label
+                    x:Name="DieNumberLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    Text="Die #"/>
+                <!-- Heat Number -->
+                <Label
+                    x:Name="HeatNumberLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="7"
+                    Grid.Column="0"
+                    Text="Heat #"/>
+                <!-- Model Number -->
+                <Label
+                    x:Name="ModelNumberLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="8"
+                    Grid.Column="0"
+                    Text="Model #"/>
+                <!-- Stack Inputs -->
+                <!-- Part Number -->
+                <Border
+                    x:Name="PartControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Picker
+                        x:Name="PartPicker"
+                        ItemsSource="{Binding SelectedProcessParts}"
+                        ItemDisplayBinding="{Binding GetInfo}"
+                        SelectedIndex="-1"
+                        SelectedIndexChanged="OnPartSelection"/>
+                </Border>
+                <!-- Quantity -->
+                <Border
+                    x:Name="QuantityControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        x:Name="QuantityEntry"/>
+                </Border>
+                <!-- JBK Number -->
+                <Border
+                    x:Name="JBKNumberControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        IsEnabled="false"
+                        x:Name="JBKNumberEntry"
+                        Text="{Binding DisplayedJBKNumber}"
+                        MaxLength="3"/>
+                </Border>
+                <!-- Lot Number -->
+                <Border
+                    x:Name="LotNumberControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        IsEnabled="false"
+                        x:Name="LotNumberEntry"
+                        Text="{Binding DisplayedLotNumber}"/>
+                </Border>
+                <!-- Deburr JBK Number -->
+                <Border
+                    x:Name="DeburrJBKNumberControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        x:Name="DeburrJBKNumberEntry"
+                        MaxLength="3"/>
+                </Border>
+                <!-- Die Number -->
+                <Border
+                    x:Name="DieNumberControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        x:Name="DieNumberEntry"
+                        MaxLength="3"/>
+                </Border>
+                <!-- Heat Number -->
+                <Border
+                    x:Name="HeatNumberControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="7"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        x:Name="HeatNumberEntry"/>
+                </Border>
+                <!-- Model Number -->
+                <Border
+                    x:Name="ModelNumberControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="8"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        x:Name="ModelNumberEntry"
+                        Text="{Binding DisplayedModelNumber}"/>
+                </Border>
+            </Grid>
+            <!-- Right-Side Sub-Grid (Production Time Inputs) allows control over label/input positions -->
+            <Grid
                 Grid.Row="1"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Picker
-                    x:Name="PartPicker"
-                    ItemsSource="{Binding SelectedProcessParts}"
-                    ItemDisplayBinding="{Binding GetInfo}"
-                    SelectedIndex="-1"
-                    SelectedIndexChanged="OnPartSelection"/>
-            </Border>
-            <!-- Quantity -->
+                Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <!-- Labels -->
+                    <ColumnDefinition Width="150"/>
+                    <!-- Inputs -->
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!-- Stack Labels -->
+                <!-- Production Date -->
+                <Label
+                    x:Name="ProductionDateLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Production Date"/>
+                <!-- Production Shift -->
+                <Label
+                    x:Name="ProductionShiftLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="Production Shift"/>
+                <!-- Operator Identification -->
+                <Label
+                    x:Name="OperatorIDLabel"
+                    Margin="10"
+                    VerticalOptions="Start"
+                    HeightRequest="40"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Text="Operator Initials"/>
+                <!-- Stack Inputs -->
+                <!-- Production Date -->
+                <Border
+                    x:Name="ProductionDateControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <DatePicker
+                        x:Name="ProductionDatePicker"/>
+                </Border>
+                <!-- Production Shift -->
+                <Border
+                    x:Name="ProductionShiftControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Picker
+                        x:Name="ProductionShiftPicker">
+                        <Picker.ItemsSource>
+                            <x:Array Type ="{x:Type x:String}">
+                                <x:String>1</x:String>
+                                <x:String>2</x:String>
+                                <x:String>3</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                </Border>
+                <!-- Operator Identification -->
+                <Border
+                    x:Name="OperatorIDControl"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="300"
+                    HeightRequest="40"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Stroke="#88ACACAC"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000"
+                    >
+                    <Entry
+                        x:Name="OperatorIDEntry"
+                        MaxLength="3"/>
+                </Border>
+            </Grid>
+            <!-- Print Button -->
             <Border
-                x:Name="QuantityControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="2"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    x:Name="QuantityEntry"/>
-            </Border>
-            <!-- JBK Number -->
-            <Border
-                x:Name="JBKNumberControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="3"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    IsEnabled="false"
-                    x:Name="JBKNumberEntry"
-                    Text="{Binding DisplayedJBKNumber}"
-                    MaxLength="3"/>
-            </Border>
-            <!-- Lot Number -->
-            <Border
-                x:Name="LotNumberControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="4"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    IsEnabled="false"
-                    x:Name="LotNumberEntry"
-                    Text="{Binding DisplayedLotNumber}"/>
-            </Border>
-            <!-- Deburr JBK Number -->
-            <Border
-                x:Name="DeburrJBKNumberControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="5"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    x:Name="DeburrJBKNumberEntry"
-                    MaxLength="3"/>
-            </Border>
-            <!-- Die Number -->
-            <Border
-                x:Name="DieNumberControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="6"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    x:Name="DieNumberEntry"
-                    MaxLength="3"/>
-            </Border>
-            <!-- Heat Number -->
-            <Border
-                x:Name="HeatNumberControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="7"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    x:Name="HeatNumberEntry"/>
-            </Border>
-            <!-- Model Number -->
-            <Border
-                x:Name="ModelNumberControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="8"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    x:Name="ModelNumberEntry"
-                    Text="{Binding DisplayedModelNumber}"/>
-            </Border>
-        </Grid>
-        <!-- Right-Side Sub-Grid (Production Time Inputs) allows control over label/input positions -->
-        <Grid
-            Grid.Row="1"
-            Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <!-- Labels -->
-                <ColumnDefinition Width="150"/>
-                <!-- Inputs -->
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <!-- Stack Labels -->
-            <!-- Production Date -->
-            <Label
-                x:Name="ProductionDateLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="0"
-                Grid.Column="0"
-                Text="Production Date"/>
-            <!-- Production Shift -->
-            <Label
-                x:Name="ProductionShiftLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="1"
-                Grid.Column="0"
-                Text="Production Shift"/>
-            <!-- Operator Identification -->
-            <Label
-                x:Name="OperatorIDLabel"
-                Margin="10"
-                VerticalOptions="Start"
-                HeightRequest="40"
-                Grid.Row="2"
-                Grid.Column="0"
-                Text="Operator Initials"/>
-            <!-- Stack Inputs -->
-            <!-- Production Date -->
-            <Border
-                x:Name="ProductionDateControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="0"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <DatePicker
-                    x:Name="ProductionDatePicker"/>
-            </Border>
-            <!-- Production Shift -->
-            <Border
-                x:Name="ProductionShiftControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="1"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Picker
-                    x:Name="ProductionShiftPicker">
-                    <Picker.ItemsSource>
-                        <x:Array Type ="{x:Type x:String}">
-                            <x:String>1</x:String>
-                            <x:String>2</x:String>
-                            <x:String>3</x:String>
-                        </x:Array>
-                    </Picker.ItemsSource>
-                </Picker>
-            </Border>
-            <!-- Operator Identification -->
-            <Border
-                x:Name="OperatorIDControl"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="300"
-                HeightRequest="40"
-                Grid.Row="2"
-                Grid.Column="1"
-                Stroke="#88ACACAC"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                Background="#00000000"
-                >
-                <Entry
-                    x:Name="OperatorIDEntry"
-                    MaxLength="3"/>
-            </Border>
-        </Grid>
-        <!-- Print Button -->
-        <Border
-            x:Name="PrintButtonControl"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
-            WidthRequest="300"
-            HeightRequest="50"
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Stroke="#88ACACAC"
-            StrokeThickness="1"
-            StrokeShape="RoundRectangle 10,10,10,10"
-            Background="#00000000"
-            >
-            <Button
-                x:Name="PrintButton"
-                Text="Print Label"
-                Pressed="OnPrintButtonPressed"/>
-        </Border>
-        <!-- Printing Activity Indicator -->
-        <Border
-            x:Name="PrintingIndicatorOverlay"
-            IsVisible="{Binding Printing}"
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Margin="-200"
-            Stroke="#5A000000"
-            StrokeThickness="0"
-            StrokeShape="Rectangle"
-            Background="#5A000000"
-            >
-            <ActivityIndicator
-                x:Name="PrintingIndicator"
-                IsRunning="{Binding Printing}"
-                IsVisible="{Binding Printing}"
+                x:Name="PrintButtonControl"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                WidthRequest="200"
-                HeightRequest="200"
-                Color="{StaticResource Secondary}"
-                />
-        </Border>
-    </Grid>
+                WidthRequest="300"
+                HeightRequest="50"
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Stroke="#88ACACAC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                Background="#00000000"
+                >
+                <Button
+                    x:Name="PrintButton"
+                    Text="Print Label"
+                    Pressed="OnPrintButtonPressed"/>
+            </Border>
+            <!-- Printing Activity Indicator -->
+            <Border
+                x:Name="PrintingIndicatorOverlay"
+                IsVisible="{Binding Printing}"
+                Grid.Row="0"
+                Grid.RowSpan="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="-200"
+                Stroke="#5A000000"
+                StrokeThickness="0"
+                StrokeShape="Rectangle"
+                Background="#5A000000"
+                >
+                <ActivityIndicator
+                    x:Name="PrintingIndicator"
+                    IsRunning="{Binding Printing}"
+                    IsVisible="{Binding Printing}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="200"
+                    HeightRequest="200"
+                    Color="{StaticResource Secondary}"
+                    />
+            </Border>
+        </Grid>
+        <!-- Open Print Tickets Panel Grid -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Header Row -->
+                <RowDefinition Height="100"/>
+                <!-- Body (ListView) Row -->
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Single Column for the Panel -->
+                <ColumnDefinition Width="500"/>
+            </Grid.ColumnDefinitions>
+            <Label
+                x:Name="OpenPrintTicketsHeaderLabel"
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="Open Labels"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"/>
+            <ListView
+                x:Name="OpenPrintTicketsListView"
+                Grid.Row="1"
+                Grid.Column="0">
+            </ListView>
+            <BoxView
+                x:Name="OpenPrintTicketsLeftBorder"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                WidthRequest="1"
+                VerticalOptions="Fill"
+                HorizontalOptions="Start"/>
+        </Grid>
+    </HorizontalStackLayout>
 </ContentPage>
