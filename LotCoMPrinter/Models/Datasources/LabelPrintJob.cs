@@ -46,10 +46,10 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header) {
         // retrieve data from the Capture to improve processing time
         Process SelectedProcess = _capture.SelectedProcess!;
         string PartNumber = _capture.SelectedPart!.PartNumber;
-        string Serialization = SelectedProcess.Serialization;
+        SerializationModes Serialization = SelectedProcess.Serialization;
         // retrieve the Serial Number from the Capture data
         string SerialNumber;
-        if (Serialization.Equals("JBK")) {
+        if (Serialization == SerializationModes.JBK) {
             SerialNumber = _capture.JBKNumber!;
         } else {
             SerialNumber = _capture.LotNumber!;
