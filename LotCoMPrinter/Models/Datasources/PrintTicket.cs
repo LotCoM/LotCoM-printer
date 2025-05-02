@@ -6,7 +6,13 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <summary>
 /// Provides a structure for the creation and maintenance of a Printing Ticket.
 /// </summary>
-public partial class PrintTicket(Department Department, Process Process, Part Part, string SerialNumber, Timestamp ProductionDate) : ObservableObject()
+/// <param name="Department">The Department that initiated this Print Ticket.</param>
+/// <param name="Process">The Process that initiated this Print Ticket.</param>
+/// <param name="Part">The Part that this Print Ticket is applied to.</param>
+/// <param name="SerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
+/// <param name="SerialNumber"></param>
+/// <param name="ProductionDate"></param>
+public partial class PrintTicket(Department Department, Process Process, Part Part, SerializationModes SerializationMode, string SerialNumber, Timestamp ProductionDate) : ObservableObject()
 {
     /// <summary>
     /// The Department that initiated this Print Ticket.
@@ -22,6 +28,11 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
     /// The Part that this Print Ticket is applied to.
     /// </summary>
     private Part Part = Part;
+
+    /// <summary>
+    /// The type of Serial Number used to Serialize this Print Ticket.
+    /// </summary>
+    private SerializationModes SerializationMode = SerializationMode;
 
     /// <summary>
     /// The Serial Number (JBK or Lot Number) applied to this Print Ticket.
@@ -51,6 +62,38 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         get
         {
             return $"{Part.ModelNumber} {Part.PartName}: {SerialNumber}";
+        }
+    }
+
+    /// <summary>
+    /// Returns whether the Print Ticket is serialized using a JBK Number or not.
+    /// </summary>
+    public bool IsJBKSerialized
+    {
+        get
+        {
+            return SerializationMode == SerializationModes.JBK;
+        }
+        set
+        {
+            _ = value;
+            OnPropertyChanged(nameof(IsJBKSerialized));
+        }
+    }
+
+    /// <summary>
+    /// Returns whether the Print Ticket is serialized using a Lot Number or not.
+    /// </summary>
+    public bool IsLotSerialized
+    {
+        get
+        {
+            return SerializationMode == SerializationModes.Lot;
+        }
+        set
+        {
+            _ = value;
+            OnPropertyChanged(nameof(IsLotSerialized));
         }
     }
 }
