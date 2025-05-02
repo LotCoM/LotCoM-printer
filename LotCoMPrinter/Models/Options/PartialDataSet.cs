@@ -5,13 +5,23 @@ namespace LotCoMPrinter.Models.Options;
 /// <summary>
 /// Provides a structure to capture Data related to a Partially-completed Basket.
 /// </summary>
-public partial class PartialDataSet(int Quantity, VariableFieldSet VariableFields, int Shift, string Operator) : ObservableObject()
+/// <param name="Quantity">The number of Parts produced during the Shift captured by the PartialDataSet.</param>
+/// <param name="Shift">The Shift Number captured by the PartialDataSet.</param>
+/// <param name="Operator">The Operator who created the PartialDataSet.</param>
+public partial class PartialDataSet(int Quantity, int Shift, string Operator) : ObservableObject()
 {
-    private int Quantity = Quantity;
+    /// <summary>
+    /// The number of Parts produced during the Shift captured by the PartialDataSet.
+    /// </summary>
+    public int Quantity = Quantity;
 
-    private VariableFieldSet VariableFields = VariableFields;
+    /// <summary>
+    /// The Shift Number captured by the PartialDataSet.
+    /// </summary>
+    public int Shift = Shift;
 
-    private int Shift = Shift;
-
-    private string Operator = Operator;
+    /// <summary>
+    /// The Operator who created the PartialDataSet.
+    /// </summary>
+    public string Operator = Operator;
 }
