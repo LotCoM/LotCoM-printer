@@ -22,13 +22,10 @@ public partial class MainPageOptions(): ObservableObject()
     /// </summary>
     private static class DefaultOptions
     {
-        public static readonly List<PrintTicket>? OpenPrintTickets = null;
         public const PrintTicket? SelectedPrintTicket = null;
         public const int SelectedPrintTicketIndex = -1;
-        public const PrintTicket? ActivePrintTicket = null;
         public const Department? SelectedDepartment = null;
         public const int SelectedDepartmentIndex = -1;
-        public static readonly List<Process>? Processes = null;
         public const Process? SelectedProcess = null;
         public const int SelectedProcessIndex = -1;
         public static readonly List<Part>? SelectedProcessParts = null;
@@ -37,12 +34,6 @@ public partial class MainPageOptions(): ObservableObject()
         public const VariableFieldSet DisplayedVariableFields = null;
         public const OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
     }
-
-    /// <summary>
-    /// Provides the List of Open Print Tickets that can be selected from.
-    /// </summary>
-    [ObservableProperty]
-    public partial List<PrintTicket>? OpenPrintTickets {get; set;} = DefaultOptions.OpenPrintTickets;
 
     /// <summary>
     /// Provides the currently selected PrintTicket in the Open Print Tickets Panel.
@@ -58,12 +49,6 @@ public partial class MainPageOptions(): ObservableObject()
     public partial int SelectedPrintTicketIndex {get; set;} = DefaultOptions.SelectedPrintTicketIndex;
 
     /// <summary>
-    /// Provides the currently displayed PrintTicket.
-    /// </summary>
-    [ObservableProperty]
-    public partial PrintTicket? ActivePrintTicket {get; set;} = DefaultOptions.ActivePrintTicket;
-
-    /// <summary>
     /// Provides the currently selected Department for the active PrintTicket.
     /// </summary>
     [ObservableProperty]
@@ -74,12 +59,6 @@ public partial class MainPageOptions(): ObservableObject()
     /// </summary>
     [ObservableProperty]
     public partial int SelectedDepartmentIndex {get; set;} = DefaultOptions.SelectedDepartmentIndex;
-
-    /// <summary>
-    /// Provides the List of Processes that can be selected from.
-    /// </summary>
-    [ObservableProperty]
-    public partial List<Process>? Processes {get; set;} = DefaultOptions.Processes;
 
     /// <summary>
     /// Provides the currently selected Process for the active PrintTicket.
