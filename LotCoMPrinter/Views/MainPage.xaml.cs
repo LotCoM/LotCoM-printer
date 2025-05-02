@@ -17,9 +17,6 @@ public partial class MainPage : ContentPage {
 		// show the window from XAML
 		InitializeComponent();
 
-		// force the basket type to be full on start-up
-		BasketTypePicker.SelectedIndex = 0;
-
 		// hide the process type card on start-up
 		ProcessTypeCard.IsVisible = false;
 		ProcessTypeLabel.IsVisible = false;
@@ -31,7 +28,7 @@ public partial class MainPage : ContentPage {
 	/// <returns></returns>
 	public void ChangeDisplayedInputs() {
         // confirm there was a valid selection made in the Picker
-        if (_viewModel.SelectedProcess != null) {
+        if (_viewModel.Options.SelectedProcess != null) {
             // create a conversion dictionary for string names to control objects
             Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> {
                 {"SelectedProcess", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
@@ -44,11 +41,11 @@ public partial class MainPage : ContentPage {
 				{"HeatNumber", new List<View> {HeatNumberControl, HeatNumberEntry, HeatNumberLabel}},
                 {"ModelNumber", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
                 {"ProductionDate", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
-                {"ProductionShift", new List<View> {ProductionShiftControl, ProductionShiftPicker, ProductionShiftLabel}},
-				{"OperatorID", new List<View> {OperatorIDControl, OperatorIDEntry, OperatorIDLabel}}
+                {"ProductionShift", new List<View> {ShiftControl, ShiftPicker, ShiftLabel}},
+				{"OperatorID", new List<View> {OperatorControl, OperatorEntry, OperatorLabel}}
             };
 			// get the process requirements for the currently selected Process
-			List<string> Requirements = _viewModel.SelectedProcess.RequiredFields;
+			List<string> Requirements = _viewModel.Options.SelectedProcess.RequiredFields;
 			// show all necessary UI input elements
 			foreach (KeyValuePair<string, List<View>> _pair in Conversions) {
 				if (Requirements.Contains(_pair.Key)) {
@@ -62,7 +59,7 @@ public partial class MainPage : ContentPage {
 				}
 			}
         	// confirm whether this label needs to be serialized or considered "pass-through"
-			if (_viewModel.SelectedProcess.Type.Equals("Originator")) {
+			if (_viewModel.Options.SelectedProcess.Type.Equals("Originator")) {
 				// disable serial number inputs
 				JBKNumberEntry.IsEnabled = false;
 				LotNumberEntry.IsEnabled = false;
@@ -84,7 +81,7 @@ public partial class MainPage : ContentPage {
 		Picker ProcessPicker = (Picker)Sender;
 		await _viewModel.UpdateSelectedProcess(ProcessPicker);
 		// reset the Page
-		Reset();
+		// Reset();
 		// update the SelectedProcess and change the visible UI elements
 		try {
 			// show the process type card
@@ -135,7 +132,7 @@ public partial class MainPage : ContentPage {
 		bool Printed;
 		// call the ViewModel's Print Request method
 		try {
-			Printed = await _viewModel.PrintRequest(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+			Printed = await _viewModel.PrintRequest(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, ProductionDatePicker, ShiftPicker, OperatorEntry);
 		} catch (Exception _ex) {
 			// stop the Printing Indicator
 			_viewModel.Printing = false;
@@ -170,7 +167,7 @@ public partial class MainPage : ContentPage {
 		}
 		// reset UI, show a confirmation if print was successful
 		if (Printed) {
-			Reset();
+			// Reset();
 			// stop printing indicator
 			_viewModel.Printing = false;
 			BasicPopup Popup = new("Label Printed", "The Label was printed successfully.");
@@ -184,68 +181,51 @@ public partial class MainPage : ContentPage {
 		}
 	}
 
-	/// <summary>
-	/// Handler for the Item Selected event from the BasketTypePicker.
-	/// </summary>
-	/// <param name="Sender"></param>
-	/// <param name="e"></param>
-	public async void OnBasketTypeSelection(object Sender, EventArgs e) {
-		// update the BasketType ViewModel property
-		Picker BasketTypePicker = (Picker)Sender;
-		string? BasketType = (string?)BasketTypePicker.ItemsSource[BasketTypePicker.SelectedIndex];
-		if (BasketType != null) {
-			await _viewModel.UpdateBasketType(BasketType);
-		}
-	}
-
-	/// <summary>
-	/// Clears and reactivates all UI Controls on the Page.
-	/// </summary>
-	public void Reset() {
-		// reset viewmodel properties
-		_viewModel.Reset();
-		// Basket Type Picker reset
-		BasketTypePicker.SelectedIndex = 0;
-		BasketTypePicker.IsEnabled = true;
-		// Part Picker reset
-		PartPicker.SelectedIndex = -1;
-		PartPicker.IsEnabled = true;
-		// Quantity Input reset
-		QuantityEntry.Text = "";
-		QuantityEntry.IsEnabled = true;
-		// Deburr JBK Input reset
-		DeburrJBKNumberEntry.Text = "";
-		DeburrJBKNumberEntry.IsEnabled = true;
-		// Die Number Input reset
-		DieNumberEntry.Text = "";
-		DieNumberEntry.IsEnabled = true;
-		// Heat Number Input reset
-		HeatNumberEntry.Text = "";
-		HeatNumberEntry.IsEnabled = true;
-		// Model Number Picker reset
-		ModelNumberEntry.Text = "";
-		ModelNumberEntry.IsEnabled = true;
-		// Production Date Picker reset
-		ProductionDatePicker.Date = DateTime.Now;
-		ProductionDatePicker.IsEnabled = true;
-		// Production Shift Picker reset
-		ProductionShiftPicker.SelectedIndex = -1;
-		ProductionShiftPicker.IsEnabled = true;
-		// Operator Initials Entry reset
-		OperatorIDEntry.Text = "";
-		OperatorIDEntry.IsEnabled = true;
-		// re-enable serial number inputs if serialization is not needed
-		if (_viewModel.SelectedProcess == null) {
-			return;
-		}
-		if (!_viewModel.SelectedProcess.Type.Equals("Originator")) {
-			// JBK Input reset
-			JBKNumberEntry.Text = "";
-			JBKNumberEntry.IsEnabled = true;
-			// Lot Input reset
-			LotNumberEntry.Text = "";
-			LotNumberEntry.IsEnabled = true;
-		}
-	}
+	// /// <summary>
+	// /// Clears and reactivates all UI Controls on the Page.
+	// /// </summary>
+	// public void Reset() {
+	// 	// reset viewmodel properties
+	// 	_viewModel.Reset();
+	// 	// Part Picker reset
+	// 	PartPicker.SelectedIndex = -1;
+	// 	PartPicker.IsEnabled = true;
+	// 	// Quantity Input reset
+	// 	QuantityEntry.Text = "";
+	// 	QuantityEntry.IsEnabled = true;
+	// 	// Deburr JBK Input reset
+	// 	DeburrJBKNumberEntry.Text = "";
+	// 	DeburrJBKNumberEntry.IsEnabled = true;
+	// 	// Die Number Input reset
+	// 	DieNumberEntry.Text = "";
+	// 	DieNumberEntry.IsEnabled = true;
+	// 	// Heat Number Input reset
+	// 	HeatNumberEntry.Text = "";
+	// 	HeatNumberEntry.IsEnabled = true;
+	// 	// Model Number Picker reset
+	// 	ModelNumberEntry.Text = "";
+	// 	ModelNumberEntry.IsEnabled = true;
+	// 	// Production Date Picker reset
+	// 	ProductionDatePicker.Date = DateTime.Now;
+	// 	ProductionDatePicker.IsEnabled = true;
+	// 	// Production Shift Picker reset
+	// 	ProductionShiftPicker.SelectedIndex = -1;
+	// 	ProductionShiftPicker.IsEnabled = true;
+	// 	// Operator Initials Entry reset
+	// 	OperatorIDEntry.Text = "";
+	// 	OperatorIDEntry.IsEnabled = true;
+	// 	// re-enable serial number inputs if serialization is not needed
+	// 	if (_viewModel.Options.SelectedProcess == null) {
+	// 		return;
+	// 	}
+	// 	if (!_viewModel.Options.SelectedProcess.Type.Equals("Originator")) {
+	// 		// JBK Input reset
+	// 		JBKNumberEntry.Text = "";
+	// 		JBKNumberEntry.IsEnabled = true;
+	// 		// Lot Input reset
+	// 		LotNumberEntry.Text = "";
+	// 		LotNumberEntry.IsEnabled = true;
+	// 	}
+	// }
 }
 
