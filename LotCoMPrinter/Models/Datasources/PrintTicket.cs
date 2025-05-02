@@ -47,12 +47,45 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
     /// <summary>
     /// The first of the Partial Production Data sets associated with this Print Ticket.
     /// </summary>
-    private PartialDataSet? FirstPartialDataSet;
+    private PartialDataSet? FirstPartialDataSet = null;
 
     /// <summary>
     /// The second of the Partial Production Data sets associated with this Print Ticket.
     /// </summary>
-    private PartialDataSet? SecondPartialDataSet;
+    private PartialDataSet? SecondPartialDataSet = null;
+
+    /// <summary>
+    /// Returns whether the Print Ticket has one Partial Data Set associated with it.
+    /// </summary>
+    public bool HasFirstPartialDataSet 
+    {
+        get
+        {
+            return FirstPartialDataSet is not null;
+        }
+    }
+
+    /// <summary>
+    /// Returns whether the Print Ticket has two Partial Data Sets associated with it.
+    /// </summary>
+    public bool HasSecondPartialDataSet 
+    {
+        get
+        {
+            return SecondPartialDataSet is not null;
+        }
+    }
+
+    /// <summary>
+    /// Returns whether the Print Ticket has space for another Partial Data Set.
+    /// </summary>
+    public bool HasSpace 
+    {
+        get
+        {
+            return !HasSecondPartialDataSet;
+        }
+    }
 
     /// <summary>
     /// Provides a Title for the Print Ticket that gives the crucial information of the Ticket.
