@@ -1,118 +1,107 @@
+using LotCoMPrinter.Models.Options;
+
 namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Pulls and stores the current state of each Interface control element, "capturing" this unique Interface state.
 /// </summary>
-/// <param name="ProcessPicker"></param>
-/// <param name="PartPicker"></param>
-/// <param name="QuantityEntry"></param>
-/// <param name="JBKNumberEntry"></param>
-/// <param name="LotNumberEntry"></param>
-/// <param name="DeburrJBKNumberEntry"></param>
-/// <param name="DieNumberEntry"></param>
-/// <param name="HeatNumberEntry"></param>
-/// <param name="ModelNumberEntry"></param>
-/// <param name="BasketTypePicker"></param>
-/// <param name="ProductionDatePicker"></param>
-/// <param name="ProductionShiftPicker"></param>
-/// <param name="OperatorIDEntry"></param>
+/// <param name="Process"></param>
+/// <param name="Part"></param>
+/// <param name="Quantity"></param>
+/// <param name="JBKNumber"></param>
+/// <param name="LotNumber"></param>
+/// <param name="DeburrJBKNumber"></param>
+/// <param name="DieNumber"></param>
+/// <param name="HeatNumber"></param>
+/// <param name="ModelNumber"></param>
+/// <param name="ProductionDate"></param>
+/// <param name="ProductionShift"></param>
+/// <param name="OperatorID"></param>
 /// <returns></returns>
-public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry HeatNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
+public class InterfaceCapture(Process Process, Part Part, int Quantity, int JBKNumber, string LotNumber, int DeburrJBKNumber, int DieNumber, string ModelNumber, string HeatNumber, DateTime ProductionDate, int ProductionShift, string OperatorID) 
+{
     /// <summary>
     /// The Process object selected in the ProcessPicker control at the time of this capture.
     /// </summary>
-    /// // capture the values stored in all of the UI control elements
-    public Process SelectedProcess = (Process?)ProcessPicker.ItemsSource[ProcessPicker.SelectedIndex]!;
+    public Process Process = Process;
+
     /// <summary>
     /// The Part object selected in the PartPicker control at the time of this capture.
     /// </summary>
-    public Part SelectedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex]!;
+    public Part Part = Part;
+
     /// <summary>
     /// The Quantity value entered in the QuantityEntry control at the time of this capture.
     /// </summary>
-    public string Quantity = QuantityEntry.Text;
+    public int Quantity = Quantity;
+
     /// <summary>
-    /// The JBK Number value entered in the JBKNumberEntry control at the time of this capture.
+    /// The Variable Field values entered in the Variable Field controls at the time of this capture.
     /// </summary>
-    public string JBKNumber = JBKNumberEntry.Text;
-    /// <summary>
-    /// The Lot Number value entered in the LotNumberEntry control at the time of this capture.
-    /// </summary>
-    public string LotNumber = LotNumberEntry.Text;
-    /// <summary>
-    /// The Deburr JBK Number value entered in the DeburrJBKNumberEntry control at the time of this capture.
-    /// </summary>
-    public string DeburrJBKNumber = DeburrJBKNumberEntry.Text;
-    /// <summary>
-    /// The Die Number value entered in the DieNumberEntry control at the time of this capture.
-    /// </summary>
-    public string DieNumber = DieNumberEntry.Text;
-    /// <summary>
-    /// The Heat Number value entered in the HeatNumberEntry control at the time of this capture.
-    /// </summary>
-    public string HeatNumber = HeatNumberEntry.Text;
-    /// <summary>
-    /// The Model Number value entered in the ModelNumberEntry control at the time of this capture.
-    /// </summary>
-    public string ModelNumber = ModelNumberEntry.Text;
-    /// <summary>
-    /// The Basket Type value selected in the BasketTypePicker control at the time of this capture.
-    /// </summary>
-    public string BasketType = (string?)BasketTypePicker.ItemsSource[BasketTypePicker.SelectedIndex]!;
+    public VariableFieldSet VariableFields = new VariableFieldSet
+    (
+        JBKNumber,
+        LotNumber,
+        DeburrJBKNumber,
+        DieNumber,
+        ModelNumber,
+        HeatNumber
+    );
+
     /// <summary>
     /// The DateTime object selected in the ProductionDatePicker control at the time of this capture.
     /// </summary>
-    public DateTime ProductionDate = ProductionDatePicker.Date;
+    public DateTime ProductionDate = ProductionDate;
+
     /// <summary>
     /// The Shift Number value selected in the ProductionShiftPicker control at the time of this capture.
     /// </summary>
-    public string ProductionShift = (string?)ProductionShiftPicker.ItemsSource[ProductionShiftPicker.SelectedIndex]!;
+    public int ProductionShift = ProductionShift;
+
     /// <summary>
     /// The Operator Initial value entered in the OperatorIDEntry control at the time of this capture.
     /// </summary>
-    public string OperatorID = OperatorIDEntry.Text;
+    public string OperatorID = OperatorID;
 
     /// <summary>
     /// Formats the InterfaceCapture's properties as a QR Code data List. 
     /// </summary>
     /// <returns></returns>
-    public List<string> FormatAsQRCodeData() {
+    public List<string> FormatAsQRCodeData() 
+    {
         // create a List of Capture fields to use as QR Code data
         List<string> QRCodeData = [];
-        // if the Capture is for a Partial Label, add the PARTIAL flag first
-        if (BasketType.Equals("Partial")) {
-            QRCodeData.Add("PARTIAL");
-        }
         // always add Process, Part Number/Name, Quantity
-        QRCodeData.Add(SelectedProcess.FullName);
-        QRCodeData.Add(SelectedPart.PartNumber);
-        QRCodeData.Add(SelectedPart.PartName);
-        QRCodeData.Add(Quantity);
+        QRCodeData.AddRange([Process.FullName, Part.PartNumber, Part.PartName, Quantity.ToString()]);
         // retrieve the Process Requirements
-        List<string> RequiredFields = SelectedProcess.RequiredFields;
+        List<string> RequiredFields = Process.RequiredFields;
         // add inner (variable) Capture data
-        if (JBKNumber != "" && RequiredFields.Contains("JBKNumber")) {
-            QRCodeData.Add(JBKNumber);
+        if (RequiredFields.Contains("JBKNumber")) 
+        {
+            QRCodeData.Add(VariableFields.JBKNumber.ToString()!);
         }
-        if (LotNumber != "" && RequiredFields.Contains("LotNumber")) {
-            QRCodeData.Add(LotNumber);
+        if (RequiredFields.Contains("LotNumber")) 
+        {
+            QRCodeData.Add(VariableFields.LotNumber!);
         }
-        if (DeburrJBKNumber != "" && RequiredFields.Contains("DeburrJBKNumber")) {
-            QRCodeData.Add(DeburrJBKNumber);
+        if (RequiredFields.Contains("DeburrJBKNumber")) 
+        {
+            QRCodeData.Add(VariableFields.DeburrJBKNumber.ToString()!);
         }
-        if (DieNumber != "" && RequiredFields.Contains("DieNumber")) {
-            QRCodeData.Add(DieNumber);
+        if (RequiredFields.Contains("DieNumber")) 
+        {
+            QRCodeData.Add(VariableFields.DieNumber.ToString()!);
         }
-        if (HeatNumber != "" && RequiredFields.Contains("HeatNumber")) {
-            QRCodeData.Add(HeatNumber);
+        if (RequiredFields.Contains("HeatNumber")) 
+        {
+            QRCodeData.Add(VariableFields.HeatNumber!);
         }
-        if (ModelNumber != "" && RequiredFields.Contains("ModelNumber")) {
-            QRCodeData.Add(ModelNumber);
+        if (RequiredFields.Contains("ModelNumber")) 
+        {
+            QRCodeData.Add(VariableFields.ModelNumber!);
         }
         // always add Production Date/Shift and Initials
-        QRCodeData.Add(new Timestamp(ProductionDate).Stamp);
-        QRCodeData.Add(ProductionShift);
-        QRCodeData.Add(OperatorID);
+        QRCodeData.AddRange([new Timestamp(ProductionDate).Stamp, ProductionShift.ToString(), OperatorID]);
         // return the QR Code data
         return QRCodeData;
     } 
@@ -121,38 +110,43 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
     /// Formats the InterfaceCapture's properties as a Label Body data List. 
     /// </summary>
     /// <returns></returns>
-    public List<string> FormatAsLabelBodyText() {
+    public List<string> FormatAsLabelBodyText() 
+    {
         // create a List of Capture fields to include in a Label's body text
         List<string> LabelBodyData = [];
-        // format Label body based on Label type
-        bool IsPartial = BasketType.Equals("Partial");
         // add universal label fields (front)
-        LabelBodyData.Add($"Process: {SelectedProcess.FullName}");
-        LabelBodyData.Add($"Part #: {SelectedPart.PartNumber}");
-        LabelBodyData.Add($"Quantity: {Quantity}");
-        // add inner (variable) Capture data if Label is full
-        if (!IsPartial) {
-            // retrieve the Process Requirements
-            List<string> RequiredFields = SelectedProcess.RequiredFields;
-            // add inner (variable) Capture data
-            if (JBKNumber != "" && RequiredFields.Contains("JBKNumber")) {
-                LabelBodyData.Add($"JBK #: {JBKNumber}");
-            }
-            if (LotNumber != "" && RequiredFields.Contains("LotNumber")) {
-                LabelBodyData.Add($"Lot #: {LotNumber}");
-            }
-            if (DeburrJBKNumber != "" && RequiredFields.Contains("DeburrJBKNumber")) {
-                LabelBodyData.Add($"Deburr JBK #: {DeburrJBKNumber}");
-            }
-            if (DieNumber != "" && RequiredFields.Contains("DieNumber")) {
-                LabelBodyData.Add($"Die #: {DieNumber}");
-            }
-            if (HeatNumber != "" && RequiredFields.Contains("HeatNumber")) {
-                LabelBodyData.Add($"Heat #: {HeatNumber}");
-            }
-            if (ModelNumber != "" && RequiredFields.Contains("ModelNumber")) {
-                LabelBodyData.Add($"Model #: {ModelNumber}");
-            }
+        LabelBodyData.AddRange(
+        [
+            $"Process: {Process.FullName}",
+            $"Part #: {Part.PartNumber}",
+            $"Quantity: {Quantity}"
+        ]);
+        // retrieve the Process' requirements
+        List<string> Requirements = Process.RequiredFields;
+        // add inner (variable) Capture data
+        if (Requirements.Contains("JBKNumber")) 
+        {
+            LabelBodyData.Add(VariableFields.JBKNumber.ToString()!);
+        }
+        if (Requirements.Contains("LotNumber")) 
+        {
+            LabelBodyData.Add(VariableFields.LotNumber!);
+        }
+        if (Requirements.Contains("DeburrJBKNumber")) 
+        {
+            LabelBodyData.Add(VariableFields.DeburrJBKNumber.ToString()!);
+        }
+        if (Requirements.Contains("DieNumber")) 
+        {
+            LabelBodyData.Add(VariableFields.DieNumber.ToString()!);
+        }
+        if (Requirements.Contains("HeatNumber")) 
+        {
+            LabelBodyData.Add(VariableFields.HeatNumber!);
+        }
+        if (Requirements.Contains("ModelNumber")) 
+        {
+            LabelBodyData.Add(VariableFields.ModelNumber!);
         }
         // add universal label fields (back)
         LabelBodyData.Add($"Prod. Date: {new Timestamp(ProductionDate).Stamp}");
@@ -165,32 +159,39 @@ public class InterfaceCapture(Picker ProcessPicker, Picker PartPicker, Entry Qua
     /// Formats the InterfaceCapture as a comma-separated value (CSV line). The Line includes all required data fields.
     /// </summary>
     /// <returns></returns>
-    public string FormatAsCSV() {
+    public string FormatAsCSV() 
+    {
         // retrieve the Process' requirements
-        List<string> Requirements = SelectedProcess.RequiredFields;
+        List<string> Requirements = Process.RequiredFields;
         // add universal requirements (front)
-        string Log = $"{SelectedProcess.FullName},{SelectedPart.PartNumber},{SelectedPart.PartName},{Quantity}";
+        string CSVLine = $"{Process.FullName},{Part.PartNumber},{Part.PartName},{Quantity}";
         // add internal, variable fields
-        if (Requirements.Contains("JBKNumber")) {
-            Log = $"{Log},{JBKNumber}";
+        if (Requirements.Contains("JBKNumber")) 
+        {
+            CSVLine = $"{CSVLine},{VariableFields.JBKNumber}";
         }
-        if (Requirements.Contains("LotNumber")) {
-            Log = $"{Log},{LotNumber}";
+        if (Requirements.Contains("LotNumber")) 
+        {
+            CSVLine = $"{CSVLine},{VariableFields.LotNumber}";
         }
-        if (Requirements.Contains("DeburrJBKNumber")) {
-            Log = $"{Log},{DeburrJBKNumber}";
+        if (Requirements.Contains("DeburrJBKNumber")) 
+        {
+            CSVLine = $"{CSVLine},{VariableFields.DeburrJBKNumber}";
         }
-        if (Requirements.Contains("DieNumber")) {
-            Log = $"{Log},{DieNumber}";
+        if (Requirements.Contains("DieNumber")) 
+        {
+            CSVLine = $"{CSVLine},{VariableFields.DieNumber}";
         }
-        if (Requirements.Contains("HeatNumber")) {
-            Log = $"{Log},{HeatNumber}";
+        if (Requirements.Contains("HeatNumber")) 
+        {
+            CSVLine = $"{CSVLine},{VariableFields.HeatNumber}";
         }
-        if (Requirements.Contains("ModelNumber")) {
-            Log = $"{Log},{ModelNumber}";
+        if (Requirements.Contains("ModelNumber")) 
+        {
+            CSVLine = $"{CSVLine},{VariableFields.ModelNumber}";
         }
         // add universal requirements (back)
-        Log = $"{Log},{new Timestamp(ProductionDate).Stamp},{ProductionShift},{OperatorID}";
-        return Log;
+        CSVLine = $"{CSVLine},{new Timestamp(ProductionDate).Stamp},{ProductionShift},{OperatorID}";
+        return CSVLine;
     }
 }
