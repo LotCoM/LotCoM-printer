@@ -12,84 +12,12 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private readonly MainPageViewModel ViewModel;
 
-	// full constructor
-	public MainPage() 
-	{
-		// instantiate the ViewModel and bind the Page to it
-		ViewModel = new MainPageViewModel();
-		BindingContext = ViewModel;
-		// show the window from XAML
-		InitializeComponent();
-		// hide the process type card on start-up
-		ProcessTypeCard.IsVisible = false;
-		ProcessTypeLabel.IsVisible = false;
-	}
-
-	/// <summary>
-	/// Changes the visibility of Input Elements based on the Process selection.
-	/// </summary>
-	/// <returns></returns>
-	public void ChangeDisplayedInputs() 
-	{
-        // confirm there was a valid selection made in the Picker
-        if (ViewModel.Options.SelectedProcess is not null) 
-		{
-            // create a conversion dictionary for string names to control objects
-            Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> 
-			{
-                {"SelectedProcess", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
-                {"SelectedPart", new List<View> {PartControl, PartPicker, PartLabel}},
-                {"Quantity", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
-                {"JBKNumber", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
-                {"LotNumber", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
-                {"DeburrJBKNumber", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
-                {"DieNumber", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
-				{"HeatNumber", new List<View> {HeatNumberControl, HeatNumberEntry, HeatNumberLabel}},
-                {"ModelNumber", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
-                {"ProductionDate", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
-                {"ProductionShift", new List<View> {ShiftControl, ShiftPicker, ShiftLabel}},
-				{"OperatorID", new List<View> {OperatorControl, OperatorEntry, OperatorLabel}}
-            };
-			// get the process requirements for the currently selected Process
-			List<string> Requirements = ViewModel.Options.SelectedProcess.RequiredFields;
-			// show all necessary UI input elements
-			foreach (KeyValuePair<string, List<View>> _pair in Conversions) 
-			{
-				if (Requirements.Contains(_pair.Key)) 
-				{
-					_pair.Value[0].IsVisible = true;
-					_pair.Value[1].IsVisible = true;
-					_pair.Value[2].IsVisible = true;
-				}
-				else 
-				{
-					_pair.Value[0].IsVisible = false;
-					_pair.Value[1].IsVisible = false;
-					_pair.Value[2].IsVisible = false;
-				}
-			}
-        	// confirm whether this label needs to be serialized or considered "pass-through"
-			if (ViewModel.Options.SelectedProcess.Type == OriginationTypes.Originator) 
-			{
-				// disable serial number inputs
-				JBKNumberEntry.IsEnabled = false;
-				LotNumberEntry.IsEnabled = false;
-			} 
-			else 
-			{
-				// enable serial number inputs
-				JBKNumberEntry.IsEnabled = true;
-				LotNumberEntry.IsEnabled = true;
-			}
-		}
-    }
-
 	/// <summary>
 	/// Handler for the ItemSelected event from ProcessPicker.
 	/// </summary>
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
-	public async void OnProcessSelection(object Sender, EventArgs e) 
+	private async void OnProcessSelection(object Sender, EventArgs e) 
 	{
 		// update the SelectedProcess by invoking the ViewModel method
 		Picker ProcessPicker = (Picker)Sender;
@@ -124,7 +52,7 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
-	public async void OnPartSelection(object Sender, EventArgs e) 
+	private async void OnPartSelection(object Sender, EventArgs e) 
 	{
 		// update the SelectedPart, DisplayedModel, and DisplayedJBKNumber properties
 		Picker PartPicker = (Picker)Sender;
@@ -149,7 +77,7 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	/// <param name="Sender"></param>
 	/// <param name="e"></param>
-	public async void OnPrintButtonPressed(object Sender, EventArgs e) 
+	private async void OnPrintButtonPressed(object Sender, EventArgs e) 
 	{
 		// start the Printing Indicator
 		ViewModel.Printing = true;
@@ -231,6 +159,108 @@ public partial class MainPage : ContentPage
 			this.ShowPopup(Popup);
 		}
 	}
+	
+	/// <summary>
+	/// Event Handler for the Clicked Event from the AddPartialProductionDataSet Button.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+    private void OnAddPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+    {
+		ViewModel.AddPartialDataSet();
+    }
+
+	/// <summary>
+	/// Event Handler for the Clicked Event from the AddPartialProductionDataset Button.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnRemoveFirstPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	{
+		ViewModel.ActivePrintTicket!.RemoveFirstPartialDataSet();
+	}
+
+	/// <summary>
+	/// Event Handler for the Clicked Event from the AddPartialProductionDataset Button.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnRemoveSecondPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	{
+		ViewModel.ActivePrintTicket!.RemoveSecondPartialDataSet();
+	}
+
+	// full constructor
+	public MainPage() 
+	{
+		// instantiate the ViewModel and bind the Page to it
+		ViewModel = new MainPageViewModel();
+		BindingContext = ViewModel;
+		// show the window from XAML
+		InitializeComponent();
+		// hide the process type card on start-up
+		ProcessTypeCard.IsVisible = false;
+		ProcessTypeLabel.IsVisible = false;
+	}
+
+	/// <summary>
+	/// Changes the visibility of Input Elements based on the Process selection.
+	/// </summary>
+	/// <returns></returns>
+	public void ChangeDisplayedInputs() 
+	{
+        // confirm there was a valid selection made in the Picker
+        if (ViewModel.Options.SelectedProcess is not null) 
+		{
+            // create a conversion dictionary for string names to control objects
+            Dictionary<string, List<View>> Conversions = new Dictionary<string, List<View>> 
+			{
+                {"SelectedProcess", new List<View> {ProcessControl, ProcessPicker, ProcessLabel}},
+                {"SelectedPart", new List<View> {PartControl, PartPicker, PartLabel}},
+                {"Quantity", new List<View> {QuantityControl, QuantityEntry, QuantityLabel}},
+                {"JBKNumber", new List<View> {JBKNumberControl, JBKNumberEntry, JBKNumberLabel}},
+                {"LotNumber", new List<View> {LotNumberControl, LotNumberEntry, LotNumberLabel}},
+                {"DeburrJBKNumber", new List<View> {DeburrJBKNumberControl, DeburrJBKNumberEntry, DeburrJBKNumberLabel}},
+                {"DieNumber", new List<View> {DieNumberControl, DieNumberEntry, DieNumberLabel}},
+				{"HeatNumber", new List<View> {HeatNumberControl, HeatNumberEntry, HeatNumberLabel}},
+                {"ModelNumber", new List<View> {ModelNumberControl, ModelNumberEntry, ModelNumberLabel}},
+                {"ProductionDate", new List<View> {ProductionDateControl, ProductionDatePicker, ProductionDateLabel}},
+                {"ProductionShift", new List<View> {ShiftControl, ShiftPicker, ShiftLabel}},
+				{"OperatorID", new List<View> {OperatorControl, OperatorEntry, OperatorLabel}}
+            };
+			// get the process requirements for the currently selected Process
+			List<string> Requirements = ViewModel.Options.SelectedProcess.RequiredFields;
+			// show all necessary UI input elements
+			foreach (KeyValuePair<string, List<View>> _pair in Conversions) 
+			{
+				if (Requirements.Contains(_pair.Key)) 
+				{
+					_pair.Value[0].IsVisible = true;
+					_pair.Value[1].IsVisible = true;
+					_pair.Value[2].IsVisible = true;
+				}
+				else 
+				{
+					_pair.Value[0].IsVisible = false;
+					_pair.Value[1].IsVisible = false;
+					_pair.Value[2].IsVisible = false;
+				}
+			}
+        	// confirm whether this label needs to be serialized or considered "pass-through"
+			if (ViewModel.Options.SelectedProcess.Type == OriginationTypes.Originator) 
+			{
+				// disable serial number inputs
+				JBKNumberEntry.IsEnabled = false;
+				LotNumberEntry.IsEnabled = false;
+			} 
+			else 
+			{
+				// enable serial number inputs
+				JBKNumberEntry.IsEnabled = true;
+				LotNumberEntry.IsEnabled = true;
+			}
+		}
+    }
 
 	/// <summary>
 	/// Clears and reactivates all UI Controls on the Page.
