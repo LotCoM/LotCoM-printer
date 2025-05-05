@@ -639,8 +639,10 @@
                     VerticalOptions="Center"/>
                 <!-- Remove Button -->
                 <Button
+                    x:Name="RemoveFirstPartialProductionDataSetButton"
                     Grid.Row="2"
                     Grid.Column="3"
+                    Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
                     Text="-"
                     Margin="0"
                     Padding="0"
@@ -801,8 +803,10 @@
                     VerticalOptions="Center"/>
                 <!-- Remove Button -->
                 <Button
+                    x:Name="RemoveSecondPartialProductionDataSetButton"
                     Grid.Row="2"
                     Grid.Column="3"
+                    Clicked="OnRemoveSecondPartialProductionDataSetButtonClicked"
                     Text="-"
                     Margin="0"
                     Padding="0"
@@ -815,8 +819,10 @@
 
             <!-- Add Partial Production Dataset Button -->
             <Button
+                x:Name="AddPartialProductionDatasetButton"
                 Grid.Row="7"
                 Grid.Column="0"
+                Clicked="OnAddPartialProductionDataSetButtonClicked"
                 IsVisible="{Binding ActivePrintTicket.HasSpace}"
                 Margin="10,0,0,0"
                 Padding="0"
