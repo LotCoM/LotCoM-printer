@@ -75,39 +75,6 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
     }
 
     /// <summary>
-    /// Returns whether the Print Ticket has one Partial Data Set associated with it.
-    /// </summary>
-    public bool HasFirstPartialDataSet 
-    {
-        get
-        {
-            return FirstPartialDataSet is not null;
-        }
-    }
-
-    /// <summary>
-    /// Returns whether the Print Ticket has two Partial Data Sets associated with it.
-    /// </summary>
-    public bool HasSecondPartialDataSet 
-    {
-        get
-        {
-            return SecondPartialDataSet is not null;
-        }
-    }
-
-    /// <summary>
-    /// Returns whether the Print Ticket has space for another Partial Data Set.
-    /// </summary>
-    public bool HasSpace 
-    {
-        get
-        {
-            return !HasSecondPartialDataSet;
-        }
-    }
-
-    /// <summary>
     /// Provides a Title for the Print Ticket that gives the crucial information of the Ticket.
     /// </summary>
     public string Title
@@ -147,6 +114,97 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         {
             _ = value;
             OnPropertyChanged(nameof(IsLotSerialized));
+        }
+    }
+
+    [ObservableProperty]
+    /// <summary>
+    /// Returns whether the Print Ticket has one Partial Data Set associated with it.
+    /// </summary>
+    public partial bool HasFirstPartialDataSet {get; set;} = false;
+
+    [ObservableProperty]
+    /// <summary>
+    /// Returns whether the Print Ticket has two Partial Data Sets associated with it.
+    /// </summary>
+    public partial bool HasSecondPartialDataSet {get; set;} = false;
+
+    [ObservableProperty]
+    /// <summary>
+    /// Returns whether the Print Ticket has space for another Partial Data Set.
+    /// </summary>
+    public partial bool HasSpace {get; set;} = true;
+
+    /// <summary>
+    /// Shifts the PartialDataSet from the Second position into the First.
+    /// </summary>
+    private void ShiftPartialDataSet()
+    {
+        FirstPartialDataSet = SecondPartialDataSet;
+        SecondPartialDataSet = null;
+        HasFirstPartialDataSet = true;
+        HasSecondPartialDataSet = false;
+        HasSpace = true;
+    }
+
+    /// <summary>
+    /// Adds a PartialDataSet to either the First or Second PartialDataSet slot.
+    /// </summary>
+    /// <param name="DataSet"></param>
+    public void AddPartialDataSet(PartialDataSet DataSet)
+    {
+        if (FirstPartialDataSet is null)
+        {
+            FirstPartialDataSet = DataSet;
+            HasFirstPartialDataSet = true;
+        }
+        else if (SecondPartialDataSet is null)
+        {
+            SecondPartialDataSet = DataSet;
+            HasSecondPartialDataSet = true;
+            HasSpace = false;
+        }
+    }
+
+    /// <summary>
+    /// Removes the First PartialDataSet if it exists.
+    /// Shifts the Second into its place, if there is a Second PartialDataSet.
+    /// </summary>
+    public void RemoveFirstPartialDataSet()
+    {
+        // quickly return if no DataSet is present in the First slot
+        if (!HasFirstPartialDataSet)
+        {
+            return;
+        }
+        else
+        {
+            // remove the PartialDataSet and shift the Second PartialDataSet to the First position
+            FirstPartialDataSet = null;
+            HasFirstPartialDataSet = false;
+            if (HasSecondPartialDataSet)
+            {
+                ShiftPartialDataSet();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes the Second PartialDataSet if it exists.
+    /// </summary>
+    public void RemoveSecondPartialDataSet()
+    {
+        // quickly return if no DataSet is present in the Second slot
+        if (!HasSecondPartialDataSet)
+        {
+            return;
+        }
+        else
+        {
+            // remove the PartialDataSet
+            SecondPartialDataSet = null;
+            HasSecondPartialDataSet = false;
+            HasSpace = true;
         }
     }
 }
