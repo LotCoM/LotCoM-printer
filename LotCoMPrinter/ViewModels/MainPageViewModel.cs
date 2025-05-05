@@ -77,7 +77,7 @@ public partial class MainPageViewModel : ObservableObject
         ActivePrintTicket = new PrintTicket
         (
             new Department("Steel", "ST", []),
-            new Process("1111", "CIV", "Pivot-Housing-MC", "Originator", "JBK", [], []),
+            new Process(1111, "CIV", "Pivot-Housing-MC", OriginationTypes.Originator, SerializationModes.JBK, [], [], PassThroughTypes.None),
             new Part("CIV-Pivot-Housing-MC", "YN-TST-PARTN-001-0001", "Test Part", "TST"),
             SerializationModes.JBK,
             "999",
@@ -95,28 +95,28 @@ public partial class MainPageViewModel : ObservableObject
     private async Task<InterfaceCapture> SerializeLabel(InterfaceCapture Capture) 
     {
         // retrieve values to save processing time (will not be null here; post-validation)
-        Process SelectedProcess = Capture.SelectedProcess!;
-        string Serialization = SelectedProcess.Serialization;
+        Process SelectedProcess = Capture.Process;
+        SerializationModes Serialization = SelectedProcess.Serialization;
         // check if the SelectedProcess is an Originator; if not, just return the passed Capture
-        if (!SelectedProcess.Type.Equals("Originator")) 
+        if (SelectedProcess.Type != OriginationTypes.Originator) 
         {
             return Capture;
         }
         // serialize the Label using the Process' Serialization Mode
         string? SerialNumber = await Serializer.Serialize(Capture);
         // no serial number was assigned; this is fatal
-        if (SerialNumber == null) 
+        if (SerialNumber is null) 
         {
             throw new LabelBuildException("Failed to assign a Serial Number to the Label");
         }
         // update the Serialized Number in the Capture object
-        if (Serialization == "JBK") 
+        if (Serialization == SerializationModes.JBK) 
         {
-            Capture.JBKNumber = SerialNumber;
+            Capture.VariableFields.JBKNumber = int.Parse(SerialNumber);
         } 
         else 
         {
-            Capture.LotNumber = SerialNumber;
+            Capture.VariableFields.LotNumber = SerialNumber;
         }
         // return the updated Capture object
         return Capture;
@@ -132,19 +132,17 @@ public partial class MainPageViewModel : ObservableObject
         string LabelHeader = await Task.Run(() => 
         {
             // retrieve values to improve processing time
-            Process SelectedProcess = Capture.SelectedProcess!;
+            Process SelectedProcess = Capture.Process;
             // decide to use the JBK or Date as the header
             string Header;
-            if ((SelectedProcess.PassThroughHeadingType is not null 
-                && SelectedProcess.PassThroughHeadingType.Equals("JBK")) 
-                || SelectedProcess.Serialization.Equals("JBK")) 
+            if (SelectedProcess.PassThroughType == PassThroughTypes.JBK 
+                || SelectedProcess.Serialization == SerializationModes.JBK) 
             {
-                // header is the JBK # (remove "JBK #: ")
-                Header = Capture.JBKNumber!;
+                // header is the JBK #
+                Header = Capture.VariableFields.JBKNumber.ToString()!;
             } 
-            else if ((SelectedProcess.PassThroughHeadingType is not null 
-                && SelectedProcess.PassThroughHeadingType.Equals("Lot")) 
-                || SelectedProcess.Serialization.Equals("Lot")) 
+            else if (SelectedProcess.PassThroughType == PassThroughTypes.Lot 
+                || SelectedProcess.Serialization == SerializationModes.Lot) 
             {
                 // header is the MM/DD of the Production Date; retrieve the Date from the UI Capture
                 DateTime Date = Capture.ProductionDate;
@@ -162,26 +160,25 @@ public partial class MainPageViewModel : ObservableObject
     /// <summary>
     /// Creates, validates, and formats an InterfaceCapture object from the current UI status.
     /// </summary>
-    /// <param name="ProcessPicker"></param>
-    /// <param name="PartPicker"></param>
-    /// <param name="QuantityEntry"></param>
-    /// <param name="JBKNumberEntry"></param>
-    /// <param name="LotNumberEntry"></param>
-    /// <param name="DeburrJBKNumberEntry"></param>
-    /// <param name="DieNumberEntry"></param>
-    /// <param name="ModelNumberEntry"></param>
-    /// <param name="BasketTypePicker"></param>
-    /// <param name="ProductionDatePicker"></param>
-    /// <param name="ProductionShiftPicker"></param>
-    /// <param name="OperatorIDEntry"></param>
+    /// <param name="Process"></param>
+    /// <param name="Part"></param>
+    /// <param name="Quantity"></param>
+    /// <param name="JBKNumber"></param>
+    /// <param name="LotNumber"></param>
+    /// <param name="DeburrJBKNumber"></param>
+    /// <param name="DieNumber"></param>
+    /// <param name="ModelNumber"></param>
+    /// <param name="ProductionDate"></param>
+    /// <param name="ProductionShift"></param>
+    /// <param name="OperatorID"></param>
     /// <returns>An InterfaceCapture object.</returns>
     /// <exception cref="NullProcessException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="FormatException"></exception>
-    private static InterfaceCapture CreateCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry HeatNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) 
+    private static InterfaceCapture CreateCapture(Process Process, Part Part, int Quantity, int JBKNumber, string LotNumber, int DeburrJBKNumber, int DieNumber, string ModelNumber, string HeatNumber, DateTime ProductionDate, int ProductionShift, string OperatorID) 
     {
         // create an interface capture for this UI state
-        InterfaceCapture Capture = new InterfaceCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+        InterfaceCapture Capture = new InterfaceCapture(Process, Part, Quantity, JBKNumber, LotNumber, DeburrJBKNumber, DieNumber, ModelNumber, HeatNumber, ProductionDate, ProductionShift, OperatorID);
         // validate the Capture
         try 
         {
@@ -209,26 +206,20 @@ public partial class MainPageViewModel : ObservableObject
     /// <summary>
     /// Updates the Page's Selected Process and its Part Data.
     /// </summary>
-    /// <param name="ProcessPicker"></param>
+    /// <param name="Process"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedProcess(Picker ProcessPicker) 
+    public async Task UpdateSelectedProcess(Process Process) 
     {
         await Task.Run(() => 
         {
-            // retrieve the selected Process
-		    Process? PickedProcess = (Process?)AllProcesses[ProcessPicker.SelectedIndex];
             // update the SelectedProcess properties
-            if (ProcessPicker.SelectedIndex == -1) 
+            if (Process is null) 
             {
-                return;
-            }
-            if (PickedProcess == null) 
-            {
-                throw new ArgumentException("Process was not found in Process masterlist.");
+                throw new ArgumentException($"Process '{Process}' was not found in Process masterlist.");
             }
             // update SelectedProcess and assign the new list of Parts (as objects) to the SelectedProcessParts list
-            Options.SelectedProcess = PickedProcess;
+            Options.SelectedProcess = Process;
             Options.SelectedProcessParts = Options.SelectedProcess.Parts;
         });
     }
@@ -236,33 +227,27 @@ public partial class MainPageViewModel : ObservableObject
     /// <summary>
     /// Updates the Page's Selected Part and Model Number.
     /// </summary>
-    /// <param name="PartPicker">The Picker UI Control that allows the selection of a Part.</param>
+    /// <param name="Part"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedPart(Picker PartPicker) 
+    public async Task UpdateSelectedPart(Part Part) 
     {
         await Task.Run(() => 
         {
             // configure the SelectedPart property
             try 
             {
-                // get the PartPicker's selected item
-                if (PartPicker.SelectedIndex == -1) 
-                {
-                    return;
-                }
-                Part? PickedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
                 // update the SelectedPart property and the DisplayedModelNumber property
-                if (PickedPart == null) {
-                    throw new ArgumentException("Part was not found in Process Part list.");
+                if (Part is null) {
+                    throw new ArgumentException($"Part '{Part}' was not found in Process Part list.");
                 }
-                Options.SelectedPart = PickedPart;
+                Options.SelectedPart = Part;
                 Options.DisplayedVariableFields!.ModelNumber = Options.SelectedPart.ModelNumber;
             // the selected part number was somehow invalid
             } 
             catch (ArgumentException) 
             {
-                throw new ArgumentException("Part was not found in Process Part list.");
+                throw new ArgumentException($"Part '{Part}' was not found in Process Part list.");
             }
         });
     }
@@ -278,31 +263,31 @@ public partial class MainPageViewModel : ObservableObject
     /// Throws LabelBuildException if there was an error creating, formatting, serializing, or printing the Label.
     /// Throws PrintRequestException if there was an error communicating with the Printer or the Printing System.
     /// </remarks>
-    /// <param name="ProcessPicker"></param>
-    /// <param name="PartPicker"></param>
-    /// <param name="QuantityEntry"></param>
-    /// <param name="JBKNumberEntry"></param>
-    /// <param name="LotNumberEntry"></param>
-    /// <param name="DeburrJBKNumberEntry"></param>
-    /// <param name="DieNumberEntry"></param>
-    /// <param name="ModelNumberEntry"></param>
-    /// <param name="BasketTypePicker"></param>
-    /// <param name="ProductionDatePicker"></param>
-    /// <param name="ProductionShiftPicker"></param>
-    /// <param name="OperatorIDEntry"></param>
+    /// <param name="Process"></param>
+    /// <param name="Part"></param>
+    /// <param name="Quantity"></param>
+    /// <param name="JBKNumber"></param>
+    /// <param name="LotNumber"></param>
+    /// <param name="DeburrJBKNumber"></param>
+    /// <param name="DieNumber"></param>
+    /// <param name="ModelNumber"></param>
+    /// <param name="HeatNumber"></param>
+    /// <param name="ProductionDate"></param>
+    /// <param name="ProductionShift"></param>
+    /// <param name="OperatorID"></param>
     /// <returns></returns>
     /// <exception cref="NullProcessException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="FormatException"></exception>
     /// <exception cref="LabelBuildException"></exception>
     /// <exception cref="PrintRequestException"></exception>
-    public async Task<bool> PrintRequest(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry HeatNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) 
+    public async Task<bool> PrintRequest(Process Process, Part Part, int Quantity, int JBKNumber, string LotNumber, int DeburrJBKNumber, int DieNumber, string ModelNumber, string HeatNumber, DateTime ProductionDate, int ProductionShift, string OperatorID) 
     {
         // capture the interface
         InterfaceCapture Capture;
         try 
         {
-            Capture = CreateCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
+            Capture = CreateCapture(Process, Part, Quantity, JBKNumber, LotNumber, DeburrJBKNumber, DieNumber, ModelNumber, HeatNumber, ProductionDate, ProductionShift, OperatorID);
         // there was no process selection made
         } 
         catch (NullProcessException) 
