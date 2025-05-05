@@ -362,5 +362,20 @@ public partial class MainPageViewModel : ObservableObject
         Options.SelectedPart = null;
         Options.DisplayedVariableFields = null;
     }
+
+    /// <summary>
+    /// Attempts to add a blank PartialDataSet object to the Active Print Ticket.
+    /// </summary>
+    /// <param name="DataSet"></param>
+    public void AddPartialDataSet()
+    {
+        if (ActivePrintTicket is not null
+            && ActivePrintTicket.HasSpace)
+        {
+            // create and add a blank PartialDataSet object to the ticket
+            PartialDataSet EmptyDataSet = new PartialDataSet();
+            ActivePrintTicket.AddPartialDataSet(EmptyDataSet);
+        }
+    }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
