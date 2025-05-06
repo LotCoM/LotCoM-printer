@@ -159,8 +159,7 @@
                             Stroke="#88ACACAC"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
-                            Background="#00000000"
-                            >
+                            Background="#00000000">
                             <DatePicker
                                 x:Name="ProductionDatePicker"/>
                         </Border>
@@ -205,7 +204,6 @@
                         Grid.Row="3"
                         Grid.Column="0"
                         Grid.ColumnSpan="3">
-
                         <!-- JBK Input Layout -->
                         <HorizontalStackLayout
                             IsVisible="{Binding Options.SelectedProcess.RequiredFields.JBKNumber}">
@@ -859,34 +857,55 @@
         <!-- Grid for Open Print Tickets Panel -->
         <Grid
             Grid.Row="0"
-            Grid.Column="1"
-            IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}">
+            Grid.Column="1">
             <Grid.RowDefinitions>
                 <!-- Header Row -->
                 <RowDefinition Height="100"/>
                 <!-- Body (ListView) Row -->
                 <RowDefinition Height="*"/>
+                <!-- Body Collapse/Raise Button Row -->
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <!-- Single Column for the Panel -->
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+            <!-- Panel Header Label -->
             <Label
                 x:Name="OpenPrintTicketsHeaderLabel"
+                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
                 Grid.Row="0"
                 Grid.Column="0"
-                Text="Open Labels"
+                Text="In-Process Labels"
                 HorizontalOptions="Center"
                 VerticalOptions="Start"/>
+            <!-- Panel Body List -->
             <ListView
                 x:Name="OpenPrintTicketsListView"
+                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
                 Grid.Row="1"
                 Grid.Column="0">
             </ListView>
+            <!-- Panel Collapse/Raise Button -->
+            <Button
+                x:Name="OpenPrintTicketsCollapseButton"
+                Clicked="OnOpenPrintTicketsCollapseButtonClicked"
+                Margin="0"
+                Padding="10"
+                Grid.Row="2"
+                Grid.Column="0"
+                VerticalOptions="Start"
+                HorizontalOptions="End"
+                HeightRequest="30"
+                WidthRequest="30"
+                CornerRadius="30"
+                ImageSource="{AppThemeBinding Light=left_arrow_black.png, Dark=left_arrow_white.png}"/>
+            <!-- Panel Left Border -->
             <BoxView
                 x:Name="OpenPrintTicketsLeftBorder"
+                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
                 Grid.Row="0"
-                Grid.RowSpan="2"
+                Grid.RowSpan="3"
                 Grid.Column="0"
                 WidthRequest="1"
                 VerticalOptions="Fill"
