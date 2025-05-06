@@ -9,16 +9,22 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="Line">The Process' parent Line (i.e. AP5, CRV).</param>
 /// <param name="Title">The linguistic title (descriptor) assigned to the Process.</param>
 /// <param name="Type">The Process' serialization type (Originator || Pass-through).</param>
-/// <param name="Serialization">The Process' serialization mode (JBK || Lot || null [pass-through only])</param>
+/// <param name="SerializationMode">The Process' serialization mode.</param>
 /// <param name="Parts">The Parts assigned to the Process.</param>
 /// <param name="RequiredFields">The data fields required by this Process.</param>
-/// <param name="PassThroughHeading">(Optional) For Processes with Type = "Pass-through", the type of Serialization Header to apply to the Label; "JBK" or "Lot".</param>
-public partial class Process(string LineCode, string Line, string Title, string Type, string Serialization, List<Part> Parts, List<string> RequiredFields, string? PassThroughHeadingType = null): ObservableObject {
+/// <param name="PassThroughType">
+/// For Processes with OriginationTypes.PassThrough: 
+/// The type of Serialization Header to apply to the Label.
+/// For Processes with OriginationTypes.Originator:
+/// None.
+/// </param>
+public partial class Process(int LineCode, string Line, string Title, OriginationTypes Type, SerializationModes SerializationMode, List<Part> Parts, RequiredFields RequiredFields, PassThroughTypes PassThroughType): ObservableObject() 
+{
     /// <summary>
     /// [Observable] The four-digit Process Code assigned to the Process.
     /// </summary>
     [ObservableProperty]
-    public partial string LineCode {get; set;} = LineCode;
+    public partial int LineCode {get; set;} = LineCode;
 
     /// <summary>
     /// [Observable] The Process' parent Line.
@@ -42,13 +48,13 @@ public partial class Process(string LineCode, string Line, string Title, string 
     /// [Observable] The Process' serialization type (Originator || Pass-through).
     /// </summary>
     [ObservableProperty]
-    public partial string Type {get; set;} = Type;
+    public partial OriginationTypes Type {get; set;} = Type;
 
     /// <summary>
     /// The Process' serialization mode (JBK || Lot).
     /// </summary>
     [ObservableProperty]
-    public partial string Serialization {get; set;} = Serialization;
+    public partial SerializationModes Serialization {get; set;} = SerializationMode;
 
     /// <summary>
     /// [Observable] The Parts assigned to the Process.
@@ -60,12 +66,12 @@ public partial class Process(string LineCode, string Line, string Title, string 
     /// [Observable] The Production Data fields required at this Process.
     /// </summary>
     [ObservableProperty]
-    public partial List<string> RequiredFields {get; set;} = RequiredFields;
+    public partial RequiredFields RequiredFields {get; set;} = RequiredFields;
 
     /// <summary>
     /// [Observable] For Processes with Type = "Pass-through", the type of Serialization Header to apply to the Label; "JBK" or "Lot".
     /// For Processes with Type = "Origination", null.
     /// </summary>
     [ObservableProperty]
-    public partial string? PassThroughHeadingType {get; set;} = PassThroughHeadingType;
+    public partial PassThroughTypes PassThroughType {get; set;} = PassThroughType;
 }

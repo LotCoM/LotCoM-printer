@@ -3,7 +3,7 @@ using System.Drawing;
 using LotCoMPrinter.Models.Services;
 using LotCoMPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Printing;
+namespace LotCoMPrinter.Models.Datasources;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 /// <summary>

@@ -1,22 +1,24 @@
 using System.Text.RegularExpressions;
-using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Validators;
+namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// Validates values contained in InterfaceCapture objects, based on their SelectedProcess value.
 /// </summary>
-public static class InterfaceCaptureValidator {
+public static class InterfaceCaptureValidator 
+{
     /// <summary>
     /// Validates a string as non-null, non-empty, and removes all non-digit characters.
     /// </summary>
     /// <param name="Value"></param>
     /// <returns>The string after removing all non-digits (may be empty).</returns>
     /// <exception cref="NullReferenceException"></exception>
-    private static string ValidateDigitBase(string? Value) {
+    private static string ValidateDigitBase(string? Value) 
+    {
         // validate that the value is not null
-        if (Value == null) {
+        if (Value is null) 
+        {
             throw new NullReferenceException();
         }
         // remove any non-digit characters from the value
@@ -26,34 +28,29 @@ public static class InterfaceCaptureValidator {
     /// <summary>
     /// Validates a Part object as non-null.
     /// </summary>
-    /// <param name="SelectedPart"></param>
+    /// <param name="Part"></param>
     /// <exception cref="FormatException"></exception>
-    private static void ValidatePart(Part? SelectedPart) {
+    private static void ValidatePart(Part? Part) 
+    {
         // validate that the Part is not null
-        if (SelectedPart == null) {
+        if (Part is null) 
+        {
             throw new FormatException($"Please select a Part before printing Labels.");
         }
     }
 
     /// <summary>
-    /// Validates a string as non-null, non-empty. Replaces all non-digit characters.
+    /// Validates an integer as non-null.
     /// </summary>
     /// <param name="Quantity"></param>
-    /// <returns>The string as only digits.</returns>
+    /// <returns>The validated Quantity.</returns>
     /// <exception cref="FormatException"></exception>
-    private static string ValidateQuantity(string? Quantity) {
-        // validate and format the Quantity string
-        try {
-            Quantity = ValidateDigitBase(Quantity);
-        // the quantity was null
-        } catch (NullReferenceException) {
-            throw new FormatException($"Please enter a Quantity before printing Labels.");
-        }
-        // ensure that the processed Quantity contains at least one digit
-        if (Quantity.Length < 0) {
+    private static void ValidateQuantity(int? Quantity) 
+    {
+        // ensure that the Quantity contains at least one digit
+        if (Quantity is not null) {
             throw new FormatException($"Please enter a valid Quantity before printing Labels.");
         }
-        return Quantity;
     }
 
     /// <summary>
@@ -61,26 +58,29 @@ public static class InterfaceCaptureValidator {
     /// </summary>
     /// <param name="Date"></param>
     /// <exception cref="FormatException"></exception>
-    private static void ValidateProductionDate(DateTime? Date) {
+    private static void ValidateProductionDate(DateTime? Date) 
+    {
         // validate that Date is not null
-        if (Date == null) {
+        if (Date is null) {
             throw new FormatException($"Please select a Production Date before printing Labels.");
         }
     }
 
     /// <summary>
-    /// Validates a string as a non-null Shift Number.
+    /// Validates an integer as a non-null Shift Number.
     /// </summary>
     /// <param name="ProductionShift"></param>
     /// <exception cref="FormatException"></exception>
-    private static void ValidateProductionShiftPicker(string? ProductionShift) {
-        // validate that the string is non-null
-        if (ProductionShift == null) {
+    private static void ValidateProductionShiftPicker(int? ProductionShift) 
+    {
+        // validate that the int is non-null
+        if (ProductionShift is null) 
+        {
             throw new FormatException($"Please select a Production Shift before printing Labels.");
         }
         // validate that the shift is 1, 2, or 3
-        string[] Shifts = ["1", "2", "3"];
-        if (!Shifts.Contains(ProductionShift)) {
+        if (0 > ProductionShift || ProductionShift > 3) 
+            {
             throw new FormatException($"Please select a valid Production Shift before printing Labels.");
         }
     }
@@ -91,16 +91,19 @@ public static class InterfaceCaptureValidator {
     /// <param name="OperatorID"></param>
     /// <returns>The string as an uppercase Operator Initial.</returns>
     /// <exception cref="FormatException"></exception>
-    private static string ValidateOperatorID(string? OperatorID) {
+    private static string ValidateOperatorID(string? OperatorID) 
+    {
         // validate that the string is non-null
-        if (OperatorID == null) {
+        if (OperatorID is null) 
+        {
             throw new FormatException("Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
         }
         // set a regex pattern for 2 or 3 alphabetical characters
         string InitialPattern = @"^[a-zA-Z][a-zA-Z][a-zA-Z]?$";
         Regex InitialRegex = new Regex(InitialPattern);
         // ensure the value matches the regex requirement
-        if (!InitialRegex.IsMatch(OperatorID)) {
+        if (!InitialRegex.IsMatch(OperatorID)) 
+        {
             throw new FormatException("Please enter valid Operator Intials (ie. AB, ABC) before printing Labels.");
         }
         // cast the string to Uppercase and return it
@@ -108,34 +111,29 @@ public static class InterfaceCaptureValidator {
     }
 
     /// <summary>
-    /// Validates a string as non-null, non-empty. Ensures format as a JBK Number.
+    /// Validates an integer as non-null. Ensures format as a JBK Number.
     /// </summary>
     /// <param name="JBKNumber"></param>
-    /// <returns>The string formatted as a JBK Number.</returns>
+    /// <returns>The formatted JBK Number.</returns>
     /// <exception cref="FormatException"></exception>
-    private static string ValidateJBKNumber(string? JBKNumber, string ProcessType) {
+    private static int ValidateJBKNumber(int? JBKNumber, OriginationTypes Type) 
+    {
         // check if the JBK is assigned at this process or copied (pass-through)
-        if (ProcessType.Equals("Originator")) {
+        if (Type == OriginationTypes.Originator) 
+        {
             // JBK is assigned by serialization system and will be valid
-            JBKNumber = "000";
+            JBKNumber = 0;
         }
-        // validate and format the JBK Number string
-        try {
-            JBKNumber = ValidateDigitBase(JBKNumber);
-        // the JBK Number was null
-        } catch (NullReferenceException) {
-            throw new FormatException($"Please enter a JBK Number before printing Labels.");
+        // ensure that the processed JBK Number contains at least one positive digit
+        if (JBKNumber is null) 
+        {
+            throw new FormatException("Please enter a JBK Number before printing Labels.");
         }
-        // ensure that the processed JBK Number contains at least one digit
-        if (JBKNumber.Length < 0) {
+        if (JBKNumber < 0) 
+        {
             throw new FormatException($"Please enter a valid JBK Number before printing Labels.");
-        // add leading zeroes to enforce three-length format
-        } else {
-            while (JBKNumber.Length < 3) {
-                JBKNumber = $"0{JBKNumber}";
-            }
         }
-        return JBKNumber;
+        return (int)JBKNumber;
     }
 
     /// <summary>
@@ -144,25 +142,34 @@ public static class InterfaceCaptureValidator {
     /// <param name="LotNumber"></param>
     /// <returns>The string formatted as a Lot Number.</returns>
     /// <exception cref="FormatException"></exception>
-    private static string ValidateLotNumber(string? LotNumber, string ProcessType) {
+    private static string ValidateLotNumber(string? LotNumber, OriginationTypes Type) 
+    {
         // check if the Lot is assigned at this process or copied (pass-through)
-        if (ProcessType.Equals("Originator")) {
+        if (Type == OriginationTypes.Originator) 
+        {
             // Lot is assigned by serialization system and will be valid
             LotNumber = "000000000";
         }
         // validate and format the Lot Number string
-        try {
+        try 
+        {
             LotNumber = ValidateDigitBase(LotNumber);
         // the Lot Number was null
-        } catch (NullReferenceException) {
+        } 
+        catch (NullReferenceException) 
+        {
             throw new FormatException($"Please enter a Lot Number before printing Labels.");
         }
         // ensure that the processed Lot Number contains at least one digit
-        if (LotNumber.Length < 0) {
+        if (LotNumber.Length < 0) 
+        {
             throw new FormatException($"Please enter a valid Lot Number before printing Labels.");
         // add leading zeroes to enforce nine-length format
-        } else {
-            while (LotNumber.Length < 9) {
+        } 
+        else 
+        {
+            while (LotNumber.Length < 9) 
+            {
                 LotNumber = $"0{LotNumber}";
             }
         }
@@ -170,24 +177,29 @@ public static class InterfaceCaptureValidator {
     }
 
     /// <summary>
-    /// Validates a string as non-null, non-empty. Ensures at least one digit format.
+    /// Validates an integer as non-null. Ensures at least one digit format.
     /// </summary>
     /// <param name="DieNumber"></param>
-    /// <returns>The string as only digits.</returns>
+    /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    private static string ValidateDieNumber(string? DieNumber) {
+    private static int ValidateDieNumber(int? DieNumber) 
+    {
         // validate and format the Die Number string
-        try {
-            DieNumber = ValidateDigitBase(DieNumber);
+        try 
+        {
+            DieNumber = int.Parse(ValidateDigitBase(DieNumber.ToString()));
         // the Die Number was null
-        } catch (NullReferenceException) {
+        } 
+        catch (NullReferenceException) 
+        {
             throw new FormatException($"Please enter a Die Number before printing Labels.");
         }
-        // ensure that the processed Die Number contains at least one digit
-        if (DieNumber.Length < 0) {
+        // ensure that the processed Die Number contains at least one positive digit
+        if (DieNumber < 0) 
+        {
             throw new FormatException($"Please enter a valid Die Number before printing Labels.");
         }
-        return DieNumber;
+        return (int)DieNumber;
     }
 
     /// <summary>
@@ -196,16 +208,21 @@ public static class InterfaceCaptureValidator {
     /// <param name="HeatNumber"></param>
     /// <returns>The string as only digits.</returns>
     /// <exception cref="FormatException"></exception>
-    private static string ValidateHeatNumber(string? HeatNumber) {
+    private static string ValidateHeatNumber(string? HeatNumber) 
+    {
         // validate and format the Heat Number string
-        try {
+        try 
+        {
             HeatNumber = ValidateDigitBase(HeatNumber);
         // the Heat Number was null
-        } catch (NullReferenceException) {
+        } 
+        catch (NullReferenceException) 
+        {
             throw new FormatException($"Please enter a Heat Number before printing Labels.");
         }
         // ensure that the processed Heat Number contains at least one digit
-        if (HeatNumber.Length < 0) {
+        if (HeatNumber.Length < 0) 
+        {
             throw new FormatException($"Please enter a valid Heat Number before printing Labels.");
         }
         return HeatNumber;
@@ -217,16 +234,19 @@ public static class InterfaceCaptureValidator {
     /// <param name="ModelNumber"></param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    private static string ValidateModelNumber(string? ModelNumber) {
+    private static string ValidateModelNumber(string? ModelNumber) 
+    {
         // validate that the string is non-null, non-empty, and that it only contains alnum characters
-        if (ModelNumber == "" || ModelNumber == null) {
+        if (ModelNumber is null || ModelNumber!.Equals("")) 
+        {
             throw new FormatException("Please enter a Model Number before printing Labels.");
         }
         // set a regex pattern for 3 alphanumerical characters
         string ModelPattern = @"^[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]$";
         Regex ModelRegex = new Regex(ModelPattern);
         // ensure the value matches the regex requirement
-        if (!ModelRegex.IsMatch(ModelNumber)) {
+        if (!ModelRegex.IsMatch(ModelNumber)) 
+        {
             throw new FormatException("Please enter a valid Model Number before printing Labels.");
         }
         // cast the string to Uppercase and return it
@@ -242,44 +262,53 @@ public static class InterfaceCaptureValidator {
     /// <exception cref="NullProcessException">Thrown if there is no selection in the ProcessPicker Control.</exception>
     /// <exception cref="ArgumentException">Thrown if the Process Requirements could not be retrieved.</exception>
     /// <exception cref="FormatException">Thrown if there is a validation failure.</exception>
-    public static InterfaceCapture Validate(InterfaceCapture Capture) {
+    public static InterfaceCapture Validate(InterfaceCapture Capture) 
+    {
         // retrieve the Process requirements for the Process in the Capture
-        List<string> Requirements = Capture.SelectedProcess.RequiredFields;
-        // attempt validations for every required field
-        try {
+        RequiredFields Requirements = Capture.Process.RequiredFields;
+        try 
+        {
             // validate universally required fields
-            ValidatePart(Capture.SelectedPart);
-            Capture.Quantity = ValidateQuantity(Capture.Quantity);
+            ValidatePart(Capture.Part);
+            ValidateQuantity(Capture.Quantity);
             ValidateProductionDate(Capture.ProductionDate);
             ValidateProductionShiftPicker(Capture.ProductionShift);
             Capture.OperatorID = ValidateOperatorID(Capture.OperatorID);
             // validate jbk number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("JBKNumber")) {
-                Capture.JBKNumber = ValidateJBKNumber(Capture.JBKNumber, Capture.SelectedProcess.Type);
+            if (Requirements.JBKNumber) 
+            {
+                Capture.VariableFields.JBKNumber = ValidateJBKNumber(Capture.VariableFields.JBKNumber, Capture.Process.Type);
             };
             // validate lot number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("LotNumber")) {
-                Capture.LotNumber = ValidateLotNumber(Capture.LotNumber, Capture.SelectedProcess.Type);
+            if (Requirements.LotNumber) 
+            {
+                Capture.VariableFields.LotNumber = ValidateLotNumber(Capture.VariableFields.LotNumber, Capture.Process.Type);
             };
             // validate deburr jbk number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("DeburrJBKNumber")) {
+            if (Requirements.DeburrJBKNumber) 
+            {
                 // pass ProcessType as "Pass-through" to force non-serialized check
-                Capture.DeburrJBKNumber = ValidateJBKNumber(Capture.DeburrJBKNumber, "Pass-through");
+                Capture.VariableFields.DeburrJBKNumber = ValidateJBKNumber(Capture.VariableFields.DeburrJBKNumber, OriginationTypes.PassThrough);
             };
             // validate die number if required
-            if (Requirements.Contains("DieNumber")) {
-                ValidateDieNumber(Capture.DieNumber);
-            };
-            // validate heat number if required
-            if (Requirements.Contains("HeatNumber")) {
-                ValidateHeatNumber(Capture.HeatNumber);
+            if (Requirements.DieNumber) 
+            {
+                ValidateDieNumber(Capture.VariableFields.DieNumber);
             };
             // validate model number if required
-            if (Requirements.Contains("ModelNumber")) {
-                ValidateModelNumber(Capture.ModelNumber);
+            if (Requirements.ModelNumber) 
+            {
+                ValidateModelNumber(Capture.VariableFields.ModelNumber);
+            };
+            // validate heat number if required
+            if (Requirements.HeatNumber) 
+            {
+                ValidateHeatNumber(Capture.VariableFields.HeatNumber);
             };
         // a validation failed; pass the fail message to the view model
-        } catch (FormatException _ex) {
+        } 
+        catch (FormatException _ex) 
+        {
             throw new FormatException(_ex.Message);
         }
         // the validation measures succeeded; return the modified capture object
