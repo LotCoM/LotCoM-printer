@@ -6,24 +6,26 @@
              x:DataType="ViewModels:MainPageViewModel"
              x:Class="LotCoMPrinter.Views.MainPage">
 
-    <ScrollView>
-        <!-- Main Layout Grid -->
-        <Grid>
-            <Grid.RowDefinitions>
-                <!-- Main Row -->
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <!-- Active Print Ticket Column -->
-                <ColumnDefinition Width="*"/>
-                <!-- Open Print Tickets Panel Column -->
-                <ColumnDefinition Width="{Binding Options.OpenPrintTicketsPanelWidth}"/>
-            </Grid.ColumnDefinitions>
-            <!-- Active Print Ticket Layout Grid -->
-            <Grid
-                Grid.Row="0"
-                Grid.Column="0"
-                IsVisible="{Binding Options.HasActivePrintTicket}">
+    <!-- Main Layout Grid (Active Ticket and Open Tickets Columns) -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Main Layout Row -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <!-- Active Print Ticket Column -->
+            <ColumnDefinition Width="*"/>
+            <!-- Open Print Tickets Panel Column -->
+            <ColumnDefinition Width="{Binding Options.OpenPrintTicketsPanelWidth}"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- ScrollView for Active Print Ticket Display -->
+        <ScrollView
+            Grid.Row="0"
+            Grid.Column="0"
+            IsVisible="True"> <!-- "{Binding Options.HasActivePrintTicket}" -->
+            <!-- Layout Grid -->
+            <Grid>
                 <Grid.RowDefinitions>
                     <!-- Basic Label Information Input Row -->
                     <RowDefinition Height="Auto"/>
@@ -44,7 +46,6 @@
                     <!-- Main Layout Column -->
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
                 <!-- Basic Label Information Layout Grid -->
                 <Grid
                     Grid.Row="0"
@@ -69,7 +70,6 @@
                         <!-- /  / Variable Fields / Operator Input Column -->
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    
                     <!-- Header Label -->
                     <Label 
                         Grid.Row="0"
@@ -80,7 +80,6 @@
                         FontSize="20"
                         TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                         Text="{Binding ActivePrintTicket.Title, StringFormat='Input for Label: {0}'}"/>
-
                     <!-- Process Input Horizontal Layout-->
                     <HorizontalStackLayout
                         Grid.Row="1"
@@ -135,7 +134,6 @@
                                 FontSize="11"/>
                         </Border>
                     </HorizontalStackLayout>
-
                     <!-- Production Date Input Horizontal Layout -->
                     <HorizontalStackLayout
                         Grid.Row="1"
@@ -167,7 +165,6 @@
                                 x:Name="ProductionDatePicker"/>
                         </Border>
                     </HorizontalStackLayout>
-
                     <!-- Part Input Horizontal Layout -->
                     <HorizontalStackLayout
                         Grid.Row="2"
@@ -203,7 +200,6 @@
                                 SelectedIndexChanged="OnPartSelection"/>
                         </Border>
                     </HorizontalStackLayout>
-
                     <!-- Variable Fields Input Horizontal Layout -->
                     <HorizontalStackLayout
                         Grid.Row="3"
@@ -241,7 +237,6 @@
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
-
                         <!-- Lot Input Layout -->
                         <HorizontalStackLayout
                             IsVisible="{Binding Options.SelectedProcess.RequiredFields.LotNumber}">
@@ -273,7 +268,6 @@
                                     MaxLength="9"/>
                             </Border>
                         </HorizontalStackLayout>
-
                         <!-- Deburr JBK Input Layout -->
                         <HorizontalStackLayout
                             IsVisible="{Binding Options.SelectedProcess.RequiredFields.DeburrJBKNumber}">
@@ -304,7 +298,6 @@
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
-                        
                         <!-- Die Number Input Layout -->
                         <HorizontalStackLayout
                             IsVisible="{Binding Options.SelectedProcess.RequiredFields.DieNumber}">
@@ -335,7 +328,6 @@
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
-                        
                         <!-- Model Input Layout -->
                         <HorizontalStackLayout
                             IsVisible="{Binding Options.SelectedProcess.RequiredFields.ModelNumber}">
@@ -366,7 +358,6 @@
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
-                        
                         <!-- Heat Number Input Layout -->
                         <HorizontalStackLayout
                             IsVisible="{Binding Options.SelectedProcess.RequiredFields.HeatNumber}">
@@ -397,7 +388,6 @@
                             </Border>
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>
-
                     <!-- Quantity / Shift / Operator Input Grid Layout -->
                     <Grid
                         Grid.Row="4"
@@ -416,7 +406,6 @@
                             <!-- Operator Input Column -->
                             <ColumnDefinition Width="200"/>
                         </Grid.ColumnDefinitions>
-
                         <!-- Shift Number Input Layout -->
                         <HorizontalStackLayout
                             Grid.Row="0"
@@ -454,7 +443,6 @@
                                 </Picker>
                             </Border>
                         </HorizontalStackLayout>
-
                         <!-- Quantity Input Layout -->
                         <HorizontalStackLayout
                             Grid.Row="0"
@@ -484,7 +472,6 @@
                                     x:Name="QuantityEntry"/>
                             </Border>
                         </HorizontalStackLayout>
-
                         <!-- Operator Input Layout -->
                         <HorizontalStackLayout
                             Grid.Row="0"
@@ -517,7 +504,6 @@
                         </HorizontalStackLayout>
                     </Grid>
                 </Grid>
-
                 <!-- Separator Bar -->
                 <BoxView
                     Grid.Row="1"
@@ -526,7 +512,6 @@
                     HorizontalOptions="Fill"
                     VerticalOptions="Center"
                     BackgroundColor="#88ACACAC"/>
-
                 <!-- First Partial Production Dataset Grid Layout -->
                 <Grid
                     Grid.Row="2"
@@ -686,7 +671,6 @@
                         HorizontalOptions="End"
                         VerticalOptions="Center"/>
                 </Grid>
-
                 <!-- Separator Bar -->
                 <BoxView
                     Grid.Row="3"
@@ -696,7 +680,6 @@
                     HorizontalOptions="Fill"
                     VerticalOptions="Center"
                     BackgroundColor="#88ACACAC"/>
-
                 <!-- Second Partial Production Dataset Grid Layout -->
                 <Grid
                     Grid.Row="4"
@@ -856,7 +839,6 @@
                         HorizontalOptions="End"
                         VerticalOptions="Center"/>
                 </Grid>
-
                 <!-- Add Partial Production Dataset Button -->
                 <Button
                     x:Name="AddPartialProductionDatasetButton"
@@ -872,46 +854,45 @@
                     VerticalOptions="Center"
                     Text="+ Add Partial"/>
             </Grid>
+        </ScrollView>
 
-            <!-- Open Print Tickets Panel Grid -->
-            <Grid
+        <!-- Grid for Open Print Tickets Panel -->
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1"
+            IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}">
+            <Grid.RowDefinitions>
+                <!-- Header Row -->
+                <RowDefinition Height="100"/>
+                <!-- Body (ListView) Row -->
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Single Column for the Panel -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label
+                x:Name="OpenPrintTicketsHeaderLabel"
                 Grid.Row="0"
-                Grid.Column="1"
-                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
-                WidthRequest="{Binding Options.OpenPrintTicketsPanelWidth}">
-                <Grid.RowDefinitions>
-                    <!-- Header Row -->
-                    <RowDefinition Height="100"/>
-                    <!-- Body (ListView) Row -->
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <!-- Single Column for the Panel -->
-                    <ColumnDefinition Width="{Binding Options.OpenPrintTicketsPanelWidth}"/>
-                </Grid.ColumnDefinitions>
-                <Label
-                    x:Name="OpenPrintTicketsHeaderLabel"
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Text="Open Labels"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Start"/>
-                <ListView
-                    x:Name="OpenPrintTicketsListView"
-                    Grid.Row="1"
-                    Grid.Column="0">
-                </ListView>
-                <BoxView
-                    x:Name="OpenPrintTicketsLeftBorder"
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="0"
-                    WidthRequest="1"
-                    VerticalOptions="Fill"
-                    HorizontalOptions="Start"/>
-            </Grid>
+                Grid.Column="0"
+                Text="Open Labels"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"/>
+            <ListView
+                x:Name="OpenPrintTicketsListView"
+                Grid.Row="1"
+                Grid.Column="0">
+            </ListView>
+            <BoxView
+                x:Name="OpenPrintTicketsLeftBorder"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                WidthRequest="1"
+                VerticalOptions="Fill"
+                HorizontalOptions="Start"/>
         </Grid>
-    </ScrollView>
+    </Grid>
 </ContentPage>
 
 <!--
