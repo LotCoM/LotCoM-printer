@@ -74,29 +74,29 @@ public class InterfaceCapture(Process Process, Part Part, int Quantity, int JBKN
         // always add Process, Part Number/Name, Quantity
         QRCodeData.AddRange([Process.FullName, Part.PartNumber, Part.PartName, Quantity.ToString()]);
         // retrieve the Process Requirements
-        List<string> RequiredFields = Process.RequiredFields;
+        RequiredFields RequiredFields = Process.RequiredFields;
         // add inner (variable) Capture data
-        if (RequiredFields.Contains("JBKNumber")) 
+        if (RequiredFields.JBKNumber) 
         {
             QRCodeData.Add(VariableFields.JBKNumber.ToString()!);
         }
-        if (RequiredFields.Contains("LotNumber")) 
+        if (RequiredFields.LotNumber) 
         {
             QRCodeData.Add(VariableFields.LotNumber!);
         }
-        if (RequiredFields.Contains("DeburrJBKNumber")) 
+        if (RequiredFields.DeburrJBKNumber) 
         {
             QRCodeData.Add(VariableFields.DeburrJBKNumber.ToString()!);
         }
-        if (RequiredFields.Contains("DieNumber")) 
+        if (RequiredFields.DieNumber) 
         {
             QRCodeData.Add(VariableFields.DieNumber.ToString()!);
         }
-        if (RequiredFields.Contains("HeatNumber")) 
+        if (RequiredFields.HeatNumber) 
         {
             QRCodeData.Add(VariableFields.HeatNumber!);
         }
-        if (RequiredFields.Contains("ModelNumber")) 
+        if (RequiredFields.ModelNumber) 
         {
             QRCodeData.Add(VariableFields.ModelNumber!);
         }
@@ -122,31 +122,31 @@ public class InterfaceCapture(Process Process, Part Part, int Quantity, int JBKN
             $"Quantity: {Quantity}"
         ]);
         // retrieve the Process' requirements
-        List<string> Requirements = Process.RequiredFields;
+        RequiredFields Requirements = Process.RequiredFields;
         // add inner (variable) Capture data
-        if (Requirements.Contains("JBKNumber")) 
+        if (Requirements.JBKNumber) 
         {
             LabelBodyData.Add(VariableFields.JBKNumber.ToString()!);
         }
-        if (Requirements.Contains("LotNumber")) 
+        if (Requirements.LotNumber) 
         {
             LabelBodyData.Add(VariableFields.LotNumber!);
         }
-        if (Requirements.Contains("DeburrJBKNumber")) 
+        if (Requirements.DeburrJBKNumber) 
         {
             LabelBodyData.Add(VariableFields.DeburrJBKNumber.ToString()!);
         }
-        if (Requirements.Contains("DieNumber")) 
+        if (Requirements.DieNumber) 
         {
             LabelBodyData.Add(VariableFields.DieNumber.ToString()!);
         }
-        if (Requirements.Contains("HeatNumber")) 
-        {
-            LabelBodyData.Add(VariableFields.HeatNumber!);
-        }
-        if (Requirements.Contains("ModelNumber")) 
+        if (Requirements.ModelNumber) 
         {
             LabelBodyData.Add(VariableFields.ModelNumber!);
+        }
+        if (Requirements.HeatNumber) 
+        {
+            LabelBodyData.Add(VariableFields.HeatNumber!);
         }
         // add universal label fields (back)
         LabelBodyData.Add($"Prod. Date: {new Timestamp(ProductionDate).Stamp}");
@@ -162,33 +162,33 @@ public class InterfaceCapture(Process Process, Part Part, int Quantity, int JBKN
     public string FormatAsCSV() 
     {
         // retrieve the Process' requirements
-        List<string> Requirements = Process.RequiredFields;
+        RequiredFields Requirements = Process.RequiredFields;
         // add universal requirements (front)
         string CSVLine = $"{Process.FullName},{Part.PartNumber},{Part.PartName},{Quantity}";
         // add internal, variable fields
-        if (Requirements.Contains("JBKNumber")) 
+        if (Requirements.JBKNumber) 
         {
             CSVLine = $"{CSVLine},{VariableFields.JBKNumber}";
         }
-        if (Requirements.Contains("LotNumber")) 
+        if (Requirements.LotNumber) 
         {
             CSVLine = $"{CSVLine},{VariableFields.LotNumber}";
         }
-        if (Requirements.Contains("DeburrJBKNumber")) 
+        if (Requirements.DeburrJBKNumber) 
         {
             CSVLine = $"{CSVLine},{VariableFields.DeburrJBKNumber}";
         }
-        if (Requirements.Contains("DieNumber")) 
+        if (Requirements.DieNumber) 
         {
             CSVLine = $"{CSVLine},{VariableFields.DieNumber}";
         }
-        if (Requirements.Contains("HeatNumber")) 
-        {
-            CSVLine = $"{CSVLine},{VariableFields.HeatNumber}";
-        }
-        if (Requirements.Contains("ModelNumber")) 
+        if (Requirements.ModelNumber) 
         {
             CSVLine = $"{CSVLine},{VariableFields.ModelNumber}";
+        }
+        if (Requirements.HeatNumber) 
+        {
+            CSVLine = $"{CSVLine},{VariableFields.HeatNumber}";
         }
         // add universal requirements (back)
         CSVLine = $"{CSVLine},{new Timestamp(ProductionDate).Stamp},{ProductionShift},{OperatorID}";

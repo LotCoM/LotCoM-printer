@@ -265,7 +265,7 @@ public static class InterfaceCaptureValidator
     public static InterfaceCapture Validate(InterfaceCapture Capture) 
     {
         // retrieve the Process requirements for the Process in the Capture
-        List<string> Requirements = Capture.Process.RequiredFields;
+        RequiredFields Requirements = Capture.Process.RequiredFields;
         try 
         {
             // validate universally required fields
@@ -275,35 +275,35 @@ public static class InterfaceCaptureValidator
             ValidateProductionShiftPicker(Capture.ProductionShift);
             Capture.OperatorID = ValidateOperatorID(Capture.OperatorID);
             // validate jbk number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("JBKNumber")) 
+            if (Requirements.JBKNumber) 
             {
                 Capture.VariableFields.JBKNumber = ValidateJBKNumber(Capture.VariableFields.JBKNumber, Capture.Process.Type);
             };
             // validate lot number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("LotNumber")) 
+            if (Requirements.LotNumber) 
             {
                 Capture.VariableFields.LotNumber = ValidateLotNumber(Capture.VariableFields.LotNumber, Capture.Process.Type);
             };
             // validate deburr jbk number if required (also adds any needed leading zeroes)
-            if (Requirements.Contains("DeburrJBKNumber")) 
+            if (Requirements.DeburrJBKNumber) 
             {
                 // pass ProcessType as "Pass-through" to force non-serialized check
                 Capture.VariableFields.DeburrJBKNumber = ValidateJBKNumber(Capture.VariableFields.DeburrJBKNumber, OriginationTypes.PassThrough);
             };
             // validate die number if required
-            if (Requirements.Contains("DieNumber")) 
+            if (Requirements.DieNumber) 
             {
                 ValidateDieNumber(Capture.VariableFields.DieNumber);
             };
-            // validate heat number if required
-            if (Requirements.Contains("HeatNumber")) 
-            {
-                ValidateHeatNumber(Capture.VariableFields.HeatNumber);
-            };
             // validate model number if required
-            if (Requirements.Contains("ModelNumber")) 
+            if (Requirements.ModelNumber) 
             {
                 ValidateModelNumber(Capture.VariableFields.ModelNumber);
+            };
+            // validate heat number if required
+            if (Requirements.HeatNumber) 
+            {
+                ValidateHeatNumber(Capture.VariableFields.HeatNumber);
             };
         // a validation failed; pass the fail message to the view model
         } 
