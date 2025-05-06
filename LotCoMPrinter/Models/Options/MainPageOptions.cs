@@ -14,7 +14,7 @@ public partial class MainPageOptions(): ObservableObject()
     public enum OpenPrintTicketsPanelWidths
     {
         Open = 350,
-        Closed = 0
+        Closed = 50
     }
 
     /// <summary>
