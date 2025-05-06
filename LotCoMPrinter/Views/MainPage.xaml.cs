@@ -210,6 +210,24 @@ public partial class MainPage : ContentPage
 		ViewModel.ActivePrintTicket!.RemoveSecondPartialDataSet();
 	}
 
+	/// <summary>
+    /// Handler for the Clicked event from the OpenPrintTicketsCollapseButton control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnOpenPrintTicketsCollapseButtonClicked(object sender, EventArgs e) 
+    {
+        if (ViewModel.Options.IsOpenPrintTicketsPanelShown) 
+        {
+            ViewModel.Options.CollapseOpenPrintTicketsPanel();
+        } 
+        else 
+        {
+            ViewModel.Options.RaiseOpenPrintTicketsPanel();
+        }
+        OpenPrintTicketsCollapseButton.Rotation += 180;
+    }
+
 	// full constructor
 	public MainPage() 
 	{
