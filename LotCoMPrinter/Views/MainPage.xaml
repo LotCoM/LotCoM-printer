@@ -53,21 +53,23 @@
                     <Grid.RowDefinitions>
                         <!-- Header Row -->
                         <RowDefinition Height="Auto"/>
-                        <!-- Process / Production Date Input Row -->
+                        <!-- Process Input Row -->
                         <RowDefinition Height="Auto"/>
                         <!-- Part Input Row -->
                         <RowDefinition Height="Auto"/>
-                        <!-- Variable Fields Input Row -->
+                        <!-- Production Date Input Row -->
                         <RowDefinition Height="Auto"/>
                         <!-- Shift / Quantity / Operator Input Row -->
                         <RowDefinition Height="Auto"/>
+                        <!-- Variable Fields Input Row -->
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <!-- Process / Part / Variable Fields / Shift Input Column -->
+                        <!-- Process / Part / Production Date / Shift / Variable Fields Input Column -->
                         <ColumnDefinition Width="Auto"/>
-                        <!-- Production Date /  / Variable Fields / Quantity Input Column -->
+                        <!-- /  /  / Quantity / Variable Fields Input Column -->
                         <ColumnDefinition Width="Auto"/>
-                        <!-- /  / Variable Fields / Operator Input Column -->
+                        <!-- /  /  / Operator / Variable Fields Input Column -->
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <!-- Header Label -->
@@ -83,7 +85,8 @@
                     <!-- Process Input Horizontal Layout-->
                     <HorizontalStackLayout
                         Grid.Row="1"
-                        Grid.Column="0">
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
                         <!-- Input Label -->
                         <Label
                             x:Name="ProcessLabel"
@@ -134,40 +137,11 @@
                                 FontSize="11"/>
                         </Border>
                     </HorizontalStackLayout>
-                    <!-- Production Date Input Horizontal Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="2">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="ProductionDateLabel"
-                            Margin="10,0,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
-                            Text="Production Date"/>
-                        <!-- Input DatePicker Control and Border -->
-                        <Border
-                            x:Name="ProductionDateControl"
-                            Margin="10,5,5,12"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="250"
-                            HeightRequest="40"
-                            Stroke="#88ACACAC"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10"
-                            Background="#00000000">
-                            <DatePicker
-                                x:Name="ProductionDatePicker"/>
-                        </Border>
-                    </HorizontalStackLayout>
                     <!-- Part Input Horizontal Layout -->
                     <HorizontalStackLayout
                         Grid.Row="2"
-                        Grid.Column="0">
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
                         <!-- Input Label -->
                         <Label
                             x:Name="PartLabel"
@@ -199,9 +173,154 @@
                                 SelectedIndexChanged="OnPartSelection"/>
                         </Border>
                     </HorizontalStackLayout>
-                    <!-- Variable Fields Input Horizontal Layout -->
+                    <!-- Production Date Input Horizontal Layout -->
                     <HorizontalStackLayout
                         Grid.Row="3"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="ProductionDateLabel"
+                            Margin="10,0,0,10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="75"
+                            MinimumWidthRequest="75"
+                            Text="Production Date"/>
+                        <!-- Input DatePicker Control and Border -->
+                        <Border
+                            x:Name="ProductionDateControl"
+                            Margin="10,5,5,12"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            WidthRequest="250"
+                            HeightRequest="40"
+                            Stroke="#88ACACAC"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10,10,10,10"
+                            Background="#00000000">
+                            <DatePicker
+                                x:Name="ProductionDatePicker"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                    <!-- Quantity / Shift / Operator Input Grid Layout -->
+                    <Grid
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Margin="10">
+                        <Grid.RowDefinitions>
+                            <!-- Main Row -->
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>    
+                        <Grid.ColumnDefinitions>
+                            <!-- Shift Input Column -->
+                            <ColumnDefinition Width="200"/>
+                            <!-- Quantity Input Column -->
+                            <ColumnDefinition Width="200"/>
+                            <!-- Operator Input Column -->
+                            <ColumnDefinition Width="200"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Shift Number Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="0">
+                            <!-- Input Label -->
+                            <Label
+                                Margin="0,0,0,10"
+                                x:Name="ShiftLabel"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="75"
+                                MinimumWidthRequest="75"
+                                Text="Shift"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="ShiftControl"
+                                Margin="10,5,5,12"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="100"
+                                HeightRequest="40"
+                                Stroke="#88ACACAC"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10"
+                                Background="#00000000">
+                                <Picker
+                                    x:Name="ShiftPicker">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type ="{x:Type x:Int32}">
+                                            <x:Int32>1</x:Int32>
+                                            <x:Int32>2</x:Int32>
+                                            <x:Int32>3</x:Int32>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Quantity Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="1">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="QuantityLabel"
+                                Margin="10,0,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="75"
+                                MinimumWidthRequest="75"
+                                Text="Quantity"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="QuantityControl"
+                                Margin="10,5,5,12"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="100"
+                                HeightRequest="40"
+                                Stroke="#88ACACAC"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10"
+                                Background="#00000000">
+                                <Entry
+                                    x:Name="QuantityEntry"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Operator Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="2">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="OperatorLabel"
+                                Margin="10,0,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="75"
+                                MinimumWidthRequest="75"
+                                Text="Operator"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="OperatorControl"
+                                Margin="10,5,5,12"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="100"
+                                HeightRequest="40"
+                                Stroke="#88ACACAC"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10"
+                                Background="#00000000">
+                                <Entry
+                                    x:Name="OperatorEntry"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </Grid>
+                    <!-- Variable Fields Input Horizontal Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="5"
                         Grid.Column="0"
                         Grid.ColumnSpan="3">
                         <!-- JBK Input Layout -->
@@ -386,121 +505,6 @@
                             </Border>
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>
-                    <!-- Quantity / Shift / Operator Input Grid Layout -->
-                    <Grid
-                        Grid.Row="4"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        Margin="10">
-                        <Grid.RowDefinitions>
-                            <!-- Main Row -->
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>    
-                        <Grid.ColumnDefinitions>
-                            <!-- Shift Input Column -->
-                            <ColumnDefinition Width="200"/>
-                            <!-- Quantity Input Column -->
-                            <ColumnDefinition Width="200"/>
-                            <!-- Operator Input Column -->
-                            <ColumnDefinition Width="200"/>
-                        </Grid.ColumnDefinitions>
-                        <!-- Shift Number Input Layout -->
-                        <HorizontalStackLayout
-                            Grid.Row="0"
-                            Grid.Column="0">
-                            <!-- Input Label -->
-                            <Label
-                                Margin="0,0,0,10"
-                                x:Name="ShiftLabel"
-                                HorizontalOptions="Start"
-                                VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
-                                Text="Shift"/>
-                            <!-- Input Entry Control and Border -->
-                            <Border
-                                x:Name="ShiftControl"
-                                Margin="10,5,5,12"
-                                HorizontalOptions="Start"
-                                VerticalOptions="Start"
-                                WidthRequest="100"
-                                HeightRequest="40"
-                                Stroke="#88ACACAC"
-                                StrokeThickness="1"
-                                StrokeShape="RoundRectangle 10,10,10,10"
-                                Background="#00000000">
-                                <Picker
-                                    x:Name="ShiftPicker">
-                                    <Picker.ItemsSource>
-                                        <x:Array Type ="{x:Type x:Int32}">
-                                            <x:Int32>1</x:Int32>
-                                            <x:Int32>2</x:Int32>
-                                            <x:Int32>3</x:Int32>
-                                        </x:Array>
-                                    </Picker.ItemsSource>
-                                </Picker>
-                            </Border>
-                        </HorizontalStackLayout>
-                        <!-- Quantity Input Layout -->
-                        <HorizontalStackLayout
-                            Grid.Row="0"
-                            Grid.Column="1">
-                            <!-- Input Label -->
-                            <Label
-                                x:Name="QuantityLabel"
-                                Margin="10,0,0,10"
-                                HorizontalOptions="Start"
-                                VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
-                                Text="Quantity"/>
-                            <!-- Input Entry Control and Border -->
-                            <Border
-                                x:Name="QuantityControl"
-                                Margin="10,5,5,12"
-                                HorizontalOptions="Start"
-                                VerticalOptions="Start"
-                                WidthRequest="100"
-                                HeightRequest="40"
-                                Stroke="#88ACACAC"
-                                StrokeThickness="1"
-                                StrokeShape="RoundRectangle 10,10,10,10"
-                                Background="#00000000">
-                                <Entry
-                                    x:Name="QuantityEntry"/>
-                            </Border>
-                        </HorizontalStackLayout>
-                        <!-- Operator Input Layout -->
-                        <HorizontalStackLayout
-                            Grid.Row="0"
-                            Grid.Column="2">
-                            <!-- Input Label -->
-                            <Label
-                                x:Name="OperatorLabel"
-                                Margin="10,0,0,10"
-                                HorizontalOptions="Start"
-                                VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
-                                Text="Operator"/>
-                            <!-- Input Entry Control and Border -->
-                            <Border
-                                x:Name="OperatorControl"
-                                Margin="10,5,5,12"
-                                HorizontalOptions="Start"
-                                VerticalOptions="Start"
-                                WidthRequest="100"
-                                HeightRequest="40"
-                                Stroke="#88ACACAC"
-                                StrokeThickness="1"
-                                StrokeShape="RoundRectangle 10,10,10,10"
-                                Background="#00000000">
-                                <Entry
-                                    x:Name="OperatorEntry"
-                                    MaxLength="3"/>
-                            </Border>
-                        </HorizontalStackLayout>
-                    </Grid>
                 </Grid>
                 <!-- Separator Bar -->
                 <BoxView
@@ -521,6 +525,8 @@
                         <RowDefinition Height="Auto"/>
                         <!-- Inputs Row -->
                         <RowDefinition Height="Auto"/>
+                        <!-- Buttons Row -->
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <!-- Shift Input Column -->
@@ -529,8 +535,6 @@
                         <ColumnDefinition Width="200"/>
                         <!-- Operator Input Column -->
                         <ColumnDefinition Width="200"/>
-                        <!-- Print/Remove Button Column -->
-                        <ColumnDefinition Width="250"/>
                         <!-- Margin Column -->
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -642,32 +646,30 @@
                                 MaxLength="3"/>
                         </Border>
                     </HorizontalStackLayout>
-                    <!-- Print Button -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="3"
-                        Text="Print Label"
-                        Margin="10,0,20,10"
-                        WidthRequest="150"
-                        HeightRequest="40"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"/>
-                    <!-- Remove Button -->
-                    <Button
-                        x:Name="RemoveFirstPartialProductionDataSetButton"
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
-                        Text="-"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        Margin="10,0,20,10"
-                        Padding="0"
-                        CharacterSpacing="0"
-                        WidthRequest="25"
-                        HeightRequest="25"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"/>
+                    <!-- Buttons Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
+                        <!-- Print Button -->
+                        <Button
+                            Text="Print Label"
+                            Margin="0,10,20,20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+                        <!-- Remove Button -->
+                        <Button
+                            x:Name="RemoveFirstPartialProductionDataSetButton"
+                            Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
+                            Text="- Remove"
+                            Margin="0,10,20,20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
                 </Grid>
                 <!-- Separator Bar -->
                 <BoxView
@@ -689,6 +691,8 @@
                         <RowDefinition Height="Auto"/>
                         <!-- Inputs Row -->
                         <RowDefinition Height="Auto"/>
+                        <!-- Buttons Row -->
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <!-- Shift Input Column -->
@@ -697,8 +701,6 @@
                         <ColumnDefinition Width="200"/>
                         <!-- Operator Input Column -->
                         <ColumnDefinition Width="200"/>
-                        <!-- Print/Remove Button Column -->
-                        <ColumnDefinition Width="250"/>
                         <!-- Margin Column -->
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -810,32 +812,30 @@
                                 MaxLength="3"/>
                         </Border>
                     </HorizontalStackLayout>
-                    <!-- Print Button -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="3"
-                        Text="Print Label"
-                        Margin="10,0,20,10"
-                        WidthRequest="150"
-                        HeightRequest="40"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"/>
-                    <!-- Remove Button -->
-                    <Button
-                        x:Name="RemoveSecondPartialProductionDataSetButton"
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        Clicked="OnRemoveSecondPartialProductionDataSetButtonClicked"
-                        Text="-"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        Margin="10,0,20,10"
-                        Padding="0"
-                        CharacterSpacing="0"
-                        WidthRequest="25"
-                        HeightRequest="25"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"/>
+                    <!-- Buttons Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
+                        <!-- Print Button -->
+                        <Button
+                            Text="Print Label"
+                            Margin="0,10,20,20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+                        <!-- Remove Button -->
+                        <Button
+                            x:Name="RemoveSecondPartialProductionDataSetButton"
+                            Clicked="OnRemoveSecondPartialProductionDataSetButtonClicked"
+                            Text="- Remove"
+                            Margin="0,10,20,20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
                 </Grid>
                 <!-- Add Partial Production Dataset Button -->
                 <Button
