@@ -23,7 +23,7 @@
         <ScrollView
             Grid.Row="0"
             Grid.Column="0"
-            IsVisible="True"> <!-- "{Binding Options.HasActivePrintTicket}" -->
+            IsVisible="{Binding Options.HasActivePrintTicket}"> <!-- "{Binding Options.HasActivePrintTicket}" -->
             <!-- Layout Grid -->
             <Grid>
                 <Grid.RowDefinitions>
