@@ -23,7 +23,7 @@
             <Grid
                 Grid.Row="0"
                 Grid.Column="0"
-                IsVisible="True"> <!-- {Binding Options.HasActivePrintTicket} -->
+                IsVisible="{Binding Options.HasActivePrintTicket}">
                 <Grid.RowDefinitions>
                     <!-- Basic Label Information Input Row -->
                     <RowDefinition Height="Auto"/>
@@ -211,11 +211,11 @@
                         Grid.ColumnSpan="3">
 
                         <!-- JBK Input Layout -->
-                        <HorizontalStackLayout>
+                        <HorizontalStackLayout
+                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.JBKNumber}">
                             <!-- JBK Input Label -->
                             <Label
                                 x:Name="JBKNumberLabel"
-                                IsVisible="{Binding Options.JBKNumberRequired}"
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
@@ -225,7 +225,6 @@
                             <!-- JBK Input Entry Control and Border -->
                             <Border
                                 x:Name="JBKNumberControl"
-                                IsVisible="{Binding Options.JBKNumberRequired}"
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
@@ -244,11 +243,11 @@
                         </HorizontalStackLayout>
 
                         <!-- Lot Input Layout -->
-                        <HorizontalStackLayout>
+                        <HorizontalStackLayout
+                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.LotNumber}">
                             <!-- Lot Input Label -->
                             <Label
                                 x:Name="LotNumberLabel"
-                                IsVisible="{Binding Options.LotNumberRequired}"
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
@@ -258,7 +257,6 @@
                             <!-- Lot Input Entry Control and Border -->
                             <Border
                                 x:Name="LotNumberControl"
-                                IsVisible="{Binding Options.LotNumberRequired}"
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
@@ -278,7 +276,7 @@
 
                         <!-- Deburr JBK Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.DeburrJBKNumberRequired}">
+                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.DeburrJBKNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="DeburrJBKNumberLabel"
@@ -309,7 +307,7 @@
                         
                         <!-- Die Number Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.DieNumberRequired}">
+                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.DieNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="DieNumberLabel"
@@ -340,7 +338,7 @@
                         
                         <!-- Model Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.ModelNumberRequired}">
+                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.ModelNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="ModelNumberLabel"
@@ -371,7 +369,7 @@
                         
                         <!-- Heat Number Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.HeatNumberRequired}">
+                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.HeatNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="HeatNumberLabel"
