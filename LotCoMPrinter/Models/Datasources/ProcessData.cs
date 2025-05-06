@@ -160,15 +160,47 @@ public class ProcessData()
         {
             throw new FormatException($"Could not resolve '{Token}' to a Process object, due to the following Part resolution failure: {_ex.Message}");
         }
-        // create requirements list; add first set of universal fields
-        List<string> RequiredFields = ["SelectedProcess", "SelectedPart", "Quantity"];
+        // create a RequiredFields object to parse the Process requirements into
+        RequiredFields RequiredFields = new RequiredFields(false, false, false, false, false, false);
         // add variable (process-dependent) fields
-        foreach (JToken _field in Requirements) 
+        foreach (JToken? _requirement in Requirements)
         {
-            RequiredFields.Add(_field.ToString());
+            string _requirementString = _requirement.ToString();
+            if (_requirementString is null)
+            {
+                continue;
+            }
+            if (_requirementString.Equals("JBKNumber"))
+            {
+                RequiredFields.JBKNumber = true;
+                continue;
+            }
+            if (_requirementString.Equals("LotNumber"))
+            {
+                RequiredFields.LotNumber = true;
+                continue;
+            }
+            if (_requirementString.Equals("DeburrJBKNumber"))
+            {
+                RequiredFields.DeburrJBKNumber = true;
+                continue;
+            }
+            if (_requirementString.Equals("DieNumber"))
+            {
+                RequiredFields.DieNumber = true;
+                continue;
+            }
+            if (_requirementString.Equals("ModelNumber"))
+            {
+                RequiredFields.ModelNumber = true;
+                continue;
+            }
+            if (_requirementString.Equals("HeatNumber"))
+            {
+                RequiredFields.HeatNumber = true;
+                continue;
+            }
         }
-        // add the second set of universal fields
-        RequiredFields.AddRange(["ProductionDate", "ProductionShift", "OperatorID"]);
         // attempt to construct the Process object from the resolved data
         Process ResolvedProcess;
         try 
