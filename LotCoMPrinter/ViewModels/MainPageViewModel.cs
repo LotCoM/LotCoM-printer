@@ -76,13 +76,46 @@ public partial class MainPageViewModel : ObservableObject
     {
         ActivePrintTicket = new PrintTicket
         (
-            new Department("Steel", "ST", []),
-            new Process(1111, "CIV", "Pivot-Housing-MC", OriginationTypes.Originator, SerializationModes.JBK, [], [], PassThroughTypes.None),
-            new Part("CIV-Pivot-Housing-MC", "YN-TST-PARTN-001-0001", "Test Part", "TST"),
+            new Department
+            (
+                "Steel", 
+                "ST", 
+                []
+            ),
+            new Process
+            (
+                1111, 
+                "CIV", 
+                "Pivot-Housing-MC", 
+                OriginationTypes.Originator, 
+                SerializationModes.JBK, 
+                [], 
+                new RequiredFields
+                (
+                    true, 
+                    false, 
+                    true, 
+                    false, 
+                    false, 
+                    false
+                ), 
+                PassThroughTypes.None
+            ),
+            new Part
+            (
+                "CIV-Pivot-Housing-MC", 
+                "YN-TST-PARTN-001-0001", 
+                "Test Part", 
+                "TST"
+            ),
             SerializationModes.JBK,
             "999",
-            new Timestamp(DateTime.Now)
+            new Timestamp
+            (
+                DateTime.Now
+            )
         );
+        OpenPrintTickets.Add(ActivePrintTicket);
     }
 
     /// <summary>
