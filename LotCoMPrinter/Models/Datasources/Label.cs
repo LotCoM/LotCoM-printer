@@ -95,9 +95,9 @@ public class Label
         {
             LoadFonts();
         }
-        catch
+        catch (Exception _ex)
         {
-            throw new LabelBuildException("Failed to configure the Label's fonts.");
+            throw new SystemException($"Failed to configure the Label's fonts due to the following error:\n{_ex.Message}.");
         }
     }
 
