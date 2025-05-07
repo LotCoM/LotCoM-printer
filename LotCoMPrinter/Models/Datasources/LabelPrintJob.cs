@@ -36,7 +36,7 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header)
         // generate a new Label image and store it in the _label property
         try 
         {
-            Label = await LabelGenerator.GenerateFullLabelAsync(Capture, Header);
+            Label = await LabelGenerator.GenerateLabelAsync(Capture, Header);
         // there was an unexpected error in the Label generation
         } 
         catch (LabelBuildException _ex) 
