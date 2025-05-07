@@ -43,7 +43,7 @@ public class BasketLabel
     /// Padding width/height applied between each item on the Label.
     /// Default is 12.
     /// </summary>
-    private int LabelInternalPadding = 12; // 12
+    private int LabelInternalPadding = 12;
 
     /// <summary>
     /// The horizontal position of the Label's Heading text.
