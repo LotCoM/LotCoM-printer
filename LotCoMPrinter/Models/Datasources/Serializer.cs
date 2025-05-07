@@ -64,9 +64,6 @@ public static class Serializer
 
     /// <summary>
     /// Assigns a Serial Number to use for a new Label.
-    /// If the LabelType is Partial, checks if there is a Serial Number cached for the Part Number.
-    /// If not, consumes and caches the queued Serial Number.
-    /// If the LabelType is Full, consumes the queued Serial Number.
     /// </summary>
     /// <param name="Capture">An InterfaceCapture object to use as a source for serialization information.</param>
     /// <returns>A Serial Number string.</returns>
@@ -80,7 +77,7 @@ public static class Serializer
         string SerialNumber = await GetSerialNumber(PartNumber, Mode);
         // format the Serial Number
         SerialNumber = FormatSerialNumber(SerialNumber, Mode);
-        // if the label is a Partial; cache the Serial Number under the part number
+        // cache the Serial Number under the part number
         SerialCacheController SerialCache = new SerialCacheController();
         await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
         // return the serial number
