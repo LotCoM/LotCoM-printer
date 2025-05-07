@@ -8,6 +8,11 @@ public class SerialNumber
     public SerializationModes Mode {get;} = SerializationModes.None;
 
     /// <summary>
+    /// The Part the Serial Number has been assigned to.
+    /// </summary>
+    public Part? Part {get;} = null;
+
+    /// <summary>
     /// The Serial Number's literal value.
     /// </summary>
     public object? LiteralValue {get; private set;} = null;
@@ -82,9 +87,10 @@ public class SerialNumber
     /// <param name="Mode">The mode of Serialization this Serial Number uses.</param>
     /// <param name="LiteralValue">The Value to attempt to apply to this Serial Number.</param>
     /// <exception cref="ArgumentException"></exception>
-    public SerialNumber(SerializationModes Mode, object LiteralValue)
+    public SerialNumber(SerializationModes Mode, Part Part, object LiteralValue)
     {
         this.Mode = Mode;
+        this.Part = Part;
         this.LiteralValue = LiteralValue;
         LiteralType = LiteralValue.GetType();
         // ensure that the passed literal value matches the required Serial Mode type
