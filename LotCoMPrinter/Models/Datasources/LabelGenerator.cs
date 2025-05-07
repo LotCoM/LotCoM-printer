@@ -33,7 +33,7 @@ public static class LabelGenerator
         await Label.AddHeaderAsync(LabelHeader);
         await Label.AddPartNameAsync(Capture.Part.PartName);
         await Label.AddQRCodeAsync(LabelCode);
-        await Label.AddLabelFieldsAsync(Capture.FormatAsLabelBodyText());
+        await Label.AddBodyTextAsync(Capture.FormatAsLabelBodyText());
         // return the Label image
         return Label.GetImage();
     }
