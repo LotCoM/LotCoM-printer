@@ -2,7 +2,10 @@ using Newtonsoft.Json;
 
 namespace LotCoMPrinter.Models.Datasources;
 
-public class SerialCacheController 
+/// <summary>
+/// Provides an interface with the cached Serial Number system in app data.
+/// </summary>
+public static class SerialCacheController 
 {
     /// <summary>
     /// The Directory of the Cache file system.
@@ -19,8 +22,18 @@ public class SerialCacheController
     /// </summary>
     /// <returns></returns>
     /// <exception cref="JsonException"></exception>
-    private async Task<List<SerialNumber>> Read() 
+    private static async Task<List<SerialNumber>> Read() 
     {
+        // ensure the cache file system exists
+        if (!Directory.Exists(CacheDir)) 
+        {
+            Directory.CreateDirectory(CacheDir);
+        }
+        if (!File.Exists(CacheFile)) 
+        {
+            File.Create(CacheFile).Close();
+            File.WriteAllText(CacheFile, "{}");
+        }
         // read the cache file and parse each line from JSON to SerialNumber
         string[] Lines = await File.ReadAllLinesAsync(CacheFile);
         IEnumerable<Task<SerialNumber>>? ParseTasks = Lines
@@ -51,30 +64,11 @@ public class SerialCacheController
     }
 
     /// <summary>
-    /// Creates a controlled interface with the Serial Cache File system for the Application instance.
-    /// </summary>
-    public SerialCacheController() 
-    {
-        // create the cache directory
-        if (!Directory.Exists(CacheDir)) 
-        {
-            Directory.CreateDirectory(CacheDir);
-        }
-        // create the cache file
-        if (!File.Exists(CacheFile)) 
-        {
-            File.Create(CacheFile).Close();
-            // add JSON braces
-            File.WriteAllText(CacheFile, "{}");
-        }
-    }
-
-    /// <summary>
     /// Reads the Cache file and attempts to find a cached SerialNumber for the Part.
     /// </summary>
     /// <param name="Part"></param>
     /// <returns>A cached SerialNumber for the Part; null if not found.</returns>
-    public async Task<SerialNumber?> FindNumberForPart(Part Part) 
+    public static async Task<SerialNumber?> FindNumberForPart(Part Part) 
     {
         // read the file and confirm there is at least one cached SerialNumber
         List<SerialNumber> SerialNumbers = await Read();
@@ -100,7 +94,7 @@ public class SerialCacheController
     /// </summary>
     /// <param name="Cachable"></param>
     /// <returns></returns>
-    public async Task Cache(SerialNumber Cachable) 
+    public static async Task Cache(SerialNumber Cachable) 
     {
         // read the cache file and confirm Cachable is not already there, then add it
         List<SerialNumber> SerialNumbers = await Read();
@@ -119,7 +113,7 @@ public class SerialCacheController
     /// </summary>
     /// <param name="SerialNumber"></param>
     /// <returns></returns>
-    public async Task Remove(SerialNumber SerialNumber) 
+    public static async Task Remove(SerialNumber SerialNumber) 
     {
         // read the file and confirm there is at least one cached SerialNumber
         List<SerialNumber> SerialNumbers = await Read();
