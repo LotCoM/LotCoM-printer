@@ -57,24 +57,24 @@ public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit)
     }
 
     /// <summary>
-    /// Retrieves the currently queued Serial Number for the Part Number WITHOUT incrementing the Queue.
+    /// Retrieves the currently queued Serial Number for the Part WITHOUT incrementing the Queue.
     /// </summary>
-    /// <param name="PartNumber">The Part Number to access the Queue of.</param>
+    /// <param name="Part">The Part to access the Serial Queue of.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public async Task<int> QueuedAsync(string PartNumber) 
+    public async Task<SerialNumber> QueuedAsync(Part Part) 
     {
         // retrieve the Queue Dictionary
         Dictionary<string, int> QueueDictionary = await DeserializeAsync();
         // access the Serial Number for the Part Number key
-        int QueuedSerial;
+        SerialNumber QueuedSerial;
         try 
         {
-            QueuedSerial = QueueDictionary[PartNumber];
+            QueuedSerial = new SerialNumber(Mode, Part, QueueDictionary[Part.PartNumber]);
         } 
         catch 
         {
-            throw new ArgumentException($"Could not find a {Mode} # Queue for the Part: {PartNumber}.");
+            throw new ArgumentException($"Could not find a {Mode} # Queue for the Part: {Part.PartNumber}.");
         }
         return QueuedSerial;
     }
@@ -83,27 +83,27 @@ public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit)
     /// Retrieves the currently queued Serial number for the Part Number, increments that Queue, and overwrites the Queue file.
     /// This method WILL consume a Serial Number from the Queue when called.
     /// </summary>
-    /// <param name="PartNumber"></param>
-    public async Task<string> ConsumeAsync(string PartNumber) 
+    /// <param name="Part"></param>
+    public async Task<SerialNumber> ConsumeAsync(Part Part) 
     {
         // retrieve the Queue Dictionary
         Dictionary<string, int> QueueDictionary = await DeserializeAsync();
-        int Consumed = await Task.Run(() => 
+        SerialNumber Consumed = await Task.Run(() => 
         {
             // access the queued Serial Number for the Part Number
-            int Unincremented = QueueDictionary[PartNumber];
+            int Raw = QueueDictionary[Part.PartNumber];
             // if the queued Serial Number is at the limit, reset to 1
-            if (Unincremented >= Limit) 
+            if (Raw >= Limit) 
             {
-                Unincremented = 0;
+                Raw = 0;
             }
             // increment the queued Serial Number and save the new Queue version
-            QueueDictionary[PartNumber] = Unincremented + 1;
-            return Unincremented;
+            QueueDictionary[Part.PartNumber] = Raw + 1;
+            return new SerialNumber(Mode, Part, QueueDictionary[Part.PartNumber]);
         });
         // save the incremented Queue
         await SaveAsync(QueueDictionary);
         // return the unincremented (consumed) Serial Number
-        return Consumed.ToString();
+        return Consumed;
     }
 }
