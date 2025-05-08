@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LotCoMPrinter.Models.Datasources;
 
@@ -20,63 +21,21 @@ public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit)
     private readonly int Limit = Limit;
 
     /// <summary>
-    /// Reads the Serial Queue file and deserializes it into a Queue Dictionary.
+    /// Reads the Serial Queue file and deserializes it into a JSON stream.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="JsonException"></exception>
-    private async Task<Dictionary<string, int>> DeserializeAsync() 
+    /// <returns>A JObject object that contains all of the JSON stream from the file.</returns>
+    private async Task<JObject> ReadAsync() 
     {
-        // read the Serial Queue file
-        string QueueFile = await File.ReadAllTextAsync(QueuePath);
-        Dictionary<string, int> QueueDictionary = await Task.Run(() => 
-        {
-            // attempt to deserialize the Serial Queue file text into a dictionary
-            try 
-            {
-                Dictionary<string, int> Dict = JsonConvert.DeserializeObject<Dictionary<string, int>>(QueueFile)!;
-                return Dict;
-            } 
-            catch 
-            {
-                throw new JsonException($"Failed to deserialize the {Mode} # Queue.");
-            }
-        });
-        return QueueDictionary;
+        return JObject.Parse(await File.ReadAllTextAsync(QueuePath));
     }
 
     /// <summary>
     /// Overwrites the Serial Queue file with a new version of the Queue.
     /// </summary>
-    /// <param name="QueueDictionary">The modified queue dictionary.</param>
-    private async Task SaveAsync(Dictionary<string, int> QueueDictionary) 
+    /// <param name="Queue">The modified queue JObject.</param>
+    private async Task SaveAsync(JObject Queue) 
     {
-        // serialize the QueueDictionary to a JSON string
-        string Serialized = JsonConvert.SerializeObject(QueueDictionary);
-        // write the serialized string to the Serial Queue file
-        await File.WriteAllTextAsync(QueuePath, Serialized);
-    }
-
-    /// <summary>
-    /// Retrieves the currently queued Serial Number for the Part WITHOUT incrementing the Queue.
-    /// </summary>
-    /// <param name="Part">The Part to access the Serial Queue of.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public async Task<SerialNumber> QueuedAsync(Part Part) 
-    {
-        // retrieve the Queue Dictionary
-        Dictionary<string, int> QueueDictionary = await DeserializeAsync();
-        // access the Serial Number for the Part Number key
-        SerialNumber QueuedSerial;
-        try 
-        {
-            QueuedSerial = new SerialNumber(Mode, Part, QueueDictionary[Part.PartNumber]);
-        } 
-        catch 
-        {
-            throw new ArgumentException($"Could not find a {Mode} # Queue for the Part: {Part.PartNumber}.");
-        }
-        return QueuedSerial;
+        await File.WriteAllTextAsync(QueuePath, JsonConvert.SerializeObject(Queue));
     }
 
     /// <summary>
@@ -86,24 +45,32 @@ public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit)
     /// <param name="Part"></param>
     public async Task<SerialNumber> ConsumeAsync(Part Part) 
     {
-        // retrieve the Queue Dictionary
-        Dictionary<string, int> QueueDictionary = await DeserializeAsync();
-        SerialNumber Consumed = await Task.Run(() => 
+        // retrieve the Queue
+        JObject Queue = await ReadAsync();
+        // access the queued Serial Number for the Part
+        JToken? Raw = Queue[Part.PartNumber];
+        if (Raw is null)
         {
-            // access the queued Serial Number for the Part Number
-            int Raw = QueueDictionary[Part.PartNumber];
-            // if the queued Serial Number is at the limit, reset to 1
-            if (Raw >= Limit) 
-            {
-                Raw = 0;
-            }
-            // increment the queued Serial Number and save the new Queue version
-            QueueDictionary[Part.PartNumber] = Raw + 1;
-            return new SerialNumber(Mode, Part, QueueDictionary[Part.PartNumber]);
-        });
-        // save the incremented Queue
-        await SaveAsync(QueueDictionary);
-        // return the unincremented (consumed) Serial Number
-        return Consumed;
+            throw new ArgumentException($"No Queue found for the Part '{Part.PartNumber} {Part.PartName}'.");
+        }
+        int Queued;
+        try
+        {
+            Queued = int.Parse(Raw.ToString());
+        }
+        catch
+        {
+            throw new ArgumentException($"Failed to parse an integer from the Queue for the Part '{Part.PartNumber} {Part.PartName}'.");
+        }
+        // increment the queue
+        if (Queued >= Limit) 
+        {
+            Queued = 0;
+        }
+        Queued += 1;
+        Queue[Part.PartNumber] = Queued.ToString();
+        // save the incremented queue and return the new SerialNumber
+        await SaveAsync(Queue);
+        return new SerialNumber(Mode, Part, Queued);
     }
 }
