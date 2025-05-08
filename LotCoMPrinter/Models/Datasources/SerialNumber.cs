@@ -3,105 +3,28 @@ using Newtonsoft.Json.Linq;
 
 namespace LotCoMPrinter.Models.Datasources;
 
-public class SerialNumber
+/// <summary>
+/// Create a new Serial Number for Part using SerializationMode.
+/// </summary>
+/// <param name="Mode">The mode of Serialization this Serial Number uses.</param>
+/// <param name="Part">The Part this Serial Number was assigned to.</param>
+/// <param name="Value">The Value to attempt to apply to this Serial Number.</param>
+public class SerialNumber(SerializationModes Mode, Part Part, int Value)
 {
     /// <summary>
     /// The mode of Serialization that the Serial Number uses.
     /// </summary>
-    public SerializationModes Mode {get;} = SerializationModes.None;
+    public SerializationModes Mode {get;} = Mode;
 
     /// <summary>
     /// The Part the Serial Number has been assigned to.
     /// </summary>
-    public Part? Part {get;} = null;
+    public Part Part {get;} = Part;
 
     /// <summary>
     /// The Serial Number's literal value.
     /// </summary>
-    public object? LiteralValue {get; private set;} = null;
-
-    /// <summary>
-    /// The Type of the Serial Number's Value property.
-    /// </summary>
-    public Type LiteralType {get; private set;} = typeof(object);
-
-    /// <summary>
-    /// Confirms that the passed Literal Value can be used to create a Serial Number of the passed Serialization Mode.
-    /// </summary>
-    /// <returns>true (if successful).</returns>
-    /// <exception cref="NullReferenceException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    private bool ValidateLiteral()
-    {
-        if (LiteralValue is null)
-        {
-            throw new NullReferenceException("Cannot create a Serial Number without a value.");
-        }
-        if (Mode == SerializationModes.None)
-        {
-            throw new NullReferenceException("Cannot create a Serial Number without a Serialization Mode.");
-        }
-        if (Mode == SerializationModes.JBK)
-        {
-            // set the LiteralType property to int and confirm the Value property is valid
-            if (!LiteralType.GetType().Equals(typeof(int)))
-            {
-                LiteralType = typeof(int);
-            }
-            if (!LiteralValue.GetType().Equals(LiteralType.GetType()))
-            {
-                try
-                {
-                    LiteralValue = int.Parse(LiteralValue.ToString()!);
-                }
-                catch
-                {
-                    throw new ArgumentException($"Cannot parse a valid 'int' from '{LiteralValue}' to apply to the Serial Number with SerializationMode 'JBK'.");
-                }
-            }
-        }
-        else
-        {
-            // set the LiteralType property to string and confirm the Value property is valid
-            if (!LiteralType.GetType().Equals(typeof(string)))
-            {
-                LiteralType = typeof(string);
-            }
-            if (!LiteralValue.GetType().Equals(LiteralType.GetType()))
-            {
-                try
-                {
-                    LiteralValue = LiteralValue.ToString();
-                }
-                catch
-                {
-                    throw new ArgumentException($"Cannot parse a valid 'string' from '{LiteralValue}' to apply to the Serial Number with SerializationMode 'Lot'.");
-                }
-            }
-        }
-        // the Serial Number can be created with the passed Literal Value
-        return true;
-    }
-
-    /// <summary>
-    /// Create a new Serial Number using SerializationMode. 
-    /// Verifies that LiteralValue can be used as a Value for a Serial Number using the passed Serialization Mode.
-    /// </summary>
-    /// <param name="Mode">The mode of Serialization this Serial Number uses.</param>
-    /// <param name="LiteralValue">The Value to attempt to apply to this Serial Number.</param>
-    /// <exception cref="ArgumentException"></exception>
-    public SerialNumber(SerializationModes Mode, Part Part, object LiteralValue)
-    {
-        this.Mode = Mode;
-        this.Part = Part;
-        this.LiteralValue = LiteralValue;
-        LiteralType = LiteralValue.GetType();
-        // ensure that the passed literal value matches the required Serial Mode type
-        if (!ValidateLiteral())
-        {
-            throw new ArgumentException($"Cannot create a Serial Number of this SerializationMode with the passed literal value '{LiteralValue}'");
-        }
-    }
+    public int Value {get; private set;} = Value;
 
     /// <summary>
     /// Formats the Serial Number as a JSON string that can be written to a File and parsed as JSON text.
@@ -116,8 +39,7 @@ public class SerialNumber
                     $"PartNumber:{Part!.PartNumber}," +
                     $"Process{Part!.ParentProcess}" +
                 "}," +
-                $"LiteralValue:{LiteralValue}," +
-                $"LiteralType:{LiteralType}" +
+                $"Value:{Value}" +
             "}";
     }
 
@@ -136,14 +58,12 @@ public class SerialNumber
     {
         SerializationModes Mode;
         Part Part;
-        object LiteralValue;
-        Type LiteralType;
+        int Value;
         // parse Line into JSON
         JObject JSON = JObject.Parse(Line);
         JToken? RawMode = JSON["Mode"];
         JToken? RawPart = JSON["Part"];
-        JToken? RawLiteralValue = JSON["LiteralValue"];
-        JToken? RawLiteralType = JSON["LiteralType"];
+        JToken? RawValue = JSON["Value"];
         // confirm the Mode key has a valid value and convert it to a SerializationMode
         if (RawMode is null)
         {
@@ -186,46 +106,12 @@ public class SerialNumber
         {
             throw new ArgumentException($"The Part '{PartNumber}' for Process '{ProcessName}' was not defined.");
         }
-        // confirm the LiteralType key has a non-null value and is either int or string
-        if (RawLiteralType is null) 
+        // confirm the Value key has a valid value and that it is of type int
+        if (RawValue is null) 
         {
-            throw new JsonException($"No LiteralType found in cached Serial Number '{Line}'.");
+            throw new JsonException($"No Value found in cached Serial Number '{Line}'.");
         }
-        Type? ParsedType = Type.GetType(RawLiteralType.ToString());
-        if (ParsedType is not null && 
-            (ParsedType.Equals(typeof(int)) || ParsedType.Equals(typeof(string))))
-        {
-            LiteralType = ParsedType;
-        }
-        else
-        {
-            throw new JsonException($"Invalid LiteralType '{ParsedType}'.");
-        }
-        // confirm the LiteralValue key has a valid value and that it matches the LiteralType
-        if (RawLiteralValue is null) 
-        {
-            throw new JsonException($"No LiteralValue found in cached Serial Number '{Line}'.");
-        }
-        if (Mode == SerializationModes.JBK)
-        {
-            try
-            {
-                LiteralValue = int.Parse(RawLiteralValue.ToString());
-            }
-            catch
-            {
-                throw new JsonException($"Invalid LiteralValue '{RawLiteralValue}' for SerializationMode 'JBK'.");
-            }
-        }
-        else
-        {
-            LiteralValue = int.Parse(RawLiteralValue.ToString());
-        }
-        if (!LiteralValue.GetType().Equals(LiteralType))
-        {
-            throw new JsonException($"LiteralValue '{LiteralValue}' is of an invalid Type for SerializationMode 'JBK'.");
-        }
-        // use JToken approach from Client app to parse out data fields
-        return new SerialNumber(Mode, Part, LiteralValue);
+        Value = int.Parse(RawValue.ToString());
+        return new SerialNumber(Mode, Part, Value);
     }
 }
