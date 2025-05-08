@@ -27,6 +27,33 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
     public int Value {get; private set;} = Value;
 
     /// <summary>
+    /// Returns the SerialNumber's value as a string with leading zeroes to enforce formatting.
+    /// </summary>
+    /// <returns></returns>
+    public string GetFormattedValue()
+    {
+        // enforce leading zero-padding format
+        string FormattedNumber = Value.ToString();
+        if (Mode == SerializationModes.JBK) 
+        {
+            // enforce 3-length format
+            while (FormattedNumber.Length < 3) 
+            {
+                FormattedNumber = $"0{FormattedNumber}";
+            }
+        } 
+        else 
+        {
+            // enforce 9-length format
+            while (FormattedNumber.Length < 9) 
+            {
+                FormattedNumber = $"0{FormattedNumber}";
+            }
+        }
+        return FormattedNumber;
+    }
+
+    /// <summary>
     /// Formats the Serial Number as a JSON string that can be written to a File and parsed as JSON text.
     /// </summary>
     /// <returns></returns>
