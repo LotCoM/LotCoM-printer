@@ -2,195 +2,133 @@ using Newtonsoft.Json;
 
 namespace LotCoMPrinter.Models.Datasources;
 
-public class SerialCacheController {
-    // Cache system paths
-    private static readonly string _cacheDir = Path.Join(FileSystem.AppDataDirectory, "SerialCache");
-    private static readonly string _cacheFile = Path.Join(_cacheDir, "serial_cache.json");
-    // runtime cache dictionary
-    private Dictionary<string, int> _cacheDictionary = [];
-    public Dictionary<string, int> CacheDictionary {
-        get {return _cacheDictionary;}
-        set {_cacheDictionary = value;}
+public class SerialCacheController 
+{
+    /// <summary>
+    /// The Directory of the Cache file system.
+    /// </summary>
+    private static readonly string CacheDir = Path.Join(FileSystem.AppDataDirectory, "SerialCache");
+
+    /// <summary>
+    /// The Absolute Path of the Cache file.
+    /// </summary>
+    private static readonly string CacheFile = Path.Join(CacheDir, "serial_cache.json");
+
+    /// <summary>
+    /// Reads the Cache File and returns a List of SerialNumber objects.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="JsonException"></exception>
+    private async Task<List<SerialNumber>> Read() 
+    {
+        // read the cache file and parse each line from JSON to SerialNumber
+        string[] Lines = await File.ReadAllLinesAsync(CacheFile);
+        IEnumerable<Task<SerialNumber>>? ParseTasks = Lines
+            .Select(SerialNumber.ParseJSON);
+        SerialNumber[]? ParseResults = await Task.WhenAll(ParseTasks);
+        // confirm that the Parse was successful
+        if (ParseResults is null) 
+        {
+            return [];
+        }
+        return ParseResults.ToList();
+    }
+
+    /// <summary>
+    /// Saves the passed List of SerialNumber objects to the Cache file.
+    /// </summary>
+    /// <returns></returns>
+    private static void Save(List<SerialNumber> SerialNumbers) 
+    {
+        // serialize the List to a JSON string
+        List<string> JSON = SerialNumbers
+            .Select(x => x
+            .ToJSON())
+            .ToList();
+        string Serialized = JsonConvert.SerializeObject(JSON);
+        // write the serialized string to the cache file
+        File.WriteAllText(CacheFile, Serialized);
     }
 
     /// <summary>
     /// Creates a controlled interface with the Serial Cache File system for the Application instance.
     /// </summary>
-    public SerialCacheController() {
+    public SerialCacheController() 
+    {
         // create the cache directory
-        if (!Directory.Exists(_cacheDir)) {
-            Directory.CreateDirectory(_cacheDir);
+        if (!Directory.Exists(CacheDir)) 
+        {
+            Directory.CreateDirectory(CacheDir);
         }
         // create the cache file
-        if (!File.Exists(_cacheFile)) {
-            File.Create(_cacheFile).Close();
+        if (!File.Exists(CacheFile)) 
+        {
+            File.Create(CacheFile).Close();
             // add JSON braces
-            File.WriteAllText(_cacheFile, "{}");
+            File.WriteAllText(CacheFile, "{}");
         }
     }
 
     /// <summary>
-    /// Reads the Cache File and updates the Cache Dictionary in the runtime CacheDictionary property.
+    /// Reads the Cache file and attempts to find a cached SerialNumber for the Part.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="JsonException"></exception>
-    private async Task Read() {
-        // open the file and get its contents as a serial cache dictionary
-        string CacheFile = await File.ReadAllTextAsync(_cacheFile);
-        CacheDictionary = await Task.Run(() => {
-            // attempt to deserialize the cache file text into a dictionary
-            try {
-                Dictionary<string, int> Dict = JsonConvert.DeserializeObject<Dictionary<string, int>>(CacheFile)!;
-                return Dict;
-            } catch {
-                throw new JsonException($"Failed to deserialize the Serial Cache.");
-            }
-        });
-    }
-
-    /// <summary>
-    /// Saves the passed Dictionary to the Cache file.
-    /// </summary>
-    /// <returns></returns>
-    private void Save() {
-        // serialize the CacheDictionary to a JSON string
-        string Serialized = JsonConvert.SerializeObject(CacheDictionary);
-        // write the serialized string to the cache file
-        File.WriteAllText(_cacheFile, Serialized);
-    }
-
-    /// <summary>
-    /// Converts CacheDictionary into a List of CachedSerialNumber objects.
-    /// </summary>
-    /// <returns></returns>
-    private async Task<List<CachedSerialNumber>> BuildCacheList() {
-        // run the conversion on a new CPU thread
-        List<CachedSerialNumber> CacheList = await Task.Run(() => {
-            List<CachedSerialNumber> List = [];
-            // convert each key/value in the cache dictionary to a Cache object
-            foreach (string _key in CacheDictionary.Keys) {
-                List.Add(new CachedSerialNumber(CacheDictionary[_key].ToString(), _key));
-            }
-            return List;
-        });
-        return CacheList;
-    }
-
-    /// <summary>
-    /// Converts a List of CachedSerialNumber objects into a Cache Dictionary.
-    /// </summary>
-    /// <param name="CacheList"></param>
-    /// <returns></returns>
-    private async Task<Dictionary<string, int>> BuildCacheDictionary(List<CachedSerialNumber> CacheList) {
-        // run the conversion on a new CPU thread
-        Dictionary<string, int> NewCacheDictionary = await Task.Run(() => {
-            Dictionary<string, int> Dict = [];
-            // convert each List index into a key/value in the cache dictionary
-            foreach (CachedSerialNumber _cached in CacheList) {
-                Dict.Add(_cached.GetPartNumber(), int.Parse(_cached.GetSerialNumber()));
-            }
-            return Dict;
-        });
-        return NewCacheDictionary;
-    }
-
-    /// <summary>
-    /// Adds a new Cache object to the cache file.
-    /// </summary>
-    /// <param name="Cachable"></param>
-    /// <returns></returns>
-    private async Task Cache(CachedSerialNumber Cachable) {
-        // add the cache to the dictionary
-        if (!CacheDictionary.ContainsKey(Cachable.GetPartNumber())) {  
-            CacheDictionary.Add(Cachable.GetPartNumber(), int.Parse(Cachable.GetSerialNumber()));
-            // write the cache back to the cache file
-            Save();
-            // update runtime
-            await Read();
+    /// <param name="Part"></param>
+    /// <returns>A cached SerialNumber for the Part; null if not found.</returns>
+    public async Task<SerialNumber?> FindNumberForPart(Part Part) 
+    {
+        // read the file and confirm there is at least one cached SerialNumber
+        List<SerialNumber> SerialNumbers = await Read();
+        if (SerialNumbers.Count > 0)
+        {
+            return null;
         }
-    }
-
-    /// <summary>
-    /// Compiles a CachedSerialNumber object from the parameters, removes any matching objects from the cache, and saves it.
-    /// Deletes the cache files if the cache is empty after the removal.
-    /// </summary>
-    /// <param name="SerialNumber"></param>
-    /// <param name="PartNumber"></param>
-    /// <returns></returns>
-    private async Task Remove(string SerialNumber, string PartNumber) {
-        // convert the Cache Dictionary into a List
-        List<CachedSerialNumber> CacheList = await BuildCacheList();
-        // if the cache is empty, don't waste time
-        try {
-            bool _ = CacheDictionary.Keys.Count > 0;
-        } catch {
-            return;
+        // attempt to find a cached SerialNumber object for the Part
+        List<SerialNumber> Hits = SerialNumbers
+            .Where(x => x.Part
+            .Equals(Part))
+            .ToList();
+        if (Hits.Count > 0) 
+        {
+            return Hits[0];
         }
-        // something exists in the cache; remove the matching cached object (if found)
-        for (int i = 0; i < CacheList.Count; i += 1) {
-            CachedSerialNumber _cached = CacheList[i];
-            // if the numbers match, remove the cached item
-            if (_cached.GetPartNumber().Equals(PartNumber) && _cached.GetSerialNumber().Equals(SerialNumber)) {
-                CacheList.RemoveAt(i);
-                break;
-            }
-        }
-        // convert the List back to a Dictionary
-        CacheDictionary = await BuildCacheDictionary(CacheList);
-        // save the modified cache file
-        Save();
-        // update runtime
-        await Read();
-    }
-
-    /// <summary>
-    /// Reads the Cache and attempts to find a hit for the Part Number.
-    /// </summary>
-    /// <param name="PartNumber"></param>
-    /// <returns>The cached serial number for the Part, as a string; null if not found.</returns>
-    public async Task<string?> FindNumberForPart(string PartNumber) {
-        // read the cache into runtime
-        await Read();
-        // convert the cache dictionary to a List of CachedSerialNumber objects
-        List<CachedSerialNumber> CacheList = await BuildCacheList();
-        // attempt to find a CachedSerialNumber object for the Part Number
-        List<CachedSerialNumber> Hits = CacheList.Where(x => x.IsForPart(PartNumber)).ToList();
-        // return the hit if there was one
-        if (Hits.Count > 0) {
-            return Hits[0].GetSerialNumber();
-        }
-        // no hit was found for the number, return nothing
+        // no hit was found for the number, return null
         return null;
     }
 
     /// <summary>
-    /// Adds a Serial Number to the Cache.
+    /// Adds a new SerialNumber object to the cache file.
     /// </summary>
-    /// <param name="SerialNumber"></param>
-    /// <param name="PartNumber"></param>
+    /// <param name="Cachable"></param>
     /// <returns></returns>
-    public async Task CacheSerialNumber(string SerialNumber, string PartNumber) {
-        // create a new CachedSerialNumber object
-        CachedSerialNumber NewCache = new CachedSerialNumber(SerialNumber, PartNumber);
-        // cache the number
-        await Cache(NewCache);
+    public async Task Cache(SerialNumber Cachable) 
+    {
+        // read the cache file and confirm Cachable is not already there, then add it
+        List<SerialNumber> SerialNumbers = await Read();
+        if (SerialNumbers.Contains(Cachable))
+        {
+            return;
+        }
+        SerialNumbers.Add(Cachable);
+        // write the Cache list back to the Cache file
+        Save(SerialNumbers);
     }
 
     /// <summary>
-    /// Removes a Serial Number from the Cache.
+    /// Removes any objects that match SerialNumber from the Cache.
+    /// Deletes the cache files if the cache is empty after the removal.
     /// </summary>
     /// <param name="SerialNumber"></param>
-    /// <param name="PartNumber"></param>
     /// <returns></returns>
-    public async Task RemoveCachedSerialNumber(string SerialNumber, string PartNumber) {
-        // remove leading zeroes (the cache file will not contain them)
-        if (SerialNumber == "") {
+    public async Task Remove(SerialNumber SerialNumber) 
+    {
+        // read the file and confirm there is at least one cached SerialNumber
+        List<SerialNumber> SerialNumbers = await Read();
+        if (SerialNumbers.Count > 0)
+        {
             return;
         }
-        while (SerialNumber[0].Equals('0')) {
-            SerialNumber = SerialNumber[1..];
-        }
-        // remove any occurrences of the cache object
-        await Remove(SerialNumber, PartNumber);
+        // remove the matching cached SerialNumber (if found)
+        SerialNumbers.Remove(SerialNumber);
+        Save(SerialNumbers);
     }
 }
