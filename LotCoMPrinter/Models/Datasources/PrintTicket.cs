@@ -12,37 +12,37 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="SerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
 /// <param name="SerialNumber"></param>
 /// <param name="ProductionDate"></param>
-public partial class PrintTicket(Department Department, Process Process, Part Part, SerializationModes SerializationMode, string SerialNumber, Timestamp ProductionDate) : ObservableObject()
+public partial class PrintTicket(Department Department, Process Process, Part Part, SerializationModes SerializationMode, SerialNumber SerialNumber, Timestamp ProductionDate) : ObservableObject()
 {
     /// <summary>
     /// The Department that initiated this Print Ticket.
     /// </summary>
-    private Department Department = Department;
+    private readonly Department Department = Department;
 
     /// <summary>
     /// The Process that initiated this Print Ticket.
     /// </summary>
-    private Process Process = Process;
+    private readonly Process Process = Process;
 
     /// <summary>
     /// The Part that this Print Ticket is applied to.
     /// </summary>
-    private Part Part = Part;
+    private readonly Part Part = Part;
 
     /// <summary>
     /// The type of Serial Number used to Serialize this Print Ticket.
     /// </summary>
-    private SerializationModes SerializationMode = SerializationMode;
+    private readonly SerializationModes SerializationMode = SerializationMode;
 
     /// <summary>
     /// The Serial Number (JBK or Lot Number) applied to this Print Ticket.
     /// </summary>
-    private string SerialNumber = SerialNumber;
+    private readonly SerialNumber SerialNumber = SerialNumber;
 
     /// <summary>
     /// The Date and Time at which this Print Ticket was initiated.
     /// </summary>
-    private Timestamp ProductionDate = ProductionDate;
+    private readonly Timestamp ProductionDate = ProductionDate;
 
     private PartialDataSet? _firstPartialDataSet = null;
     /// <summary>
