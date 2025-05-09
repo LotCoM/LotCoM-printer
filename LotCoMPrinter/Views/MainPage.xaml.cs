@@ -228,6 +228,17 @@ public partial class MainPage : ContentPage
         OpenPrintTicketsCollapseButton.Rotation += 180;
     }
 
+	/// <summary>
+    /// Handler for the Clicked event from the OnStartNewLabelButton control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnStartNewLabelButtonClicked(object sender, EventArgs e)
+    {
+		NewPrintTicketForm Form = new NewPrintTicketForm();
+		this.ShowPopup(Form);
+    }
+
 	// full constructor
 	public MainPage() 
 	{

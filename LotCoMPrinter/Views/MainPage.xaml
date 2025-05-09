@@ -55,6 +55,7 @@
         <!-- Start New Label Button -->
         <Button
             x:Name="StartNewLabelButton"
+            Clicked="OnStartNewLabelButtonClicked"
             IsVisible="{Binding Options.IsWindowHeaderShown}"
             Grid.Row="1"
             Grid.Column="0"
