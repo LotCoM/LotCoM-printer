@@ -74,7 +74,7 @@ public partial class MainPageViewModel : ObservableObject
     // full constructor
     public MainPageViewModel() 
     {
-        
+        Options.WindowHeaderLabelText = "Welcome";
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ public partial class MainPageViewModel : ObservableObject
             return Capture;
         }
         // serialize the Label using the Process' Serialization Mode
-        string? SerialNumber = await Serializer.Serialize(Capture);
+        SerialNumber? SerialNumber = await Serializer.Serialize(Capture);
         // no serial number was assigned; this is fatal
         if (SerialNumber is null) 
         {
@@ -104,11 +104,11 @@ public partial class MainPageViewModel : ObservableObject
         // update the Serialized Number in the Capture object
         if (Serialization == SerializationModes.JBK) 
         {
-            Capture.VariableFields.JBKNumber = int.Parse(SerialNumber);
+            Capture.VariableFields.JBKNumber = SerialNumber.Value;
         } 
         else 
         {
-            Capture.VariableFields.LotNumber = SerialNumber;
+            Capture.VariableFields.LotNumber = SerialNumber.GetFormattedValue();
         }
         // return the updated Capture object
         return Capture;
