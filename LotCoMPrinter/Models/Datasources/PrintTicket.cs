@@ -14,7 +14,7 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="SerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
 /// <param name="SerialNumber"></param>
 /// <param name="ProductionDate"></param>
-public partial class PrintTicket(Department Department, Process Process, Part Part, SerializationModes SerializationMode, SerialNumber SerialNumber, Timestamp ProductionDate, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
+public partial class PrintTicket(Department Department, Process Process, Part Part, SerializationModes SerializationMode, SerialNumber SerialNumber, Timestamp ProductionDate, int ProductionShift, string Operator, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
 {
     /// <summary>
     /// The Department that initiated this Print Ticket.
@@ -45,6 +45,16 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
     /// The Date and Time at which this Print Ticket was initiated.
     /// </summary>
     private readonly Timestamp ProductionDate = ProductionDate;
+
+    /// <summary>
+    /// The Shift that this Print Ticket was initiated on.
+    /// </summary>
+    private readonly int ProductionShift = ProductionShift;
+
+    /// <summary>
+    /// The Operator that this Print Ticket was initiated by.
+    /// </summary>
+    private readonly string ProductionOperator = Operator;
 
     private PartialDataSet? _firstPartialDataSet = FirstPartialDataSet;
     /// <summary>
@@ -166,7 +176,7 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
             ModeString = "Lot";
         }
         // build the JSON stream piece-by-piece
-        // Department, Process, Part, SerializationMode, SerialNumber, and Production Date are all universal
+        // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
         string JSON = 
             "{" +
                 "\"Department\":{" +
@@ -180,7 +190,9 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
                 "}," +
                 $"\"SerializationMode\":\"{ModeString}\"," +
                 $"\"SerialNumber\":\"{SerialNumber.ToJSON()}\"," +
-                $"\"ProductionDate\":\"{ProductionDate.Stamp}\"";
+                $"\"ProductionDate\":\"{ProductionDate.Stamp}\"," +
+                $"\"ProductionShift\":\"{ProductionShift}\"," +
+                $"\"ProductionOperator\":\"{ProductionOperator}\"";
         // add partial data sets only if assigned
         if (HasFirstPartialDataSet)
         {
@@ -242,15 +254,33 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
             Mode = SerializationModes.Lot;
         }
         SerialNumber Number = await SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
-        // parse out a timestamp for ProductionDate
-        Timestamp Date;
+        // parse out a timestamp for ProductionDate, Shift number, and Operator
+        Timestamp ParsedDate;
+        int ParsedShift;
+        string ParsedOperator;
         if (DateTime.TryParse(JSON["ProductionDate"]!.ToString(), out DateTime ParsedStamp))
         {
-            Date = new Timestamp(ParsedStamp);
+            ParsedDate = new Timestamp(ParsedStamp);
         }
         else
         {
             throw new JsonException($"Could not parse a Production Date from '{Line}'.");
+        }
+        try
+        {
+            ParsedShift = int.Parse(JSON["ProductionShift"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Production Shift from '{Line}'.");
+        }
+        try
+        {
+            ParsedOperator = JSON["ProductionOperator"]!.ToString();
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse an Operator from '{Line}'.");
         }
         // check for and parse partial data sets
         PartialDataSet? FirstPartialDataSet = null;
@@ -270,7 +300,7 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
             SecondPartialDataSet = new PartialDataSet(Quantity, Shift, Operator);
         }
         // construct the parsed PrintTicket
-        return new PrintTicket(Department, Process, Part, Mode, Number, Date, FirstPartialDataSet, SecondPartialDataSet);
+        return new PrintTicket(Department, Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedOperator, FirstPartialDataSet, SecondPartialDataSet);
     }
 
     /// <summary>
