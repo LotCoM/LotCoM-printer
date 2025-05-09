@@ -169,35 +169,35 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         // Department, Process, Part, SerializationMode, SerialNumber, and Production Date are all universal
         string JSON = 
             "{" +
-                "Department:{" +
-                    $"Title:{Department.Title}" +
+                "\"Department\":{" +
+                    $"\"Title\":\"{Department.Title}\"" +
                 "}," + 
-                "Process:{" +
-                    $"FullName:{Process.FullName}" +
+                "\"Process\":{" +
+                    $"\"FullName\":\"{Process.FullName}\"" +
                 "}," +
-                "Part:{" +
-                    $"PartNumber:{Part.PartNumber}" + 
+                "\"Part\":{" +
+                    $"\"PartNumber\":\"{Part.PartNumber}\"" + 
                 "}," +
-                $"SerializationMode:{ModeString}," +
-                $"SerialNumber:{SerialNumber.ToJSON()}," +
-                $"ProductionDate:{ProductionDate.Stamp}";
+                $"\"SerializationMode\":\"{ModeString}\"," +
+                $"\"SerialNumber\":\"{SerialNumber.ToJSON()}\"," +
+                $"\"ProductionDate\":\"{ProductionDate.Stamp}\"";
         // add partial data sets only if assigned
         if (HasFirstPartialDataSet)
         {
             JSON += 
-                ",FirstPartialDataSet:{" +
-                    $"Quantity:{FirstPartialDataSet!.Quantity}," +
-                    $"Shift:{FirstPartialDataSet!.Shift}," +
-                    $"Operator:{FirstPartialDataSet!.Operator}" +
+                ",\"FirstPartialDataSet\":{" +
+                    $"\"Quantity\":\"{FirstPartialDataSet!.Quantity}\"," +
+                    $"\"Shift\":\"{FirstPartialDataSet!.Shift}\"," +
+                    $"\"Operator\":\"{FirstPartialDataSet!.Operator}\"" +
                 "}";
         }
         if (HasSecondPartialDataSet)
         {
             JSON += 
-                ",SecondPartialDataSet:{" +
-                    $"Quantity:{SecondPartialDataSet!.Quantity}," +
-                    $"Shift:{SecondPartialDataSet!.Shift}," +
-                    $"Operator:{SecondPartialDataSet!.Operator}" +
+                ",\"SecondPartialDataSet\":{" +
+                    $"\"Quantity\":\"{SecondPartialDataSet!.Quantity}\"," +
+                    $"\"Shift\":\"{SecondPartialDataSet!.Shift}\"," +
+                    $"\"Operator\":\"{SecondPartialDataSet!.Operator}\"" +
                 "}";
         }
         // close the JSON stream
