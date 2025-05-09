@@ -89,8 +89,12 @@ public static class PrintTicketCache
         {
             JSON = $"{JSON}{_ticket},";
         }
-        // remove trailing comma, close JSON stream, and write to the cache
-        JSON = JSON[..^1];
+        // check if tickets were added before removing the trailing comma
+        if (Tickets.Count > 0)
+        {
+            JSON = JSON[..^1];
+        }
+        // close JSON stream and write to the cache
         JSON = $"{JSON}]" + "}";
         await File.WriteAllTextAsync(CacheFile, JSON);
     }
