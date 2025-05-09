@@ -32,7 +32,7 @@ public static class PrintTicketCache
         if (!File.Exists(CacheFile)) 
         {
             File.Create(CacheFile).Close();
-            File.WriteAllText(CacheFile, "{Cache:[]}");
+            File.WriteAllText(CacheFile, "{\"Cache\":[]}");
         }
         // read the cache and convert the JSON text to a List of strings
         JObject JSON = JObject.Parse(await File.ReadAllTextAsync(CacheFile));
@@ -146,7 +146,7 @@ public static class PrintTicketCache
     {
         // read the cache, confirm Index is in range and attempt to parse and return a PrintTicket object
         List<string> JSON = await Read();
-        if (Index > JSON.Count)
+        if (Index >= JSON.Count)
         {
             throw new ArgumentOutOfRangeException($"The Index '{Index}' is outside the range of the cache file.");
         }
