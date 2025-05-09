@@ -255,14 +255,14 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         // check for and parse partial data sets
         PartialDataSet? FirstPartialDataSet = null;
         PartialDataSet? SecondPartialDataSet = null;
-        if (Line.Contains("FirstPartialDataSet"))
+        if (JSON.ContainsKey("FirstPartialDataSet"))
         {
             int Quantity = int.Parse(JSON["FirstPartialDataSet"]!["Quantity"]!.ToString());
             int Shift = int.Parse(JSON["FirstPartialDataSet"]!["Shift"]!.ToString());
             string Operator = JSON["FirstPartialDataSet"]!["Operator"]!.ToString();
             FirstPartialDataSet = new PartialDataSet(Quantity, Shift, Operator);
         }
-        if (Line.Contains("SecondPartialDataSet"))
+        if (JSON.ContainsKey("SecondPartialDataSet"))
         {
             int Quantity = int.Parse(JSON["SecondPartialDataSet"]!["Quantity"]!.ToString());
             int Shift = int.Parse(JSON["SecondPartialDataSet"]!["Shift"]!.ToString());
