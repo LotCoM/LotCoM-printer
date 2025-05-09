@@ -35,6 +35,8 @@ public partial class MainPageOptions(): ObservableObject()
         public const VariableFieldSet DisplayedVariableFields = null;
         public const OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
         public const bool IsOpenPrintTicketsPanelShown = false;
+        public const bool IsWindowHeaderShown = true;
+        public const string WindowHeaderLabelText = "";
     }
 
     /// <summary>
@@ -116,6 +118,18 @@ public partial class MainPageOptions(): ObservableObject()
     /// </summary>
     [ObservableProperty]
     public partial bool IsOpenPrintTicketsPanelShown {get; set;} = DefaultOptions.IsOpenPrintTicketsPanelShown;
+
+    /// <summary>
+    /// Provides the Visibility state of the Window Header.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsWindowHeaderShown {get; set;} = DefaultOptions.IsWindowHeaderShown;
+
+    /// <summary>
+    /// Provides the text to display on the Window Header Label.
+    /// </summary>
+    [ObservableProperty]
+    public partial string WindowHeaderLabelText {get; set;} = DefaultOptions.WindowHeaderLabelText;
 
     /// <summary>
     /// Opens the Open Print Tickets Panel.
