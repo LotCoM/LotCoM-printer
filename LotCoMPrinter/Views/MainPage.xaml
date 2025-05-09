@@ -17,6 +17,8 @@
     <!-- Main Layout Grid (Active Ticket and Open Tickets Columns) -->
     <Grid>
         <Grid.RowDefinitions>
+            <!-- Window Header Row -->
+            <RowDefinition Height="Auto"/>
             <!-- Main Layout Row -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -27,9 +29,43 @@
             <ColumnDefinition Width="{Binding Options.OpenPrintTicketsPanelWidth}"/>
         </Grid.ColumnDefinitions>
         
+        <!-- Window Header -->
+        <HorizontalStackLayout
+            Grid.Row="0"
+            Grid.Column="0"
+            IsVisible="{Binding Options.IsWindowHeaderShown}">
+            <VerticalStackLayout>
+                <Label
+                    Margin="20,10,0,0"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    FontSize="20"
+                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                    Text="{Binding Options.WindowHeaderLabelText}"/>
+                <Label
+                    Margin="20,10,0,0"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    FontSize="14"
+                    TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                    Text="Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below."/>
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+
+        <!-- Start New Label Button -->
+        <Button
+            x:Name="StartNewLabelButton"
+            IsVisible="{Binding Options.IsWindowHeaderShown}"
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="20,0,0,10"
+            HorizontalOptions="Start"
+            VerticalOptions="End"
+            Text="Start New Label"/>
+
         <!-- ScrollView for Active Print Ticket Display -->
         <ScrollView
-            Grid.Row="0"
+            Grid.Row="1"
             Grid.Column="0"
             IsVisible="{Binding Options.HasActivePrintTicket}"> <!-- "{Binding Options.HasActivePrintTicket}" -->
             <!-- Layout Grid -->
@@ -865,6 +901,7 @@
         <!-- Grid for Open Print Tickets Panel -->
         <Grid
             Grid.Row="0"
+            Grid.RowSpan="2"
             Grid.Column="1">
             <Grid.RowDefinitions>
                 <!-- Header Row -->
@@ -884,6 +921,7 @@
                 IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
                 Grid.Row="0"
                 Grid.Column="0"
+                Margin="0,20,0,0"
                 Text="In-Process Labels"
                 HorizontalOptions="Center"
                 VerticalOptions="Start"/>
@@ -898,16 +936,16 @@
             <Button
                 x:Name="OpenPrintTicketsCollapseButton"
                 Clicked="OnOpenPrintTicketsCollapseButtonClicked"
-                Margin="0"
+                Margin="0,0,0,10"
                 Padding="10"
                 Grid.Row="2"
                 Grid.Column="0"
-                VerticalOptions="Start"
+                VerticalOptions="End"
                 HorizontalOptions="End"
                 HeightRequest="30"
                 WidthRequest="30"
                 CornerRadius="30"
-                ImageSource="{AppThemeBinding Light=left_arrow_black.png, Dark=left_arrow_white.png}"/>
+                ImageSource="{AppThemeBinding Light=left_arrow_white.png, Dark=left_arrow_black.png}"/>
             <!-- Panel Left Border -->
             <BoxView
                 x:Name="OpenPrintTicketsLeftBorder"
@@ -917,7 +955,8 @@
                 Grid.Column="0"
                 WidthRequest="1"
                 VerticalOptions="Fill"
-                HorizontalOptions="Start"/>
+                HorizontalOptions="Start"
+                Color="{StaticResource Gray500}"/>
         </Grid>
     </Grid>
 </ContentPage>
