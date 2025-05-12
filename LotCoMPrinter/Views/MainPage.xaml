@@ -127,97 +127,34 @@
                         FontSize="20"
                         TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                         Text="{Binding ActivePrintTicket.Title, StringFormat='Input for Label: {0}'}"/>
-                    <!-- Process Input Horizontal Layout-->
-                    <HorizontalStackLayout
+                    <!-- Process Label -->
+                    <Label
                         Grid.Row="1"
                         Grid.Column="0"
-                        Grid.ColumnSpan="2">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="ProcessLabel"
-                            Margin="10,0,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
-                            Text="Process"/>
-                        <!-- Input Picker Control and Border -->
-                        <Border
-                            x:Name="ProcessControl"
-                            Margin="10,5,5,12"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="250"
-                            HeightRequest="40"
-                            Stroke="#88ACACAC"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10"
-                            Background="#00000000">
-                            <Picker
-                                x:Name="ProcessPicker"
-                                ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ViewModels:MainPageViewModel}}, Path=AllProcesses}"
-                                ItemDisplayBinding="{Binding FullName}"
-                                SelectedIndex="{Binding Options.SelectedProcessIndex}"
-                                SelectedIndexChanged="OnProcessSelection">
-                            </Picker>
-                        </Border>
-                        <!-- Originator/Pass-through Indicator Card -->
-                        <Border
-                            x:Name="ProcessTypeCard"
-                            Margin="5"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            HeightRequest="25"
-                            WidthRequest="85"
-                            Stroke="#00ACACAC"
-                            StrokeThickness="0"
-                            StrokeShape="RoundRectangle 10,10,10,10"
-                            Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
-                            <Label
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                x:Name="ProcessTypeLabel"
-                                Text="{Binding Options.SelectedProcess.Type}"
-                                TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-                                FontSize="11"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Part Input Horizontal Layout -->
-                    <HorizontalStackLayout
+                        Grid.ColumnSpan="2"
+                        x:Name="ProcessLabel"
+                        FontSize="14"
+                        TextColor="{StaticResource Secondary}"
+                        Margin="10,10,0,10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="250"
+                        MinimumWidthRequest="250"
+                        Text="{Binding ActivePrintTicket.Process.FullName, StringFormat='Process: {0}'}"/>
+                    <!-- Part Label -->
+                    <Label
                         Grid.Row="2"
                         Grid.Column="0"
-                        Grid.ColumnSpan="2">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="PartLabel"
-                            Margin="10,0,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
-                            Text="Part"/>
-                        <!-- Input Picker Control and Border -->
-                        <Border
-                            x:Name="PartControl"
-                            Margin="10,5,5,12"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="250"
-                            HeightRequest="40"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Stroke="#88ACACAC"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10"
-                            Background="#00000000">
-                            <Picker
-                                x:Name="PartPicker"
-                                ItemsSource="{Binding Options.SelectedProcessParts}"
-                                ItemDisplayBinding="{Binding GetInfo}"
-                                SelectedIndex="{Binding Options.SelectedPartIndex}"
-                                SelectedIndexChanged="OnPartSelection"/>
-                        </Border>
-                    </HorizontalStackLayout>
+                        Grid.ColumnSpan="2"
+                        x:Name="PartLabel"
+                        FontSize="14"
+                        TextColor="{StaticResource Secondary}"
+                        Margin="10,10,0,40"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="250"
+                        MinimumWidthRequest="250"
+                        Text="{Binding ActivePrintTicket.Part.GetInfo, StringFormat='Part: {0}'}"/>
                     <!-- Production Date Input Horizontal Layout -->
                     <HorizontalStackLayout
                         Grid.Row="3"
@@ -238,14 +175,16 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="250"
+                            WidthRequest="125"
                             HeightRequest="40"
                             Stroke="#88ACACAC"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
                             <DatePicker
-                                x:Name="ProductionDatePicker"/>
+                                x:Name="ProductionDatePicker"
+                                IsEnabled="False"
+                                Date="{Binding ActivePrintTicket.ProductionDate}"/>
                         </Border>
                     </HorizontalStackLayout>
                     <!-- Quantity / Shift / Operator Input Grid Layout -->
@@ -292,9 +231,11 @@
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
                                 <Picker
-                                    x:Name="ShiftPicker">
+                                    x:Name="ShiftPicker"
+                                    IsEnabled="False"
+                                    SelectedItem="{Binding ActivePrintTicket.ProductionShift}">
                                     <Picker.ItemsSource>
-                                        <x:Array Type ="{x:Type x:Int32}">
+                                        <x:Array Type="{x:Type x:Int32}">
                                             <x:Int32>1</x:Int32>
                                             <x:Int32>2</x:Int32>
                                             <x:Int32>3</x:Int32>
@@ -359,6 +300,8 @@
                                 Background="#00000000">
                                 <Entry
                                     x:Name="OperatorEntry"
+                                    IsEnabled="False"
+                                    Text="{Binding ActivePrintTicket.ProductionOperator}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -370,7 +313,7 @@
                         Grid.ColumnSpan="3">
                         <!-- JBK Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.JBKNumber}">
+                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.JBKNumber}">
                             <!-- JBK Input Label -->
                             <Label
                                 x:Name="JBKNumberLabel"
@@ -401,7 +344,7 @@
                         </HorizontalStackLayout>
                         <!-- Lot Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.LotNumber}">
+                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.LotNumber}">
                             <!-- Lot Input Label -->
                             <Label
                                 x:Name="LotNumberLabel"
@@ -432,7 +375,7 @@
                         </HorizontalStackLayout>
                         <!-- Deburr JBK Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.DeburrJBKNumber}">
+                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.DeburrJBKNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="DeburrJBKNumberLabel"
@@ -462,7 +405,7 @@
                         </HorizontalStackLayout>
                         <!-- Die Number Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.DieNumber}">
+                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.DieNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="DieNumberLabel"
@@ -492,7 +435,7 @@
                         </HorizontalStackLayout>
                         <!-- Model Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.ModelNumber}">
+                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.ModelNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="ModelNumberLabel"
@@ -522,7 +465,7 @@
                         </HorizontalStackLayout>
                         <!-- Heat Number Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding Options.SelectedProcess.RequiredFields.HeatNumber}">
+                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.HeatNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="HeatNumberLabel"
@@ -930,8 +873,17 @@
             <ListView
                 x:Name="OpenPrintTicketsListView"
                 IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
+                SelectedItem="{Binding Options.SelectedPrintTicketIndex}"
+                ItemsSource="{Binding OpenPrintTickets}"
                 Grid.Row="1"
                 Grid.Column="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate
+                        x:DataType="Datasources:PrintTicket">
+                        <Label 
+                            Text="{Binding Title}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
             <!-- Panel Collapse/Raise Button -->
             <Button
