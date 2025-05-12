@@ -177,7 +177,7 @@
                             VerticalOptions="Start"
                             WidthRequest="125"
                             HeightRequest="40"
-                            Stroke="#88ACACAC"
+                            Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
@@ -226,7 +226,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="100"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -265,7 +265,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="100"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -294,7 +294,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="100"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -331,7 +331,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="150"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -362,7 +362,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="150"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -393,7 +393,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="150"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -423,7 +423,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="150"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -453,7 +453,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="150"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -483,7 +483,7 @@
                                 VerticalOptions="Start"
                                 WidthRequest="150"
                                 HeightRequest="40"
-                                Stroke="#88ACACAC"
+                                Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 10,10,10,10"
                                 Background="#00000000">
@@ -501,7 +501,7 @@
                     HeightRequest="1"
                     HorizontalOptions="Fill"
                     VerticalOptions="Center"
-                    BackgroundColor="#88ACACAC"/>
+                    BackgroundColor="{StaticResource Gray500}"/>
                 <!-- First Partial Production Dataset Grid Layout -->
                 <Grid
                     Grid.Row="2"
@@ -556,7 +556,7 @@
                             VerticalOptions="Start"
                             WidthRequest="100"
                             HeightRequest="40"
-                            Stroke="#88ACACAC"
+                            Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
@@ -594,7 +594,7 @@
                             VerticalOptions="Start"
                             WidthRequest="100"
                             HeightRequest="40"
-                            Stroke="#88ACACAC"
+                            Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
@@ -624,7 +624,7 @@
                             VerticalOptions="Start"
                             WidthRequest="100"
                             HeightRequest="40"
-                            Stroke="#88ACACAC"
+                            Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
@@ -667,7 +667,7 @@
                     HeightRequest="1"
                     HorizontalOptions="Fill"
                     VerticalOptions="Center"
-                    BackgroundColor="#88ACACAC"/>
+                    BackgroundColor="{StaticResource Gray500}"/>
                 <!-- Second Partial Production Dataset Grid Layout -->
                 <Grid
                     Grid.Row="4"
@@ -722,7 +722,7 @@
                             VerticalOptions="Start"
                             WidthRequest="100"
                             HeightRequest="40"
-                            Stroke="#88ACACAC"
+                            Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
@@ -760,7 +760,7 @@
                             VerticalOptions="Start"
                             WidthRequest="100"
                             HeightRequest="40"
-                            Stroke="#88ACACAC"
+                            Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
@@ -790,7 +790,7 @@
                             VerticalOptions="Start"
                             WidthRequest="100"
                             HeightRequest="40"
-                            Stroke="#88ACACAC"
+                            Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10"
                             Background="#00000000">
@@ -845,7 +845,7 @@
                     Clicked="OnCloseActivePrintTicketButtonClicked"
                     Grid.Row="7"
                     Grid.Column="2"
-                    Margin="0,0,10,0"
+                    Margin="0,0,10,10"
                     Padding="0"
                     WidthRequest="100"
                     HeightRequest="40"
@@ -889,12 +889,76 @@
                 SelectedItem="{Binding Options.SelectedPrintTicketIndex}"
                 ItemsSource="{Binding OpenPrintTickets}"
                 Grid.Row="1"
-                Grid.Column="0">
+                Grid.Column="0"
+                Margin="10"
+                HorizontalOptions="Start"
+                VerticalOptions="Start">
                 <ListView.ItemTemplate>
                     <DataTemplate
                         x:DataType="Datasources:PrintTicket">
-                        <Label 
-                            Text="{Binding Title}"/>
+                        <!-- Configurable ListView Grid Layout -->
+                        <ViewCell>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <!-- Process & Date Row -->
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Title & Shift Row -->
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <!-- Process / Title Column -->
+                                    <ColumnDefinition Width="*"/>
+                                    <!-- Date / Shift Column -->
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Process Label -->
+                                <Label 
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="0,5,0,0"
+                                    Text="{Binding Process.FullName}"
+                                    FontSize="12"
+                                    HorizontalOptions="Start"
+                                    VerticalOptions="Center"/>
+                                <!-- Date Label -->
+                                <Label 
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="0,5,0,0"
+                                    Text="{Binding ProductionDateNoTime}"
+                                    FontSize="12"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center"/>
+                                <!-- Title Label -->
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="0,5,0,0"
+                                    Text="{Binding Title}"
+                                    FontSize="12"
+                                    HorizontalOptions="Start"
+                                    VerticalOptions="Center"/>
+                                <!-- Shift Label -->
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="0,5,0,0"
+                                    Text="{Binding ProductionShift}"
+                                    FontSize="12"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center"/>
+                                <!-- Bottom Border -->
+                                <BoxView
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,5,0,0"
+                                    HeightRequest="1"
+                                    HorizontalOptions="Fill"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{StaticResource Gray500}"/>
+                            </Grid>
+                        </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -940,7 +1004,7 @@ Old UI Elements
     Grid.Row="2"
     Grid.Column="0"
     Grid.ColumnSpan="2"
-    Stroke="#88ACACAC"
+    Stroke="{StaticResource Gray500}"
     StrokeThickness="1"
     StrokeShape="RoundRectangle 10,10,10,10"
     Background="#00000000">
