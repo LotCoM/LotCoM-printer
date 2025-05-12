@@ -70,12 +70,6 @@ public partial class MainPageViewModel : ObservableObject
             OnPropertyChanged(nameof(Printing));
         }
     }
-    
-    // full constructor
-    public MainPageViewModel() 
-    {
-        Options.WindowHeaderLabelText = "Welcome";
-    }
 
     /// <summary>
     /// Checks if the Process requires Serialization (is an origination process).
@@ -95,7 +89,7 @@ public partial class MainPageViewModel : ObservableObject
             return Capture;
         }
         // serialize the Label using the Process' Serialization Mode
-        SerialNumber? SerialNumber = await Serializer.Serialize(Capture);
+        SerialNumber? SerialNumber = await Serializer.Serialize(Capture.Process, Capture.Part);
         // no serial number was assigned; this is fatal
         if (SerialNumber is null) 
         {
@@ -193,6 +187,14 @@ public partial class MainPageViewModel : ObservableObject
         }
         // the Capture is valid and processed; return it
         return Capture;
+    }
+    
+    /// <summary>
+    /// Create a ViewModel to control the logic of a Main Page instance.
+    /// </summary>
+    public MainPageViewModel() 
+    {
+        Options.WindowHeaderLabelText = "Welcome";
     }
 
     /// <summary>
@@ -367,6 +369,41 @@ public partial class MainPageViewModel : ObservableObject
             // create and add a blank PartialDataSet object to the ticket
             PartialDataSet EmptyDataSet = new PartialDataSet();
             ActivePrintTicket.AddPartialDataSet(EmptyDataSet);
+        }
+    }
+
+    /// <summary>
+    /// Adds a new Print Ticket to the ViewModel's OpenPrintTicket List.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    public void AddOpenPrintTicket(PrintTicket Ticket)
+    {
+        OpenPrintTickets.Add(Ticket);
+    }
+
+    /// <summary>
+    /// Updates the Page's active PrintTicket object.
+    /// Omitting Index will set the property to the most-recently added PrintTicket.
+    /// </summary>
+    /// <param name="Index"></param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    public void SetActivePrintTicket(int Index = -1)
+    {
+        // if Index not passed, set to the most recently added Ticket, else set to the Ticket at Index
+        if (Index == -1 && OpenPrintTickets.Count > 0)
+        {
+            ActivePrintTicket = OpenPrintTickets[^1];
+        }
+        else
+        {
+            if (Index <= OpenPrintTickets.Count)
+            {
+                ActivePrintTicket = OpenPrintTickets[Index];
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("There is no PrintTicket at the passed Index.");
+            }
         }
     }
 }
