@@ -1,3 +1,4 @@
+using LotCoMPrinter.Models.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -46,12 +47,20 @@ public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit)
     public async Task<SerialNumber> ConsumeAsync(Part Part) 
     {
         // retrieve the Queue
-        JObject Queue = await ReadAsync();
+        JObject Queue;
+        try
+        {
+            Queue = await ReadAsync();
+        }
+        catch
+        {
+            throw new SerializationException("Failed to read the Serial queue files.");
+        }
         // access the queued Serial Number for the Part
         JToken? Raw = Queue[Part.PartNumber];
         if (Raw is null)
         {
-            throw new ArgumentException($"No Queue found for the Part '{Part.PartNumber} {Part.PartName}'.");
+            throw new SerializationException($"No Queue found for the Part '{Part.PartNumber} {Part.PartName}'.");
         }
         int Queued;
         try
@@ -60,7 +69,7 @@ public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit)
         }
         catch
         {
-            throw new ArgumentException($"Failed to parse an integer from the Queue for the Part '{Part.PartNumber} {Part.PartName}'.");
+            throw new SerializationException($"Failed to parse an integer from the Queue for the Part '{Part.PartNumber} {Part.PartName}'.");
         }
         // increment the queue
         if (Queued >= Limit) 
