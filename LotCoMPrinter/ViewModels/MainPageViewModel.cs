@@ -353,5 +353,13 @@ public partial class MainPageViewModel : ObservableObject
             }
         }
     }
+
+    /// <summary>
+    /// Closes the Active Print Ticket display, returning to the Welcome menu.
+    /// </summary>
+    public void CloseActivePrintTicket()
+    {
+        Options.CloseActivePrintTicket();
+    }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
