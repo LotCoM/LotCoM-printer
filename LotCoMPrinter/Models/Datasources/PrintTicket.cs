@@ -8,47 +8,79 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <summary>
 /// Provides a structure for the creation and maintenance of a Printing Ticket.
 /// </summary>
-/// <param name="Process">The Process that initiated this Print Ticket.</param>
-/// <param name="Part">The Part that this Print Ticket is applied to.</param>
-/// <param name="SerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
-/// <param name="SerialNumber"></param>
-/// <param name="ProductionDate"></param>
-public partial class PrintTicket(Process Process, Part Part, SerializationModes SerializationMode, SerialNumber SerialNumber, Timestamp ProductionDate, int ProductionShift, string Operator, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
+/// <param name="TicketProcess">The Process that initiated this Print Ticket.</param>
+/// <param name="TicketPart">The Part that this Print Ticket is applied to.</param>
+/// <param name="TicketSerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
+/// <param name="TicketSerialNumber">The Serial Number to apply to this Print Ticket.</param>
+/// <param name="TicketProductionDate">The Date on which this Print Ticket was initiated.</param>
+/// <param name="TicketProductionShift">The Shift that this Print Ticket was initiated on.</param>
+/// <param name="TicketOperator">The Operator that initiated this Print Ticket.</param>
+/// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
+/// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
+public partial class PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, string TicketOperator, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
 {
+    private readonly Process _process = TicketProcess;
     /// <summary>
     /// The Process that initiated this Print Ticket.
     /// </summary>
-    private readonly Process Process = Process;
+    public Process Process
+    {
+        get {return _process;}
+    }
 
+    private readonly Part _part = TicketPart;
     /// <summary>
     /// The Part that this Print Ticket is applied to.
     /// </summary>
-    private readonly Part Part = Part;
+    public Part Part
+    {
+        get {return _part;}
+    } 
 
+    private readonly SerializationModes _serializationMode = TicketSerializationMode;
     /// <summary>
     /// The type of Serial Number used to Serialize this Print Ticket.
     /// </summary>
-    private readonly SerializationModes SerializationMode = SerializationMode;
+    public SerializationModes SerializationMode
+    {
+        get {return _serializationMode;}
+    }
 
+    private readonly SerialNumber _serialNumber = TicketSerialNumber;
     /// <summary>
     /// The Serial Number (JBK or Lot Number) applied to this Print Ticket.
     /// </summary>
-    private readonly SerialNumber SerialNumber = SerialNumber;
+    public SerialNumber SerialNumber
+    {
+        get {return _serialNumber;}
+    }
 
+    private readonly DateTime _productionDate = TicketProductionDate;
     /// <summary>
     /// The Date and Time at which this Print Ticket was initiated.
     /// </summary>
-    private readonly Timestamp ProductionDate = ProductionDate;
+    public DateTime ProductionDate
+    {
+        get {return _productionDate;}
+    }
 
+    private readonly int _productionShift = TicketProductionShift;
     /// <summary>
     /// The Shift that this Print Ticket was initiated on.
     /// </summary>
-    private readonly int ProductionShift = ProductionShift;
+    public int ProductionShift
+    {
+        get {return _productionShift;}
+    }
 
+    private readonly string _productionOperator = TicketOperator;
     /// <summary>
     /// The Operator that this Print Ticket was initiated by.
     /// </summary>
-    private readonly string ProductionOperator = Operator;
+    public string ProductionOperator
+    {
+        get {return _productionOperator;}
+    }
 
     private PartialDataSet? _firstPartialDataSet = FirstPartialDataSet;
     /// <summary>
@@ -181,7 +213,7 @@ public partial class PrintTicket(Process Process, Part Part, SerializationModes 
                 "}," +
                 $"\"SerializationMode\":\"{ModeString}\"," +
                 $"\"SerialNumber\":\"{SerialNumber.ToJSON()}\"," +
-                $"\"ProductionDate\":\"{ProductionDate.Stamp}\"," +
+                $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
                 $"\"ProductionShift\":\"{ProductionShift}\"," +
                 $"\"ProductionOperator\":\"{ProductionOperator}\"";
         // add partial data sets only if assigned
@@ -244,12 +276,12 @@ public partial class PrintTicket(Process Process, Part Part, SerializationModes 
         }
         SerialNumber Number = await SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
         // parse out a timestamp for ProductionDate, Shift number, and Operator
-        Timestamp ParsedDate;
+        DateTime ParsedDate;
         int ParsedShift;
         string ParsedOperator;
         if (DateTime.TryParse(JSON["ProductionDate"]!.ToString(), out DateTime ParsedStamp))
         {
-            ParsedDate = new Timestamp(ParsedStamp);
+            ParsedDate = ParsedStamp;
         }
         else
         {
