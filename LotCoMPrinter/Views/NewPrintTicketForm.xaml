@@ -88,7 +88,7 @@
                     VerticalOptions="Start"
                     WidthRequest="250"
                     HeightRequest="40"
-                    Stroke="#88ACACAC"
+                    Stroke="{StaticResource Gray500}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 10,10,10,10"
                     Background="#00000000">
@@ -144,7 +144,7 @@
                     VerticalOptions="Start"
                     WidthRequest="250"
                     HeightRequest="40"
-                    Stroke="#88ACACAC"
+                    Stroke="{StaticResource Gray500}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 10,10,10,10"
                     Background="#00000000">
@@ -181,12 +181,13 @@
                         VerticalOptions="Center"
                         WidthRequest="125"
                         HeightRequest="40"
-                        Stroke="#88ACACAC"
+                        Stroke="{StaticResource Gray500}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 10,10,10,10"
                         Background="#00000000">
                         <DatePicker
-                            x:Name="ProductionDatePicker"/>
+                            x:Name="ProductionDatePicker"
+                            Date="{Binding ProductionDate}"/>
                     </Border>
                 </HorizontalStackLayout>
 
@@ -211,12 +212,13 @@
                         VerticalOptions="Center"
                         WidthRequest="75"
                         HeightRequest="40"
-                        Stroke="#88ACACAC"
+                        Stroke="{StaticResource Gray500}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 10,10,10,10"
                         Background="#00000000">
                         <Picker
-                            x:Name="ShiftPicker">
+                            x:Name="ShiftPicker"
+                            SelectedItem="{Binding ProductionShift}">
                             <Picker.ItemsSource>
                                 <x:Array Type ="{x:Type x:Int32}">
                                     <x:Int32>1</x:Int32>
@@ -247,12 +249,13 @@
                         VerticalOptions="Start"
                         WidthRequest="75"
                         HeightRequest="40"
-                        Stroke="#88ACACAC"
+                        Stroke="{StaticResource Gray500}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 10,10,10,10"
                         Background="#00000000">
                         <Entry
                             x:Name="OperatorEntry"
+                            Text="{Binding ProductionOperator}"
                             MaxLength="3"/>
                     </Border>
                 </HorizontalStackLayout>
