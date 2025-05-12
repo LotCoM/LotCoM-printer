@@ -233,10 +233,21 @@ public partial class MainPage : ContentPage
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnStartNewLabelButtonClicked(object sender, EventArgs e)
+    private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
     {
 		NewPrintTicketForm Form = new NewPrintTicketForm();
-		this.ShowPopup(Form);
+		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
+		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
+		if (Result is null)
+		{
+			return;
+		}
+		if (Result.GetType().Equals(typeof(PrintTicket)))
+		{
+			ViewModel.AddOpenPrintTicket((PrintTicket)Result);
+		}
+		// change the ViewModel's ActivePrintTicket
+		ViewModel.SetActivePrintTicket();
     }
 
 	// full constructor
