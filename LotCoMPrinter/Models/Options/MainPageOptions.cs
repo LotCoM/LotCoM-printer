@@ -43,13 +43,6 @@ public partial class MainPageOptions(): ObservableObject()
     public partial int SelectedPrintTicketIndex {get; set;} = DefaultOptions.SelectedPrintTicketIndex;
 
     /// <summary>
-    /// Controls the displayed VariableFieldSet for the active PrintTicket.
-    /// Allows the UI to display dummy values without interfering with back-end logic.
-    /// </summary>
-    [ObservableProperty]
-    public partial VariableFieldSet? DisplayedVariableFields {get; set;} = DefaultOptions.DisplayedVariableFields;
-
-    /// <summary>
     /// Provides the width Option of the Open Print Tickets Panel.
     /// </summary>
     [ObservableProperty]
