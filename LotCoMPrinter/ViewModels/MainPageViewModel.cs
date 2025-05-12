@@ -12,10 +12,14 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject 
 {
+    private List<PrintTicket> _openPrintTickets = [];
     /// <summary>
     /// The List of Open Print Tickets currently saved locally.
     /// </summary>
-    private List<PrintTicket> OpenPrintTickets = [];
+    public List<PrintTicket> OpenPrintTickets
+    {
+        get {return _openPrintTickets;}
+    }
 
     private readonly List<Process> _allProcesses = new ProcessData().GetAllProcesses();
     /// <summary>
@@ -198,55 +202,6 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Updates the Page's Selected Process and its Part Data.
-    /// </summary>
-    /// <param name="Process"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedProcess(Process Process) 
-    {
-        await Task.Run(() => 
-        {
-            // update the SelectedProcess properties
-            if (Process is null) 
-            {
-                throw new ArgumentException($"Process '{Process}' was not found in Process masterlist.");
-            }
-            // update SelectedProcess and assign the new list of Parts (as objects) to the SelectedProcessParts list
-            Options.SelectedProcess = Process;
-            Options.SelectedProcessParts = Options.SelectedProcess.Parts;
-        });
-    }
-
-    /// <summary>
-    /// Updates the Page's Selected Part and Model Number.
-    /// </summary>
-    /// <param name="Part"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedPart(Part Part) 
-    {
-        await Task.Run(() => 
-        {
-            // configure the SelectedPart property
-            try 
-            {
-                // update the SelectedPart property and the DisplayedModelNumber property
-                if (Part is null) {
-                    throw new ArgumentException($"Part '{Part}' was not found in Process Part list.");
-                }
-                Options.SelectedPart = Part;
-                Options.DisplayedVariableFields!.ModelNumber = Options.SelectedPart.ModelNumber;
-            // the selected part number was somehow invalid
-            } 
-            catch (ArgumentException) 
-            {
-                throw new ArgumentException($"Part '{Part}' was not found in Process Part list.");
-            }
-        });
-    }
-
-    /// <summary>
     /// Processes a Print Request from the user. 
     /// Captures the interface and validates it, then creates a new Label object from that captured data.
     /// </summary>
@@ -353,7 +308,7 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public void Reset() 
     {
-        Options.SelectedPart = null;
+        ActivePrintTicket = null;
         Options.DisplayedVariableFields = null;
     }
 
@@ -363,8 +318,7 @@ public partial class MainPageViewModel : ObservableObject
     /// <param name="DataSet"></param>
     public void AddPartialDataSet()
     {
-        if (ActivePrintTicket is not null
-            && ActivePrintTicket.HasSpace)
+        if (ActivePrintTicket is not null && ActivePrintTicket.HasSpace)
         {
             // create and add a blank PartialDataSet object to the ticket
             PartialDataSet EmptyDataSet = new PartialDataSet();
@@ -393,12 +347,14 @@ public partial class MainPageViewModel : ObservableObject
         if (Index == -1 && OpenPrintTickets.Count > 0)
         {
             ActivePrintTicket = OpenPrintTickets[^1];
+            Options.OpenActivePrintTicket(Index);
         }
         else
         {
             if (Index <= OpenPrintTickets.Count)
             {
                 ActivePrintTicket = OpenPrintTickets[Index];
+                Options.OpenActivePrintTicket(Index);
             }
             else
             {
