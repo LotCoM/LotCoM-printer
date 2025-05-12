@@ -90,4 +90,25 @@ public partial class MainPageOptions(): ObservableObject()
         OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
         IsOpenPrintTicketsPanelShown = false;
     }
+
+    /// <summary>
+    /// Opens the UI View of SelectedPrintTicket.
+    /// </summary>
+    /// <param name="Index"></param>
+    public void OpenActivePrintTicket(int Index)
+    {
+        HasActivePrintTicket = true;
+        SelectedPrintTicketIndex = Index;
+        IsWindowHeaderShown = false;
+    }
+
+    /// <summary>
+    /// Closes the UI View of SelectedPrintTicket.
+    /// </summary>
+    public void CloseActivePrintTicket()
+    {
+        HasActivePrintTicket = false;
+        SelectedPrintTicketIndex = -1;
+        IsWindowHeaderShown = true;
+    }
 }
