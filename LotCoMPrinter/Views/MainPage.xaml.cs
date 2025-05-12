@@ -170,6 +170,14 @@ public partial class MainPage : ContentPage
 		ViewModel.SetActivePrintTicket();
     }
 
+	/// <summary>
+	/// Handler for the Clicked event from the CloseActivePrintTicketButton control.
+	/// </summary>
+	private void OnCloseActivePrintTicketButtonClicked(object sender, EventArgs e)
+	{
+		ViewModel.CloseActivePrintTicket();
+	}
+
 	// full constructor
 	public MainPage() 
 	{
