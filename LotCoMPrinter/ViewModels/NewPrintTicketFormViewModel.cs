@@ -181,6 +181,6 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         {
             throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
         }
-        return new PrintTicket(Process, Part, Process.Serialization, TicketNumber, new Timestamp(ProductionDate), (int)ProductionShift, ProductionOperator);
+        return new PrintTicket(Process, Part, Process.Serialization, TicketNumber, ProductionDate, (int)ProductionShift, ProductionOperator);
     }
 }
