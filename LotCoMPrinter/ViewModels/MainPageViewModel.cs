@@ -304,15 +304,6 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Resets the ViewModel's public properties.
-    /// </summary>
-    public void Reset() 
-    {
-        ActivePrintTicket = null;
-        Options.DisplayedVariableFields = null;
-    }
-
-    /// <summary>
     /// Attempts to add a blank PartialDataSet object to the Active Print Ticket.
     /// </summary>
     /// <param name="DataSet"></param>
