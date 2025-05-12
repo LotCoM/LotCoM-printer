@@ -8,19 +8,13 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <summary>
 /// Provides a structure for the creation and maintenance of a Printing Ticket.
 /// </summary>
-/// <param name="Department">The Department that initiated this Print Ticket.</param>
 /// <param name="Process">The Process that initiated this Print Ticket.</param>
 /// <param name="Part">The Part that this Print Ticket is applied to.</param>
 /// <param name="SerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
 /// <param name="SerialNumber"></param>
 /// <param name="ProductionDate"></param>
-public partial class PrintTicket(Department Department, Process Process, Part Part, SerializationModes SerializationMode, SerialNumber SerialNumber, Timestamp ProductionDate, int ProductionShift, string Operator, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
+public partial class PrintTicket(Process Process, Part Part, SerializationModes SerializationMode, SerialNumber SerialNumber, Timestamp ProductionDate, int ProductionShift, string Operator, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
 {
-    /// <summary>
-    /// The Department that initiated this Print Ticket.
-    /// </summary>
-    private readonly Department Department = Department;
-
     /// <summary>
     /// The Process that initiated this Print Ticket.
     /// </summary>
@@ -129,22 +123,22 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         }
     }
 
-    [ObservableProperty]
     /// <summary>
     /// Returns whether the Print Ticket has one Partial Data Set associated with it.
     /// </summary>
+    [ObservableProperty]
     public partial bool HasFirstPartialDataSet {get; set;} = false;
 
-    [ObservableProperty]
     /// <summary>
     /// Returns whether the Print Ticket has two Partial Data Sets associated with it.
     /// </summary>
+    [ObservableProperty]
     public partial bool HasSecondPartialDataSet {get; set;} = false;
 
-    [ObservableProperty]
     /// <summary>
     /// Returns whether the Print Ticket has space for another Partial Data Set.
     /// </summary>
+    [ObservableProperty]
     public partial bool HasSpace {get; set;} = true;
 
     /// <summary>
@@ -179,9 +173,6 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
         string JSON = 
             "{" +
-                "\"Department\":{" +
-                    $"\"Title\":\"{Department.Title}\"" +
-                "}," + 
                 "\"Process\":{" +
                     $"\"FullName\":\"{Process.FullName}\"" +
                 "}," +
@@ -230,18 +221,16 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         JObject JSON = JObject.Parse(Line);
         // attempt to find Department, Process, and Part in the Process Masterlist
         ProcessData Data = new ProcessData();
-        Department Department;
         Process Process;
         Part Part;
         try
         {
-            Department = await Data.GetIndividualDepartmentAsync(JSON["Department"]!["Title"]!.ToString());
             Process = await Data.GetIndividualProcessAsync(JSON["Process"]!["FullName"]!.ToString());
             Part = await Data.GetProcessPartDataAsync(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
         }
         catch
         {
-            throw new JsonException($"Could not parse a Department, Process, and/or Part from '{Line}'.");
+            throw new JsonException($"Could not parse a Process, and/or Part from '{Line}'.");
         }
         // convert the SerializationMode from string to actual enum value and parse the SerialNumber
         SerializationModes Mode;
@@ -300,7 +289,7 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
             SecondPartialDataSet = new PartialDataSet(Quantity, Shift, Operator);
         }
         // construct the parsed PrintTicket
-        return new PrintTicket(Department, Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedOperator, FirstPartialDataSet, SecondPartialDataSet);
+        return new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedOperator, FirstPartialDataSet, SecondPartialDataSet);
     }
 
     /// <summary>
