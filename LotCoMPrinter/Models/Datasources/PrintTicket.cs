@@ -84,7 +84,9 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
     }
 
     private VariableFieldSet _variableFields = VariableFields;
-
+    /// <summary>
+    /// The Variable Field Set assigned to hold the data entered for this Print Ticket.
+    /// </summary>
     public VariableFieldSet VariableFields
     {
         get {return _variableFields;}
@@ -147,6 +149,11 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
             return _process.Type == OriginationTypes.PassThrough;
         }
     }
+
+    /// <summary>
+    /// Returns the Production Date without the Time segment.
+    /// </summary>
+    public string ProductionDateNoTime => $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
 
     /// <summary>
     /// Returns whether the Print Ticket has one Partial Data Set associated with it.
