@@ -51,11 +51,11 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         }
     }
 
-    private Timestamp? _productionDate = null;
+    private DateTime _productionDate = DateTime.Today;
     /// <summary>
     /// The Date and Time at which this Form was initiated.
     /// </summary>    
-    public Timestamp? ProductionDate
+    public DateTime ProductionDate
     {
         get {return _productionDate;}
         set 
@@ -171,7 +171,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     public async Task<PrintTicket> OpenNewPrintTicket()
     {
         // confirm there are selections for all fields
-        if (Process is null || Part is null || ProductionDate is null || ProductionShift is null || ProductionOperator is null)
+        if (Process is null || Part is null || ProductionShift is null || ProductionOperator is null)
         {
             throw new ArgumentException("Cannot create a PrintTicket without a full Form.");
         }
@@ -181,6 +181,6 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         {
             throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
         }
-        return new PrintTicket(Process, Part, Process.Serialization, TicketNumber, ProductionDate, (int)ProductionShift, ProductionOperator);
+        return new PrintTicket(Process, Part, Process.Serialization, TicketNumber, new Timestamp(ProductionDate), (int)ProductionShift, ProductionOperator);
     }
 }
