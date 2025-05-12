@@ -87,7 +87,7 @@ public partial class PrintTicket(Process Process, Part Part, SerializationModes 
     {
         get
         {
-            return $"{Part.ModelNumber} {Part.PartName} - {SerialNumber}";
+            return $"{Part.ModelNumber} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
         }
     }
 
