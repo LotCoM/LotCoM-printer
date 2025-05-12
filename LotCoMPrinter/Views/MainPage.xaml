@@ -337,8 +337,8 @@
                                 Background="#00000000">
                                 <Entry
                                     x:Name="JBKNumberEntry"
-                                    IsEnabled="{Binding ActivePrintTicket.IsJBKSerialized}"
-                                    Text="{Binding Options.DisplayedVariableFields.JBKNumber}"
+                                    IsEnabled="{Binding ActivePrintTicket.IsPassThrough}"
+                                    Text="{Binding ActivePrintTicket.VariableFields.JBKNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -368,8 +368,8 @@
                                 Background="#00000000">
                                 <Entry
                                     x:Name="LotNumberEntry"
-                                    IsEnabled="{Binding ActivePrintTicket.IsLotSerialized}"
-                                    Text="{Binding Options.DisplayedVariableFields.LotNumber}"
+                                    IsEnabled="{Binding ActivePrintTicket.IsPassThrough}"
+                                    Text="{Binding ActivePrintTicket.VariableFields.LotNumber}"
                                     MaxLength="9"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -399,7 +399,7 @@
                                 Background="#00000000">
                                 <Entry
                                     x:Name="DeburrJBKNumberEntry"
-                                    Text="{Binding Options.DisplayedVariableFields.DeburrJBKNumber}"
+                                    Text="{Binding ActivePrintTicket.VariableFields.DeburrJBKNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -429,7 +429,7 @@
                                 Background="#00000000">
                                 <Entry
                                     x:Name="DieNumberEntry"
-                                    Text="{Binding Options.DisplayedVariableFields.DieNumber}"
+                                    Text="{Binding ActivePrintTicket.VariableFields.DieNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -459,7 +459,7 @@
                                 Background="#00000000">
                                 <Entry
                                     x:Name="ModelNumberEntry"
-                                    Text="{Binding Options.DisplayedVariableFields.ModelNumber}"
+                                    Text="{Binding ActivePrintTicket.VariableFields.ModelNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -489,7 +489,7 @@
                                 Background="#00000000">
                                 <Entry
                                     x:Name="HeatNumberEntry"
-                                    Text="{Binding Options.DisplayedVariableFields.HeatNumber}"/>
+                                    Text="{Binding ActivePrintTicket.VariableFields.HeatNumber}"/>
                             </Border>
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>
