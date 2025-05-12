@@ -127,6 +127,19 @@
                         FontSize="20"
                         TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                         Text="{Binding ActivePrintTicket.Title, StringFormat='Input for Label: {0}'}"/>
+                    <!-- Close Active Ticket Display Button -->
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="4"
+                        x:Name="CloseActivePrintTicketButton"
+                        Clicked="OnCloseActivePrintTicketButtonClicked"
+                        Margin="0,20,10,0"
+                        Padding="0"
+                        WidthRequest="100"
+                        HeightRequest="40"
+                        HorizontalOptions="End"
+                        VerticalOptions="Start"
+                        Text="Save &amp; Close"/>
                     <!-- Process Label -->
                     <Label
                         Grid.Row="1"
@@ -138,8 +151,8 @@
                         Margin="10,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        WidthRequest="250"
-                        MinimumWidthRequest="250"
+                        WidthRequest="300"
+                        MinimumWidthRequest="300"
                         Text="{Binding ActivePrintTicket.Process.FullName, StringFormat='Process: {0}'}"/>
                     <!-- Part Label -->
                     <Label
@@ -152,8 +165,8 @@
                         Margin="10,10,0,40"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        WidthRequest="250"
-                        MinimumWidthRequest="250"
+                        WidthRequest="300"
+                        MinimumWidthRequest="300"
                         Text="{Binding ActivePrintTicket.Part.GetInfo, StringFormat='Part: {0}'}"/>
                     <!-- Production Date Input Horizontal Layout -->
                     <HorizontalStackLayout
@@ -166,8 +179,8 @@
                             Margin="10,0,0,10"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
                             Text="Production Date"/>
                         <!-- Input DatePicker Control and Border -->
                         <Border
@@ -175,7 +188,7 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="125"
+                            WidthRequest="200"
                             HeightRequest="40"
                             Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
@@ -199,11 +212,11 @@
                         </Grid.RowDefinitions>    
                         <Grid.ColumnDefinitions>
                             <!-- Shift Input Column -->
-                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="Auto"/>
                             <!-- Quantity Input Column -->
-                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="Auto"/>
                             <!-- Operator Input Column -->
-                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <!-- Shift Number Input Layout -->
                         <HorizontalStackLayout
@@ -215,8 +228,8 @@
                                 x:Name="ShiftLabel"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Shift"/>
                             <!-- Input Entry Control and Border -->
                             <Border
@@ -224,7 +237,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="100"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -254,8 +267,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Quantity"/>
                             <!-- Input Entry Control and Border -->
                             <Border
@@ -263,7 +276,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="100"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -283,8 +296,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Operator"/>
                             <!-- Input Entry Control and Border -->
                             <Border
@@ -292,7 +305,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="100"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -320,8 +333,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="JBK #"/>
                             <!-- JBK Input Entry Control and Border -->
                             <Border
@@ -329,7 +342,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="150"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -351,8 +364,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Lot #"/>
                             <!-- Lot Input Entry Control and Border -->
                             <Border
@@ -360,7 +373,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="150"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -382,8 +395,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Deburr   JBK #"/>
                             <!-- Input Entry Control and Border -->
                             <Border
@@ -391,7 +404,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="150"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -412,8 +425,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Die #"/>
                             <!-- Input Entry Control and Border -->
                             <Border
@@ -421,7 +434,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="150"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -442,8 +455,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Model #"/>
                             <!-- Input Entry Control and Border -->
                             <Border
@@ -451,7 +464,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="150"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -472,8 +485,8 @@
                                 Margin="10,0,0,10"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
-                                WidthRequest="75"
-                                MinimumWidthRequest="75"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
                                 Text="Heat #"/>
                             <!-- Input Entry Control and Border -->
                             <Border
@@ -481,7 +494,7 @@
                                 Margin="10,5,5,12"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
-                                WidthRequest="150"
+                                WidthRequest="200"
                                 HeightRequest="40"
                                 Stroke="{StaticResource Gray500}"
                                 StrokeThickness="1"
@@ -506,7 +519,7 @@
                 <Grid
                     Grid.Row="2"
                     Grid.Column="0"
-                    Margin="40,10,0,0"
+                    Margin="10,10,0,0"
                     IsVisible="{Binding ActivePrintTicket.HasFirstPartialDataSet}">
                     <Grid.RowDefinitions>
                         <!-- Header Row -->
@@ -518,11 +531,11 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <!-- Shift Input Column -->
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
                         <!-- Quantity Input Column -->
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
                         <!-- Operator Input Column -->
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
                         <!-- Margin Column -->
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -545,8 +558,8 @@
                             x:Name="FirstPartialDataSetShiftLabel"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
                             Text="Shift"/>
                         <!-- Input Entry Control and Border -->
                         <Border
@@ -554,7 +567,7 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="100"
+                            WidthRequest="200"
                             HeightRequest="40"
                             Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
@@ -583,8 +596,8 @@
                             Margin="10,0,0,10"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
                             Text="Quantity"/>
                         <!-- Input Entry Control and Border -->
                         <Border
@@ -592,7 +605,7 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="100"
+                            WidthRequest="200"
                             HeightRequest="40"
                             Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
@@ -613,8 +626,8 @@
                             Margin="10,0,0,10"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
                             Text="Operator"/>
                         <!-- Input Entry Control and Border -->
                         <Border
@@ -622,7 +635,7 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="100"
+                            WidthRequest="200"
                             HeightRequest="40"
                             Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
@@ -634,30 +647,28 @@
                                 MaxLength="3"/>
                         </Border>
                     </HorizontalStackLayout>
-                    <!-- Buttons Layout -->
-                    <HorizontalStackLayout
+                    <!-- Print Button -->
+                    <Button
                         Grid.Row="3"
                         Grid.Column="0"
-                        Grid.ColumnSpan="2">
-                        <!-- Print Button -->
-                        <Button
-                            Text="Print Label"
-                            Margin="0,10,20,20"
-                            WidthRequest="100"
-                            HeightRequest="40"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"/>
-                        <!-- Remove Button -->
-                        <Button
-                            x:Name="RemoveFirstPartialProductionDataSetButton"
-                            Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
-                            Text="- Remove"
-                            Margin="0,10,20,20"
-                            WidthRequest="100"
-                            HeightRequest="40"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
+                        Text="Print Label"
+                        Margin="0,10,0,20"
+                        WidthRequest="100"
+                        HeightRequest="40"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"/>
+                    <!-- Remove Button -->
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="3"
+                        x:Name="RemoveFirstPartialProductionDataSetButton"
+                        Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
+                        Text="- Remove"
+                        Margin="0,10,10,20"
+                        WidthRequest="100"
+                        HeightRequest="40"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"/>
                 </Grid>
                 <!-- Separator Bar -->
                 <BoxView
@@ -672,7 +683,7 @@
                 <Grid
                     Grid.Row="4"
                     Grid.Column="0"
-                    Margin="40,10,0,0"
+                    Margin="10,10,0,0"
                     IsVisible="{Binding ActivePrintTicket.HasSecondPartialDataSet}">
                     <Grid.RowDefinitions>
                         <!-- Header Row -->
@@ -684,11 +695,11 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <!-- Shift Input Column -->
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
                         <!-- Quantity Input Column -->
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
                         <!-- Operator Input Column -->
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
                         <!-- Margin Column -->
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -711,8 +722,8 @@
                             x:Name="SecondPartialDataSetShiftLabel"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
                             Text="Shift"/>
                         <!-- Input Entry Control and Border -->
                         <Border
@@ -720,7 +731,7 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="100"
+                            WidthRequest="200"
                             HeightRequest="40"
                             Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
@@ -749,8 +760,8 @@
                             Margin="10,0,0,10"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
                             Text="Quantity"/>
                         <!-- Input Entry Control and Border -->
                         <Border
@@ -758,7 +769,7 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="100"
+                            WidthRequest="200"
                             HeightRequest="40"
                             Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
@@ -779,8 +790,8 @@
                             Margin="10,0,0,10"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            WidthRequest="75"
-                            MinimumWidthRequest="75"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
                             Text="Operator"/>
                         <!-- Input Entry Control and Border -->
                         <Border
@@ -788,7 +799,7 @@
                             Margin="10,5,5,12"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            WidthRequest="100"
+                            WidthRequest="200"
                             HeightRequest="40"
                             Stroke="{StaticResource Gray500}"
                             StrokeThickness="1"
@@ -800,30 +811,28 @@
                                 MaxLength="3"/>
                         </Border>
                     </HorizontalStackLayout>
-                    <!-- Buttons Layout -->
-                    <HorizontalStackLayout
+                    <!-- Print Button -->
+                    <Button
                         Grid.Row="3"
                         Grid.Column="0"
-                        Grid.ColumnSpan="2">
-                        <!-- Print Button -->
-                        <Button
-                            Text="Print Label"
-                            Margin="0,10,20,20"
-                            WidthRequest="100"
-                            HeightRequest="40"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"/>
-                        <!-- Remove Button -->
-                        <Button
-                            x:Name="RemoveSecondPartialProductionDataSetButton"
-                            Clicked="OnRemoveSecondPartialProductionDataSetButtonClicked"
-                            Text="- Remove"
-                            Margin="0,10,20,20"
-                            WidthRequest="100"
-                            HeightRequest="40"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
+                        Text="Print Label"
+                        Margin="0,10,0,20"
+                        WidthRequest="100"
+                        HeightRequest="40"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"/>
+                    <!-- Remove Button -->
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="3"
+                        x:Name="RemoveFirstPartialProductionDataSetButton"
+                        Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
+                        Text="- Remove"
+                        Margin="0,10,10,20"
+                        WidthRequest="100"
+                        HeightRequest="40"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"/>
                 </Grid>
                 <!-- Add Partial Production Dataset Button -->
                 <Button
@@ -832,26 +841,13 @@
                     Grid.Column="0"
                     Clicked="OnAddPartialProductionDataSetButtonClicked"
                     IsVisible="{Binding ActivePrintTicket.HasSpace}"
-                    Margin="10,0,0,0"
+                    Margin="10,0,0,10"
                     Padding="0"
                     WidthRequest="100"
                     HeightRequest="40"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
                     Text="+ Add Partial"/>
-                <!-- Close Active Ticket Display Button -->
-                <Button
-                    x:Name="CloseActivePrintTicketButton"
-                    Clicked="OnCloseActivePrintTicketButtonClicked"
-                    Grid.Row="7"
-                    Grid.Column="2"
-                    Margin="0,0,10,10"
-                    Padding="0"
-                    WidthRequest="100"
-                    HeightRequest="40"
-                    HorizontalOptions="End"
-                    VerticalOptions="Start"
-                    Text="Save &amp; Close"/>
             </Grid>
         </ScrollView>
 
