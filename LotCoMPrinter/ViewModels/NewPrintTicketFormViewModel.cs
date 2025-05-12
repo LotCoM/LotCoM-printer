@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -160,5 +161,26 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     public NewPrintTicketFormViewModel()
     {
 
+    }
+
+    /// <summary>
+    /// Retrieves a Serial Number for a Process/Part pair and returns a new Print Ticket with the form's inputs.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SerializationException"></exception>
+    public async Task<PrintTicket> OpenNewPrintTicket()
+    {
+        // confirm there are selections for all fields
+        if (Process is null || Part is null || ProductionDate is null || ProductionShift is null || ProductionOperator is null)
+        {
+            throw new ArgumentException("Cannot create a PrintTicket without a full Form.");
+        }
+        // retrieve a Serial Number and the Department for this new Print Ticket
+        SerialNumber? TicketNumber = await Serializer.Serialize(Process, Part);
+        if (TicketNumber is null)
+        {
+            throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
+        }
+        return new PrintTicket(Process, Part, Process.Serialization, TicketNumber, ProductionDate, (int)ProductionShift, ProductionOperator);
     }
 }
