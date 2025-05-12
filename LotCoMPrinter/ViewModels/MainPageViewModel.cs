@@ -19,6 +19,12 @@ public partial class MainPageViewModel : ObservableObject
     public List<PrintTicket> OpenPrintTickets
     {
         get {return _openPrintTickets;}
+        set
+        {
+            _openPrintTickets = value;
+            OnPropertyChanged(nameof(_openPrintTickets));
+            OnPropertyChanged(nameof(OpenPrintTickets));
+        }
     }
 
     private readonly List<Process> _allProcesses = new ProcessData().GetAllProcesses();
@@ -323,7 +329,7 @@ public partial class MainPageViewModel : ObservableObject
     /// <param name="Ticket"></param>
     public void AddOpenPrintTicket(PrintTicket Ticket)
     {
-        OpenPrintTickets.Add(Ticket);
+        OpenPrintTickets = OpenPrintTickets.Append(Ticket).ToList();
     }
 
     /// <summary>
