@@ -178,6 +178,25 @@ public partial class MainPage : ContentPage
 		ViewModel.CloseActivePrintTicket();
 	}
 
+	/// <summary>
+	/// Handler for the ItemSelected event from the OOpenPrintTicketsListView control.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	public void OnOpenPrintTicketsListViewItemSelected(object sender, SelectedItemChangedEventArgs e)
+	{
+		// find the selected PrintTicket in the Open Print Tickets list and set its IsSelectedInList property
+		foreach (PrintTicket _ticket in ViewModel.OpenPrintTickets)
+		if (_ticket.Equals(e.SelectedItem))
+		{
+			_ticket.IsSelectedInList = true;
+		}
+		else
+		{
+			_ticket.IsSelectedInList = false;
+		}
+	}
+
 	// full constructor
 	public MainPage() 
 	{
