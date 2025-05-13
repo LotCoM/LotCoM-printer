@@ -39,9 +39,8 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	/// <returns></returns>
 	/// <param name="Duration"></param>
-	private async Task AnimatedCloseActivePrintTicket(uint Duration = 50, bool Swapping = false)
+	private async Task AnimatedCloseActivePrintTicket(uint Duration = 100, bool Swapping = false)
 	{
-		ViewModel.Options.IsWindowHeaderShown = false;
 		await ActivePrintTicketLayout.FadeTo(0, Duration);
 		ViewModel.CloseActivePrintTicket();
 		ActivePrintTicketLayout.Opacity = 1;
@@ -59,7 +58,7 @@ public partial class MainPage : ContentPage
 	/// <param name="Index"></param>
 	/// <param name="Duration"></param>
 	/// <returns></returns>
-	private async Task AnimatedOpenActivePrintTicket(int Index = -1, uint Duration = 50)
+	private async Task AnimatedOpenActivePrintTicket(int Index = -1, uint Duration = 100)
 	{
 		ViewModel.Options.IsWindowHeaderShown = false;
 		ActivePrintTicketLayout.Opacity = 0;
@@ -268,8 +267,16 @@ public partial class MainPage : ContentPage
 		{
 			Swapping = true;
 		}
-		await AnimatedCloseActivePrintTicket(Swapping: Swapping);
-		await AnimatedOpenActivePrintTicket(ViewModel.Options.SelectedPrintTicketIndex); 
+		// only collapse open print tickets panel if the same item selected; else swap to new item
+		if (ViewModel.ActivePrintTicket == ViewModel.OpenPrintTickets[ViewModel.Options.SelectedPrintTicketIndex])
+		{
+			await AnimatedCollapseOpenPrintTicketsPanel();
+		}
+		else
+		{
+			await AnimatedCloseActivePrintTicket(Swapping: Swapping);
+			await AnimatedOpenActivePrintTicket(ViewModel.Options.SelectedPrintTicketIndex); 
+		}
 	}
 
 	// full constructor
