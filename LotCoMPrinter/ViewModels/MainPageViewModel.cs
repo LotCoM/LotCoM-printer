@@ -312,14 +312,12 @@ public partial class MainPageViewModel : ObservableObject
     /// <summary>
     /// Attempts to add a blank PartialDataSet object to the Active Print Ticket.
     /// </summary>
-    /// <param name="DataSet"></param>
     public void AddPartialDataSet()
     {
         if (ActivePrintTicket is not null && ActivePrintTicket.HasSpace)
         {
             // create and add a blank PartialDataSet object to the ticket
-            PartialDataSet EmptyDataSet = new PartialDataSet();
-            ActivePrintTicket.AddPartialDataSet(EmptyDataSet);
+            ActivePrintTicket.AddPartialDataSet(new PartialDataSet());
         }
     }
 
@@ -340,28 +338,34 @@ public partial class MainPageViewModel : ObservableObject
     /// <exception cref="IndexOutOfRangeException"></exception>
     public void SetActivePrintTicket(int Index = -1)
     {
-        // if Index not passed, set to the most recently added Ticket, else set to the Ticket at Index
-        if (Index == -1 && OpenPrintTickets.Count > 0)
+        // confirm that any print tickets exist
+        if (OpenPrintTickets.Count < 1)
         {
-            ActivePrintTicket = OpenPrintTickets[^1];
-            Options.OpenActivePrintTicket(Index);
+            throw new IndexOutOfRangeException("There are no Open PrintTickets to select from.");
         }
-        else
+        // confirm that the passed index is in range
+        if (Index != -1 && Index >= OpenPrintTickets.Count)
         {
-            if (Index <= OpenPrintTickets.Count)
-            {
-                ActivePrintTicket = OpenPrintTickets[Index];
-                Options.OpenActivePrintTicket(Index);
-            }
-            else
-            {
-                throw new IndexOutOfRangeException("There is no PrintTicket at the passed Index.");
-            }
+            throw new IndexOutOfRangeException("There is no PrintTicket at the passed Index.");
         }
+        // there is a PrintTicket at Index; update and open the new active ticket
+        if (Index == -1)
+        {
+            Index = OpenPrintTickets.Count - 1;
+        }
+        ActivePrintTicket = OpenPrintTickets[Index];
     }
 
     /// <summary>
-    /// Closes the Active Print Ticket display, returning to the Welcome menu.
+    /// Opens the ActivePrintTicket in a display View, taking the place of the Welcome menu.
+    /// </summary>
+    public void OpenActivePrintTicket()
+    {
+        Options.OpenActivePrintTicket();
+    }
+
+    /// <summary>
+    /// Closes the ActivePrintTicket display View, returning to the Welcome menu.
     /// </summary>
     public void CloseActivePrintTicket()
     {
