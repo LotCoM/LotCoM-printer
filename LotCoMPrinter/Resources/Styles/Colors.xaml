@@ -6,12 +6,41 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
+    <!-- Highlight Colors -->
+    <Color x:Key="Primary">#FF5AA8F0</Color>
+    <Color x:Key="PrimaryDark">#FF3B94E7</Color>
     <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <Color x:Key="Secondary">#F6C6AD</Color>
+    <Color x:Key="SecondaryDarkText">#242424</Color>
+    <Color x:Key="Tertiary">#FFDBAA5C</Color>
+    
+    <!-- Light Theme UI Colors -->
+    <Color x:Key="PrimaryText">Black</Color>
+    <Color x:Key="SecondaryText">DarkSlateGray</Color>
+    <Color x:Key="DisabledPrimaryText">#919191</Color>  <!-- Gray400 -->
+    <Color x:Key="DisabledSecondaryText">LightSlateGray</Color>
+    <Color x:Key="Hovered">#DAEDFF</Color>
+    <Color x:Key="HoveredRecessed">#A7B4C1</Color>
+    <Color x:Key="TitleBar">Gainsboro</Color>
+    <Color x:Key="Foreground">Gainsboro</Color>
+    <Color x:Key="Framing">WhiteSmoke</Color>
+    <Color x:Key="Background">White</Color>
+    <Color x:Key="DisabledBackground">LightGray</Color>
+
+    <!-- Dark Theme UI Colors -->
+    <Color x:Key="PrimaryTextDark">White</Color>
+    <Color x:Key="SecondaryTextDark">LightSlateGray</Color>
+    <Color x:Key="DisabledPrimaryTextDark">DarkGray</Color>
+    <Color x:Key="DisabledSecondaryTextDark">Gray</Color>
+    <Color x:Key="HoveredDark">#5D646C</Color>
+    <Color x:Key="HoveredRecessedDark">#4F5357</Color>
+    <Color x:Key="TitleBarDark">#404040</Color>         <!-- Gray600 -->
+    <Color x:Key="ForegroundDark">#404040</Color>       <!-- Gray600 -->
+    <Color x:Key="FramingDark">#1f1f1f</Color>          <!-- OffBlack -->
+    <Color x:Key="BackgroundDark">Black</Color>
+    <Color x:Key="DisabledBackgroundDark">#1f1f1f</Color>   <!-- OffBlack -->
+
+      <!-- Default MAUI Colors -->
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
