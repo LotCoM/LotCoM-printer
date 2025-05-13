@@ -20,67 +20,109 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
 public partial class PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, string TicketOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
 {
-    private readonly Process _process = TicketProcess;
+    private Process _process = TicketProcess;
     /// <summary>
     /// The Process that initiated this Print Ticket.
     /// </summary>
     public Process Process
     {
         get {return _process;}
+        set
+        {
+            _process = value;
+            OnPropertyChanged(nameof(_process));
+            OnPropertyChanged(nameof(Process));
+        }
     }
 
-    private readonly Part _part = TicketPart;
+    private Part _part = TicketPart;
     /// <summary>
     /// The Part that this Print Ticket is applied to.
     /// </summary>
     public Part Part
     {
         get {return _part;}
+        set
+        {
+            _part = value;
+            OnPropertyChanged(nameof(_part));
+            OnPropertyChanged(nameof(Part));
+        }
     } 
 
-    private readonly SerializationModes _serializationMode = TicketSerializationMode;
+    private SerializationModes _serializationMode = TicketSerializationMode;
     /// <summary>
     /// The type of Serial Number used to Serialize this Print Ticket.
     /// </summary>
     public SerializationModes SerializationMode
     {
         get {return _serializationMode;}
+        set
+        {
+            _serializationMode = value;
+            OnPropertyChanged(nameof(_serializationMode));
+            OnPropertyChanged(nameof(SerializationMode));
+        }
     }
 
-    private readonly SerialNumber _serialNumber = TicketSerialNumber;
+    private SerialNumber _serialNumber = TicketSerialNumber;
     /// <summary>
     /// The Serial Number (JBK or Lot Number) applied to this Print Ticket.
     /// </summary>
     public SerialNumber SerialNumber
     {
         get {return _serialNumber;}
+        set
+        {
+            _serialNumber = value;
+            OnPropertyChanged(nameof(_serialNumber));
+            OnPropertyChanged(nameof(SerialNumber));
+        }
     }
 
-    private readonly DateTime _productionDate = TicketProductionDate;
+    private DateTime _productionDate = TicketProductionDate;
     /// <summary>
     /// The Date and Time at which this Print Ticket was initiated.
     /// </summary>
     public DateTime ProductionDate
     {
         get {return _productionDate;}
+        set
+        {
+            _productionDate = value;
+            OnPropertyChanged(nameof(_productionDate));
+            OnPropertyChanged(nameof(ProductionDate));
+        }
     }
 
-    private readonly int _productionShift = TicketProductionShift;
+    private int _productionShift = TicketProductionShift;
     /// <summary>
     /// The Shift that this Print Ticket was initiated on.
     /// </summary>
     public int ProductionShift
     {
         get {return _productionShift;}
+        set
+        {
+            _productionShift = value;
+            OnPropertyChanged(nameof(_productionShift));
+            OnPropertyChanged(nameof(ProductionShift));
+        }
     }
 
-    private readonly string _productionOperator = TicketOperator;
+    private string _productionOperator = TicketOperator;
     /// <summary>
     /// The Operator that this Print Ticket was initiated by.
     /// </summary>
     public string ProductionOperator
     {
         get {return _productionOperator;}
+        set
+        {
+            _productionOperator = value;
+            OnPropertyChanged(nameof(_productionOperator));
+            OnPropertyChanged(nameof(ProductionOperator));
+        }
     }
 
     private VariableFieldSet _variableFields = VariableFields;
@@ -172,6 +214,13 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
     /// </summary>
     [ObservableProperty]
     public partial bool HasSpace {get; set;} = true;
+
+    /// <summary>
+    /// Controls whether the Print Ticket is selected in the Open Print Ticket ListView.
+    /// Purely a template-binding property.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsSelectedInList {get; set;} = false;
 
     /// <summary>
     /// Shifts the PartialDataSet from the Second position into the First.

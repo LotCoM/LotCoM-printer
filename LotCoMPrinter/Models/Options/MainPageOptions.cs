@@ -85,13 +85,20 @@ public partial class MainPageOptions(): ObservableObject()
     }
 
     /// <summary>
-    /// Opens the UI View of SelectedPrintTicket.
+    /// Updates the SelectedPrintTicketIndex without opening or changing the Active Print Ticket display.
     /// </summary>
     /// <param name="Index"></param>
-    public void OpenActivePrintTicket(int Index)
+    public void SetSelectedPrintTicket(int Index)
+    {
+        SelectedPrintTicketIndex = Index;
+    }
+
+    /// <summary>
+    /// Opens the UI View of SelectedPrintTicket.
+    /// </summary>
+    public void OpenActivePrintTicket()
     {
         HasActivePrintTicket = true;
-        SelectedPrintTicketIndex = Index;
         IsWindowHeaderShown = false;
     }
 
@@ -101,7 +108,6 @@ public partial class MainPageOptions(): ObservableObject()
     public void CloseActivePrintTicket()
     {
         HasActivePrintTicket = false;
-        SelectedPrintTicketIndex = -1;
         IsWindowHeaderShown = true;
     }
 }
