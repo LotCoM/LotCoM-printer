@@ -66,6 +66,7 @@
 
         <!-- ScrollView for Active Print Ticket Display -->
         <ScrollView
+            x:Name="ActivePrintTicketLayout"
             Grid.Row="1"
             Grid.Column="0"
             IsVisible="{Binding Options.HasActivePrintTicket}"> <!-- "{Binding Options.HasActivePrintTicket}" -->
@@ -950,6 +951,7 @@
                                 <Button
                                     x:Name="OpenTicketFromListViewButton"
                                     IsVisible="{Binding IsSelectedInList}"
+                                    Clicked="OnOpenPrintTicketFromListViewButtonClicked"
                                     Grid.Row="2"
                                     Grid.Column="1"
                                     Margin="5"
