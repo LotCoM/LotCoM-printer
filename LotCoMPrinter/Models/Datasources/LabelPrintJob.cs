@@ -46,42 +46,6 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header)
     }
 
     /// <summary>
-    /// Performs Serial Number processing logic at the end of a Print Job. 
-    /// Calculates whether to consume or cache the Serial Number. 
-    /// </summary>
-    /// <param name="PrintResult"></param>
-    /// <returns></returns>
-    private async Task ProcessSerialNumber(bool PrintResult) 
-    {
-        // retrieve data from the Capture to improve processing time
-        Process SelectedProcess = Capture.Process;
-        string PartNumber = Capture.Part.PartNumber;
-        SerializationModes Serialization = SelectedProcess.Serialization;
-        // retrieve the Serial Number from the Capture data
-        string SerialNumber;
-        if (Serialization == SerializationModes.JBK) 
-        {
-            SerialNumber = Capture.VariableFields.JBKNumber.ToString()!;
-        } 
-        else 
-        {
-            SerialNumber = Capture.VariableFields.LotNumber!;
-        }
-        // prepare the serial cache for the end of the print job
-        SerialCacheController SerialCache = new SerialCacheController();
-        // the print was successful; remove the cached serial number here (if the label was full)
-        if (PrintResult) 
-        {
-            await SerialCache.RemoveCachedSerialNumber(SerialNumber, PartNumber);
-        // the print failed; cache the serial number
-        } 
-        else 
-        {
-            await SerialCache.CacheSerialNumber(SerialNumber, PartNumber);
-        }
-    }
-
-    /// <summary>
     /// Runs the Print Job (creates a Handler for the Job and spools it to the OS' printing system).
     /// </summary>
     /// <remarks>
@@ -117,8 +81,6 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header)
         {
             throw new PrintRequestException(_ex.Message);
         }
-        // process the serial number attached to this Label
-        await ProcessSerialNumber(Printed);
         // log successful print jobs
         if (Printed) 
         {

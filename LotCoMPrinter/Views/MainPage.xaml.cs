@@ -13,85 +13,6 @@ public partial class MainPage : ContentPage
 	private readonly MainPageViewModel ViewModel;
 
 	/// <summary>
-	/// Sets the IsEnabled property of the JBK and Lot (Serial #) inputs based on the Serialization requirements.
-	/// </summary>
-	private void ToggleSerialNumberInputs()
-	{
-		// confirm whether this label needs to be serialized or considered "pass-through"
-		if (ViewModel.Options.SelectedProcess!.Type == OriginationTypes.Originator) 
-		{
-			// disable serial number inputs
-			JBKNumberEntry.IsEnabled = false;
-			LotNumberEntry.IsEnabled = false;
-		} 
-		else 
-		{
-			// enable serial number inputs
-			JBKNumberEntry.IsEnabled = true;
-			LotNumberEntry.IsEnabled = true;
-		}
-	}
-
-	/// <summary>
-	/// Handler for the ItemSelected event from ProcessPicker.
-	/// </summary>
-	/// <param name="Sender"></param>
-	/// <param name="e"></param>
-	private async void OnProcessSelection(object Sender, EventArgs e) 
-	{
-		// update the SelectedProcess by invoking the ViewModel method
-		Picker ProcessPicker = (Picker)Sender;
-		await ViewModel.UpdateSelectedProcess((Process)ProcessPicker.SelectedItem);
-		// reset the Page
-		Reset();
-		// update the SelectedProcess and change the visible UI elements
-		try 
-		{
-			// show the process type card
-			ProcessTypeCard.IsVisible = true;
-			ProcessTypeLabel.IsVisible = true;
-		// there was some error involving the Process file
-		} 
-		catch (FileLoadException) 
-		{
-			BasicPopup Popup = new("Failed to Retrieve Data", "There was an error retrieving Part Data for this Process. Please see management to resolve this issue.");
-			this.ShowPopup(Popup);
-		// there are no Parts assigned to the Process
-		} 
-		catch (ArgumentException) 
-		{
-			BasicPopup Popup = new("Failed to Retrieve Data", "There are no Parts assigned to this Process.");
-			this.ShowPopup(Popup);
-		}
-		// update the Serial Number inputs
-		ToggleSerialNumberInputs();
-	}
-
-	/// <summary>
-	/// Handler for the ItemSelected event from PartPicker.
-	/// </summary>
-	/// <param name="Sender"></param>
-	/// <param name="e"></param>
-	private async void OnPartSelection(object Sender, EventArgs e) 
-	{
-		// update the SelectedPart, DisplayedModel, and DisplayedJBKNumber properties
-		Picker PartPicker = (Picker)Sender;
-		try 
-		{
-			await ViewModel.UpdateSelectedPart((Part)PartPicker.SelectedItem);
-		// the Model Number was either unimplied or the JBK # Queue could not be accessed
-		} 
-		catch (Exception _ex) 
-		{
-			// show a warning
-			BasicPopup Popup = new("Unexpected Error", $"The selected Part/Model # could not be retrieved. Please see management to resolve this issue.\n\nError: {_ex.Message}");
-			this.ShowPopup(Popup);
-		}
-		// disable the Model Number control 
-		ModelNumberEntry.IsEnabled = false;
-	}
-
-	/// <summary>
 	/// Handler for the Pressed event from the PrintButton.
 	/// Starts the print action using the information entered in the entries on the UI.
 	/// </summary>
@@ -107,8 +28,8 @@ public partial class MainPage : ContentPage
 		{
 			Printed = await ViewModel.PrintRequest
 			(
-				(Process)ProcessPicker.SelectedItem, 
-				(Part)PartPicker.SelectedItem, 
+				ViewModel.ActivePrintTicket!.Process, 
+				ViewModel.ActivePrintTicket.Part, 
 				int.Parse(QuantityEntry.Text), 
 				int.Parse(JBKNumberEntry.Text), 
 				LotNumberEntry.Text, 
@@ -168,7 +89,6 @@ public partial class MainPage : ContentPage
 		ViewModel.Printing = false;
 		if (Printed) 
 		{
-			Reset();
 			BasicPopup Popup = new("Label Printed", "The Label was printed successfully.");
 			this.ShowPopup(Popup);
 		// the print failed for some reason; show a warning
@@ -228,6 +148,36 @@ public partial class MainPage : ContentPage
         OpenPrintTicketsCollapseButton.Rotation += 180;
     }
 
+	/// <summary>
+    /// Handler for the Clicked event from the OnStartNewLabelButton control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
+    {
+		NewPrintTicketForm Form = new NewPrintTicketForm();
+		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
+		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
+		if (Result is null)
+		{
+			return;
+		}
+		if (Result.GetType().Equals(typeof(PrintTicket)))
+		{
+			ViewModel.AddOpenPrintTicket((PrintTicket)Result);
+		}
+		// change the ViewModel's ActivePrintTicket
+		ViewModel.SetActivePrintTicket();
+    }
+
+	/// <summary>
+	/// Handler for the Clicked event from the CloseActivePrintTicketButton control.
+	/// </summary>
+	private void OnCloseActivePrintTicketButtonClicked(object sender, EventArgs e)
+	{
+		ViewModel.CloseActivePrintTicket();
+	}
+
 	// full constructor
 	public MainPage() 
 	{
@@ -236,59 +186,6 @@ public partial class MainPage : ContentPage
 		BindingContext = ViewModel;
 		// show the window from XAML
 		InitializeComponent();
-		// hide the process type card on start-up
-		ProcessTypeCard.IsVisible = false;
-		ProcessTypeLabel.IsVisible = false;
-	}
-
-	/// <summary>
-	/// Clears and reactivates all UI Controls on the Page.
-	/// </summary>
-	public void Reset() 
-	{
-		// reset viewmodel properties
-		ViewModel.Reset();
-		// Part Picker reset
-		PartPicker.SelectedIndex = -1;
-		PartPicker.IsEnabled = true;
-		// Quantity Input reset
-		QuantityEntry.Text = "";
-		QuantityEntry.IsEnabled = true;
-		// Deburr JBK Input reset
-		DeburrJBKNumberEntry.Text = "";
-		DeburrJBKNumberEntry.IsEnabled = true;
-		// Die Number Input reset
-		DieNumberEntry.Text = "";
-		DieNumberEntry.IsEnabled = true;
-		// Heat Number Input reset
-		HeatNumberEntry.Text = "";
-		HeatNumberEntry.IsEnabled = true;
-		// Model Number Picker reset
-		ModelNumberEntry.Text = "";
-		ModelNumberEntry.IsEnabled = true;
-		// Production Date Picker reset
-		ProductionDatePicker.Date = DateTime.Now;
-		ProductionDatePicker.IsEnabled = true;
-		// Production Shift Picker reset
-		ShiftPicker.SelectedIndex = -1;
-		ShiftPicker.IsEnabled = true;
-		// Operator Initials Entry reset
-		OperatorEntry.Text = "";
-		OperatorEntry.IsEnabled = true;
-		// re-enable serial number inputs if serialization is not needed
-		if (ViewModel.Options.SelectedProcess is null) 
-		{
-			return;
-		}
-		if (ViewModel.Options.SelectedProcess.Type != OriginationTypes.Originator) 
-		{
-			// JBK Input reset
-			JBKNumberEntry.Text = "";
-			JBKNumberEntry.IsEnabled = true;
-			// Lot Input reset
-			LotNumberEntry.Text = "";
-			LotNumberEntry.IsEnabled = true;
-		}
 	}
 }
 

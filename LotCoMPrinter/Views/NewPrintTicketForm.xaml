@@ -1,0 +1,288 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:Views="clr-namespace:LotCoMPrinter.Views"
+               xmlns:ViewModels="clr-namespace:LotCoMPrinter.ViewModels"
+               x:DataType="ViewModels:NewPrintTicketFormViewModel"
+               x:Class="LotCoMPrinter.Views.NewPrintTicketForm">
+    
+    <!-- Style the Popup Window -->
+    <toolkit:Popup.Resources>
+        <Style TargetType="{x:Type Views:NewPrintTicketForm}">
+            <Setter Property="Color" Value="{StaticResource OffBlack}" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Start" />
+            <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
+        </Style>
+    </toolkit:Popup.Resources>
+
+    <!-- Main Layout -->
+    <Border
+        StrokeThickness=".25"
+        StrokeShape="RoundRectangle 10,10,10,10"
+        Stroke="{AppThemeBinding Light={StaticResource OffBlack}, Dark={StaticResource White}}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Title Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Message Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Process Input Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Part Input Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Date, Shift, Operator Input Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Fill Row -->
+                <RowDefinition Height="*"/>
+                <!-- Buttons Row -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Main Column -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Title Label -->
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                x:Name="PopupTitleLabel"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Margin="20,10,0,0"
+                Text="Open New Label Ticket"
+                FontSize="20"
+                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+
+            <!-- Message Label -->
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                x:Name="PopupMessageLabel"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                Margin="20,10,0,20"
+                Text="Enter basic information for this new Label:"
+                TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+
+            <!-- Process Input Horizontal Layout-->
+            <HorizontalStackLayout
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="20">
+                <!-- Input Label -->
+                <Label
+                    x:Name="ProcessLabel"
+                    Margin="0,0,0,10"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    WidthRequest="75"
+                    MinimumWidthRequest="75"
+                    Text="Process"/>
+                <!-- Input Picker Control and Border -->
+                <Border
+                    x:Name="ProcessControl"
+                    Margin="10,5,5,12"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="250"
+                    HeightRequest="40"
+                    Stroke="{StaticResource Gray500}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000">
+                    <Picker
+                        x:Name="ProcessPicker"
+                        ItemsSource="{Binding AllProcesses}"
+                        ItemDisplayBinding="{Binding FullName}"
+                        SelectedIndex="{Binding SelectedProcessIndex}"
+                        SelectedIndexChanged="OnProcessPickerSelectedIndexChanged">
+                    </Picker>
+                </Border>
+                <!-- Originator/Pass-through Indicator Card -->
+                <Border
+                    x:Name="ProcessTypeCard"
+                    Margin="5"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    HeightRequest="25"
+                    WidthRequest="85"
+                    Stroke="#00ACACAC"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                    <Label
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        x:Name="ProcessTypeLabel"
+                        Text="{Binding Process.Type}"
+                        TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+                        FontSize="11"/>
+                </Border>
+            </HorizontalStackLayout>
+
+            <!-- Part Input Horizontal Layout -->
+            <HorizontalStackLayout
+                Grid.Row="3"
+                Grid.Column="0"
+                Margin="20">
+                <!-- Input Label -->
+                <Label
+                    x:Name="PartLabel"
+                    Margin="0,0,0,10"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    WidthRequest="75"
+                    MinimumWidthRequest="75"
+                    Text="Part"/>
+                <!-- Input Picker Control and Border -->
+                <Border
+                    x:Name="PartControl"
+                    Margin="10,5,5,12"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    WidthRequest="250"
+                    HeightRequest="40"
+                    Stroke="{StaticResource Gray500}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    Background="#00000000">
+                    <Picker
+                        x:Name="PartPicker"
+                        ItemsSource="{Binding SelectedProcessParts}"
+                        ItemDisplayBinding="{Binding GetInfo}"
+                        SelectedIndex="{Binding SelectedPartIndex}"
+                        SelectedIndexChanged="OnPartPickerSelectedIndexChanged"/>
+                </Border>
+            </HorizontalStackLayout>
+
+            <!-- Date, Shift, Operator Input Layout -->
+            <HorizontalStackLayout
+                Grid.Row="4"
+                Grid.Column="0"
+                Margin="20">
+                <!-- Production Date Input Horizontal Layout -->
+                <HorizontalStackLayout>
+                    <!-- Input Label -->
+                    <Label
+                        x:Name="ProductionDateLabel"
+                        Margin="0,0,0,0"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="75"
+                        MinimumWidthRequest="75"
+                        Text="Date"/>
+                    <!-- Input DatePicker Control and Border -->
+                    <Border
+                        x:Name="ProductionDateControl"
+                        Margin="10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="125"
+                        HeightRequest="40"
+                        Stroke="{StaticResource Gray500}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        Background="#00000000">
+                        <DatePicker
+                            x:Name="ProductionDatePicker"
+                            Date="{Binding ProductionDate}"/>
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- Shift Number Input Layout -->
+                <HorizontalStackLayout
+                    Grid.Row="5"
+                    Grid.Column="0">
+                    <!-- Input Label -->
+                    <Label
+                        Margin="10,0,0,0"
+                        x:Name="ShiftLabel"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="50"
+                        MinimumWidthRequest="50"
+                        Text="Shift"/>
+                    <!-- Input Entry Control and Border -->
+                    <Border
+                        x:Name="ShiftControl"
+                        Margin="10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="75"
+                        HeightRequest="40"
+                        Stroke="{StaticResource Gray500}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        Background="#00000000">
+                        <Picker
+                            x:Name="ShiftPicker"
+                            SelectedItem="{Binding ProductionShift}">
+                            <Picker.ItemsSource>
+                                <x:Array Type ="{x:Type x:Int32}">
+                                    <x:Int32>1</x:Int32>
+                                    <x:Int32>2</x:Int32>
+                                    <x:Int32>3</x:Int32>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                    </Border>
+                </HorizontalStackLayout>
+                
+                <!-- Operator Input Layout -->
+                <HorizontalStackLayout>
+                    <!-- Input Label -->
+                    <Label
+                        x:Name="OperatorLabel"
+                        Margin="0"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="75"
+                        MinimumWidthRequest="75"
+                        Text="Operator"/>
+                    <!-- Input Entry Control and Border -->
+                    <Border
+                        x:Name="OperatorControl"
+                        Margin="10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        WidthRequest="75"
+                        HeightRequest="40"
+                        Stroke="{StaticResource Gray500}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        Background="#00000000">
+                        <Entry
+                            x:Name="OperatorEntry"
+                            Text="{Binding ProductionOperator}"
+                            MaxLength="3"/>
+                    </Border>
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
+
+            <!-- Cancel Button -->
+            <Button
+                Grid.Row="6"
+                Grid.Column="0"
+                x:Name="CancelButton"
+                Clicked="OnCancelButtonClicked"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Margin="20,0,0,10"
+                Text="Cancel"
+                TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}"/>
+            <!-- Confirm Button -->
+            <Button
+                Grid.Row="6"
+                Grid.Column="0"
+                x:Name="ConfirmButton"
+                Clicked="OnConfirmButtonClicked"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                Margin="0,0,20,10"
+                Text="Create Label"/>
+        </Grid>
+    </Border>
+</toolkit:Popup>

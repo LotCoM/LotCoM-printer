@@ -12,10 +12,20 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject 
 {
+    private List<PrintTicket> _openPrintTickets = [];
     /// <summary>
     /// The List of Open Print Tickets currently saved locally.
     /// </summary>
-    private List<PrintTicket> OpenPrintTickets = [];
+    public List<PrintTicket> OpenPrintTickets
+    {
+        get {return _openPrintTickets;}
+        set
+        {
+            _openPrintTickets = value;
+            OnPropertyChanged(nameof(_openPrintTickets));
+            OnPropertyChanged(nameof(OpenPrintTickets));
+        }
+    }
 
     private readonly List<Process> _allProcesses = new ProcessData().GetAllProcesses();
     /// <summary>
@@ -70,12 +80,6 @@ public partial class MainPageViewModel : ObservableObject
             OnPropertyChanged(nameof(Printing));
         }
     }
-    
-    // full constructor
-    public MainPageViewModel() 
-    {
-        
-    }
 
     /// <summary>
     /// Checks if the Process requires Serialization (is an origination process).
@@ -95,7 +99,7 @@ public partial class MainPageViewModel : ObservableObject
             return Capture;
         }
         // serialize the Label using the Process' Serialization Mode
-        string? SerialNumber = await Serializer.Serialize(Capture);
+        SerialNumber? SerialNumber = await Serializer.Serialize(Capture.Process, Capture.Part);
         // no serial number was assigned; this is fatal
         if (SerialNumber is null) 
         {
@@ -104,11 +108,11 @@ public partial class MainPageViewModel : ObservableObject
         // update the Serialized Number in the Capture object
         if (Serialization == SerializationModes.JBK) 
         {
-            Capture.VariableFields.JBKNumber = int.Parse(SerialNumber);
+            Capture.VariableFields.JBKNumber = SerialNumber.Value;
         } 
         else 
         {
-            Capture.VariableFields.LotNumber = SerialNumber;
+            Capture.VariableFields.LotNumber = SerialNumber.GetFormattedValue();
         }
         // return the updated Capture object
         return Capture;
@@ -194,54 +198,13 @@ public partial class MainPageViewModel : ObservableObject
         // the Capture is valid and processed; return it
         return Capture;
     }
-
+    
     /// <summary>
-    /// Updates the Page's Selected Process and its Part Data.
+    /// Create a ViewModel to control the logic of a Main Page instance.
     /// </summary>
-    /// <param name="Process"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedProcess(Process Process) 
+    public MainPageViewModel() 
     {
-        await Task.Run(() => 
-        {
-            // update the SelectedProcess properties
-            if (Process is null) 
-            {
-                throw new ArgumentException($"Process '{Process}' was not found in Process masterlist.");
-            }
-            // update SelectedProcess and assign the new list of Parts (as objects) to the SelectedProcessParts list
-            Options.SelectedProcess = Process;
-            Options.SelectedProcessParts = Options.SelectedProcess.Parts;
-        });
-    }
-
-    /// <summary>
-    /// Updates the Page's Selected Part and Model Number.
-    /// </summary>
-    /// <param name="Part"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedPart(Part Part) 
-    {
-        await Task.Run(() => 
-        {
-            // configure the SelectedPart property
-            try 
-            {
-                // update the SelectedPart property and the DisplayedModelNumber property
-                if (Part is null) {
-                    throw new ArgumentException($"Part '{Part}' was not found in Process Part list.");
-                }
-                Options.SelectedPart = Part;
-                Options.DisplayedVariableFields!.ModelNumber = Options.SelectedPart.ModelNumber;
-            // the selected part number was somehow invalid
-            } 
-            catch (ArgumentException) 
-            {
-                throw new ArgumentException($"Part '{Part}' was not found in Process Part list.");
-            }
-        });
+        Options.WindowHeaderLabelText = "Welcome";
     }
 
     /// <summary>
@@ -347,27 +310,62 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Resets the ViewModel's public properties.
-    /// </summary>
-    public void Reset() 
-    {
-        Options.SelectedPart = null;
-        Options.DisplayedVariableFields = null;
-    }
-
-    /// <summary>
     /// Attempts to add a blank PartialDataSet object to the Active Print Ticket.
     /// </summary>
     /// <param name="DataSet"></param>
     public void AddPartialDataSet()
     {
-        if (ActivePrintTicket is not null
-            && ActivePrintTicket.HasSpace)
+        if (ActivePrintTicket is not null && ActivePrintTicket.HasSpace)
         {
             // create and add a blank PartialDataSet object to the ticket
             PartialDataSet EmptyDataSet = new PartialDataSet();
             ActivePrintTicket.AddPartialDataSet(EmptyDataSet);
         }
+    }
+
+    /// <summary>
+    /// Adds a new Print Ticket to the ViewModel's OpenPrintTicket List.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    public void AddOpenPrintTicket(PrintTicket Ticket)
+    {
+        OpenPrintTickets = OpenPrintTickets.Append(Ticket).ToList();
+    }
+
+    /// <summary>
+    /// Updates the Page's active PrintTicket object.
+    /// Omitting Index will set the property to the most-recently added PrintTicket.
+    /// </summary>
+    /// <param name="Index"></param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    public void SetActivePrintTicket(int Index = -1)
+    {
+        // if Index not passed, set to the most recently added Ticket, else set to the Ticket at Index
+        if (Index == -1 && OpenPrintTickets.Count > 0)
+        {
+            ActivePrintTicket = OpenPrintTickets[^1];
+            Options.OpenActivePrintTicket(Index);
+        }
+        else
+        {
+            if (Index <= OpenPrintTickets.Count)
+            {
+                ActivePrintTicket = OpenPrintTickets[Index];
+                Options.OpenActivePrintTicket(Index);
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("There is no PrintTicket at the passed Index.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Closes the Active Print Ticket display, returning to the Welcome menu.
+    /// </summary>
+    public void CloseActivePrintTicket()
+    {
+        Options.CloseActivePrintTicket();
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility

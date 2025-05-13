@@ -8,43 +8,95 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <summary>
 /// Provides a structure for the creation and maintenance of a Printing Ticket.
 /// </summary>
-/// <param name="Department">The Department that initiated this Print Ticket.</param>
-/// <param name="Process">The Process that initiated this Print Ticket.</param>
-/// <param name="Part">The Part that this Print Ticket is applied to.</param>
-/// <param name="SerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
-/// <param name="SerialNumber"></param>
-/// <param name="ProductionDate"></param>
-public partial class PrintTicket(Department Department, Process Process, Part Part, SerializationModes SerializationMode, SerialNumber SerialNumber, Timestamp ProductionDate, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
+/// <param name="TicketProcess">The Process that initiated this Print Ticket.</param>
+/// <param name="TicketPart">The Part that this Print Ticket is applied to.</param>
+/// <param name="TicketSerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
+/// <param name="TicketSerialNumber">The Serial Number to apply to this Print Ticket.</param>
+/// <param name="TicketProductionDate">The Date on which this Print Ticket was initiated.</param>
+/// <param name="TicketProductionShift">The Shift that this Print Ticket was initiated on.</param>
+/// <param name="TicketOperator">The Operator that initiated this Print Ticket.</param>
+/// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
+/// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
+/// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
+public partial class PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, string TicketOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
 {
-    /// <summary>
-    /// The Department that initiated this Print Ticket.
-    /// </summary>
-    private readonly Department Department = Department;
-
+    private readonly Process _process = TicketProcess;
     /// <summary>
     /// The Process that initiated this Print Ticket.
     /// </summary>
-    private readonly Process Process = Process;
+    public Process Process
+    {
+        get {return _process;}
+    }
 
+    private readonly Part _part = TicketPart;
     /// <summary>
     /// The Part that this Print Ticket is applied to.
     /// </summary>
-    private readonly Part Part = Part;
+    public Part Part
+    {
+        get {return _part;}
+    } 
 
+    private readonly SerializationModes _serializationMode = TicketSerializationMode;
     /// <summary>
     /// The type of Serial Number used to Serialize this Print Ticket.
     /// </summary>
-    private readonly SerializationModes SerializationMode = SerializationMode;
+    public SerializationModes SerializationMode
+    {
+        get {return _serializationMode;}
+    }
 
+    private readonly SerialNumber _serialNumber = TicketSerialNumber;
     /// <summary>
     /// The Serial Number (JBK or Lot Number) applied to this Print Ticket.
     /// </summary>
-    private readonly SerialNumber SerialNumber = SerialNumber;
+    public SerialNumber SerialNumber
+    {
+        get {return _serialNumber;}
+    }
 
+    private readonly DateTime _productionDate = TicketProductionDate;
     /// <summary>
     /// The Date and Time at which this Print Ticket was initiated.
     /// </summary>
-    private readonly Timestamp ProductionDate = ProductionDate;
+    public DateTime ProductionDate
+    {
+        get {return _productionDate;}
+    }
+
+    private readonly int _productionShift = TicketProductionShift;
+    /// <summary>
+    /// The Shift that this Print Ticket was initiated on.
+    /// </summary>
+    public int ProductionShift
+    {
+        get {return _productionShift;}
+    }
+
+    private readonly string _productionOperator = TicketOperator;
+    /// <summary>
+    /// The Operator that this Print Ticket was initiated by.
+    /// </summary>
+    public string ProductionOperator
+    {
+        get {return _productionOperator;}
+    }
+
+    private VariableFieldSet _variableFields = VariableFields;
+    /// <summary>
+    /// The Variable Field Set assigned to hold the data entered for this Print Ticket.
+    /// </summary>
+    public VariableFieldSet VariableFields
+    {
+        get {return _variableFields;}
+        set
+        {
+            _variableFields = value;
+            OnPropertyChanged(nameof(_variableFields));
+            OnPropertyChanged(nameof(VariableFields));
+        }
+    }
 
     private PartialDataSet? _firstPartialDataSet = FirstPartialDataSet;
     /// <summary>
@@ -83,58 +135,42 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
     {
         get
         {
-            return $"{Part.ModelNumber} {Part.PartName} - {SerialNumber}";
+            return $"{Part.ModelNumber} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
         }
     }
 
     /// <summary>
-    /// Returns whether the Print Ticket is serialized using a JBK Number or not.
+    /// Returns whether the Print Ticket's Process is a Pass-through Process or not.
     /// </summary>
-    public bool IsJBKSerialized
+    public bool IsPassThrough 
     {
-        get
+        get 
         {
-            return SerializationMode == SerializationModes.JBK;
-        }
-        set
-        {
-            _ = value;
-            OnPropertyChanged(nameof(IsJBKSerialized));
+            return _process.Type == OriginationTypes.PassThrough;
         }
     }
 
     /// <summary>
-    /// Returns whether the Print Ticket is serialized using a Lot Number or not.
+    /// Returns the Production Date without the Time segment.
     /// </summary>
-    public bool IsLotSerialized
-    {
-        get
-        {
-            return SerializationMode == SerializationModes.Lot;
-        }
-        set
-        {
-            _ = value;
-            OnPropertyChanged(nameof(IsLotSerialized));
-        }
-    }
+    public string ProductionDateNoTime => $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
 
-    [ObservableProperty]
     /// <summary>
     /// Returns whether the Print Ticket has one Partial Data Set associated with it.
     /// </summary>
+    [ObservableProperty]
     public partial bool HasFirstPartialDataSet {get; set;} = false;
 
-    [ObservableProperty]
     /// <summary>
     /// Returns whether the Print Ticket has two Partial Data Sets associated with it.
     /// </summary>
+    [ObservableProperty]
     public partial bool HasSecondPartialDataSet {get; set;} = false;
 
-    [ObservableProperty]
     /// <summary>
     /// Returns whether the Print Ticket has space for another Partial Data Set.
     /// </summary>
+    [ObservableProperty]
     public partial bool HasSpace {get; set;} = true;
 
     /// <summary>
@@ -166,12 +202,9 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
             ModeString = "Lot";
         }
         // build the JSON stream piece-by-piece
-        // Department, Process, Part, SerializationMode, SerialNumber, and Production Date are all universal
+        // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
         string JSON = 
             "{" +
-                "\"Department\":{" +
-                    $"\"Title\":\"{Department.Title}\"" +
-                "}," + 
                 "\"Process\":{" +
                     $"\"FullName\":\"{Process.FullName}\"" +
                 "}," +
@@ -180,7 +213,17 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
                 "}," +
                 $"\"SerializationMode\":\"{ModeString}\"," +
                 $"\"SerialNumber\":\"{SerialNumber.ToJSON()}\"," +
-                $"\"ProductionDate\":\"{ProductionDate.Stamp}\"";
+                $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
+                $"\"ProductionShift\":\"{ProductionShift}\"," +
+                $"\"ProductionOperator\":\"{ProductionOperator}\"" +
+                "\"VariableFieldSet\":\"{" +
+                    $"\"JBKNumber\":\"{VariableFields.JBKNumber}\"," +
+                    $"\"LotNumber\":\"{VariableFields.LotNumber}\"," +
+                    $"\"DeburrJBKNumber\":\"{VariableFields.DeburrJBKNumber}\"," +
+                    $"\"DieNumber\":\"{VariableFields.DieNumber}\"," +
+                    $"\"ModelNumber\":\"{VariableFields.ModelNumber}\"," +
+                    $"\"HeatNumber\":\"{VariableFields.HeatNumber}\"" +
+                "}";
         // add partial data sets only if assigned
         if (HasFirstPartialDataSet)
         {
@@ -218,18 +261,16 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
         JObject JSON = JObject.Parse(Line);
         // attempt to find Department, Process, and Part in the Process Masterlist
         ProcessData Data = new ProcessData();
-        Department Department;
         Process Process;
         Part Part;
         try
         {
-            Department = await Data.GetIndividualDepartmentAsync(JSON["Department"]!["Title"]!.ToString());
             Process = await Data.GetIndividualProcessAsync(JSON["Process"]!["FullName"]!.ToString());
             Part = await Data.GetProcessPartDataAsync(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
         }
         catch
         {
-            throw new JsonException($"Could not parse a Department, Process, and/or Part from '{Line}'.");
+            throw new JsonException($"Could not parse a Process, and/or Part from '{Line}'.");
         }
         // convert the SerializationMode from string to actual enum value and parse the SerialNumber
         SerializationModes Mode;
@@ -242,15 +283,48 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
             Mode = SerializationModes.Lot;
         }
         SerialNumber Number = await SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
-        // parse out a timestamp for ProductionDate
-        Timestamp Date;
+        // parse out a timestamp for ProductionDate, Shift number, and Operator
+        DateTime ParsedDate;
+        int ParsedShift;
+        string ParsedOperator;
         if (DateTime.TryParse(JSON["ProductionDate"]!.ToString(), out DateTime ParsedStamp))
         {
-            Date = new Timestamp(ParsedStamp);
+            ParsedDate = ParsedStamp;
         }
         else
         {
             throw new JsonException($"Could not parse a Production Date from '{Line}'.");
+        }
+        try
+        {
+            ParsedShift = int.Parse(JSON["ProductionShift"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Production Shift from '{Line}'.");
+        }
+        try
+        {
+            ParsedOperator = JSON["ProductionOperator"]!.ToString();
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse an Operator from '{Line}'.");
+        }
+        // parse the variable field set assigned to the Ticket
+        VariableFieldSet VariableFields = new VariableFieldSet();
+        try
+        {
+            VariableFields.JBKNumber = int.Parse(JSON["VariableFieldSet"]!["JBKNumber"]!.ToString());
+            VariableFields.LotNumber = JSON["VariableFieldSet"]!["LotNumber"]!.ToString();
+            VariableFields.DeburrJBKNumber = int.Parse(JSON["VariableFieldSet"]!["DeburrJBKNumber"]!.ToString());
+            VariableFields.DieNumber = int.Parse(JSON["VariableFieldSet"]!["DieNumber"]!.ToString());
+            VariableFields.ModelNumber = JSON["VariableFieldSet"]!["ModelNumber"]!.ToString();
+            VariableFields.HeatNumber = JSON["VariableFieldSet"]!["HeatNumber"]!.ToString();
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse variable requirements from '{Line}'.");
         }
         // check for and parse partial data sets
         PartialDataSet? FirstPartialDataSet = null;
@@ -270,7 +344,7 @@ public partial class PrintTicket(Department Department, Process Process, Part Pa
             SecondPartialDataSet = new PartialDataSet(Quantity, Shift, Operator);
         }
         // construct the parsed PrintTicket
-        return new PrintTicket(Department, Process, Part, Mode, Number, Date, FirstPartialDataSet, SecondPartialDataSet);
+        return new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
     }
 
     /// <summary>
