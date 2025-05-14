@@ -13,7 +13,7 @@ public partial class MainPageOptions(): ObservableObject()
     public enum OpenPrintTicketsPanelWidths
     {
         Open = 350,
-        Closed = 50
+        Closed = 90
     }
 
     /// <summary>
@@ -22,19 +22,13 @@ public partial class MainPageOptions(): ObservableObject()
     private static class DefaultOptions
     {
         public const int SelectedPrintTicketIndex = -1;
-        public const bool HasActivePrintTicket = false;
-        public const VariableFieldSet DisplayedVariableFields = null;
         public const OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
         public const bool IsOpenPrintTicketsPanelShown = false;
-        public const bool IsWindowHeaderShown = true;
-        public const string WindowHeaderLabelText = "";
+        public const bool IsWelcomeMenuShown = true;
+        public const string WelcomeMenuTitleLabelText = "";
+        public const string WelcomeMenuSubTitleLabelText = "";
+        public const bool IsActivePrintTicketMenuShown = false;
     }
-
-    /// <summary>
-    /// Controls whether there is an active Print Ticket to display or not.
-    /// </summary>
-    [ObservableProperty]
-    public partial bool HasActivePrintTicket {get; set;} = DefaultOptions.HasActivePrintTicket;
 
     /// <summary>
     /// Controls the index of the currently selected PrintTicket in the Open Print Tickets Panel ListView.
@@ -55,16 +49,28 @@ public partial class MainPageOptions(): ObservableObject()
     public partial bool IsOpenPrintTicketsPanelShown {get; set;} = DefaultOptions.IsOpenPrintTicketsPanelShown;
 
     /// <summary>
-    /// Provides the Visibility state of the Window Header.
+    /// Provides the Visibility state of the Welcome Menu.
     /// </summary>
     [ObservableProperty]
-    public partial bool IsWindowHeaderShown {get; set;} = DefaultOptions.IsWindowHeaderShown;
+    public partial bool IsWelcomeMenuShown {get; set;} = DefaultOptions.IsWelcomeMenuShown;
+    
+    /// <summary>
+    /// Provides the text to display on the Window Title Label.
+    /// </summary>
+    [ObservableProperty]
+    public partial string WelcomeMenuTitleLabelText {get; set;} = DefaultOptions.WelcomeMenuTitleLabelText;
 
     /// <summary>
-    /// Provides the text to display on the Window Header Label.
+    /// Provides the text to display on the Window Sub-Title Label.
     /// </summary>
     [ObservableProperty]
-    public partial string WindowHeaderLabelText {get; set;} = DefaultOptions.WindowHeaderLabelText;
+    public partial string WelcomeMenuSubTitleLabelText {get; set;} = DefaultOptions.WelcomeMenuSubTitleLabelText;
+
+    /// <summary>
+    /// Provides the Visibility state of the ActivePrintTicket Menu.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsActivePrintTicketMenuShown {get; set;} = DefaultOptions.IsActivePrintTicketMenuShown;
 
     /// <summary>
     /// Opens the Open Print Tickets Panel.
@@ -98,8 +104,8 @@ public partial class MainPageOptions(): ObservableObject()
     /// </summary>
     public void OpenActivePrintTicket()
     {
-        HasActivePrintTicket = true;
-        IsWindowHeaderShown = false;
+        IsWelcomeMenuShown = false;
+        IsActivePrintTicketMenuShown = true;
     }
 
     /// <summary>
@@ -107,7 +113,7 @@ public partial class MainPageOptions(): ObservableObject()
     /// </summary>
     public void CloseActivePrintTicket()
     {
-        HasActivePrintTicket = false;
-        IsWindowHeaderShown = true;
+        IsWelcomeMenuShown = true;
+        IsActivePrintTicketMenuShown = false;
     }
 }
