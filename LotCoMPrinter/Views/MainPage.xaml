@@ -337,35 +337,96 @@
                     HeightRequest="40"
                     HorizontalOptions="End"
                     VerticalOptions="Start"
-                    Text="Finalize &amp; Print"/>  
-                <!-- Process Label -->
-                <Label
+                    Text="Finalize &amp; Print"/>
+
+                <!-- Initial Production Info Header Layout -->
+                <Grid
                     Grid.Row="1"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    x:Name="ProcessLabel"
-                    FontSize="16"
-                    TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
-                    Margin="20,20,0,10"
-                    HorizontalOptions="Start"
-                    VerticalOptions="Center"
-                    WidthRequest="300"
-                    MinimumWidthRequest="300"
-                    Text="{Binding ActivePrintTicket.Process.FullName, StringFormat='Process: {0}'}"/>
-                <!-- Part Label -->
-                <Label
+                    Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <!-- Title Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Process Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Part Row -->
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <!-- Title / Labels Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Process / Part Column -->
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- Title Label -->
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="20"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        FontSize="16"
+                        TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                        Text="Initial Production Data"/>  
+                    <!-- Process Field Label -->
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        FontSize="16"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
+                        Margin="20,0,0,10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        Text="Process:"/>
+                    <!-- Process Value Label -->
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        x:Name="ProcessLabel"
+                        FontSize="16"
+                        TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
+                        Margin="35,0,0,10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="300"
+                        MinimumWidthRequest="300"
+                        Text="{Binding ActivePrintTicket.Process.FullName}"/>
+                    <!-- Part Field Label -->
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        FontSize="16"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
+                        Margin="20,0,0,10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        Text="Part:"/>
+                    <!-- Part Value Label -->
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        x:Name="PartLabel"
+                        FontSize="16"
+                        TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
+                        Margin="35,0,0,10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="300"
+                        MinimumWidthRequest="300"
+                        Text="{Binding ActivePrintTicket.Part.GetInfo}"/>
+                </Grid>
+                
+                <!-- Process/Part Separator Bar -->
+                <BoxView
                     Grid.Row="2"
                     Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    x:Name="PartLabel"
-                    FontSize="16"
-                    TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
-                    Margin="20,10,0,10"
-                    HorizontalOptions="Start"
-                    VerticalOptions="Center"
-                    WidthRequest="300"
-                    MinimumWidthRequest="300"
-                    Text="{Binding ActivePrintTicket.Part.GetInfo, StringFormat='Part: {0}'}"/>
+                    Grid.ColumnSpan="3"
+                    Margin="0"
+                    HeightRequest="1"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
                 <!-- Production Date Input -->
                 <HorizontalStackLayout
                     Grid.Row="3"
