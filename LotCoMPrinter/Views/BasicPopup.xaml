@@ -13,18 +13,20 @@
             <Setter Property="VerticalOptions" Value="Start" />
             <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
         </Style>
+        <!-- RecessedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
     </toolkit:Popup.Resources>
     
     <!-- Use a Grid Layout to create a Windows-like Popup Window -->
     <!-- Apply a Thin Border -->
     <Border
-        StrokeThickness=".25"
+        StrokeThickness="1"
         StrokeShape="RoundRectangle 10,10,10,10"
-        Stroke="{AppThemeBinding Light={StaticResource OffBlack}, Dark={StaticResource White}}">
+        Stroke="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}">
         <Grid>
             <Grid.RowDefinitions>
                 <!-- Header Row -->
-                <RowDefinition Height="75"/>
+                <RowDefinition Height="Auto"/>
                 <!-- Body Row -->
                 <RowDefinition Height="Auto"/>
                 <!-- Button (Footer) Row -->
@@ -36,52 +38,55 @@
             </Grid.ColumnDefinitions>
             <!-- Add a Border to Fill the Header Row -->
             <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
                 StrokeThickness="0"
                 StrokeShape="Rectangle"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Black}}"
-                Grid.Row="0"
-                Grid.Column="0">
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
                 <!-- Add an Error Title Label -->
                 <Label
                     x:Name="PopupTitleLabel"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
-                    Margin="10,5,5,5"
+                    Margin="15"
                     Text="{Binding Title}"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                    FontSize="28"
-                    FontAttributes="Bold"/>
+                    FontSize="20"/>
             </Border>
             <!-- Use a ScrollView in the Body to Allow Lengthy Messages -->
             <ScrollView
                 Grid.Row="1"
-                Grid.Column="0">
+                Grid.Column="0"
+                MinimumHeightRequest="50"
+                HeightRequest="150">
                 <!-- Add a Border to Fill the Body Row -->
                 <Border
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
                     StrokeThickness="0"
                     StrokeShape="Rectangle"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
-                    Grid.Row="1"
-                    Grid.Column="0">
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
                     <!-- Add an Error Message Body Label -->
                     <Label
                         x:Name="PopupMessageLabel"
                         HorizontalOptions="Start"
                         VerticalOptions="Start"
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="10"
+                        Margin="25,5,0,5"
                         Text="{Binding Message}"
-                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
                 </Border>
             </ScrollView>
             <!-- Add a Border to Fill the Footer Row -->
             <Border
+                Grid.Row="2"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
                 StrokeThickness="0"
                 StrokeShape="Rectangle"
-                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
-                Grid.Row="2"
-                Grid.Column="0">
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
                 <!-- Add an OK Button -->
                 <Button
                     x:Name="ConfirmationButton"
@@ -93,11 +98,7 @@
                     Grid.Row="2"
                     Grid.Column="0"
                     Margin="10"
-                    Text="OK"
-                    TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-                    BorderColor="#88ACACAC"
-                    BorderWidth="1"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+                    Text="OK"/>
             </Border>
         </Grid>
     </Border>

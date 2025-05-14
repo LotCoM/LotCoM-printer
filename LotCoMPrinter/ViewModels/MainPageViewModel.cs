@@ -204,7 +204,8 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public MainPageViewModel() 
     {
-        Options.WindowHeaderLabelText = "Welcome";
+        Options.WelcomeMenuTitleLabelText = "Welcome";
+        Options.WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
     }
 
     /// <summary>

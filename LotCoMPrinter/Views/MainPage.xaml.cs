@@ -20,7 +20,7 @@ public partial class MainPage : ContentPage
 	private async Task AnimatedCollapseOpenPrintTicketsPanel()
 	{
 		ViewModel.Options.CollapseOpenPrintTicketsPanel();
-		await OpenPrintTicketsCollapseButton.RotateTo(0);
+		await OpenPrintTicketsCollapseButton.RotateTo(180);
 	}
 
 	/// <summary>
@@ -31,7 +31,7 @@ public partial class MainPage : ContentPage
 	private async Task AnimatedRaiseOpenPrintTicketsPanel()
 	{
 		ViewModel.Options.RaiseOpenPrintTicketsPanel();
-		await OpenPrintTicketsCollapseButton.RotateTo(180);
+		await OpenPrintTicketsCollapseButton.RotateTo(0);
 	}
 
 	/// <summary>
@@ -47,7 +47,7 @@ public partial class MainPage : ContentPage
 		// show the welcome menu if not swapping ticket displays
 		if (!Swapping)
 		{
-			ViewModel.Options.IsWindowHeaderShown = true;
+			ViewModel.Options.IsWelcomeMenuShown = true;
 		}
 		await AnimatedCollapseOpenPrintTicketsPanel();
 	}
@@ -60,7 +60,7 @@ public partial class MainPage : ContentPage
 	/// <returns></returns>
 	private async Task AnimatedOpenActivePrintTicket(int Index = -1, uint Duration = 100)
 	{
-		ViewModel.Options.IsWindowHeaderShown = false;
+		ViewModel.Options.IsWelcomeMenuShown = false;
 		ActivePrintTicketLayout.Opacity = 0;
 		await ActivePrintTicketLayout.FadeTo(1, Duration);
 		ViewModel.SetActivePrintTicket(Index);

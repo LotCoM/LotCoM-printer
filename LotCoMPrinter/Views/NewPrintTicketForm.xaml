@@ -14,13 +14,15 @@
             <Setter Property="VerticalOptions" Value="Start" />
             <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
         </Style>
+        <!-- RecessedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
     </toolkit:Popup.Resources>
 
     <!-- Main Layout -->
     <Border
-        StrokeThickness=".25"
+        StrokeThickness="1"
         StrokeShape="RoundRectangle 10,10,10,10"
-        Stroke="{AppThemeBinding Light={StaticResource OffBlack}, Dark={StaticResource White}}">
+        Stroke="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}">
         <Grid>
             <Grid.RowDefinitions>
                 <!-- Title Row -->
@@ -43,38 +45,52 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
-            <!-- Title Label -->
-            <Label
+            <!-- Title Fill -->
+            <HorizontalStackLayout
                 Grid.Row="0"
                 Grid.Column="0"
-                x:Name="PopupTitleLabel"
-                HorizontalOptions="Start"
-                VerticalOptions="Center"
-                Margin="20,10,0,0"
-                Text="Open New Label Ticket"
-                FontSize="20"
-                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
-
-            <!-- Message Label -->
-            <Label
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
+                <!-- Title Label -->
+                <Label
+                    x:Name="PopupTitleLabel"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Margin="10,20,0,20"
+                    Text="Open New Label Ticket"
+                    FontSize="20"
+                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+            </HorizontalStackLayout>
+            
+            <!-- Message Fill -->
+            <HorizontalStackLayout
                 Grid.Row="1"
                 Grid.Column="0"
-                x:Name="PopupMessageLabel"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                Margin="20,10,0,20"
-                Text="Enter basic information for this new Label:"
-                TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                <!-- Message Label -->
+                <Label
+                    x:Name="PopupMessageLabel"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Margin="20"
+                    Text="Enter basic information for this new Label:"
+                    TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
+            </HorizontalStackLayout>
 
-            <!-- Process Input Horizontal Layout-->
+            <!-- Process Input Layout-->
             <HorizontalStackLayout
                 Grid.Row="2"
                 Grid.Column="0"
-                Margin="20">
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
                 <!-- Input Label -->
                 <Label
                     x:Name="ProcessLabel"
-                    Margin="0,0,0,10"
+                    Margin="20,10,0,10"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
                     WidthRequest="75"
@@ -83,15 +99,13 @@
                 <!-- Input Picker Control and Border -->
                 <Border
                     x:Name="ProcessControl"
-                    Margin="10,5,5,12"
+                    Margin="0,10,0,10"
                     HorizontalOptions="Start"
                     VerticalOptions="Start"
                     WidthRequest="250"
                     HeightRequest="40"
-                    Stroke="{StaticResource Gray500}"
                     StrokeThickness="1"
-                    StrokeShape="RoundRectangle 10,10,10,10"
-                    Background="#00000000">
+                    StrokeShape="RoundRectangle 10,10,10,10">
                     <Picker
                         x:Name="ProcessPicker"
                         ItemsSource="{Binding AllProcesses}"
@@ -126,11 +140,13 @@
             <HorizontalStackLayout
                 Grid.Row="3"
                 Grid.Column="0"
-                Margin="20">
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
                 <!-- Input Label -->
                 <Label
                     x:Name="PartLabel"
-                    Margin="0,0,0,10"
+                    Margin="20,10,0,10"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
                     WidthRequest="75"
@@ -139,15 +155,13 @@
                 <!-- Input Picker Control and Border -->
                 <Border
                     x:Name="PartControl"
-                    Margin="10,5,5,12"
+                    Margin="0,10,0,10"
                     HorizontalOptions="Start"
                     VerticalOptions="Start"
                     WidthRequest="250"
                     HeightRequest="40"
-                    Stroke="{StaticResource Gray500}"
                     StrokeThickness="1"
-                    StrokeShape="RoundRectangle 10,10,10,10"
-                    Background="#00000000">
+                    StrokeShape="RoundRectangle 10,10,10,10">
                     <Picker
                         x:Name="PartPicker"
                         ItemsSource="{Binding SelectedProcessParts}"
@@ -161,13 +175,15 @@
             <HorizontalStackLayout
                 Grid.Row="4"
                 Grid.Column="0"
-                Margin="20">
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
                 <!-- Production Date Input Horizontal Layout -->
                 <HorizontalStackLayout>
                     <!-- Input Label -->
                     <Label
                         x:Name="ProductionDateLabel"
-                        Margin="0,0,0,0"
+                        Margin="20,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
                         WidthRequest="75"
@@ -176,17 +192,16 @@
                     <!-- Input DatePicker Control and Border -->
                     <Border
                         x:Name="ProductionDateControl"
-                        Margin="10"
+                        Margin="0,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
                         WidthRequest="125"
                         HeightRequest="40"
-                        Stroke="{StaticResource Gray500}"
                         StrokeThickness="1"
-                        StrokeShape="RoundRectangle 10,10,10,10"
-                        Background="#00000000">
+                        StrokeShape="RoundRectangle 10,10,10,10">
                         <DatePicker
                             x:Name="ProductionDatePicker"
+                            WidthRequest="120"
                             Date="{Binding ProductionDate}"/>
                     </Border>
                 </HorizontalStackLayout>
@@ -197,7 +212,7 @@
                     Grid.Column="0">
                     <!-- Input Label -->
                     <Label
-                        Margin="10,0,0,0"
+                        Margin="20,10,0,10"
                         x:Name="ShiftLabel"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
@@ -207,15 +222,13 @@
                     <!-- Input Entry Control and Border -->
                     <Border
                         x:Name="ShiftControl"
-                        Margin="10"
+                        Margin="0,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
                         WidthRequest="75"
                         HeightRequest="40"
-                        Stroke="{StaticResource Gray500}"
                         StrokeThickness="1"
-                        StrokeShape="RoundRectangle 10,10,10,10"
-                        Background="#00000000">
+                        StrokeShape="RoundRectangle 10,10,10,10">
                         <Picker
                             x:Name="ShiftPicker"
                             SelectedItem="{Binding ProductionShift}">
@@ -235,7 +248,7 @@
                     <!-- Input Label -->
                     <Label
                         x:Name="OperatorLabel"
-                        Margin="0"
+                        Margin="20,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
                         WidthRequest="75"
@@ -244,15 +257,13 @@
                     <!-- Input Entry Control and Border -->
                     <Border
                         x:Name="OperatorControl"
-                        Margin="10"
+                        Margin="0,10,20,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Start"
                         WidthRequest="75"
                         HeightRequest="40"
-                        Stroke="{StaticResource Gray500}"
                         StrokeThickness="1"
-                        StrokeShape="RoundRectangle 10,10,10,10"
-                        Background="#00000000">
+                        StrokeShape="RoundRectangle 10,10,10,10">
                         <Entry
                             x:Name="OperatorEntry"
                             Text="{Binding ProductionOperator}"
@@ -261,6 +272,12 @@
                 </HorizontalStackLayout>
             </HorizontalStackLayout>
 
+            <HorizontalStackLayout
+                Grid.Row="6"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"/>
             <!-- Cancel Button -->
             <Button
                 Grid.Row="6"
@@ -269,10 +286,8 @@
                 Clicked="OnCancelButtonClicked"
                 HorizontalOptions="Start"
                 VerticalOptions="Center"
-                Margin="20,0,0,10"
-                Text="Cancel"
-                TextColor="{AppThemeBinding Light=Black, Dark=White}"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}"/>
+                Margin="10"
+                Text="Cancel"/>
             <!-- Confirm Button -->
             <Button
                 Grid.Row="6"
@@ -281,7 +296,7 @@
                 Clicked="OnConfirmButtonClicked"
                 HorizontalOptions="End"
                 VerticalOptions="Center"
-                Margin="0,0,20,10"
+                Margin="10"
                 Text="Create Label"/>
         </Grid>
     </Border>
