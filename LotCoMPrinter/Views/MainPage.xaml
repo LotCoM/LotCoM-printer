@@ -331,7 +331,6 @@
                     Grid.Row="0"
                     Grid.Column="1"
                     x:Name="FinalizeActivePrintTicketButton"
-                    Clicked="OnFinalizeActivePrintTicketButtonClicked"
                     Margin="30"
                     Padding="0"
                     WidthRequest="100"
