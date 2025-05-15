@@ -523,7 +523,8 @@
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 10,10,10,10">
                             <Entry
-                                x:Name="QuantityEntry"/>
+                                x:Name="QuantityEntry"
+                                Text="{Binding ActivePrintTicket.ProductionQuantity}"/>
                         </Border>
                     </HorizontalStackLayout>
                     <!-- Operator Input -->
