@@ -15,7 +15,6 @@ public partial class MainPage : ContentPage
 	/// <summary>
 	/// Animates the collapsing of the Open Print Tickets Panel across Duration milliseconds.
 	/// </summary>
-	/// <param name="Duration"></param>
 	/// <returns></returns>
 	private async Task AnimatedCollapseOpenPrintTicketsPanel()
 	{
@@ -26,7 +25,6 @@ public partial class MainPage : ContentPage
 	/// <summary>
 	/// Animates the raising of the Open Print Tickets Panel across Duration milliseconds.
 	/// </summary>
-	/// <param name="Duration"></param>
 	/// <returns></returns>
 	private async Task AnimatedRaiseOpenPrintTicketsPanel()
 	{
@@ -35,37 +33,33 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
-	/// Fades the ActivePrintTicketLayout out over Duration milliseconds, then closes the display.
+	/// Opens and fades the ActivePrintTicket Menu in over Duration milliseconds.
 	/// </summary>
-	/// <returns></returns>
 	/// <param name="Duration"></param>
-	private async Task AnimatedCloseActivePrintTicket(uint Duration = 100, bool Swapping = false)
+	/// <returns></returns>
+	private async Task AnimatedDisplayPrintTicket(uint Duration = 100)
 	{
-		await ActivePrintTicketLayout.FadeTo(0, Duration);
-		ViewModel.CloseActivePrintTicket();
-		ActivePrintTicketLayout.Opacity = 1;
-		// show the welcome menu if not swapping ticket displays
-		if (!Swapping)
+		ViewModel.DisplayPrintTicket(ViewModel.ActivePrintTicket!);
+		await ActivePrintTicketLayout.FadeTo(1, Duration);
+		if (ViewModel.Options.IsOpenPrintTicketsPanelShown)
 		{
-			ViewModel.Options.IsWelcomeMenuShown = true;
+			await AnimatedCollapseOpenPrintTicketsPanel();
 		}
-		await AnimatedCollapseOpenPrintTicketsPanel();
 	}
 
 	/// <summary>
-	/// Sets the ActivePrintTicket to Index, then opens and fades the ActivePrintTicketLayout in over Duration milliseconds.
+	/// Fades the ActivePrintTicket Menu out over Duration milliseconds, then closes the display.
 	/// </summary>
-	/// <param name="Index"></param>
-	/// <param name="Duration"></param>
 	/// <returns></returns>
-	private async Task AnimatedOpenActivePrintTicket(int Index = -1, uint Duration = 100)
+	/// <param name="Duration"></param>
+	private async Task AnimatedClosePrintTicket(uint Duration = 100)
 	{
-		ViewModel.Options.IsWelcomeMenuShown = false;
-		ActivePrintTicketLayout.Opacity = 0;
-		await ActivePrintTicketLayout.FadeTo(1, Duration);
-		ViewModel.SetActivePrintTicket(Index);
-		ViewModel.OpenActivePrintTicket();
-		await AnimatedCollapseOpenPrintTicketsPanel();
+		await ActivePrintTicketLayout.FadeTo(0, Duration);
+		await ViewModel.ClosePrintTicket();
+		if (ViewModel.Options.IsOpenPrintTicketsPanelShown)
+		{
+			await AnimatedCollapseOpenPrintTicketsPanel();
+		}
 	}
 
 	/// <summary>
@@ -210,8 +204,7 @@ public partial class MainPage : ContentPage
     /// <param name="e"></param>
     private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
     {
-		NewPrintTicketForm Form = new NewPrintTicketForm();
-		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
+		object? Result = await this.ShowPopupAsync(new NewPrintTicketForm(), CancellationToken.None);
 		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
 		if (Result is null)
 		{
@@ -219,11 +212,9 @@ public partial class MainPage : ContentPage
 		}
 		if (Result.GetType().Equals(typeof(PrintTicket)))
 		{
-			ViewModel.AddOpenPrintTicket((PrintTicket)Result);
+			await ViewModel.AddOpenPrintTicket((PrintTicket)Result);
+			await AnimatedDisplayPrintTicket();
 		}
-		// change the ViewModel's ActivePrintTicket
-		ViewModel.SetActivePrintTicket();
-		await AnimatedOpenActivePrintTicket();
     }
 
 	/// <summary>
@@ -231,7 +222,7 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private async void OnCloseActivePrintTicketButtonClicked(object sender, EventArgs e)
 	{
-		await AnimatedCloseActivePrintTicket(Swapping: false);
+		await AnimatedClosePrintTicket();
 	}
 
 	/// <summary>
@@ -241,8 +232,8 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private void OnOpenPrintTicketsListViewItemSelected(object sender, SelectedItemChangedEventArgs e)
 	{
-		ViewModel.Options.SelectedPrintTicketIndex = e.SelectedItemIndex;
 		// find the selected PrintTicket in the Open Print Tickets list and set its IsSelectedInList property
+		ViewModel.Options.SelectedPrintTicketIndex = e.SelectedItemIndex;
 		foreach (PrintTicket _ticket in ViewModel.OpenPrintTickets)
 		if (_ticket.Equals(e.SelectedItem))
 		{
@@ -261,22 +252,8 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private async void OnOpenPrintTicketFromListViewButtonClicked(object sender, EventArgs e)
 	{
-		// configure a Swapping flag and perform animations
-		bool Swapping = false;
-		if (ViewModel.ActivePrintTicket is not null)
-		{
-			Swapping = true;
-		}
-		// only collapse open print tickets panel if the same item selected; else swap to new item
-		if (ViewModel.ActivePrintTicket == ViewModel.OpenPrintTickets[ViewModel.Options.SelectedPrintTicketIndex])
-		{
-			await AnimatedCollapseOpenPrintTicketsPanel();
-		}
-		else
-		{
-			await AnimatedCloseActivePrintTicket(Swapping: Swapping);
-			await AnimatedOpenActivePrintTicket(ViewModel.Options.SelectedPrintTicketIndex); 
-		}
+		ViewModel.ActivePrintTicket = (PrintTicket)OpenPrintTicketsListView.SelectedItem;
+		await AnimatedDisplayPrintTicket();
 	}
 
 	// full constructor
