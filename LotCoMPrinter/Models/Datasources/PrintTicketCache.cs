@@ -12,7 +12,7 @@ public static class PrintTicketCache
     /// <summary>
     /// The absolute path of the Print Ticket cache file.
     /// </summary>
-    private static readonly string CacheFile = Path.Join(CacheDir, "ticket_cache.json");
+    private static readonly string CacheFile = Path.Join(CacheDir, "ticket_cache.txt");
 
     /// <summary>
     /// Reads the Print Ticket cache file and returns the results as a List of PrintTicket JSON streams.
