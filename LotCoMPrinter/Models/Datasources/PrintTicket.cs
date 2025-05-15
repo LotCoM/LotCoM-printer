@@ -505,6 +505,171 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
     }
 
     /// <summary>
+    /// Attempts to asynchronously parse a full PrintTicket object from a JSON formatted Line.
+    /// </summary>
+    /// <param name="Line"></param>
+    /// <returns>A PrintTicket object.</returns>
+    /// <exception cref="JsonException"></exception>
+    public static async Task<PrintTicket> ParseJSONAsync(string Line)
+    {
+        // parse Line into JTokens
+        JObject JSON = JObject.Parse(Line);
+        // attempt to find Department, Process, and Part in the Process Masterlist
+        ProcessData Data = new ProcessData();
+        Process Process;
+        Part Part;
+        try
+        {
+            Process = await Data.GetIndividualProcessAsync(JSON["Process"]!["FullName"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Process from '{JSON["Process"]!}'.");
+        }
+        try
+        {
+            Part = await Data.GetProcessPartDataAsync(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
+        }
+        // convert the SerializationMode from string to actual enum value and parse the SerialNumber
+        SerializationModes Mode;
+        SerialNumber Number;
+        try
+        {
+            Mode = SerializationModeFromString(JSON["SerializationMode"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a SerializationMode from '{JSON["SerializationMode"]!}'.");
+        }
+        try
+        {
+            Number = await SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a SerialNumber from '{JSON["SerialNumber"]!}'.");
+        }
+        // parse out a timestamp for ProductionDate, Shift number, and Operator
+        DateTime ParsedDate;
+        int ParsedShift;
+        int ParsedQuantity;
+        string ParsedOperator;
+        try
+        {
+            ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Production Date from '{JSON["ProductionDate"]!}'.");
+        }
+        try
+        {
+            ParsedShift = int.Parse(JSON["ProductionShift"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Production Shift from '{JSON["ProductionShift"]!}'.");
+        }
+        try
+        {
+            ParsedQuantity = int.Parse(JSON["ProductionQuantity"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Production Quantity from '{JSON["ProductionQuantity"]!}'.");
+        }
+        try
+        {
+            ParsedOperator = JSON["ProductionOperator"]!.ToString();
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse an Operator from '{JSON["ProductionOperator"]!}'.");
+        }
+        // parse the variable field set assigned to the Ticket
+        VariableFieldSet VariableFields = new VariableFieldSet();
+        try
+        {
+            VariableFields.JBKNumber = int.Parse(JSON["VariableFieldSet"]!["JBKNumber"]!.ToString());
+        }
+        catch
+        {
+            VariableFields.JBKNumber = null;
+        }
+        try
+        {
+            VariableFields.LotNumber = JSON["VariableFieldSet"]!["LotNumber"]!.ToString();
+        }
+        catch
+        {
+            VariableFields.LotNumber = null;
+        }
+        try
+        {
+            VariableFields.DeburrJBKNumber = int.Parse(JSON["VariableFieldSet"]!["DeburrJBKNumber"]!.ToString());
+        }
+        catch
+        {
+            VariableFields.DeburrJBKNumber = null;
+        }
+        try
+        {
+            VariableFields.DieNumber = int.Parse(JSON["VariableFieldSet"]!["DieNumber"]!.ToString());
+        }
+        catch
+        {
+            VariableFields.DieNumber = null;
+        }
+        try
+        {
+            VariableFields.ModelNumber = JSON["VariableFieldSet"]!["ModelNumber"]!.ToString();
+        }
+        catch
+        {
+            VariableFields.ModelNumber = null;
+        }
+        try
+        {
+            VariableFields.HeatNumber = JSON["VariableFieldSet"]!["HeatNumber"]!.ToString();
+        }
+        catch
+        {
+            VariableFields.HeatNumber = null;
+        }
+        // check for and parse partial data sets
+        PartialDataSet? FirstPartialDataSet = null;
+        PartialDataSet? SecondPartialDataSet = null;
+        if (JSON.ContainsKey("FirstPartialDataSet"))
+        {
+            try
+            {
+                FirstPartialDataSet = PartialDataSet.ParseJSON(JSON["FirstPartialDataSet"]!);
+            }
+            catch
+            {
+                throw new JsonException($"Could not parse the First Partial Data Set from {JSON["FirstPartialDataSet"]!}.");
+            }
+        }
+        if (JSON.ContainsKey("SecondPartialDataSet"))
+        {
+            try
+            {
+                FirstPartialDataSet = PartialDataSet.ParseJSON(JSON["SecondPartialDataSet"]!);
+            }
+            catch
+            {
+                throw new JsonException($"Could not parse the Second Partial Data Set from {JSON["SecondPartialDataSet"]!}.");
+            }
+        }
+        // construct the parsed PrintTicket
+        return new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
+    }
+
+    /// <summary>
     /// Adds a PartialDataSet to either the First or Second PartialDataSet slot.
     /// </summary>
     /// <param name="DataSet"></param>
