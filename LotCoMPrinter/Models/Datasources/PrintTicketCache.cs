@@ -44,7 +44,7 @@ public static class PrintTicketCache
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
-    private static async Task Save(List<PrintTicket> Tickets) 
+    public static async Task Save(List<PrintTicket> Tickets) 
     {
         // convert the passed Print Tickets to JSON streams and write them to the cache
         List<string> JSONTickets = Tickets
