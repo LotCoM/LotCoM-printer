@@ -13,6 +13,10 @@
     <Color x:Key="Secondary">#F6C6AD</Color>
     <Color x:Key="SecondaryDarkText">#242424</Color>
     <Color x:Key="Tertiary">#FFDBAA5C</Color>
+    <Color x:Key="LightGreen">#FF61F28F</Color>
+    <Color x:Key="LightRed">#FFEE8787</Color>
+    <Color x:Key="Green">#FF4AC671</Color>
+    <Color x:Key="Red">#FFE05757</Color>
     
     <!-- Light Theme UI Colors -->
     <Color x:Key="PrimaryText">Black</Color>
