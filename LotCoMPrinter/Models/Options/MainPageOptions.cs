@@ -115,5 +115,6 @@ public partial class MainPageOptions(): ObservableObject()
     {
         IsWelcomeMenuShown = true;
         IsActivePrintTicketMenuShown = false;
+        SelectedPrintTicketIndex = -1;
     }
 }
