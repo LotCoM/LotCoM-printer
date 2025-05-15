@@ -344,7 +344,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         catch
         {
-            throw new JsonException($"Could not parse a Process from '{Line}'.");
+            throw new JsonException($"Could not parse a Process from '{JSON["Process"]!}'.");
         }
         try
         {
@@ -352,7 +352,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         catch
         {
-            throw new JsonException($"Could not parse a Part from '{Line}'.");
+            throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
         }
         // convert the SerializationMode from string to actual enum value and parse the SerialNumber
         SerializationModes Mode;
@@ -363,7 +363,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         catch
         {
-            throw new JsonException($"Could not parse a SerializationMode from '{Line}'.");
+            throw new JsonException($"Could not parse a SerializationMode from '{JSON["SerializationMode"]!}'.");
         }
         try
         {
@@ -371,7 +371,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         catch
         {
-            throw new JsonException($"Could not parse a SerialNumber from '{Line}'.");
+            throw new JsonException($"Could not parse a SerialNumber from '{JSON["SerialNumber"]!}'.");
         }
         // parse out a timestamp for ProductionDate, Shift number, and Operator
         DateTime ParsedDate;
@@ -383,7 +383,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         catch
         {
-            throw new JsonException($"Could not parse a Production Date from '{Line}'.");
+            throw new JsonException($"Could not parse a Production Date from '{JSON["ProductionDate"]!}'.");
         }
         try
         {
@@ -391,7 +391,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         catch
         {
-            throw new JsonException($"Could not parse a Production Shift from '{Line}'.");
+            throw new JsonException($"Could not parse a Production Shift from '{JSON["ProductionShift"]!}'.");
         }
         try
         {
@@ -399,7 +399,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         catch
         {
-            throw new JsonException($"Could not parse an Operator from '{Line}'.");
+            throw new JsonException($"Could not parse an Operator from '{JSON["ProductionOperator"]!}'.");
         }
         // parse the variable field set assigned to the Ticket
         VariableFieldSet VariableFields = new VariableFieldSet();
@@ -462,7 +462,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
             }
             catch
             {
-                throw new JsonException($"Could not parse the First Partial Data Set from {JSON}.");
+                throw new JsonException($"Could not parse the First Partial Data Set from {JSON["FirstPartialDataSet"]!}.");
             }
         }
         if (JSON.ContainsKey("SecondPartialDataSet"))
@@ -473,7 +473,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
             }
             catch
             {
-                throw new JsonException($"Could not parse the Second Partial Data Set from {JSON}.");
+                throw new JsonException($"Could not parse the Second Partial Data Set from {JSON["SecondPartialDataSet"]!}.");
             }
         }
         // construct the parsed PrintTicket

@@ -44,27 +44,27 @@ public partial class PartialDataSet(int? Quantity = null, int? Shift = null, str
         string Operator;
         try
         {
-            Quantity = int.Parse(JSON["FirstPartialDataSet"]!["Quantity"]!.ToString());
+            Quantity = int.Parse(JSON["Quantity"]!.ToString());
         }
         catch
         {
-            throw new JsonException($"Could not parse a Quantity value from {JSON}.");
+            throw new JsonException($"Could not parse a Quantity value from {JSON["FirstPartialDataSet"]!["Quantity"]!}.");
         }
         try
         {
-            Shift = int.Parse(JSON["FirstPartialDataSet"]!["Shift"]!.ToString());
+            Shift = int.Parse(JSON!["Shift"]!.ToString());
         }
         catch
         {
-            throw new JsonException($"Could not parse a Quantity value from {JSON}.");
+            throw new JsonException($"Could not parse a Quantity value from {JSON["FirstPartialDataSet"]!["Shift"]!}.");
         }
         try
         {
-            Operator = JSON["FirstPartialDataSet"]!["Operator"]!.ToString();
+            Operator = JSON["Operator"]!.ToString();
         }
         catch
         {
-            throw new JsonException($"Could not parse a Quantity value from {JSON}.");
+            throw new JsonException($"Could not parse a Quantity value from {JSON["FirstPartialDataSet"]!["Operator"]!}.");
         }
         return new PartialDataSet(Quantity, Shift, Operator);
     }
