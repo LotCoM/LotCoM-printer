@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LotCoMPrinter.Models.Options;
 
@@ -10,21 +12,60 @@ namespace LotCoMPrinter.Models.Options;
 /// <param name="Operator">The Operator who created the PartialDataSet.</param>
 public partial class PartialDataSet(int? Quantity = null, int? Shift = null, string? Operator = null) : ObservableObject()
 {
-    [ObservableProperty]
     /// <summary>
     /// The number of Parts produced during the Shift captured by the PartialDataSet.
     /// </summary>
+    [ObservableProperty]
     public partial int? Quantity {get; set;} = Quantity;
 
-    [ObservableProperty]
     /// <summary>
     /// The Shift Number captured by the PartialDataSet.
     /// </summary>
+    [ObservableProperty]
     public partial int? Shift {get; set;} = Shift;
 
-    [ObservableProperty]
     /// <summary>
     /// The Operator who created the PartialDataSet.
     /// </summary>
+    [ObservableProperty]
     public partial string? Operator {get; set;} = Operator;
+
+    /// <summary>
+    /// Attempts to parse and construct a PartialDataSet object from a JSON stream.
+    /// </summary>
+    /// <param name="JSON"></param>
+    /// <returns></returns>
+    /// <exception cref="JsonException"></exception>
+    public static PartialDataSet ParseJSON(JToken JSON)
+    {
+        // attempt to parse a Quantity, Shift Number, and Operator from the passed JSON stream
+        int Quantity;
+        int Shift;
+        string Operator;
+        try
+        {
+            Quantity = int.Parse(JSON["FirstPartialDataSet"]!["Quantity"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Quantity value from {JSON}.");
+        }
+        try
+        {
+            Shift = int.Parse(JSON["FirstPartialDataSet"]!["Shift"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Quantity value from {JSON}.");
+        }
+        try
+        {
+            Operator = JSON["FirstPartialDataSet"]!["Operator"]!.ToString();
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Quantity value from {JSON}.");
+        }
+        return new PartialDataSet(Quantity, Shift, Operator);
+    }
 }
