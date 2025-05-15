@@ -109,12 +109,13 @@ public partial class MainPageOptions(): ObservableObject()
     }
 
     /// <summary>
-    /// Closes the UI View of SelectedPrintTicket.
+    /// Closes the UI View of SelectedPrintTicket and shows the Welcome Menu.
+    /// Resets the SelectedPrintTicketIndex to no selection.
     /// </summary>
     public void CloseActivePrintTicket()
     {
         IsWelcomeMenuShown = true;
         IsActivePrintTicketMenuShown = false;
-        SelectedPrintTicketIndex = -1;
+        SetSelectedPrintTicket(-1);
     }
 }
