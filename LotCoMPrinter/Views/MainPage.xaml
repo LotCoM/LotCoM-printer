@@ -18,6 +18,10 @@
     <ContentPage.Resources>
         <!-- RecessedButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
+        <!-- GreenButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/GreenButton.xaml"/>
+        <!-- RedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RedButton.xaml"/>
     </ContentPage.Resources>
 
     <!-- Main Layout Grid (Welcome Menu, Active Ticket, and Open Tickets) -->
@@ -341,7 +345,34 @@
                         MinimumHeightRequest="25"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        Text="Delete Label"/>  
+                        Text="Delete Label">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="RedStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedNormalStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedDisabledStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedPressedStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedPointerOverStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                    </Button>  
                     <!-- Close Button -->
                     <Button
                         x:Name="CloseActivePrintTicketButton"
@@ -354,7 +385,8 @@
                         MinimumHeightRequest="25"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        Text="Save &amp; Close"/>  
+                        Text="Save &amp; Close">
+                    </Button>  
                     <!-- Finalize & Print Button -->
                     <Button
                         x:Name="FinalizeActivePrintTicketButton"
@@ -366,7 +398,34 @@
                         MinimumHeightRequest="25"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        Text="Finalize &amp; Print"/>
+                        Text="Finalize &amp; Print">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="GreenStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenNormalStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenDisabledStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenPressedStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenPointerOverStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                    </Button>
                 </HorizontalStackLayout>
                 <!-- Initial Production Info Header Layout -->
                 <Grid
