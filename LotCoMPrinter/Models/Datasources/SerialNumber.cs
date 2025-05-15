@@ -61,12 +61,12 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
     {   
         return 
             "{" +
-                $"Mode:{Mode}," +
-                "Part:{" +
-                    $"PartNumber:{Part!.PartNumber}," +
-                    $"Process{Part!.ParentProcess}" +
+                $"\"Mode\":\"{Mode}\"," +
+                "\"Part\":{" +
+                    $"\"PartNumber\":\"{Part!.PartNumber}\"," +
+                    $"\"Process\":\"{Part!.ParentProcess}\"" +
                 "}," +
-                $"Value:{Value}" +
+                $"\"Value\":\"{Value}\"" +
             "}";
     }
 
@@ -127,7 +127,7 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
         }
         try
         {
-            Part = await new ProcessData().GetProcessPartDataAsync(PartNumber, ProcessName);
+            Part = await new ProcessData().GetProcessPartDataAsync(ProcessName, PartNumber);
         }
         catch
         {
