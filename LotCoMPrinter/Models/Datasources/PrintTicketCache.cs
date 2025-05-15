@@ -19,7 +19,28 @@ public static class PrintTicketCache
     /// </summary>
     /// <returns>A List of JSON stream strings.</returns>
     /// <exception cref="OperationCanceledException"></exception>
-    private static async Task<List<string>> Read() 
+    private static List<string> Read() 
+    {
+        // ensure that the cache file system exists
+        if (!Directory.Exists(CacheDir)) 
+        {
+            Directory.CreateDirectory(CacheDir);
+        }
+        if (!File.Exists(CacheFile)) 
+        {
+            File.Create(CacheFile).Close();
+        }
+        // read the cache and convert the text to a List of strings
+        string[] Tickets = File.ReadAllLines(CacheFile);
+        return Tickets.ToList();
+    }
+
+    /// <summary>
+    /// Asynchronously reads the Print Ticket cache file and returns the results as a List of PrintTicket JSON streams.
+    /// </summary>
+    /// <returns>A List of JSON stream strings.</returns>
+    /// <exception cref="OperationCanceledException"></exception>
+    private static async Task<List<string>> ReadAsync() 
     {
         // ensure that the cache file system exists
         if (!Directory.Exists(CacheDir)) 
@@ -71,7 +92,7 @@ public static class PrintTicketCache
     public static async Task<List<PrintTicket>> Cache(PrintTicket Ticket) 
     {
         // get all of the cached PrintTickets and check if the ticket is already cached
-        List<PrintTicket> Tickets = await GetAllPrintTickets();
+        List<PrintTicket> Tickets = await GetAllPrintTicketsAsync();
         bool Hit = false;
         int HitIndex = 0;
         foreach (PrintTicket _ticket in Tickets)
@@ -110,7 +131,7 @@ public static class PrintTicketCache
     public static async Task<List<PrintTicket>> Remove(PrintTicket Ticket) 
     {
         // read the cache, convert Ticket to JSON and check for a match, remove any match, then write the list to the cache
-        List<PrintTicket> Tickets = await GetAllPrintTickets();
+        List<PrintTicket> Tickets = await GetAllPrintTicketsAsync();
         Tickets.Remove(Ticket);
         await Save(Tickets);
         return Tickets;
@@ -127,14 +148,14 @@ public static class PrintTicketCache
     public static async Task<PrintTicket> GetPrintTicketAt(int Index)
     {
         // read the cache, confirm Index is in range and attempt to parse and return a PrintTicket object
-        List<string> JSON = await Read();
+        List<string> JSON = await ReadAsync();
         if (Index >= JSON.Count)
         {
             throw new ArgumentOutOfRangeException($"The Index '{Index}' is outside the range of the cache file.");
         }
         try
         {
-            return await PrintTicket.ParseJSON(JSON[Index]);
+            return await PrintTicket.ParseJSONAsync(JSON[Index]);
         }
         catch
         {
@@ -150,16 +171,37 @@ public static class PrintTicketCache
     /// <exception cref="JsonException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    public static async Task<List<PrintTicket>> GetAllPrintTickets()
+    public static List<PrintTicket> GetAllPrintTickets()
     {
         // read the cache, convert every JSON stream to a PrintTicket, and return that List
-        List<string> JSON = await Read();
+        List<string> JSON = Read();
+        if (JSON.Count == 0 || JSON[0].Equals(string.Empty))
+        {
+            return [];
+        }
+        return JSON
+            .Select(PrintTicket.ParseJSON)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Asynchronously parses all PrintTickets in the cache and returns each as a PrintTicket object.
+    /// </summary>
+    /// <returns>A List of currently cached PrintTicket objects.</returns>
+    /// <exception cref="OperationCanceledException"></exception>
+    /// <exception cref="JsonException"></exception>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    public static async Task<List<PrintTicket>> GetAllPrintTicketsAsync()
+    {
+        // read the cache, convert every JSON stream to a PrintTicket, and return that List
+        List<string> JSON = await ReadAsync();
         if (JSON.Count == 0 || JSON[0].Equals(string.Empty))
         {
             return [];
         }
         IEnumerable<Task<PrintTicket>> ParseTasks = JSON
-            .Select(PrintTicket.ParseJSON);
+            .Select(PrintTicket.ParseJSONAsync);
         PrintTicket[] ParseResults = await Task.WhenAll(ParseTasks);
         if (ParseResults is null)
         {
