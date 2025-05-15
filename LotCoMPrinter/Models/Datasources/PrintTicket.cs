@@ -345,7 +345,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
     /// <param name="Line"></param>
     /// <returns>A PrintTicket object.</returns>
     /// <exception cref="JsonException"></exception>
-    public static async Task<PrintTicket> ParseJSON(string Line)
+    public static PrintTicket ParseJSON(string Line)
     {
         // parse Line into JTokens
         JObject JSON = JObject.Parse(Line);
@@ -355,7 +355,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         Part Part;
         try
         {
-            Process = await Data.GetIndividualProcessAsync(JSON["Process"]!["FullName"]!.ToString());
+            Process = Data.GetIndividualProcess(JSON["Process"]!["FullName"]!.ToString());
         }
         catch
         {
@@ -363,7 +363,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         try
         {
-            Part = await Data.GetProcessPartDataAsync(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
+            Part = Data.GetProcessPartData(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
         }
         catch
         {
@@ -382,7 +382,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         try
         {
-            Number = await SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
+            Number = SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
         }
         catch
         {
@@ -547,7 +547,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         try
         {
-            Number = await SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
+            Number = await SerialNumber.ParseJSONAsync(JSON["SerialNumber"]!.ToString());
         }
         catch
         {
