@@ -493,15 +493,25 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         {
             try
             {
-                FirstPartialDataSet = PartialDataSet.ParseJSON(JSON["SecondPartialDataSet"]!);
+                SecondPartialDataSet = PartialDataSet.ParseJSON(JSON["SecondPartialDataSet"]!);
             }
             catch
             {
                 throw new JsonException($"Could not parse the Second Partial Data Set from {JSON["SecondPartialDataSet"]!}.");
             }
         }
-        // construct the parsed PrintTicket
-        return new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
+        // construct and return the parsed PrintTicket
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
+        if (FirstPartialDataSet is not null)
+        {
+            NewTicket.HasFirstPartialDataSet = true;
+        }
+        if (SecondPartialDataSet is not null)
+        {
+            NewTicket.HasSecondPartialDataSet = true;
+            NewTicket.HasSpace = false;
+        }
+        return NewTicket;
     }
 
     /// <summary>
@@ -658,15 +668,25 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         {
             try
             {
-                FirstPartialDataSet = PartialDataSet.ParseJSON(JSON["SecondPartialDataSet"]!);
+                SecondPartialDataSet = PartialDataSet.ParseJSON(JSON["SecondPartialDataSet"]!);
             }
             catch
             {
                 throw new JsonException($"Could not parse the Second Partial Data Set from {JSON["SecondPartialDataSet"]!}.");
             }
         }
-        // construct the parsed PrintTicket
-        return new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
+        // construct and return the parsed PrintTicket
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
+        if (FirstPartialDataSet is not null)
+        {
+            NewTicket.HasFirstPartialDataSet = true;
+        }
+        if (SecondPartialDataSet is not null)
+        {
+            NewTicket.HasSecondPartialDataSet = true;
+            NewTicket.HasSpace = false;
+        }
+        return NewTicket;
     }
 
     /// <summary>
