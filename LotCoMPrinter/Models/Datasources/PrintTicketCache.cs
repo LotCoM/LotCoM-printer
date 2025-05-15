@@ -154,7 +154,7 @@ public static class PrintTicketCache
     {
         // read the cache, convert every JSON stream to a PrintTicket, and return that List
         List<string> JSON = await Read();
-        if (JSON[0].Equals(string.Empty))
+        if (JSON.Count == 0 || JSON[0].Equals(string.Empty))
         {
             return [];
         }
