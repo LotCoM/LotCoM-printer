@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace LotCoMPrinter.Models.Datasources;
 
@@ -19,9 +18,7 @@ public static class PrintTicketCache
     /// Reads the Print Ticket cache file and returns the results as a List of PrintTicket JSON streams.
     /// </summary>
     /// <returns>A List of JSON stream strings.</returns>
-    /// <exception cref="JsonReaderException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
-    /// <exception cref="JsonException"></exception>
     private static async Task<List<string>> Read() 
     {
         // ensure that the cache file system exists
@@ -32,20 +29,10 @@ public static class PrintTicketCache
         if (!File.Exists(CacheFile)) 
         {
             File.Create(CacheFile).Close();
-            File.WriteAllText(CacheFile, "{\"Cache\":[]}");
         }
-        // read the cache and convert the JSON text to a List of strings
-        JObject JSON = JObject.Parse(await File.ReadAllTextAsync(CacheFile));
-        List<string>? Tickets;
-        try
-        {
-            Tickets = (List<string>)JsonConvert.DeserializeObject(JSON["Cache"]!.ToString())!;
-        }
-        catch
-        {
-            throw new JsonException("Failed to deserialize the cache file.");
-        }
-        return Tickets;
+        // read the cache and convert the text to a List of strings
+        string[] Tickets = await File.ReadAllLinesAsync(CacheFile);
+        return Tickets.ToList();
     }
 
     /// <summary>
@@ -64,38 +51,11 @@ public static class PrintTicketCache
             .Select(x => x
             .ToJSON())
             .ToList();
-        string JSON = "{Cache:[";
+        string JSON = "";
         foreach (string _ticket in JSONTickets)
         {
-            JSON = $"{JSON}{_ticket},";
+            JSON = $"{JSON}{_ticket}\n";
         }
-        // remove trailing comma, close JSON stream, and write to the cache
-        JSON = JSON[..^1];
-        JSON = $"{JSON}]" + "}";
-        await File.WriteAllTextAsync(CacheFile, JSON);
-    }
-
-    /// <summary>
-    /// Writes a List of PrintTickets, as JSON streams, to the cache file.
-    /// </summary>
-    /// <param name="Tickets"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="OperationCanceledException"></exception>
-    private static async Task Save(List<string> Tickets) 
-    {
-        string JSON = "{Cache:[";
-        foreach (string _ticket in Tickets)
-        {
-            JSON = $"{JSON}{_ticket},";
-        }
-        // check if tickets were added before removing the trailing comma
-        if (Tickets.Count > 0)
-        {
-            JSON = JSON[..^1];
-        }
-        // close JSON stream and write to the cache
-        JSON = $"{JSON}]" + "}";
         await File.WriteAllTextAsync(CacheFile, JSON);
     }
 
@@ -104,20 +64,38 @@ public static class PrintTicketCache
     /// </summary>
     /// <param name="Ticket"></param>
     /// <returns></returns>
-    /// <exception cref="JsonReaderException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
     /// <exception cref="JsonException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
-    public static async Task Cache(PrintTicket Ticket) 
+    /// <exception cref="ArgumentException"></exception>
+    public static async Task<List<PrintTicket>> Cache(PrintTicket Ticket) 
     {
-        // read the cache, convert Ticket to JSON and add it to the list, then write the list to the cache
-        List<string> JSON = await Read();
-        string TicketString = Ticket.ToJSON();
-        if (!JSON.Contains(TicketString))
+        // get all of the cached PrintTickets and check if the ticket is already cached
+        List<PrintTicket> Tickets = await GetAllPrintTickets();
+        bool Hit = false;
+        int HitIndex = 0;
+        foreach (PrintTicket _ticket in Tickets)
         {
-            JSON.Add(TicketString);
+            if (_ticket.Title.Equals(Ticket.Title))
+            {
+                Hit = true;
+                break;
+            }
+            HitIndex += 1;
         }
-        await Save(JSON);
+        // if the ticket is not already cached, add it to the list
+        if (!Hit)
+        {
+            Tickets.Add(Ticket);
+        }
+        // otherwise, update the ticket in the cache
+        else
+        {
+            Tickets[HitIndex] = Ticket;
+        }
+        // save the updated Ticket list
+        await Save(Tickets);
+        return Tickets;
     }
 
     /// <summary>
@@ -125,17 +103,17 @@ public static class PrintTicketCache
     /// </summary>
     /// <param name="Ticket"></param>
     /// <returns></returns>
-    /// <exception cref="JsonReaderException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
     /// <exception cref="JsonException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
-    public static async Task Remove(PrintTicket Ticket) 
+    /// <exception cref="ArgumentException"></exception>
+    public static async Task<List<PrintTicket>> Remove(PrintTicket Ticket) 
     {
         // read the cache, convert Ticket to JSON and check for a match, remove any match, then write the list to the cache
-        List<string> JSON = await Read();
-        string TicketString = Ticket.ToJSON();
-        JSON.Remove(TicketString);
-        await Save(JSON);
+        List<PrintTicket> Tickets = await GetAllPrintTickets();
+        Tickets.Remove(Ticket);
+        await Save(Tickets);
+        return Tickets;
     }
 
     /// <summary>
@@ -143,8 +121,8 @@ public static class PrintTicketCache
     /// </summary>
     /// <param name="Index"></param>
     /// <returns>A single PrintTicket object found at Index in the cache.</returns>
-    /// <exception cref="JsonReaderException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     /// <exception cref="JsonException"></exception>
     public static async Task<PrintTicket> GetPrintTicketAt(int Index)
     {
@@ -168,7 +146,6 @@ public static class PrintTicketCache
     /// Parses all PrintTickets in the cache and returns each as a PrintTicket object.
     /// </summary>
     /// <returns>A List of currently cached PrintTicket objects.</returns>
-    /// <exception cref="JsonReaderException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
     /// <exception cref="JsonException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
@@ -177,6 +154,10 @@ public static class PrintTicketCache
     {
         // read the cache, convert every JSON stream to a PrintTicket, and return that List
         List<string> JSON = await Read();
+        if (JSON[0].Equals(string.Empty))
+        {
+            return [];
+        }
         IEnumerable<Task<PrintTicket>> ParseTasks = JSON
             .Select(PrintTicket.ParseJSON);
         PrintTicket[] ParseResults = await Task.WhenAll(ParseTasks);
