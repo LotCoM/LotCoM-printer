@@ -15,11 +15,12 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="TicketSerialNumber">The Serial Number to apply to this Print Ticket.</param>
 /// <param name="TicketProductionDate">The Date on which this Print Ticket was initiated.</param>
 /// <param name="TicketProductionShift">The Shift that this Print Ticket was initiated on.</param>
-/// <param name="TicketOperator">The Operator that initiated this Print Ticket.</param>
+/// <param name="TicketProductionQuantity">The Quantity produced on the Shift that this Print Ticket was initiated on.</param>
+/// <param name="TicketProductionOperator">The Operator that initiated this Print Ticket.</param>
 /// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
 /// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
 /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
-public partial class PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, string TicketOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
+public partial class PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, int TicketProductionQuantity, string TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
 {
     private Process _process = TicketProcess;
     /// <summary>
@@ -111,7 +112,20 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private string _productionOperator = TicketOperator;
+    private int _productionQuantity = TicketProductionQuantity;
+
+    public int ProductionQuantity
+    {
+        get {return _productionQuantity;}
+        set
+        {
+            _productionQuantity = value;
+            OnPropertyChanged(nameof(_productionQuantity));
+            OnPropertyChanged(nameof(ProductionQuantity));
+        }
+    }
+
+    private string _productionOperator = TicketProductionOperator;
     /// <summary>
     /// The Operator that this Print Ticket was initiated by.
     /// </summary>
@@ -291,6 +305,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
                 $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
                 $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
                 $"\"ProductionShift\":\"{ProductionShift}\"," +
+                $"\"ProductionQuantity\":\"{ProductionQuantity}\"," +
                 $"\"ProductionOperator\":\"{ProductionOperator}\"," +
                 "\"VariableFieldSet\":{" +
                     $"\"JBKNumber\":\"{VariableFields.JBKNumber}\"," +
@@ -320,7 +335,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
                 "}";
         }
         // close the JSON stream
-        JSON = $"{JSON}" + "}}";
+        JSON = $"{JSON}" + "}";
         return JSON;
     }
 
@@ -376,6 +391,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         // parse out a timestamp for ProductionDate, Shift number, and Operator
         DateTime ParsedDate;
         int ParsedShift;
+        int ParsedQuantity;
         string ParsedOperator;
         try
         {
@@ -392,6 +408,14 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         catch
         {
             throw new JsonException($"Could not parse a Production Shift from '{JSON["ProductionShift"]!}'.");
+        }
+        try
+        {
+            ParsedQuantity = int.Parse(JSON["ProductionQuantity"]!.ToString());
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Production Quantity from '{JSON["ProductionQuantity"]!}'.");
         }
         try
         {
@@ -477,7 +501,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
             }
         }
         // construct the parsed PrintTicket
-        return new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
+        return new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
     }
 
     /// <summary>
