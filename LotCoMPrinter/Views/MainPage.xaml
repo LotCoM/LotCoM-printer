@@ -313,32 +313,61 @@
                     FontSize="20"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                     Text="{Binding ActivePrintTicket.Title, StringFormat='Input for Label: {0}'}"/>
-                <!-- Close Button -->
-                <Button
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    x:Name="CloseActivePrintTicketButton"
-                    Clicked="OnCloseActivePrintTicketButtonClicked"
-                    Margin="30"
-                    Padding="0"
-                    WidthRequest="100"
-                    HeightRequest="40"
-                    HorizontalOptions="End"
-                    VerticalOptions="Start"
-                    Text="Save &amp; Close"/>  
-                <!-- Finalize & Print Button -->
-                <Button
+                <!-- Action Buttons Panel -->
+                <HorizontalStackLayout
                     Grid.Row="0"
                     Grid.Column="1"
-                    x:Name="FinalizeActivePrintTicketButton"
-                    Margin="30"
-                    Padding="0"
-                    WidthRequest="100"
-                    HeightRequest="40"
+                    Grid.ColumnSpan="2"
                     HorizontalOptions="End"
-                    VerticalOptions="Start"
-                    Text="Finalize &amp; Print"/>
-
+                    VerticalOptions="Center"
+                    Margin="30">
+                    <!-- Panel Label -->
+                    <Label
+                        Text="Actions"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        Margin="0,0,20,0"/>
+                    <!-- Delete Button -->
+                    <Button
+                        x:Name="DeleteActivePrintTicketButton"
+                        Clicked="OnCloseActivePrintTicketButtonClicked"
+                        Margin="5,0,0,0"
+                        Padding="0"
+                        CharacterSpacing="0"
+                        WidthRequest="110"
+                        HeightRequest="25"
+                        MinimumHeightRequest="25"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        Text="Delete Label"/>  
+                    <!-- Close Button -->
+                    <Button
+                        x:Name="CloseActivePrintTicketButton"
+                        Clicked="OnCloseActivePrintTicketButtonClicked"
+                        Margin="5,0,0,0"
+                        Padding="0"
+                        CharacterSpacing="0"
+                        WidthRequest="110"
+                        HeightRequest="25"
+                        MinimumHeightRequest="25"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        Text="Save &amp; Close"/>  
+                    <!-- Finalize & Print Button -->
+                    <Button
+                        x:Name="FinalizeActivePrintTicketButton"
+                        Margin="5,0,0,0"
+                        Padding="0"
+                        CharacterSpacing="0"
+                        WidthRequest="110"
+                        HeightRequest="25"
+                        MinimumHeightRequest="25"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        Text="Finalize &amp; Print"/>
+                </HorizontalStackLayout>
                 <!-- Initial Production Info Header Layout -->
                 <Grid
                     Grid.Row="1"
