@@ -206,6 +206,7 @@ public partial class MainPageViewModel : ObservableObject
     {
         Options.WelcomeMenuTitleLabelText = "Welcome";
         Options.WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
+        OpenPrintTickets = PrintTicketCache.GetAllPrintTickets();
     }
 
     /// <summary>
@@ -323,54 +324,50 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Adds a new Print Ticket to the ViewModel's OpenPrintTicket List.
+    /// Saves the current OpenPrintTickets List.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
+    public async Task SaveOpenPrintTickets()
+    {
+        await PrintTicketCache.Save(OpenPrintTickets);
+    }
+
+    /// <summary>
+    /// Adds a new PrintTicket to OpenPrintTickets, sets it as ActivePrintTicket, and opens it in the ActivePrintTicket Menu.
     /// </summary>
     /// <param name="Ticket"></param>
-    public void AddOpenPrintTicket(PrintTicket Ticket)
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
+    public async Task AddOpenPrintTicket(PrintTicket Ticket)
     {
-        OpenPrintTickets = OpenPrintTickets.Append(Ticket).ToList();
+        OpenPrintTickets = OpenPrintTickets
+            .Append(Ticket)
+            .ToList();
+        ActivePrintTicket = OpenPrintTickets[^1];
+        await SaveOpenPrintTickets();
     }
 
     /// <summary>
-    /// Updates the Page's active PrintTicket object.
-    /// Omitting Index will set the property to the most-recently added PrintTicket.
+    /// Sets ActivePrintTicket to Ticket and displays Ticket on the ActivePrintTicket Menu.
     /// </summary>
-    /// <param name="Index"></param>
-    /// <exception cref="IndexOutOfRangeException"></exception>
-    public void SetActivePrintTicket(int Index = -1)
+    /// <param name="Ticket"></param>
+    public void DisplayPrintTicket(PrintTicket Ticket)
     {
-        // confirm that any print tickets exist
-        if (OpenPrintTickets.Count < 1)
-        {
-            throw new IndexOutOfRangeException("There are no Open PrintTickets to select from.");
-        }
-        // confirm that the passed index is in range
-        if (Index != -1 && Index >= OpenPrintTickets.Count)
-        {
-            throw new IndexOutOfRangeException("There is no PrintTicket at the passed Index.");
-        }
-        // there is a PrintTicket at Index; update and open the new active ticket
-        if (Index == -1)
-        {
-            Index = OpenPrintTickets.Count - 1;
-        }
-        ActivePrintTicket = OpenPrintTickets[Index];
-    }
-
-    /// <summary>
-    /// Opens the ActivePrintTicket in a display View, taking the place of the Welcome menu.
-    /// </summary>
-    public void OpenActivePrintTicket()
-    {
+        ActivePrintTicket = Ticket;
         Options.OpenActivePrintTicket();
     }
 
     /// <summary>
-    /// Closes the ActivePrintTicket display View, returning to the Welcome menu.
+    /// Closes the ActivePrintTicket display View, saving the OpenPrintTickets List and returning to the Welcome menu.
     /// </summary>
-    public void CloseActivePrintTicket()
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
+    public async Task ClosePrintTicket()
     {
+        await SaveOpenPrintTickets();
         Options.CloseActivePrintTicket();
+        ActivePrintTicket = null;
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
