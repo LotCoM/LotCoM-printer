@@ -38,18 +38,18 @@ public partial class MainPageViewModel : ObservableObject
         get {return _allProcesses;}
     }
 
-    private PrintTicket? _activePrintTicket = null;
+    private TrackedPrintTicket? _activeTicket = null;
     /// <summary>
     /// The currently active PrintTicket object, the Ticket that is being edited currently.
     /// </summary>
-    public PrintTicket? ActivePrintTicket
+    public TrackedPrintTicket? ActiveTicket
     {
-        get {return _activePrintTicket;}
+        get {return _activeTicket;}
         set
         {
-            _activePrintTicket = value;
-            OnPropertyChanged(nameof(_activePrintTicket));
-            OnPropertyChanged(nameof(ActivePrintTicket));
+            _activeTicket = value;
+            OnPropertyChanged(nameof(_activeTicket));
+            OnPropertyChanged(nameof(ActiveTicket));
         }
     }
 
@@ -318,10 +318,10 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public void AddPartialDataSet()
     {
-        if (ActivePrintTicket is not null && ActivePrintTicket.HasSpace)
+        if (ActiveTicket is not null && ActiveTicket.Tracked.HasSpace)
         {
             // create and add a blank PartialDataSet object to the ticket
-            ActivePrintTicket.AddPartialDataSet(new PartialDataSet());
+            ActiveTicket.Tracked.AddPartialDataSet(new PartialDataSet());
         }
     }
 
@@ -349,7 +349,7 @@ public partial class MainPageViewModel : ObservableObject
                 .Append(Ticket)
                 .ToList()
         );
-        ActivePrintTicket = OpenPrintTickets[^1];
+        ActiveTicket = new TrackedPrintTicket(OpenPrintTickets[^1]);
         await SaveOpenPrintTickets();
     }
 
@@ -359,7 +359,7 @@ public partial class MainPageViewModel : ObservableObject
     /// <param name="Ticket"></param>
     public void DisplayPrintTicket(PrintTicket Ticket)
     {
-        ActivePrintTicket = Ticket;
+        ActiveTicket = new TrackedPrintTicket(Ticket);
         Options.OpenActivePrintTicket();
     }
 
@@ -372,7 +372,7 @@ public partial class MainPageViewModel : ObservableObject
     {
         await SaveOpenPrintTickets();
         Options.CloseActivePrintTicket();
-        ActivePrintTicket = null;
+        ActiveTicket = null;
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
