@@ -15,7 +15,20 @@ public partial class TrackedPrintTicket(PrintTicket Ticket) : ObservableObject()
     /// A copy of the UntrackedTicket that tracks edits.
     /// </summary>
     [ObservableProperty]
-    public partial PrintTicket Tracked { get; set; } = Ticket;
+    public partial PrintTicket Tracked { get; set; } = new PrintTicket
+    (
+        Ticket.Process,
+        Ticket.Part,
+        Ticket.SerializationMode,
+        Ticket.SerialNumber,
+        Ticket.ProductionDate,
+        Ticket.ProductionShift,
+        Ticket.ProductionQuantity,
+        Ticket.ProductionOperator,
+        Ticket.VariableFields,
+        Ticket.FirstPartialDataSet,
+        Ticket.SecondPartialDataSet
+    );
 
     /// <summary>
     /// Overwrites changes made to Tracked by assigning it the value of Untracked.
