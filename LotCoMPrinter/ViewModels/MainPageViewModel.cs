@@ -139,13 +139,19 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public ObservableCollection<PrintTicket> OpenPrintTickets
     {
-        get 
+        get
         {
             if (_openPrintTickets == null)
             {
                 _openPrintTickets = new ObservableCollection<PrintTicket>();
             }
             return _openPrintTickets;
+        }
+        set
+        {
+            _openPrintTickets = value;
+            OnPropertyChanged(nameof(_openPrintTickets));
+            OnPropertyChanged(nameof(OpenPrintTickets));
         }
     }
 
@@ -232,6 +238,16 @@ public partial class MainPageViewModel : ObservableObject
         SelectedTicket = null;
         IsWelcomeMenuShown = true;
         IsActivePrintTicketMenuShown = false;
+    }
+
+    /// <summary>
+    /// Adds a PrintTicket to OpenPrintTickets.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    public void AddNewOpenPrintTicket(PrintTicket Ticket)
+    {
+        OpenPrintTickets = new ObservableCollection<PrintTicket>(OpenPrintTickets.Append(Ticket));
+        PrintTicketCache.Save(OpenPrintTickets.ToList());
     }
 
     /// <summary>
