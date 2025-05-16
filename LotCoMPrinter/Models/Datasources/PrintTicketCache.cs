@@ -65,7 +65,31 @@ public static class PrintTicketCache
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
-    public static async Task Save(List<PrintTicket> Tickets) 
+    public static void Save(List<PrintTicket> Tickets) 
+    {
+        // convert the passed Print Tickets to JSON streams and write them to the cache
+        List<string> JSONTickets = Tickets
+            .Select(x => x
+            .ToJSON())
+            .ToList();
+        string JSON = "";
+        foreach (string _ticket in JSONTickets)
+        {
+            JSON = $"{JSON}{_ticket}\n";
+        }
+        File.WriteAllText(CacheFile, JSON);
+    }
+    
+    /// <summary>
+    /// Asynchronously writes a List of PrintTicket objects to the cache file.
+    /// Converts Tickets to JSON streams to be written.
+    /// Slower than the alternative List of strings overload.
+    /// </summary>
+    /// <param name="Tickets"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
+    public static async Task SaveAsync(List<PrintTicket> Tickets) 
     {
         // convert the passed Print Tickets to JSON streams and write them to the cache
         List<string> JSONTickets = Tickets
@@ -89,7 +113,7 @@ public static class PrintTicketCache
     /// <exception cref="JsonException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    public static async Task<List<PrintTicket>> Cache(PrintTicket Ticket) 
+    public static async Task<List<PrintTicket>> Cache(PrintTicket Ticket)
     {
         // get all of the cached PrintTickets and check if the ticket is already cached
         List<PrintTicket> Tickets = await GetAllPrintTicketsAsync();
@@ -115,7 +139,7 @@ public static class PrintTicketCache
             Tickets[HitIndex] = Ticket;
         }
         // save the updated Ticket list
-        await Save(Tickets);
+        await SaveAsync(Tickets);
         return Tickets;
     }
 
@@ -133,7 +157,7 @@ public static class PrintTicketCache
         // read the cache, convert Ticket to JSON and check for a match, remove any match, then write the list to the cache
         List<PrintTicket> Tickets = await GetAllPrintTicketsAsync();
         Tickets.Remove(Ticket);
-        await Save(Tickets);
+        await SaveAsync(Tickets);
         return Tickets;
     }
 
