@@ -125,7 +125,7 @@ public partial class MainPage : ContentPage
 		}
 		if (Result.GetType().Equals(typeof(PrintTicket)))
 		{
-			ViewModel.AddNewOpenPrintTicket((PrintTicket)Result);
+			await ViewModel.AddNewOpenPrintTicket((PrintTicket)Result);
 			ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.OpenPrintTickets[^1]);
 			await AnimatedDisplayPrintTicket();
 		}
@@ -136,14 +136,41 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private async void OnCloseActivePrintTicketButtonClicked(object sender, EventArgs e)
 	{
+		// get the index of the ActiveTicket in OpenPrintTickets
+		if (ViewModel.ActiveTicket is null)
+		{
+			throw new ArgumentNullException("Cannot close 'null'.");
+		}
+		ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.ActiveTicket.Untracked);
+		// close the ActivePrintTicket window
 		await AnimatedClosePrintTicket();
 	}
-	
+
 	/// <summary>
 	/// Handler for the Clicked event from the SaveActivePrintTicketButton control.
 	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	/// <exception cref="ArgumentNullException"></exception>
+	/// <exception cref="ArgumentException"></exception>
+	/// <exception cref="OperationCanceledException"></exception>
 	private async void OnSaveActivePrintTicketButtonClicked(object sender, EventArgs e)
 	{
+		// get the index of the ActiveTicket in OpenPrintTickets
+		if (ViewModel.ActiveTicket is null)
+		{
+			throw new ArgumentNullException("Cannot save 'null' to OpenPrintTickets.");
+		}
+		int Index = ViewModel.OpenPrintTickets.IndexOf(ViewModel.ActiveTicket.Untracked);
+		// confirm that the ActiveTicket exists in OpenPrintTickets and replace it with the Tracked PrintTicket
+		if (Index == -1)
+		{
+			throw new ArgumentException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+		}
+		ViewModel.ActiveTicket.MergeChanges();
+		ViewModel.OpenPrintTickets[Index] = ViewModel.ActiveTicket.Untracked;
+		await ViewModel.SaveOpenPrintTickets();
+		// close the ActivePrintTicket window
 		await AnimatedClosePrintTicket();
 	}
 
