@@ -42,7 +42,7 @@
             Grid.Row="0"
             Grid.Column="0"
             BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"
-            WidthRequest="{Binding Options.OpenPrintTicketsPanelWidth}">
+            WidthRequest="{Binding OpenPrintTicketsPanelWidth}">
             <Grid.RowDefinitions>
                 <!-- Header Row -->
                 <RowDefinition Height="Auto"/>
@@ -58,7 +58,7 @@
             <!-- Panel Header Label -->
             <Label
                 x:Name="OpenPrintTicketsHeaderLabel"
-                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
+                IsVisible="{Binding IsOpenPrintTicketsPanelShown}"
                 Grid.Row="0"
                 Grid.Column="0"
                 Margin="0,20,0,0"
@@ -70,10 +70,10 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 x:Name="OpenPrintTicketsCollectionView"
-                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
+                IsVisible="{Binding IsOpenPrintTicketsPanelShown}"
                 SelectionMode="Single"
                 ItemsSource="{Binding OpenPrintTickets}"
-                SelectedItem="{Binding SelectedPrintTicket}"
+                SelectedItem="{Binding SelectedTicket}"
                 SelectionChanged="OnOpenPrintTicketsCollectionViewSelectionChanged"
                 Margin="10"
                 HorizontalOptions="Start"
@@ -136,9 +136,9 @@
                                 VerticalOptions="Center"/>
                             <!-- Open Ticket Button -->
                             <Button
-                                x:Name="OpenTicketFromListViewButton"
+                                x:Name="OpenPrintTicketFromCollectionViewButton"
                                 IsVisible="{Binding IsSelectedInList}"
-                                Clicked="OnOpenPrintTicketFromListViewButtonClicked"
+                                Clicked="OnOpenPrintTicketFromCollectionViewButtonClicked"
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="5"
@@ -196,7 +196,7 @@
         <Grid
             Grid.Row="0"
             Grid.Column="1"
-            IsVisible="{Binding Options.IsWelcomeMenuShown}"
+            IsVisible="{Binding IsWelcomeMenuShown}"
             BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
             <Grid.RowDefinitions>
                 <!-- Header Row -->
@@ -219,7 +219,7 @@
                     VerticalOptions="Center"
                     FontSize="20"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                    Text="{Binding Options.WelcomeMenuTitleLabelText}"/>
+                    Text="{Binding WelcomeMenuTitleLabelText}"/>
             </VerticalStackLayout>
             <!-- Welcome Menu Body -->
             <HorizontalStackLayout
@@ -234,7 +234,7 @@
                     VerticalOptions="Start"
                     FontSize="14"
                     TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
-                    Text="{Binding Options.WelcomeMenuSubTitleLabelText}"/>
+                    Text="{Binding WelcomeMenuSubTitleLabelText}"/>
             </HorizontalStackLayout>
             <!-- Welcome Menu Footer -->
             <HorizontalStackLayout
@@ -246,7 +246,7 @@
                 <Button
                     x:Name="StartNewLabelButton"
                     Clicked="OnStartNewLabelButtonClicked"
-                    IsVisible="{Binding Options.IsWelcomeMenuShown}"
+                    IsVisible="{Binding IsWelcomeMenuShown}"
                     Grid.Row="1"
                     Grid.Column="0"
                     Margin="20"
@@ -261,7 +261,7 @@
             x:Name="ActivePrintTicketLayout"
             Grid.Row="0"
             Grid.Column="1"
-            IsVisible="{Binding Options.IsActivePrintTicketMenuShown}">
+            IsVisible="{Binding IsActivePrintTicketMenuShown}">
             <Grid.RowDefinitions>
                 <!-- Header Panel Row -->
                 <RowDefinition Height="Auto"/>

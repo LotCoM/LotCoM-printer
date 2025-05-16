@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
 using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
@@ -18,7 +17,7 @@ public partial class MainPage : ContentPage
 	/// <returns></returns>
 	private async Task AnimatedCollapseOpenPrintTicketsPanel()
 	{
-		ViewModel.Options.CollapseOpenPrintTicketsPanel();
+		ViewModel.CollapseOpenPrintTicketsPanel();
 		await OpenPrintTicketsCollapseButton.RotateTo(180);
 	}
 
@@ -28,7 +27,7 @@ public partial class MainPage : ContentPage
 	/// <returns></returns>
 	private async Task AnimatedRaiseOpenPrintTicketsPanel()
 	{
-		ViewModel.Options.RaiseOpenPrintTicketsPanel();
+		ViewModel.RaiseOpenPrintTicketsPanel();
 		await OpenPrintTicketsCollapseButton.RotateTo(0);
 	}
 
@@ -39,9 +38,8 @@ public partial class MainPage : ContentPage
 	/// <returns></returns>
 	private async Task AnimatedDisplayPrintTicket(uint Duration = 100)
 	{
-		ViewModel.DisplayPrintTicket(ViewModel.ActivePrintTicket!);
 		await ActivePrintTicketLayout.FadeTo(1, Duration);
-		if (ViewModel.Options.IsOpenPrintTicketsPanelShown)
+		if (ViewModel.IsOpenPrintTicketsPanelShown)
 		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
 		}
@@ -55,98 +53,9 @@ public partial class MainPage : ContentPage
 	private async Task AnimatedClosePrintTicket(uint Duration = 100)
 	{
 		await ActivePrintTicketLayout.FadeTo(0, Duration);
-		await ViewModel.ClosePrintTicket();
-		if (ViewModel.Options.IsOpenPrintTicketsPanelShown)
+		if (ViewModel.IsOpenPrintTicketsPanelShown)
 		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
-		}
-	}
-
-	/// <summary>
-	/// Handler for the Pressed event from the PrintButton.
-	/// Starts the print action using the information entered in the entries on the UI.
-	/// </summary>
-	/// <param name="Sender"></param>
-	/// <param name="e"></param>
-	private async void OnPrintButtonPressed(object Sender, EventArgs e) 
-	{
-		// start the Printing Indicator
-		ViewModel.Printing = true;
-		bool Printed;
-		// call the ViewModel's Print Request method
-		try 
-		{
-			Printed = await ViewModel.PrintRequest
-			(
-				ViewModel.ActivePrintTicket!.Process, 
-				ViewModel.ActivePrintTicket.Part, 
-				int.Parse(QuantityEntry.Text), 
-				int.Parse(JBKNumberEntry.Text), 
-				LotNumberEntry.Text, 
-				int.Parse(DeburrJBKNumberEntry.Text), 
-				int.Parse(DieNumberEntry.Text), 
-				HeatNumberEntry.Text, 
-				ModelNumberEntry.Text, 
-				ProductionDatePicker.Date, 
-				(int)ShiftPicker.SelectedItem, 
-				OperatorEntry.Text);
-		} 
-		catch (Exception _ex) 
-		{
-			// stop the Printing Indicator
-			ViewModel.Printing = false;
-			// show a message based on the exception type
-			if (_ex is NullProcessException) 
-			{
-				// there was no process selection made
-				BasicPopup Popup = new("Failed to Print", "Please select a Process before printing Labels.");
-				this.ShowPopup(Popup);
-			} 
-			else if (_ex is ArgumentException) 
-			{
-				// there was an error retrieving the process data
-				BasicPopup Popup = new("Failed to Print", "The selected Process' requirements could not be retrieved. Please see management to resolve this issue.");
-				this.ShowPopup(Popup);
-			} 
-			else if (_ex is FormatException) 
-			{
-				// there was a failed UI validation
-				BasicPopup Popup = new("Invalid Production Data.", _ex.Message);
-				this.ShowPopup(Popup);
-			} 
-			else if (_ex is LabelBuildException) 
-			{
-				// there was an error serializing the Label
-				BasicPopup Popup = new("Failed to Print", "Could not apply a Serial Number to the Label. Please see management to resolve this issue.");
-				this.ShowPopup(Popup);
-			} 
-			else if (_ex is PrintRequestException) 
-			{
-				// there was an error communicating with the Printer or Printing System
-				BasicPopup Popup = new("Failed to Print", "Could not connect to the printer. Please see management to resolve this issue.");
-				this.ShowPopup(Popup);
-			} 
-			else if (_ex is PrintLogException) 
-			{
-				// the print logger failed to log to the specific process table and was forced to default
-				BasicPopup Popup = new("Label Printed but Not Logged", "The Label was printed successfully, but the system failed to record the printed Label. Please see management to resolve this issue.");
-				this.ShowPopup(Popup);
-			}
-			// escape the handler
-			return;
-		}
-		// reset UI, show a confirmation if print was successful
-		ViewModel.Printing = false;
-		if (Printed) 
-		{
-			BasicPopup Popup = new("Label Printed", "The Label was printed successfully.");
-			this.ShowPopup(Popup);
-		// the print failed for some reason; show a warning
-		} 
-		else 
-		{
-			BasicPopup Popup = new("Failed to Print", "The system failed to print this Label. Please try again or see management to resolve this issue.");
-			this.ShowPopup(Popup);
 		}
 	}
 	
@@ -167,7 +76,7 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private void OnRemoveFirstPartialProductionDataSetButtonClicked(object sender, EventArgs e)
 	{
-		ViewModel.ActivePrintTicket!.RemoveFirstPartialDataSet();
+		ViewModel.ActiveTicket!.Tracked.RemoveFirstPartialDataSet();
 	}
 
 	/// <summary>
@@ -177,7 +86,7 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private void OnRemoveSecondPartialProductionDataSetButtonClicked(object sender, EventArgs e)
 	{
-		ViewModel.ActivePrintTicket!.RemoveSecondPartialDataSet();
+		ViewModel.ActiveTicket!.Tracked.RemoveSecondPartialDataSet();
 	}
 
 	/// <summary>
@@ -187,7 +96,7 @@ public partial class MainPage : ContentPage
     /// <param name="e"></param>
     private async void OnOpenPrintTicketsCollapseButtonClicked(object sender, EventArgs e) 
     {
-        if (ViewModel.Options.IsOpenPrintTicketsPanelShown) 
+        if (ViewModel.IsOpenPrintTicketsPanelShown) 
         {
 			await AnimatedCollapseOpenPrintTicketsPanel();
         } 
@@ -212,7 +121,6 @@ public partial class MainPage : ContentPage
 		}
 		if (Result.GetType().Equals(typeof(PrintTicket)))
 		{
-			await ViewModel.AddOpenPrintTicket((PrintTicket)Result);
 			await AnimatedDisplayPrintTicket();
 		}
     }
@@ -224,35 +132,63 @@ public partial class MainPage : ContentPage
 	{
 		await AnimatedClosePrintTicket();
 	}
-
+	
 	/// <summary>
-	/// Handler for the ItemSelected event from the OOpenPrintTicketsListView control.
+	/// Handler for the Clicked event from the SaveActivePrintTicketButton control.
 	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
-	private void OnOpenPrintTicketsListViewItemSelected(object sender, SelectedItemChangedEventArgs e)
+	private async void OnSaveActivePrintTicketButtonClicked(object sender, EventArgs e)
 	{
-		// find the selected PrintTicket in the Open Print Tickets list and set its IsSelectedInList property
-		ViewModel.Options.SelectedPrintTicketIndex = e.SelectedItemIndex;
-		foreach (PrintTicket _ticket in ViewModel.OpenPrintTickets)
-		if (_ticket.Equals(e.SelectedItem))
-		{
-			_ticket.IsSelectedInList = true;
-		}
-		else
-		{
-			_ticket.IsSelectedInList = false;
-		}
+		await AnimatedClosePrintTicket();
 	}
 
 	/// <summary>
-	/// Handler for the Clicked event from the OpenPrintTicketFromListViewButton control.
+	/// Handler for the Clicked event from the DeleteActivePrintTicketButton control.
+	/// </summary>
+	private async void OnDeleteActivePrintTicketButtonClicked(object sender, EventArgs e)
+	{
+		await AnimatedClosePrintTicket();
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the PrintActivePrintTicketButton control.
+	/// </summary>
+	private async void OnPrintActivePrintTicketButtonClicked(object sender, EventArgs e)
+	{
+		await AnimatedClosePrintTicket();
+	}
+
+	/// <summary>
+	/// Handler for the SelectionChanged event from the OpenPrintTicketsCollectionView control.
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private async void OnOpenPrintTicketFromListViewButtonClicked(object sender, EventArgs e)
+	private void OnOpenPrintTicketsCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		ViewModel.ActivePrintTicket = (PrintTicket)OpenPrintTicketsListView.SelectedItem;
+		// find the selected PrintTicket in the Open Print Tickets list and set its IsSelectedInList property
+		ViewModel.SelectedTicket = (PrintTicket)OpenPrintTicketsCollectionView.SelectedItem;
+		foreach (PrintTicket _ticket in ViewModel.OpenPrintTickets)
+			if (_ticket.Equals(ViewModel.SelectedTicket))
+			{
+				_ticket.IsSelectedInList = true;
+			}
+			else
+			{
+				_ticket.IsSelectedInList = false;
+			}
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the OpenPrintTicketFromCollectionViewButton control.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnOpenPrintTicketFromCollectionViewButtonClicked(object sender, EventArgs e)
+	{
+		if (ViewModel.SelectedTicket is null)
+		{
+			return;
+		}
+		ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.SelectedTicket);
 		await AnimatedDisplayPrintTicket();
 	}
 
