@@ -13,6 +13,15 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject 
 {
+    private readonly List<Process> _allProcesses = new ProcessData().GetAllProcesses();
+    /// <summary>
+    /// The List of Processes in the Database, captured at the time of instantiation.
+    /// </summary>
+    public List<Process> AllProcesses
+    {
+        get {return _allProcesses;}
+    }
+
     private ObservableCollection<PrintTicket> _openPrintTickets = [];
     /// <summary>
     /// The List of Open Print Tickets currently saved locally.
@@ -29,18 +38,9 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
-    private readonly List<Process> _allProcesses = new ProcessData().GetAllProcesses();
-    /// <summary>
-    /// The List of Processes in the Database, captured at the time of instantiation.
-    /// </summary>
-    public List<Process> AllProcesses
-    {
-        get {return _allProcesses;}
-    }
-
     private TrackedPrintTicket? _activeTicket = null;
     /// <summary>
-    /// The currently active PrintTicket object, the Ticket that is being edited currently.
+    /// The currently active PrintTicket object with Tracked changes.
     /// </summary>
     public TrackedPrintTicket? ActiveTicket
     {
@@ -50,6 +50,21 @@ public partial class MainPageViewModel : ObservableObject
             _activeTicket = value;
             OnPropertyChanged(nameof(_activeTicket));
             OnPropertyChanged(nameof(ActiveTicket));
+        }
+    }
+
+    private PrintTicket? _selectedTicket = null;
+    /// <summary>
+    /// The currently selected PrintTicket object in the OpenPrintTickets CollectionView.
+    /// </summary>
+    public PrintTicket? SelectedTicket
+    {
+        get {return _selectedTicket;}
+        set
+        {
+            _selectedTicket = value;
+            OnPropertyChanged(nameof(_selectedTicket));
+            OnPropertyChanged(nameof(SelectedTicket));
         }
     }
 
