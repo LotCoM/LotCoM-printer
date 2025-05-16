@@ -179,6 +179,19 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private async void OnDeleteActivePrintTicketButtonClicked(object sender, EventArgs e)
 	{
+		// get the index of the ActiveTicket in OpenPrintTickets
+		if (ViewModel.ActiveTicket is null)
+		{
+			throw new ArgumentNullException("Cannot delete 'null' from OpenPrintTickets.");
+		}
+		bool Removed = ViewModel.OpenPrintTickets.Remove(ViewModel.ActiveTicket.Untracked);
+		// confirm that the ActiveTicket exists in OpenPrintTickets and remove it
+		if (!Removed)
+		{
+			throw new ArgumentException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+		}
+		await ViewModel.SaveOpenPrintTickets();
+		// close the ActivePrintTicket window
 		await AnimatedClosePrintTicket();
 	}
 
