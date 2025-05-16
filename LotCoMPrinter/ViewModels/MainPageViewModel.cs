@@ -241,13 +241,24 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Saves the current OpenPrintTickets List to the PrintTicketCache system.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
+    public async Task SaveOpenPrintTickets()
+    {
+        await PrintTicketCache.SaveAsync(OpenPrintTickets.ToList());
+    }
+
+    /// <summary>
     /// Adds a PrintTicket to OpenPrintTickets.
     /// </summary>
     /// <param name="Ticket"></param>
-    public void AddNewOpenPrintTicket(PrintTicket Ticket)
+    public async Task AddNewOpenPrintTicket(PrintTicket Ticket)
     {
         OpenPrintTickets = new ObservableCollection<PrintTicket>(OpenPrintTickets.Append(Ticket));
-        PrintTicketCache.Save(OpenPrintTickets.ToList());
+        await SaveOpenPrintTickets();
     }
 
     /// <summary>
