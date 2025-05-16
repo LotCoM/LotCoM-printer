@@ -209,22 +209,33 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Opens the UI View of SelectedPrintTicket.
+    /// Opens the ActivePrintTicket Menu to display the current ActiveTicket.
+    /// Additionally, collapses the OpenPrintTicketsPanel.
     /// </summary>
-    public void OpenActivePrintTicket()
+    /// <exception cref="NullReferenceException"></exception>
+    public void OpenActivePrintTicketMenu()
     {
+        if (ActiveTicket is null)
+        {
+            throw new NullReferenceException("Cannot display a 'null' ActivePrintTicket.");
+        }
         IsWelcomeMenuShown = false;
         IsActivePrintTicketMenuShown = true;
+        CollapseOpenPrintTicketsPanel();
     }
 
     /// <summary>
-    /// Closes the UI View of SelectedPrintTicket and shows the Welcome Menu.
-    /// Resets the SelectedPrintTicketIndex to no selection.
+    /// Closes the ActivePrintTicket Menu and shows the Welcome Menu.
+    /// Resets the ActiveTicket and SelectedTicket properties.
+    /// Additionally, collapses the OpenPrintTicketsPanel.
     /// </summary>
-    public void CloseActivePrintTicket()
+    public void CloseActivePrintTicketMenu()
     {
+        ActiveTicket = null;
+        SelectedTicket = null;
         IsWelcomeMenuShown = true;
         IsActivePrintTicketMenuShown = false;
+        CollapseOpenPrintTicketsPanel();
     }
 
     /// <summary>
