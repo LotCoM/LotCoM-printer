@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
@@ -12,18 +13,19 @@ namespace LotCoMPrinter.ViewModels;
 /// </summary>
 public partial class MainPageViewModel : ObservableObject 
 {
-    private List<PrintTicket> _openPrintTickets = [];
+    private ObservableCollection<PrintTicket> _openPrintTickets = [];
     /// <summary>
     /// The List of Open Print Tickets currently saved locally.
     /// </summary>
-    public List<PrintTicket> OpenPrintTickets
+    public ObservableCollection<PrintTicket> OpenPrintTickets
     {
-        get {return _openPrintTickets;}
-        set
+        get 
         {
-            _openPrintTickets = value;
-            OnPropertyChanged(nameof(_openPrintTickets));
-            OnPropertyChanged(nameof(OpenPrintTickets));
+            if (_openPrintTickets == null)
+            {
+                _openPrintTickets = new ObservableCollection<PrintTicket>();
+            }
+            return _openPrintTickets;
         }
     }
 
@@ -206,7 +208,7 @@ public partial class MainPageViewModel : ObservableObject
     {
         Options.WelcomeMenuTitleLabelText = "Welcome";
         Options.WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
-        OpenPrintTickets = PrintTicketCache.GetAllPrintTickets();
+        _openPrintTickets = new ObservableCollection<PrintTicket>(PrintTicketCache.GetAllPrintTickets());
     }
 
     /// <summary>
@@ -330,7 +332,7 @@ public partial class MainPageViewModel : ObservableObject
     /// <exception cref="OperationCanceledException"></exception>
     public async Task SaveOpenPrintTickets()
     {
-        await PrintTicketCache.Save(OpenPrintTickets);
+        await PrintTicketCache.Save(OpenPrintTickets.ToList());
     }
 
     /// <summary>
@@ -341,9 +343,12 @@ public partial class MainPageViewModel : ObservableObject
     /// <exception cref="OperationCanceledException"></exception>
     public async Task AddOpenPrintTicket(PrintTicket Ticket)
     {
-        OpenPrintTickets = OpenPrintTickets
-            .Append(Ticket)
-            .ToList();
+        _openPrintTickets = new ObservableCollection<PrintTicket>
+        (
+            OpenPrintTickets
+                .Append(Ticket)
+                .ToList()
+        );
         ActivePrintTicket = OpenPrintTickets[^1];
         await SaveOpenPrintTickets();
     }
