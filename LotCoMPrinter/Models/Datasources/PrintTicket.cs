@@ -6,23 +6,9 @@ using Newtonsoft.Json.Linq;
 
 namespace LotCoMPrinter.Models.Datasources;
 
-/// <summary>
-/// Provides a structure for the creation and maintenance of a Printing Ticket.
-/// </summary>
-/// <param name="TicketProcess">The Process that initiated this Print Ticket.</param>
-/// <param name="TicketPart">The Part that this Print Ticket is applied to.</param>
-/// <param name="TicketSerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
-/// <param name="TicketSerialNumber">The Serial Number to apply to this Print Ticket.</param>
-/// <param name="TicketProductionDate">The Date on which this Print Ticket was initiated.</param>
-/// <param name="TicketProductionShift">The Shift that this Print Ticket was initiated on.</param>
-/// <param name="TicketProductionQuantity">The Quantity produced on the Shift that this Print Ticket was initiated on.</param>
-/// <param name="TicketProductionOperator">The Operator that initiated this Print Ticket.</param>
-/// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
-/// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
-/// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
-public partial class PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, int TicketProductionQuantity, string TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null) : ObservableObject()
+public partial class PrintTicket : ObservableObject
 {
-    private Process _process = TicketProcess;
+    private Process _process;
     /// <summary>
     /// The Process that initiated this Print Ticket.
     /// </summary>
@@ -37,7 +23,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private Part _part = TicketPart;
+    private Part _part;
     /// <summary>
     /// The Part that this Print Ticket is applied to.
     /// </summary>
@@ -52,7 +38,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     } 
 
-    private SerializationModes _serializationMode = TicketSerializationMode;
+    private SerializationModes _serializationMode;
     /// <summary>
     /// The type of Serial Number used to Serialize this Print Ticket.
     /// </summary>
@@ -67,7 +53,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private SerialNumber _serialNumber = TicketSerialNumber;
+    private SerialNumber _serialNumber;
     /// <summary>
     /// The Serial Number (JBK or Lot Number) applied to this Print Ticket.
     /// </summary>
@@ -82,7 +68,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private DateTime _productionDate = TicketProductionDate;
+    private DateTime _productionDate;
     /// <summary>
     /// The Date and Time at which this Print Ticket was initiated.
     /// </summary>
@@ -97,7 +83,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private int _productionShift = TicketProductionShift;
+    private int _productionShift;
     /// <summary>
     /// The Shift that this Print Ticket was initiated on.
     /// </summary>
@@ -112,7 +98,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private int _productionQuantity = TicketProductionQuantity;
+    private int _productionQuantity;
 
     public int ProductionQuantity
     {
@@ -125,7 +111,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private string _productionOperator = TicketProductionOperator;
+    private string _productionOperator;
     /// <summary>
     /// The Operator that this Print Ticket was initiated by.
     /// </summary>
@@ -140,7 +126,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private VariableFieldSet _variableFields = VariableFields;
+    private VariableFieldSet _variableFields;
     /// <summary>
     /// The Variable Field Set assigned to hold the data entered for this Print Ticket.
     /// </summary>
@@ -155,7 +141,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private PartialDataSet? _firstPartialDataSet = FirstPartialDataSet;
+    private PartialDataSet? _firstPartialDataSet;
     /// <summary>
     /// The first of the Partial Production Data sets associated with this Print Ticket.
     /// </summary>
@@ -170,7 +156,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
     }
 
-    private PartialDataSet? _secondPartialDataSet = SecondPartialDataSet;
+    private PartialDataSet? _secondPartialDataSet;
     /// <summary>
     /// The second of the Partial Production Data sets associated with this Print Ticket.
     /// </summary>
@@ -186,49 +172,40 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
     }
 
     /// <summary>
-    /// Provides a Title for the Print Ticket that gives the crucial information of the Ticket.
-    /// </summary>
-    public string Title
-    {
-        get
-        {
-            return $"{Part.ModelNumber} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
-        }
-    }
-
-    /// <summary>
-    /// Returns whether the Print Ticket's Process is a Pass-through Process or not.
-    /// </summary>
-    public bool IsPassThrough 
-    {
-        get 
-        {
-            return _process.Type == OriginationTypes.PassThrough;
-        }
-    }
-
-    /// <summary>
-    /// Returns the Production Date without the Time segment.
-    /// </summary>
-    public string ProductionDateNoTime => $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
-
-    /// <summary>
     /// Returns whether the Print Ticket has one Partial Data Set associated with it.
     /// </summary>
     [ObservableProperty]
-    public partial bool HasFirstPartialDataSet {get; set;} = false;
+    public partial bool HasFirstPartialDataSet { get; private set; }
 
     /// <summary>
     /// Returns whether the Print Ticket has two Partial Data Sets associated with it.
     /// </summary>
     [ObservableProperty]
-    public partial bool HasSecondPartialDataSet {get; set;} = false;
+    public partial bool HasSecondPartialDataSet { get; private set; }
 
     /// <summary>
     /// Returns whether the Print Ticket has space for another Partial Data Set.
     /// </summary>
     [ObservableProperty]
-    public partial bool HasSpace {get; set;} = true;
+    public partial bool HasSpace { get; private set; }
+
+    /// <summary>
+    /// Provides a Title for the Print Ticket that gives the crucial information of the Ticket.
+    /// </summary>
+    [ObservableProperty]
+    public partial string Title { get; set; }
+
+    /// <summary>
+    /// Returns whether the Print Ticket's Process is a Pass-through Process or not.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsPassThrough { get; set; }
+
+    /// <summary>
+    /// Returns the Production Date without the Time segment.
+    /// </summary>
+    [ObservableProperty]
+    public partial string ProductionDateNoTime { get; set; }
 
     /// <summary>
     /// Controls whether the Print Ticket is selected in the Open Print Ticket ListView.
@@ -244,9 +221,6 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
     {
         FirstPartialDataSet = SecondPartialDataSet;
         SecondPartialDataSet = null;
-        HasFirstPartialDataSet = true;
-        HasSecondPartialDataSet = false;
-        HasSpace = true;
     }
 
     /// <summary>
@@ -276,6 +250,42 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
     }
 
     /// <summary>
+    /// Provides a structure for the creation and maintenance of a Printing Ticket.
+    /// </summary>
+    /// <param name="TicketProcess">The Process that initiated this Print Ticket.</param>
+    /// <param name="TicketPart">The Part that this Print Ticket is applied to.</param>
+    /// <param name="TicketSerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
+    /// <param name="TicketSerialNumber">The Serial Number to apply to this Print Ticket.</param>
+    /// <param name="TicketProductionDate">The Date on which this Print Ticket was initiated.</param>
+    /// <param name="TicketProductionShift">The Shift that this Print Ticket was initiated on.</param>
+    /// <param name="TicketProductionQuantity">The Quantity produced on the Shift that this Print Ticket was initiated on.</param>
+    /// <param name="TicketProductionOperator">The Operator that initiated this Print Ticket.</param>
+    /// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
+    /// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
+    /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
+    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, int TicketProductionQuantity, string TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
+    {
+        _process = TicketProcess;
+        _part = TicketPart;
+        _serializationMode = TicketSerializationMode;
+        _serialNumber = TicketSerialNumber;
+        _productionDate = TicketProductionDate;
+        _productionShift = TicketProductionShift;
+        _productionQuantity = TicketProductionQuantity;
+        _productionOperator = TicketProductionOperator;
+        _variableFields = VariableFields;
+        _firstPartialDataSet = FirstPartialDataSet;
+        _secondPartialDataSet = SecondPartialDataSet;
+        // calculate binding properties
+        HasFirstPartialDataSet = FirstPartialDataSet is not null;
+        HasSecondPartialDataSet = SecondPartialDataSet is not null;
+        HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
+        Title = $"{Part.ModelNumber} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
+        IsPassThrough = _process.Type == OriginationTypes.PassThrough;
+        ProductionDateNoTime = $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
+    }
+
+    /// <summary>
     /// Converts the PrintTicket object to a JSON stream.
     /// </summary>
     /// <returns></returns>
@@ -286,20 +296,20 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         if (SerializationMode == SerializationModes.JBK)
         {
             ModeString = "JBK";
-        } 
+        }
         else
         {
             ModeString = "Lot";
         }
         // build the JSON stream piece-by-piece
         // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
-        string JSON = 
+        string JSON =
             "{" +
                 "\"Process\":{" +
                     $"\"FullName\":\"{Process.FullName}\"" +
                 "}," +
                 "\"Part\":{" +
-                    $"\"PartNumber\":\"{Part.PartNumber}\"" + 
+                    $"\"PartNumber\":\"{Part.PartNumber}\"" +
                 "}," +
                 $"\"SerializationMode\":\"{ModeString}\"," +
                 $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
@@ -318,7 +328,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         // add partial data sets only if assigned
         if (HasFirstPartialDataSet)
         {
-            JSON += 
+            JSON +=
                 ",\"FirstPartialDataSet\":{" +
                     $"\"Quantity\":\"{FirstPartialDataSet!.Quantity}\"," +
                     $"\"Shift\":\"{FirstPartialDataSet!.Shift}\"," +
@@ -327,7 +337,7 @@ public partial class PrintTicket(Process TicketProcess, Part TicketPart, Seriali
         }
         if (HasSecondPartialDataSet)
         {
-            JSON += 
+            JSON +=
                 ",\"SecondPartialDataSet\":{" +
                     $"\"Quantity\":\"{SecondPartialDataSet!.Quantity}\"," +
                     $"\"Shift\":\"{SecondPartialDataSet!.Shift}\"," +
