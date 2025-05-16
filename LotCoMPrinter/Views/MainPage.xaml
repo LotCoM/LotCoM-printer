@@ -285,7 +285,7 @@
                     VerticalOptions="Center"
                     FontSize="20"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                    Text="{Binding ActivePrintTicket.Title, StringFormat='Input for Label: {0}'}"/>
+                    Text="{Binding ActiveTicket.Untracked.Title, StringFormat='Input for Label: {0}'}"/>
                 <!-- Action Buttons Panel -->
                 <HorizontalStackLayout
                     HorizontalOptions="Fill"
@@ -315,7 +315,7 @@
                     <!-- Save Button -->
                     <Button
                         x:Name="SaveActivePrintTicketButton"
-                        Clicked="OnCloseActivePrintTicketButtonClicked"
+                        Clicked="OnSaveActivePrintTicketButtonClicked"
                         Margin="5,0,0,0"
                         Padding="0"
                         CharacterSpacing="0"
@@ -329,7 +329,7 @@
                     <!-- Delete Button -->
                     <Button
                         x:Name="DeleteActivePrintTicketButton"
-                        Clicked="OnCloseActivePrintTicketButtonClicked"
+                        Clicked="OnDeleteActivePrintTicketButtonClicked"
                         Margin="5,0,0,0"
                         Padding="0"
                         CharacterSpacing="0"
@@ -368,7 +368,8 @@
                     </Button>  
                     <!-- Finalize & Print Button -->
                     <Button
-                        x:Name="FinalizeActivePrintTicketButton"
+                        x:Name="PrintActivePrintTicketButton"
+                        Clicked="OnPrintActivePrintTicketButtonClicked"
                         Margin="5,0,0,0"
                         Padding="0"
                         CharacterSpacing="0"
@@ -464,7 +465,7 @@
                             VerticalOptions="Center"
                             WidthRequest="300"
                             MinimumWidthRequest="300"
-                            Text="{Binding ActivePrintTicket.Process.FullName}"/>
+                            Text="{Binding ActiveTicket.Untracked.Process.FullName}"/>
                         <!-- Part Field Label -->
                         <Label
                             Grid.Row="2"
@@ -488,7 +489,7 @@
                             VerticalOptions="Center"
                             WidthRequest="300"
                             MinimumWidthRequest="300"
-                            Text="{Binding ActivePrintTicket.Part.GetInfo}"/>
+                            Text="{Binding ActiveTicket.Untracked.Part.GetInfo}"/>
                     </Grid>
                     <!-- Process/Part Separator Bar -->
                     <BoxView
@@ -523,7 +524,7 @@
                             <DatePicker
                                 x:Name="ProductionDatePicker"
                                 IsEnabled="False"
-                                Date="{Binding ActivePrintTicket.ProductionDate}"
+                                Date="{Binding ActiveTicket.Untracked.ProductionDate}"
                                 WidthRequest="195"/>
                         </Border>
                     </HorizontalStackLayout>
@@ -554,7 +555,7 @@
                                 <Picker
                                     x:Name="ShiftPicker"
                                     IsEnabled="False"
-                                    SelectedItem="{Binding ActivePrintTicket.ProductionShift}">
+                                    SelectedItem="{Binding ActiveTicket.Untracked.ProductionShift}">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:Int32}">
                                             <x:Int32>1</x:Int32>
@@ -588,7 +589,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="QuantityEntry"
-                                    Text="{Binding ActivePrintTicket.ProductionQuantity}"/>
+                                    Text="{Binding ActiveTicket.Tracked.ProductionQuantity}"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Operator Input -->
@@ -615,7 +616,7 @@
                                 <Entry
                                     x:Name="OperatorEntry"
                                     IsEnabled="False"
-                                    Text="{Binding ActivePrintTicket.ProductionOperator}"
+                                    Text="{Binding ActiveTicket.Untracked.ProductionOperator}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -627,7 +628,7 @@
                         VerticalOptions="Fill">
                         <!-- JBK Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.JBKNumber}">
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.JBKNumber}">
                             <!-- JBK Input Label -->
                             <Label
                                 x:Name="JBKNumberLabel"
@@ -649,14 +650,14 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="JBKNumberEntry"
-                                    IsEnabled="{Binding ActivePrintTicket.IsPassThrough}"
-                                    Text="{Binding ActivePrintTicket.VariableFields.JBKNumber}"
+                                    IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.JBKNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Lot Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.LotNumber}">
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.LotNumber}">
                             <!-- Lot Input Label -->
                             <Label
                                 x:Name="LotNumberLabel"
@@ -678,14 +679,14 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="LotNumberEntry"
-                                    IsEnabled="{Binding ActivePrintTicket.IsPassThrough}"
-                                    Text="{Binding ActivePrintTicket.VariableFields.LotNumber}"
+                                    IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.LotNumber}"
                                     MaxLength="9"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Deburr JBK Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.DeburrJBKNumber}">
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.DeburrJBKNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="DeburrJBKNumberLabel"
@@ -707,13 +708,13 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="DeburrJBKNumberEntry"
-                                    Text="{Binding ActivePrintTicket.VariableFields.DeburrJBKNumber}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DeburrJBKNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Die Number Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.DieNumber}">
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.DieNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="DieNumberLabel"
@@ -735,13 +736,13 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="DieNumberEntry"
-                                    Text="{Binding ActivePrintTicket.VariableFields.DieNumber}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DieNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Model Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.ModelNumber}">
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.ModelNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="ModelNumberLabel"
@@ -763,13 +764,13 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="ModelNumberEntry"
-                                    Text="{Binding ActivePrintTicket.VariableFields.ModelNumber}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.ModelNumber}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Heat Number Input Layout -->
                         <HorizontalStackLayout
-                            IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.HeatNumber}">
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.HeatNumber}">
                             <!-- Input Label -->
                             <Label
                                 x:Name="HeatNumberLabel"
@@ -791,7 +792,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="HeatNumberEntry"
-                                    Text="{Binding ActivePrintTicket.VariableFields.HeatNumber}"/>
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.HeatNumber}"/>
                             </Border>
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>
@@ -804,7 +805,7 @@
                         BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
                     <!-- First Partial Data Set Layout -->
                     <Grid
-                        IsVisible="{Binding ActivePrintTicket.HasFirstPartialDataSet}">
+                        IsVisible="{Binding ActiveTicket.Tracked.HasFirstPartialDataSet}">
                         <Grid.RowDefinitions>
                             <!-- Header Row -->
                             <RowDefinition Height="Auto"/>
@@ -857,7 +858,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Picker
                                     x:Name="FirstPartialDataSetShiftPicker"
-                                    SelectedItem="{Binding ActivePrintTicket.FirstPartialDataSet.Shift}">
+                                    SelectedItem="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Shift}">
                                     <Picker.ItemsSource>
                                         <x:Array Type ="{x:Type x:Int32}">
                                             <x:Int32>1</x:Int32>
@@ -893,7 +894,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="FirstPartialDataSetQuantityEntry"
-                                    Text="{Binding ActivePrintTicket.FirstPartialDataSet.Quantity}"/>
+                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Quantity}"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Operator Input Layout -->
@@ -921,7 +922,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="FirstPartialDataSetOperatorEntry"
-                                    Text="{Binding ActivePrintTicket.FirstPartialDataSet.Operator}"
+                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Operator}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -981,11 +982,11 @@
                         HeightRequest="1"
                         HorizontalOptions="Fill"
                         VerticalOptions="Center"
-                        IsVisible="{Binding ActivePrintTicket.HasFirstPartialDataSet}"
+                        IsVisible="{Binding ActiveTicket.Tracked.HasFirstPartialDataSet}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/> 
                     <!-- Second Partial Dataset Layout -->
                     <Grid
-                        IsVisible="{Binding ActivePrintTicket.HasSecondPartialDataSet}">
+                        IsVisible="{Binding ActiveTicket.Tracked.HasSecondPartialDataSet}">
                         <Grid.RowDefinitions>
                             <!-- Header Row -->
                             <RowDefinition Height="Auto"/>
@@ -1038,7 +1039,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Picker
                                     x:Name="SecondPartialDataSetShiftPicker"
-                                    SelectedItem="{Binding ActivePrintTicket.SecondPartialDataSet.Shift}">
+                                    SelectedItem="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Shift}">
                                     <Picker.ItemsSource>
                                         <x:Array Type ="{x:Type x:Int32}">
                                             <x:Int32>1</x:Int32>
@@ -1074,7 +1075,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="SecondPartialDataSetQuantityEntry"
-                                    Text="{Binding ActivePrintTicket.SecondPartialDataSet.Quantity}"/>
+                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Quantity}"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Operator Input Layout -->
@@ -1102,7 +1103,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="SecondPartialDataSetOperatorEntry"
-                                    Text="{Binding ActivePrintTicket.SecondPartialDataSet.Operator}"
+                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Operator}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -1169,7 +1170,7 @@
                 <Button
                     x:Name="AddPartialProductionDatasetButton"
                     Clicked="OnAddPartialProductionDataSetButtonClicked"
-                    IsVisible="{Binding ActivePrintTicket.HasSpace}"
+                    IsVisible="{Binding ActiveTicket.Tracked.HasSpace}"
                     Margin="20"
                     WidthRequest="125"
                     HeightRequest="40"
