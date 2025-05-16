@@ -125,6 +125,8 @@ public partial class MainPage : ContentPage
 		}
 		if (Result.GetType().Equals(typeof(PrintTicket)))
 		{
+			ViewModel.AddNewOpenPrintTicket((PrintTicket)Result);
+			ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.OpenPrintTickets[^1]);
 			await AnimatedDisplayPrintTicket();
 		}
     }
