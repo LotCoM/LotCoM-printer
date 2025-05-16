@@ -178,15 +178,16 @@ public partial class MainPageViewModel : ObservableObject
             OnPropertyChanged(nameof(SelectedTicket));
         }
     }
-    
+
     /// <summary>
     /// Create a ViewModel to control the logic of a Main Page instance.
     /// </summary>
-    public MainPageViewModel() 
+    public MainPageViewModel()
     {
         WelcomeMenuTitleLabelText = "Welcome";
         WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
         _openPrintTickets = new ObservableCollection<PrintTicket>(PrintTicketCache.GetAllPrintTickets());
+        SelectedTicket = OpenPrintTickets[0];
     }
     
     /// <summary>
