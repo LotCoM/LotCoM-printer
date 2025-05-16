@@ -339,55 +339,5 @@ public partial class MainPageViewModel : ObservableObject
             ActiveTicket.Tracked.AddPartialDataSet(new PartialDataSet());
         }
     }
-
-    /// <summary>
-    /// Saves the current OpenPrintTickets List.
-    /// </summary>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="OperationCanceledException"></exception>
-    public async Task SaveOpenPrintTickets()
-    {
-        await PrintTicketCache.Save(OpenPrintTickets.ToList());
-    }
-
-    /// <summary>
-    /// Adds a new PrintTicket to OpenPrintTickets, sets it as ActivePrintTicket, and opens it in the ActivePrintTicket Menu.
-    /// </summary>
-    /// <param name="Ticket"></param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="OperationCanceledException"></exception>
-    public async Task AddOpenPrintTicket(PrintTicket Ticket)
-    {
-        _openPrintTickets = new ObservableCollection<PrintTicket>
-        (
-            OpenPrintTickets
-                .Append(Ticket)
-                .ToList()
-        );
-        ActiveTicket = new TrackedPrintTicket(OpenPrintTickets[^1]);
-        await SaveOpenPrintTickets();
-    }
-
-    /// <summary>
-    /// Sets ActivePrintTicket to Ticket and displays Ticket on the ActivePrintTicket Menu.
-    /// </summary>
-    /// <param name="Ticket"></param>
-    public void DisplayPrintTicket(PrintTicket Ticket)
-    {
-        ActiveTicket = new TrackedPrintTicket(Ticket);
-        Options.OpenActivePrintTicket();
-    }
-
-    /// <summary>
-    /// Closes the ActivePrintTicket display View, saving the OpenPrintTickets List and returning to the Welcome menu.
-    /// </summary>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="OperationCanceledException"></exception>
-    public async Task ClosePrintTicket()
-    {
-        await SaveOpenPrintTickets();
-        Options.CloseActivePrintTicket();
-        ActiveTicket = null;
-    }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
