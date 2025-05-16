@@ -14,30 +14,33 @@ public partial class MainPage : ContentPage
 	/// <summary>
 	/// Animates the collapsing of the Open Print Tickets Panel across Duration milliseconds.
 	/// </summary>
+	/// <param name="Duration">The time, in milliseconds, that it takes for this animation to complete.</param>
 	/// <returns></returns>
-	private async Task AnimatedCollapseOpenPrintTicketsPanel()
+	private async Task AnimatedCollapseOpenPrintTicketsPanel(uint Duration = 200)
 	{
 		ViewModel.CollapseOpenPrintTicketsPanel();
-		await OpenPrintTicketsCollapseButton.RotateTo(180);
+		await OpenPrintTicketsCollapseButton.RotateTo(180, length: Duration);
 	}
 
 	/// <summary>
 	/// Animates the raising of the Open Print Tickets Panel across Duration milliseconds.
 	/// </summary>
+	/// <param name="Duration">The time, in milliseconds, that it takes for this animation to complete.</param>
 	/// <returns></returns>
-	private async Task AnimatedRaiseOpenPrintTicketsPanel()
+	private async Task AnimatedRaiseOpenPrintTicketsPanel(uint Duration = 200)
 	{
 		ViewModel.RaiseOpenPrintTicketsPanel();
-		await OpenPrintTicketsCollapseButton.RotateTo(0);
+		await OpenPrintTicketsCollapseButton.RotateTo(0, length: Duration);
 	}
 
 	/// <summary>
 	/// Opens and fades the ActivePrintTicket Menu in over Duration milliseconds.
 	/// </summary>
-	/// <param name="Duration"></param>
+	/// <param name="Duration">The time, in milliseconds, that it takes for this animation to complete.</param>
 	/// <returns></returns>
-	private async Task AnimatedDisplayPrintTicket(uint Duration = 100)
+	private async Task AnimatedDisplayPrintTicket(uint Duration = 200)
 	{
+		ViewModel.OpenActivePrintTicketMenu();
 		await ActivePrintTicketLayout.FadeTo(1, Duration);
 		if (ViewModel.IsOpenPrintTicketsPanelShown)
 		{
@@ -49,10 +52,11 @@ public partial class MainPage : ContentPage
 	/// Fades the ActivePrintTicket Menu out over Duration milliseconds, then closes the display.
 	/// </summary>
 	/// <returns></returns>
-	/// <param name="Duration"></param>
-	private async Task AnimatedClosePrintTicket(uint Duration = 100)
+	/// <param name="Duration">The time, in milliseconds, that it takes for this animation to complete.</param>
+	private async Task AnimatedClosePrintTicket(uint Duration = 200)
 	{
 		await ActivePrintTicketLayout.FadeTo(0, Duration);
+		ViewModel.CloseActivePrintTicketMenu();
 		if (ViewModel.IsOpenPrintTicketsPanelShown)
 		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
@@ -164,8 +168,17 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private void OnOpenPrintTicketsCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		// find the selected PrintTicket in the Open Print Tickets list and set its IsSelectedInList property
-		ViewModel.SelectedTicket = (PrintTicket)OpenPrintTicketsCollectionView.SelectedItem;
+		// find the selected PrintTicket in OpenPrintTickets and set its IsSelectedInList property
+		CollectionView View;
+		try
+		{
+			View = (CollectionView)sender;
+		}
+		catch
+		{
+			return;
+		}
+		ViewModel.SelectedTicket = (PrintTicket)View.SelectedItem;
 		foreach (PrintTicket _ticket in ViewModel.OpenPrintTickets)
 			if (_ticket.Equals(ViewModel.SelectedTicket))
 			{
