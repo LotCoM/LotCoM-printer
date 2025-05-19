@@ -140,9 +140,19 @@ public partial class MainPage : ContentPage
 		// get the index of the ActiveTicket in OpenPrintTickets
 		if (ViewModel.ActiveTicket is null)
 		{
-			throw new ArgumentNullException("Cannot close 'null'.");
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue." +
+					"\n\nReference message: " +
+					"Cannot close 'null'."
+					
+				)
+			);
 		}
-		ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.ActiveTicket.Untracked);
+		ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.ActiveTicket!.Untracked);
 		// close the ActivePrintTicket window
 		await AnimatedClosePrintTicket();
 	}
@@ -160,13 +170,33 @@ public partial class MainPage : ContentPage
 		// get the index of the ActiveTicket in OpenPrintTickets
 		if (ViewModel.ActiveTicket is null)
 		{
-			throw new ArgumentNullException("Cannot save 'null' to OpenPrintTickets.");
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue." +
+					"\n\nReference message: " +
+					"Cannot save 'null' to OpenPrintTickets."
+					
+				)
+			);
 		}
-		int Index = ViewModel.OpenPrintTickets.IndexOf(ViewModel.ActiveTicket.Untracked);
+		int Index = ViewModel.OpenPrintTickets.IndexOf(ViewModel.ActiveTicket!.Untracked);
 		// confirm that the ActiveTicket exists in OpenPrintTickets and replace it with the Tracked PrintTicket
 		if (Index == -1)
 		{
-			throw new ArgumentException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue." +
+					"\n\nReference message: " +
+					"The Untracked ActivePrintTicket was not found in OpenPrintTickets."
+					
+				)
+			);
 		}
 		ViewModel.ActiveTicket.MergeChanges();
 		ViewModel.OpenPrintTickets[Index] = ViewModel.ActiveTicket.Untracked;
@@ -183,13 +213,33 @@ public partial class MainPage : ContentPage
 		// get the index of the ActiveTicket in OpenPrintTickets
 		if (ViewModel.ActiveTicket is null)
 		{
-			throw new ArgumentNullException("Cannot delete 'null' from OpenPrintTickets.");
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue." +
+					"\n\nReference message: " +
+					"Cannot delete 'null' from OpenPrintTickets."
+					
+				)
+			);
 		}
-		bool Removed = ViewModel.OpenPrintTickets.Remove(ViewModel.ActiveTicket.Untracked);
+		bool Removed = ViewModel.OpenPrintTickets.Remove(ViewModel.ActiveTicket!.Untracked);
 		// confirm that the ActiveTicket exists in OpenPrintTickets and remove it
 		if (!Removed)
 		{
-			throw new ArgumentException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue." +
+					"\n\nReference message: " +
+					"The Untracked ActivePrintTicket was not found in OpenPrintTickets."
+					
+				)
+			);
 		}
 		await ViewModel.SaveOpenPrintTickets();
 		// close the ActivePrintTicket window
@@ -206,15 +256,58 @@ public partial class MainPage : ContentPage
 		{
 			Printed = await ViewModel.PrintActivePrintTicket();
 		}
-		catch
+		// catch and handle validation messages
+		catch (ArgumentException _ex)
 		{
-			throw new PrintRequestException("The Print request could not be completed.");
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Invalid Production Data",
+					$"{_ex.Message}\n\nResolve this issue and try again."
+				)
+			);
 		}
-		if (!Printed)
+		// catch and handle print spooling messages
+		catch (PrintRequestException _ex)
 		{
-			throw new PrintRequestException("The Print request failed.");
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Print Failed",
+					$"The Print request could not be completed." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
 		}
-		await AnimatedClosePrintTicket();
+		// catch other, unexpected issues
+		catch (Exception _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Print Failed",
+					$"We encountered an unexpected error." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+		}
+		if (Printed)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Label Printed",
+					$"Label printing was successful. Retrieve your new Label from the Printer!"
+				)
+			);
+			await AnimatedClosePrintTicket();
+		}
 	}
 
 	/// <summary>
