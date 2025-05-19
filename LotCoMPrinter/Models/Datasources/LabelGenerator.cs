@@ -1,4 +1,3 @@
-using System.Drawing;
 using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.Models.Datasources;
@@ -133,13 +132,13 @@ public static class LabelGenerator
     }
 
     /// <summary>
-    /// Generates a Label image object that mirrors the appearance of the physical Basket Label.
+    /// Generates a Label object that mirrors the appearance of the physical Basket Label.
     /// Composition of Asynchronous tasks.
     /// </summary>
     /// <param name="Ticket"></param>
     /// <returns></returns>
     /// <exception cref="LabelBuildException"></exception>
-    public static async Task<Bitmap> GenerateLabelAsync(PrintTicket Ticket)
+    public static async Task<BasketLabel> GenerateLabelAsync(PrintTicket Ticket)
     {
         // create a new Label
         BasketLabel? Label;
@@ -160,6 +159,6 @@ public static class LabelGenerator
         await Label.AddQRCodeAsync(Code);
         await Label.AddBodyTextAsync(Body);
         // return the Label image
-        return Label.GetImage();
+        return Label;
     }
 }
