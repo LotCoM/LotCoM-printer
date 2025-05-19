@@ -825,7 +825,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            VariableFields = await VariableFields.SelfValidate(Process.Type);
+            VariableFields = await VariableFields.SelfValidate(Process);
         }
         catch (Exception _ex)
         {
