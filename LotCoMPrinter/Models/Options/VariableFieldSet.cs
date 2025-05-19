@@ -150,66 +150,81 @@ public partial class VariableFieldSet(int? JBKNumber = null, string? LotNumber =
     /// <param name="ProcessType"></param>
     /// <returns>A modified (formatted) version of the object calling this method.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public async Task<VariableFieldSet> SelfValidate(OriginationTypes ProcessType)
+    public async Task<VariableFieldSet> SelfValidate(Process Process)
     {
         // validate each field and, if faulted, throw an exception with the faulting value
-        try
+        if (Process.RequiredFields.JBKNumber)
         {
-            JBKNumber = await ValidateJBKNumber(JBKNumber, ProcessType);
+            try
+            {
+                JBKNumber = await ValidateJBKNumber(JBKNumber, Process.Type);
+            }
+            catch
+            {
+                throw new ArgumentException("JBK");
+            }
         }
-        catch
+        if (Process.RequiredFields.LotNumber)
         {
-            throw new ArgumentException("JBK");
+            try
+            {
+                LotNumber = await ValidateLotNumber(LotNumber, Process.Type);
+            }
+            catch
+            {
+                throw new ArgumentException("Lot");
+            }
         }
-        try
+        if (Process.RequiredFields.DeburrJBKNumber)
         {
-            LotNumber = await ValidateLotNumber(LotNumber, ProcessType);
+            try
+            {
+                await ValidateJBKNumber(DeburrJBKNumber, Process.Type);
+            }
+            catch
+            {
+                throw new ArgumentException("Deburr JBK");
+            }
         }
-        catch
+        if (Process.RequiredFields.DieNumber)
         {
-            throw new ArgumentException("Lot");
+            try
+            {
+                await ValidatePositiveInteger(DieNumber);
+            }
+            catch
+            {
+                throw new ArgumentException("Die");
+            }
         }
-        try
+        if (Process.RequiredFields.HeatNumber)
         {
-            await ValidateJBKNumber(DeburrJBKNumber, ProcessType);
+            try
+            {
+                await ValidatePositiveInteger(int.Parse(HeatNumber!));
+            }
+            catch
+            {
+                throw new ArgumentException("Heat");
+            }
         }
-        catch
+        if (Process.RequiredFields.ModelNumber)
         {
-            throw new ArgumentException("Deburr JBK");
-        }
-        try
-        {
-            await ValidatePositiveInteger(DieNumber);
-        }
-        catch
-        {
-            throw new ArgumentException("Die");
-        }
-        try
-        {
-            await ValidatePositiveInteger(int.Parse(HeatNumber!));
-        }
-        catch
-        {
-            throw new ArgumentException("Heat");
-        }
-        try
-        {
-            ModelNumber = await ValidateModelNumber(ModelNumber);
-        }
-        catch
-        {
-            throw new ArgumentException("Model");
+            try
+            {
+                ModelNumber = await ValidateModelNumber(ModelNumber);
+            }
+            catch
+            {
+                throw new ArgumentException("Model");
+            }
         }
         // validation is okay; return an updated version of the fields
         return this;
     }
 
     // COMPILED REGEX PATTERNS
-    
+
     [GeneratedRegex(@"^[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]$")]
     private static partial Regex ModelRegex();
-    
-    [GeneratedRegex(@"^[^\d]+$")]
-    private static partial Regex DigitRegex();
 }
