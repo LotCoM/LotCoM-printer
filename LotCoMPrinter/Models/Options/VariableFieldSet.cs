@@ -144,6 +144,12 @@ public partial class VariableFieldSet(int? JBKNumber = null, string? LotNumber =
         });
     }
 
+    /// <summary>
+    /// Validates each of the Variable Field values to ensure proper formatting and value types.
+    /// </summary>
+    /// <param name="ProcessType"></param>
+    /// <returns>A modified (formatted) version of the object calling this method.</returns>
+    /// <exception cref="ArgumentException"></exception>
     public async Task<VariableFieldSet> SelfValidate(OriginationTypes ProcessType)
     {
         // validate each field and, if faulted, throw an exception with the faulting value
