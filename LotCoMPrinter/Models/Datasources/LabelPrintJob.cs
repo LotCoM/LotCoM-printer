@@ -1,4 +1,3 @@
-using System.Drawing;
 using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.Models.Datasources;
@@ -6,38 +5,31 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <summary>
 /// Creates a Print Job that can generate a Bitmap image Label and spool a print job to the printing system.
 /// </summary>
-/// <param name="Capture">A validated InterfaceCapture object.</param>
-/// <param name="Header">The string to use as the Label's Header text.</param>
-public class LabelPrintJob(InterfaceCapture Capture, string Header) 
+/// <param name="Ticket">A PrintTicket object.</param>
+public class LabelPrintJob(PrintTicket Ticket) 
 {
     /// <summary>
-    /// The InterfaceCapture object to use as the source of Data for this Label Print Job.
+    /// The PrintTicket object to use as the source of Data for this Label Print Job.
     /// </summary>
-    private readonly InterfaceCapture Capture = Capture;
+    public readonly PrintTicket Ticket = Ticket;
 
     /// <summary>
-    /// The formatted Header string to apply to the top of this Label.
+    /// A generated Label object.
     /// </summary>
-    private readonly string Header = Header;
+    public Label? Label = null;
 
     /// <summary>
-    /// A Bitmap Label image.
-    /// </summary>
-    private Bitmap? Label = null;
-
-    /// <summary>
-    /// Creates a Label object and Bitmap image from the Job's saved information. 
-    /// Stores the generated Bitmap image in _label property.
+    /// Creates a BasketLabel object from the Job's saved PrintTicket object. 
+    /// Stores the generated BasketLabel in the Label property.
     /// </summary>
     /// <returns></returns>
     /// <exception cref="LabelBuildException">Thrown if the LabelGenerator failed to create a Label.</exception>
     private async Task GenerateLabelImage() 
     {
-        // generate a new Label image and store it in the _label property
+        // generate a new Label image and store it in the Label property
         try 
         {
-            Label = await LabelGenerator.GenerateLabelAsync(Capture, Header);
-        // there was an unexpected error in the Label generation
+            Label = await LabelGenerator.GenerateLabelAsync(Ticket);
         } 
         catch (LabelBuildException _ex) 
         {
@@ -57,26 +49,21 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header)
     /// <exception cref="PrintRequestException"></exception>
     public async Task<bool> Run() 
     {
-        // generate a Label from the saved Label information
+        // generate a Label from the saved PrintTicket
         try 
         {
             await GenerateLabelImage();
-        // there was an unexpected error in the label build; pass the error on
         } 
         catch (LabelBuildException _ex) 
         {
             throw new LabelBuildException(_ex.Message);
         }
-        // create a PrintHandler object for the new Label
+        // create a PrintHandler object for the new Label and attempt to print it
         bool Printed = false;
-        PrintHandler LabelPrinter = new PrintHandler(Label!);
-        // try to print the Label
-        try 
+        try
         {
-            await LabelPrinter.PrintLabelAsync();
-            Printed = true;
-        // handle errors thrown by the PrintLabelAsync() method
-        } 
+            Printed = await PrintHandler.PrintLabelAsync(Label!);
+        }
         catch (PrintRequestException _ex)
         {
             throw new PrintRequestException(_ex.Message);
@@ -86,8 +73,8 @@ public class LabelPrintJob(InterfaceCapture Capture, string Header)
         {
             try 
             {
-                await PrintLogger.LogPrintEvent(Capture);
-            // the print logging was forced to default on its bulk logging; report this to user
+                await PrintLogger.LogPrintEvent(this);
+            // the print logging was forced to default on its backup logging; report this to user
             } 
             catch (Exception _ex) 
             {
