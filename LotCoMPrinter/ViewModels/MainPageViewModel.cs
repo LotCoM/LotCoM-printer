@@ -254,6 +254,7 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     /// <exception cref="PrintRequestException"></exception>
     public async Task<bool> PrintActivePrintTicket()
     {
@@ -261,6 +262,15 @@ public partial class MainPageViewModel : ObservableObject
         if (ActiveTicket is null)
         {
             throw new NullReferenceException("Cannot print 'null' PrintTicket.");
+        }
+        // validate the PrintTicket
+        try
+        {
+            ActiveTicket.Tracked = await ActiveTicket.Tracked.SelfValidate();
+        }
+        catch (Exception _ex)
+        {
+            throw new ArgumentException(_ex.Message);
         }
         LabelPrintJob Job = new LabelPrintJob(ActiveTicket.Tracked);
         bool Printed = false;
@@ -284,7 +294,7 @@ public partial class MainPageViewModel : ObservableObject
             // confirm that the ActiveTicket exists in OpenPrintTickets and remove it
             if (!Removed)
             {
-                throw new ArgumentException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+                throw new NullReferenceException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
             }
             await SaveOpenPrintTickets();
             return true;
