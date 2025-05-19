@@ -889,6 +889,82 @@ public partial class PrintTicket : ObservableObject
         return this;
     }
 
+    /// <summary>
+    /// Combines the possible three partial quantity values into one total quantity.
+    /// </summary>
+    /// <returns></returns>
+    public int GetTotalQuantity()
+    {
+        // compile the full PrintTicket quantity
+        int FullQuantity = ProductionQuantity;
+        if (HasFirstPartialDataSet)
+        {
+            FullQuantity += (int)FirstPartialDataSet!.Quantity!;
+        }
+        if (HasSecondPartialDataSet)
+        {
+            FullQuantity += (int)SecondPartialDataSet!.Quantity!;
+        }
+        return FullQuantity;
+    }
+
+    /// <summary>
+    /// Combines the three possible Shift values into a string with format "3:1:2".
+    /// </summary>
+    /// <returns></returns>
+    public string GetCombinedShifts()
+    {
+        // compile the Shift values into a single value
+        string FullShift = $"{ProductionShift}";
+        if (HasFirstPartialDataSet)
+        {
+            FullShift = $"{FullShift}:{FirstPartialDataSet!.Shift}";
+        }
+        if (HasSecondPartialDataSet)
+        {
+            FullShift = $"{FullShift}:{SecondPartialDataSet!.Shift}";
+        }
+        return FullShift;
+    }
+
+    /// <summary>
+    /// Combines the three possible Quantity values into a string with format "100:100:100".
+    /// </summary>
+    /// <returns></returns>
+    public string GetCombinedQuantities()
+    {
+        // compile the Quantity values into a single value
+        string FullQuantity = $"{ProductionQuantity}";
+        if (HasFirstPartialDataSet)
+        {
+            FullQuantity = $"{FullQuantity}:{FirstPartialDataSet!.Quantity}";
+        }
+        if (HasSecondPartialDataSet)
+        {
+            FullQuantity = $"{FullQuantity}:{SecondPartialDataSet!.Quantity}";
+        }
+        return FullQuantity;
+    }
+
+    /// <summary>
+    /// Combines the three possible Operator values into a string with format "OP1:OP2:OP3".
+    /// </summary>
+    /// <returns></returns>
+    public string GetCombinedOperators()
+    {
+        // compile the Operator values into a single value
+        string FullOperator = $"{ProductionOperator}";
+        if (HasFirstPartialDataSet)
+        {
+            FullOperator = $"{FullOperator}:{FirstPartialDataSet!.Operator}";
+        }
+        if (HasSecondPartialDataSet)
+        {
+            FullOperator = $"{FullOperator}:{SecondPartialDataSet!.Operator}";
+        }
+        return FullOperator;
+    }
+
     // COMPILED REGEX PATTERNS
 
     [GeneratedRegex(@"^[a-zA-Z][a-zA-Z][a-zA-Z]?$")]
