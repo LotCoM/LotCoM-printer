@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Options;
 
 namespace LotCoMPrinter.ViewModels;
@@ -245,6 +246,38 @@ public partial class MainPageViewModel : ObservableObject
         SelectedTicket = null;
         IsWelcomeMenuShown = true;
         IsActivePrintTicketMenuShown = false;
+    }
+
+    /// <summary>
+    /// Attempts to create and run a Label Print Job from ActiveTicket.Tracked.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="PrintRequestException"></exception>
+    public async Task<bool> PrintActivePrintTicket()
+    {
+        // create a LabelPrintJob from the Active Print Ticket
+        if (ActiveTicket is null)
+        {
+            throw new NullReferenceException("Cannot print 'null' PrintTicket.");
+        }
+        LabelPrintJob Job = new LabelPrintJob(ActiveTicket.Tracked);
+        bool Printed = false;
+        // attempt to run the Print Job
+        try
+        {
+            Printed = await Job.Run();
+        }
+        catch (LabelBuildException)
+        {
+            throw new PrintRequestException("Could not create a Label from the entered information.");
+        }
+        catch (PrintRequestException)
+        {
+            throw new PrintRequestException("Failed to execute the print job for the generated Label.");
+        }
+        // return the success result of the Print Job
+        return Printed;
     }
 
     /// <summary>
