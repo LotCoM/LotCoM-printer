@@ -28,9 +28,9 @@ public static class PrintHandler
     /// Prints the Label passed to the PrintHandler.
     /// </summary>
     /// <exception cref="PrintRequestException"></exception>
-    public static async Task PrintLabelAsync(Label Label)
+    public static async Task<bool> PrintLabelAsync(Label Label)
     {
-        await Task.Run(() =>
+        return await Task.Run(() =>
         {
             // create a new PrintDocument, retrieve the Default Printer, and set the Document to use that Printer
             PrintDocument PrintDoc = new PrintDocument();
@@ -59,6 +59,7 @@ public static class PrintHandler
             {
                 throw new PrintRequestException($"The Print Request could not be completed due to the following exception:\n{_ex.Message}.");
             }
+            return true;
         });
     }
 }
