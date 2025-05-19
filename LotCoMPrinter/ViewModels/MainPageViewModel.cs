@@ -250,6 +250,7 @@ public partial class MainPageViewModel : ObservableObject
 
     /// <summary>
     /// Attempts to create and run a Label Print Job from ActiveTicket.Tracked.
+    /// Removes ActiveTicket from OpenPrintTickets.
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
@@ -276,8 +277,22 @@ public partial class MainPageViewModel : ObservableObject
         {
             throw new PrintRequestException("Failed to execute the print job for the generated Label.");
         }
-        // return the success result of the Print Job
-        return Printed;
+        // remove the Ticket if the print was successful
+        if (Printed)
+        {
+            bool Removed = OpenPrintTickets.Remove(ActiveTicket.Untracked);
+            // confirm that the ActiveTicket exists in OpenPrintTickets and remove it
+            if (!Removed)
+            {
+                throw new ArgumentException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+            }
+            await SaveOpenPrintTickets();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
