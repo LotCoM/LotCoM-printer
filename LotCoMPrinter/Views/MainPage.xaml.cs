@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Views;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
@@ -200,6 +201,19 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private async void OnPrintActivePrintTicketButtonClicked(object sender, EventArgs e)
 	{
+		bool Printed = false;
+		try
+		{
+			Printed = await ViewModel.PrintActivePrintTicket();
+		}
+		catch
+		{
+			throw new PrintRequestException("The Print request could not be completed.");
+		}
+		if (!Printed)
+		{
+			throw new PrintRequestException("The Print request failed.");
+		}
 		await AnimatedClosePrintTicket();
 	}
 
