@@ -15,25 +15,9 @@ public static class LabelGenerator
         // compile the QR code data on a new thread
         return await Task.Run(() =>
         {
-            // compile the Partial Production Data Sets into single field values
-            string FullShift = $"{Ticket.ProductionShift}";
-            string FullQuantity = $"{Ticket.ProductionQuantity}";
-            string FullOperator = $"{Ticket.ProductionOperator}";
-            if (Ticket.HasFirstPartialDataSet)
-            {
-                FullShift = $"{FullShift}:{Ticket.FirstPartialDataSet!.Shift}";
-                FullQuantity = $"{FullQuantity}:{Ticket.FirstPartialDataSet!.Quantity}";
-                FullOperator = $"{FullOperator}:{Ticket.FirstPartialDataSet!.Operator}";
-            }
-            if (Ticket.HasSecondPartialDataSet)
-            {
-                FullShift = $"{FullShift}:{Ticket.SecondPartialDataSet!.Shift}";
-                FullQuantity = $"{FullQuantity}:{Ticket.SecondPartialDataSet!.Quantity}";
-                FullOperator = $"{FullOperator}:{Ticket.SecondPartialDataSet!.Operator}";
-            }
             // create a List of PrintTicket fields to use as QR Code data and add the first required fields
             List<string> Data = [];
-            Data.AddRange([Ticket.Process.FullName, Ticket.Part.PartNumber, Ticket.Part.PartName, FullQuantity]);
+            Data.AddRange([Ticket.Process.FullName, Ticket.Part.PartNumber, Ticket.Part.PartName, Ticket.GetCombinedQuantities()]);
             // retrieve the Process Requirements and add Variable Fields where required
             RequiredFields RequiredFields = Ticket.Process.RequiredFields;
             if (RequiredFields.JBKNumber)
@@ -61,7 +45,7 @@ public static class LabelGenerator
                 Data.Add(Ticket.VariableFields.ModelNumber!);
             }
             // add the remaining required fields and use the data to create a QR code
-            Data.AddRange([new Timestamp(Ticket.ProductionDate).Stamp, FullShift, FullOperator]);
+            Data.AddRange([new Timestamp(Ticket.ProductionDate).Stamp, Ticket.GetCombinedShifts(), Ticket.GetCombinedOperators()]);
             try
             {
                 return new QRCode(Data);
@@ -83,21 +67,11 @@ public static class LabelGenerator
         // compile the Body on a new thread
         return await Task.Run(() =>
         {
-            // compile the full basket quantity
-            int FullQuantity = Ticket.ProductionQuantity;
-            if (Ticket.HasFirstPartialDataSet)
-            {
-                FullQuantity += (int)Ticket.FirstPartialDataSet!.Quantity!;
-            }
-            if (Ticket.HasSecondPartialDataSet)
-            {
-                FullQuantity += (int)Ticket.SecondPartialDataSet!.Quantity!;
-            }
             // create a List of PrintTicket fields to use as Body text and add the first required fields
             List<string> Body = [];
             Body.Add($"Process: {Ticket.Process.FullName}");
             Body.Add($"Part: {Ticket.Part.PartNumber}");
-            Body.Add($"Quantity: {FullQuantity}");
+            Body.Add($"Quantity: {Ticket.GetTotalQuantity()}");
             // retrieve the Process Requirements and add Variable Fields where required
             RequiredFields RequiredFields = Ticket.Process.RequiredFields;
             if (RequiredFields.JBKNumber)
