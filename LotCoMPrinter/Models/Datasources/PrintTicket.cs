@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Options;
 using Newtonsoft.Json;
@@ -14,7 +15,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public Process Process
     {
-        get {return _process;}
+        get { return _process; }
         set
         {
             _process = value;
@@ -29,14 +30,14 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public Part Part
     {
-        get {return _part;}
+        get { return _part; }
         set
         {
             _part = value;
             OnPropertyChanged(nameof(_part));
             OnPropertyChanged(nameof(Part));
         }
-    } 
+    }
 
     private SerializationModes _serializationMode;
     /// <summary>
@@ -44,7 +45,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public SerializationModes SerializationMode
     {
-        get {return _serializationMode;}
+        get { return _serializationMode; }
         set
         {
             _serializationMode = value;
@@ -59,7 +60,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public SerialNumber SerialNumber
     {
-        get {return _serialNumber;}
+        get { return _serialNumber; }
         set
         {
             _serialNumber = value;
@@ -74,7 +75,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public DateTime ProductionDate
     {
-        get {return _productionDate;}
+        get { return _productionDate; }
         set
         {
             _productionDate = value;
@@ -89,7 +90,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public int ProductionShift
     {
-        get {return _productionShift;}
+        get { return _productionShift; }
         set
         {
             _productionShift = value;
@@ -102,7 +103,7 @@ public partial class PrintTicket : ObservableObject
 
     public int ProductionQuantity
     {
-        get {return _productionQuantity;}
+        get { return _productionQuantity; }
         set
         {
             _productionQuantity = value;
@@ -117,7 +118,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public string ProductionOperator
     {
-        get {return _productionOperator;}
+        get { return _productionOperator; }
         set
         {
             _productionOperator = value;
@@ -132,7 +133,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public VariableFieldSet VariableFields
     {
-        get {return _variableFields;}
+        get { return _variableFields; }
         set
         {
             _variableFields = value;
@@ -147,7 +148,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public PartialDataSet? FirstPartialDataSet
     {
-        get {return _firstPartialDataSet;}
+        get { return _firstPartialDataSet; }
         set
         {
             _firstPartialDataSet = value;
@@ -162,7 +163,7 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     public PartialDataSet? SecondPartialDataSet
     {
-        get {return _secondPartialDataSet;}
+        get { return _secondPartialDataSet; }
         set
         {
             _secondPartialDataSet = value;
@@ -212,7 +213,7 @@ public partial class PrintTicket : ObservableObject
     /// Purely a template-binding property.
     /// </summary>
     [ObservableProperty]
-    public partial bool IsSelectedInList {get; set;} = false;
+    public partial bool IsSelectedInList { get; set; } = false;
 
     /// <summary>
     /// Shifts the PartialDataSet from the Second position into the First.
@@ -247,6 +248,44 @@ public partial class PrintTicket : ObservableObject
         {
             throw new ArgumentException($"Cannot convert {RawMode} to a SerializationMode.");
         }
+    }
+
+    /// <summary>
+    /// Validates an integer as non-null.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <exception cref="FormatException"></exception>
+    private static async Task ValidatePositiveInteger(int? Value)
+    {
+        // run a new thread to ensure that the Integer contains at least one positive digit
+        await Task.Run(() =>
+        {
+            if (Value is null || Value < 1)
+            {
+                throw new FormatException();
+            }
+        });
+    }
+
+    /// <summary>
+    /// Validates a string as non-null. Enforces two or three length, uppercase character format.
+    /// </summary>
+    /// <param name="String"></param>
+    /// <returns>The string as an uppercase Operator Initial.</returns>
+    /// <exception cref="FormatException"></exception>
+    private static async Task<string> ValidateOperatorInitials(string? String)
+    {
+        // run a new thread to validate the string
+        return await Task.Run(() =>
+        {
+            // validate that the string is non-null
+            if (String is null || !OperatorRegex().IsMatch(String))
+            {
+                throw new FormatException("Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
+            }
+            // cast the string to Uppercase and return it
+            return String.ToUpper();
+        });
     }
 
     /// <summary>
@@ -759,4 +798,99 @@ public partial class PrintTicket : ObservableObject
             HasSpace = true;
         }
     }
+
+    /// <summary>
+    /// Validates all PrintTicket values to ensure proper formatting and value types.
+    /// </summary>
+    /// <returns>A modified (formatted) version of the object calling this method.</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public async Task<PrintTicket> SelfValidate()
+    {
+        // validate quantity, operator, variable field, and partial dataset field values
+        try
+        {
+            await ValidatePositiveInteger(ProductionQuantity);
+        }
+        catch
+        {
+            throw new ArgumentException("Please enter a valid Production Quantity before printing a Label.");
+        }
+        try
+        {
+            ProductionOperator = await ValidateOperatorInitials(ProductionOperator);
+        }
+        catch
+        {
+            throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) before printing a Label.");
+        }
+        try
+        {
+            VariableFields = await VariableFields.SelfValidate(Process.Type);
+        }
+        catch (Exception _ex)
+        {
+            throw new ArgumentException($"Please enter a valid {_ex.Message} # before printing a Label.");
+        }
+        if (HasFirstPartialDataSet)
+        {
+            try
+            {
+                await ValidatePositiveInteger(FirstPartialDataSet!.Shift);
+            }
+            catch
+            {
+                throw new ArgumentException("Please enter a valid Production Shift in Partial Production Data #1 before printing a Label.");
+            }
+            try
+            {
+                await ValidatePositiveInteger(FirstPartialDataSet.Quantity);
+            }
+            catch
+            {
+                throw new ArgumentException("Please enter a valid Production Quantity in Partial Production Data #1 before printing a Label.");
+            }
+            try
+            {
+                FirstPartialDataSet.Operator = await ValidateOperatorInitials(FirstPartialDataSet.Operator);
+            }
+            catch
+            {
+                throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) in Partial Production Data #1 before printing a Label.");
+            }
+        }
+        if (HasSecondPartialDataSet)
+        {
+            try
+            {
+                await ValidatePositiveInteger(SecondPartialDataSet!.Shift);
+            }
+            catch
+            {
+                throw new ArgumentException("Please enter a valid Production Shift in Partial Production Data #2 before printing a Label.");
+            }
+            try
+            {
+                await ValidatePositiveInteger(SecondPartialDataSet.Quantity);
+            }
+            catch
+            {
+                throw new ArgumentException("Please enter a valid Production Quantity in Partial Production Data #2 before printing a Label.");
+            }
+            try
+            {
+                SecondPartialDataSet.Operator = await ValidateOperatorInitials(SecondPartialDataSet.Operator);
+            }
+            catch
+            {
+                throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) in Partial Production Data #2 before printing a Label.");
+            }
+        }
+        // validation is okay; return an updated version of self
+        return this;
+    }
+
+    // COMPILED REGEX PATTERNS
+
+    [GeneratedRegex(@"^[a-zA-Z][a-zA-Z][a-zA-Z]?$")]
+    private static partial Regex OperatorRegex();
 }
