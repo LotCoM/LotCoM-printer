@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using LotCoMPrinter.Models.Datasources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -10,7 +11,7 @@ namespace LotCoMPrinter.Models.Options;
 /// <param name="Quantity">The number of Parts produced during the Shift captured by the PartialDataSet.</param>
 /// <param name="Shift">The Shift Number captured by the PartialDataSet.</param>
 /// <param name="Operator">The Operator who created the PartialDataSet.</param>
-public partial class PartialDataSet(int? Quantity = null, int? Shift = null, string? Operator = null) : ObservableObject()
+public partial class PartialDataSet(int? Quantity = null, Shift? Shift = null, string? Operator = null) : ObservableObject()
 {
     /// <summary>
     /// The number of Parts produced during the Shift captured by the PartialDataSet.
@@ -22,7 +23,7 @@ public partial class PartialDataSet(int? Quantity = null, int? Shift = null, str
     /// The Shift Number captured by the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial int? Shift {get; set;} = Shift;
+    public partial Shift? Shift {get; set;} = Shift;
 
     /// <summary>
     /// The Operator who created the PartialDataSet.
@@ -40,7 +41,7 @@ public partial class PartialDataSet(int? Quantity = null, int? Shift = null, str
     {
         // attempt to parse a Quantity, Shift Number, and Operator from the passed JSON stream
         int Quantity;
-        int Shift;
+        Shift Shift;
         string Operator;
         try
         {
@@ -52,7 +53,7 @@ public partial class PartialDataSet(int? Quantity = null, int? Shift = null, str
         }
         try
         {
-            Shift = int.Parse(JSON!["Shift"]!.ToString());
+            Shift = ShiftExtensions.FromString(JSON!["Shift"]!.ToString());
         }
         catch
         {
