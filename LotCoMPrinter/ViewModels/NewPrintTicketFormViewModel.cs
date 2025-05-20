@@ -67,11 +67,11 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         }
     }
 
-    private int? _productionShift = null;
+    private Shift? _productionShift = null;
     /// <summary>
     /// The Shift on which this Form was initiated.
     /// </summary>
-    public int? ProductionShift
+    public Shift? ProductionShift
     {
         get {return _productionShift;}
         set 
@@ -200,7 +200,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         {
             throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
         }
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, ProductionDate, (int)ProductionShift, 0, ProductionOperator, new VariableFieldSet());
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, ProductionDate, (Shift)ProductionShift, 0, ProductionOperator, new VariableFieldSet());
         // apply the SerialNumber to the appropriate field and return the new Ticket
         if (NewTicket.SerializationMode == SerializationModes.JBK)
         {
