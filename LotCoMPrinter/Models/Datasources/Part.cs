@@ -9,7 +9,8 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="PartNumber">The Part Number assigned to the Part.</param>
 /// <param name="PartName">The Part Name assigned to the Part.</param>
 /// <param name="ModelNumber">The Model Number the Part is associated with.</param>
-public partial class Part(Process ParentProcess, string PartNumber, string PartName, ModelNumber ModelNumber): ObservableObject {
+public partial class Part(Process ParentProcess, string PartNumber, string PartName, ModelNumber ModelNumber): ObservableObject 
+{
     /// <summary>
     /// Provides a formatted string to display in a ListView; includes the Part Number and Name.
     /// </summary>
