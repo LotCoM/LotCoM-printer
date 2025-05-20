@@ -18,7 +18,7 @@ namespace LotCoMPrinter.Models.Datasources;
 /// For Processes with OriginationTypes.Originator:
 /// None.
 /// </param>
-public partial class Process(int LineCode, string Line, string Title, OriginationTypes Type, SerializationModes SerializationMode, List<Part> Parts, RequiredFields RequiredFields, PassThroughTypes PassThroughType): ObservableObject() 
+public partial class Process(int LineCode, string Line, string Title, OriginationType Type, SerializationMode SerializationMode, List<Part> Parts, RequiredFields RequiredFields, PassThroughType PassThroughType): ObservableObject() 
 {
     /// <summary>
     /// [Observable] The four-digit Process Code assigned to the Process.
@@ -48,13 +48,13 @@ public partial class Process(int LineCode, string Line, string Title, Originatio
     /// [Observable] The Process' serialization type (Originator || Pass-through).
     /// </summary>
     [ObservableProperty]
-    public partial OriginationTypes Type {get; set;} = Type;
+    public partial OriginationType Type {get; set;} = Type;
 
     /// <summary>
     /// The Process' serialization mode (JBK || Lot).
     /// </summary>
     [ObservableProperty]
-    public partial SerializationModes Serialization {get; set;} = SerializationMode;
+    public partial SerializationMode Serialization {get; set;} = SerializationMode;
 
     /// <summary>
     /// [Observable] The Parts assigned to the Process.
@@ -73,5 +73,5 @@ public partial class Process(int LineCode, string Line, string Title, Originatio
     /// For Processes with Type = "Origination", null.
     /// </summary>
     [ObservableProperty]
-    public partial PassThroughTypes PassThroughType {get; set;} = PassThroughType;
+    public partial PassThroughType PassThroughType {get; set;} = PassThroughType;
 }
