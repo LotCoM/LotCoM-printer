@@ -36,7 +36,7 @@ public partial class RequiredFields(bool JBKNumber = false, bool LotNumber = fal
     /// </summary>
     /// <param name="Line"></param>
     /// <returns></returns>
-    public RequiredFields ParseJSON(string Line)
+    public static RequiredFields ParseJSON(string Line)
     {
         RequiredFields Requirements = new RequiredFields();
         // attempt to parse each of the field requirements
