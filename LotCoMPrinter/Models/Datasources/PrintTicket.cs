@@ -39,11 +39,11 @@ public partial class PrintTicket : ObservableObject
         }
     }
 
-    private SerializationModes _serializationMode;
+    private SerializationMode _serializationMode;
     /// <summary>
     /// The type of Serial Number used to Serialize this Print Ticket.
     /// </summary>
-    public SerializationModes SerializationMode
+    public SerializationMode SerializationMode
     {
         get { return _serializationMode; }
         set
@@ -84,11 +84,11 @@ public partial class PrintTicket : ObservableObject
         }
     }
 
-    private int _productionShift;
+    private Shift _productionShift;
     /// <summary>
     /// The Shift that this Print Ticket was initiated on.
     /// </summary>
-    public int ProductionShift
+    public Shift ProductionShift
     {
         get { return _productionShift; }
         set
@@ -225,32 +225,6 @@ public partial class PrintTicket : ObservableObject
     }
 
     /// <summary>
-    /// Attempts to convert a string literal to a SerializationMode enum value.
-    /// </summary>
-    /// <param name="RawMode"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    private static SerializationModes SerializationModeFromString(string RawMode)
-    {
-        if (RawMode.Equals("JBK"))
-        {
-            return SerializationModes.JBK;
-        }
-        else if (RawMode.Equals("Lot"))
-        {
-            return SerializationModes.Lot;
-        }
-        else if (RawMode.Equals("None"))
-        {
-            return SerializationModes.None;
-        }
-        else
-        {
-            throw new ArgumentException($"Cannot convert {RawMode} to a SerializationMode.");
-        }
-    }
-
-    /// <summary>
     /// Validates an integer as non-null.
     /// </summary>
     /// <param name="Value"></param>
@@ -302,7 +276,7 @@ public partial class PrintTicket : ObservableObject
     /// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
     /// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
     /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
-    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationModes TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, int TicketProductionShift, int TicketProductionQuantity, string TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
+    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, int TicketProductionQuantity, string TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
     {
         _process = TicketProcess;
         _part = TicketPart;
@@ -330,16 +304,6 @@ public partial class PrintTicket : ObservableObject
     /// <returns></returns>
     public string ToJSON()
     {
-        // convert non-string SerializationModes type to a string
-        string ModeString;
-        if (SerializationMode == SerializationModes.JBK)
-        {
-            ModeString = "JBK";
-        }
-        else
-        {
-            ModeString = "Lot";
-        }
         // build the JSON stream piece-by-piece
         // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
         string JSON =
@@ -350,10 +314,10 @@ public partial class PrintTicket : ObservableObject
                 "\"Part\":{" +
                     $"\"PartNumber\":\"{Part.PartNumber}\"" +
                 "}," +
-                $"\"SerializationMode\":\"{ModeString}\"," +
+                $"\"SerializationMode\":\"{SerializationModeExtensions.ToString(SerializationMode)}\"," +
                 $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
                 $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
-                $"\"ProductionShift\":\"{ProductionShift}\"," +
+                $"\"ProductionShift\":\"{ShiftExtensions.ToString(ProductionShift)}\"," +
                 $"\"ProductionQuantity\":\"{ProductionQuantity}\"," +
                 $"\"ProductionOperator\":\"{ProductionOperator}\"," +
                 "\"VariableFieldSet\":{" +
@@ -370,7 +334,7 @@ public partial class PrintTicket : ObservableObject
             JSON +=
                 ",\"FirstPartialDataSet\":{" +
                     $"\"Quantity\":\"{FirstPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{FirstPartialDataSet!.Shift}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(FirstPartialDataSet!.Shift)}\"," +
                     $"\"Operator\":\"{FirstPartialDataSet!.Operator}\"" +
                 "}";
         }
@@ -379,7 +343,7 @@ public partial class PrintTicket : ObservableObject
             JSON +=
                 ",\"SecondPartialDataSet\":{" +
                     $"\"Quantity\":\"{SecondPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{SecondPartialDataSet!.Shift}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondPartialDataSet!.Shift)}\"," +
                     $"\"Operator\":\"{SecondPartialDataSet!.Operator}\"" +
                 "}";
         }
@@ -419,11 +383,11 @@ public partial class PrintTicket : ObservableObject
             throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
         }
         // convert the SerializationMode from string to actual enum value and parse the SerialNumber
-        SerializationModes Mode;
+        SerializationMode Mode;
         SerialNumber Number;
         try
         {
-            Mode = SerializationModeFromString(JSON["SerializationMode"]!.ToString());
+            Mode = SerializationModeExtensions.FromString(JSON["SerializationMode"]!.ToString());
         }
         catch
         {
@@ -439,7 +403,7 @@ public partial class PrintTicket : ObservableObject
         }
         // parse out a timestamp for ProductionDate, Shift number, and Operator
         DateTime ParsedDate;
-        int ParsedShift;
+        Shift ParsedShift;
         int ParsedQuantity;
         string ParsedOperator;
         try
@@ -452,7 +416,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedShift = int.Parse(JSON["ProductionShift"]!.ToString());
+            ParsedShift = ShiftExtensions.FromString(JSON["ProductionShift"]!.ToString());
         }
         catch
         {
@@ -594,11 +558,11 @@ public partial class PrintTicket : ObservableObject
             throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
         }
         // convert the SerializationMode from string to actual enum value and parse the SerialNumber
-        SerializationModes Mode;
+        SerializationMode Mode;
         SerialNumber Number;
         try
         {
-            Mode = SerializationModeFromString(JSON["SerializationMode"]!.ToString());
+            Mode = SerializationModeExtensions.FromString(JSON["SerializationMode"]!.ToString());
         }
         catch
         {
@@ -614,7 +578,7 @@ public partial class PrintTicket : ObservableObject
         }
         // parse out a timestamp for ProductionDate, Shift number, and Operator
         DateTime ParsedDate;
-        int ParsedShift;
+        Shift ParsedShift;
         int ParsedQuantity;
         string ParsedOperator;
         try
@@ -627,7 +591,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedShift = int.Parse(JSON["ProductionShift"]!.ToString());
+            ParsedShift = ShiftExtensions.FromString(JSON["ProductionShift"]!.ToString());
         }
         catch
         {
@@ -915,14 +879,14 @@ public partial class PrintTicket : ObservableObject
     public string GetCombinedShifts()
     {
         // compile the Shift values into a single value
-        string FullShift = $"{ProductionShift}";
+        string FullShift = $"{ShiftExtensions.ToString(ProductionShift)}";
         if (HasFirstPartialDataSet)
         {
-            FullShift = $"{FullShift}:{FirstPartialDataSet!.Shift}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString(FirstPartialDataSet!.Shift)}";
         }
         if (HasSecondPartialDataSet)
         {
-            FullShift = $"{FullShift}:{SecondPartialDataSet!.Shift}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString(SecondPartialDataSet!.Shift)}";
         }
         return FullShift;
     }
