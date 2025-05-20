@@ -45,7 +45,7 @@ public static class OriginationTypeExtensions
             }
             else
             {
-                throw new ArgumentException($"Cannot convert {String} to a SerializationMode.");
+                throw new ArgumentException($"Cannot convert {String} to an OriginationType.");
             }
         }
     }
