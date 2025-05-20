@@ -18,6 +18,10 @@
     <ContentPage.Resources>
         <!-- RecessedButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
+        <!-- GreenButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/GreenButton.xaml"/>
+        <!-- RedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RedButton.xaml"/>
     </ContentPage.Resources>
 
     <!-- Main Layout Grid (Welcome Menu, Active Ticket, and Open Tickets) -->
@@ -38,7 +42,7 @@
             Grid.Row="0"
             Grid.Column="0"
             BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"
-            WidthRequest="{Binding Options.OpenPrintTicketsPanelWidth}">
+            WidthRequest="{Binding OpenPrintTicketsPanelWidth}">
             <Grid.RowDefinitions>
                 <!-- Header Row -->
                 <RowDefinition Height="Auto"/>
@@ -54,7 +58,7 @@
             <!-- Panel Header Label -->
             <Label
                 x:Name="OpenPrintTicketsHeaderLabel"
-                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
+                IsVisible="{Binding IsOpenPrintTicketsPanelShown}"
                 Grid.Row="0"
                 Grid.Column="0"
                 Margin="0,20,0,0"
@@ -62,106 +66,105 @@
                 HorizontalOptions="Center"
                 VerticalOptions="Start"/>
             <!-- Panel Body List -->
-            <ListView
-                x:Name="OpenPrintTicketsListView"
-                IsVisible="{Binding Options.IsOpenPrintTicketsPanelShown}"
-                SelectedItem="{Binding Options.SelectedPrintTicketIndex}"
-                ItemsSource="{Binding OpenPrintTickets}"
-                ItemSelected="OnOpenPrintTicketsListViewItemSelected"
+            <CollectionView
                 Grid.Row="1"
                 Grid.Column="0"
+                x:Name="OpenPrintTicketsCollectionView"
+                IsVisible="{Binding IsOpenPrintTicketsPanelShown}"
+                SelectionMode="Single"
+                ItemsSource="{Binding OpenPrintTickets}"
+                SelectedItem="{Binding SelectedTicket}"
+                SelectionChanged="OnOpenPrintTicketsCollectionViewSelectionChanged"
                 Margin="10"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
-                <ListView.ItemTemplate>
+                <CollectionView.ItemTemplate>
                     <DataTemplate
                         x:DataType="Datasources:PrintTicket">
-                        <ViewCell>
-                            <!-- Configurable ListView Grid Layout -->
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <!-- Process & Date Row -->
-                                    <RowDefinition Height="Auto"/>
-                                    <!-- Title & Shift Row -->
-                                    <RowDefinition Height="Auto"/>
-                                    <!-- Open Button Row -->
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <!-- Process / Title Column -->
-                                    <ColumnDefinition Width="*"/>
-                                    <!-- Date / Shift Column -->
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <!-- Process Label -->
-                                <Label 
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    Margin="0,5,0,0"
-                                    Text="{Binding Process.FullName}"
-                                    FontSize="12"
-                                    HorizontalOptions="Start"
-                                    VerticalOptions="Center"/>
-                                <!-- Date Label -->
-                                <Label 
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Margin="0,5,0,0"
-                                    Text="{Binding ProductionDateNoTime}"
-                                    FontSize="12"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center"/>
-                                <!-- Title Label -->
-                                <Label
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Margin="0,5,0,0"
-                                    Text="{Binding Title}"
-                                    FontSize="12"
-                                    HorizontalOptions="Start"
-                                    VerticalOptions="Center"/>
-                                <!-- Shift Label -->
-                                <Label
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Margin="0,5,0,0"
-                                    Text="{Binding ProductionShift}"
-                                    FontSize="12"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center"/>
-                                <!-- Open Ticket Button -->
-                                <Button
-                                    x:Name="OpenTicketFromListViewButton"
-                                    IsVisible="{Binding IsSelectedInList}"
-                                    Clicked="OnOpenPrintTicketFromListViewButtonClicked"
-                                    Grid.Row="2"
-                                    Grid.Column="1"
-                                    Margin="5"
-                                    Padding="0"
-                                    CharacterSpacing="0"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center"
-                                    WidthRequest="50"
-                                    HeightRequest="25"
-                                    MinimumHeightRequest="25"
-                                    Text="Open >"
-                                    FontSize="10"/>
-                                <!-- Bottom Border -->
-                                <BoxView
-                                    Grid.Row="2"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Margin="0,5,0,0"
-                                    HeightRequest="1"
-                                    HorizontalOptions="Fill"
-                                    VerticalOptions="End"
-                                    BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
-                            </Grid>
-                        </ViewCell>
+                        <!-- Configurable ListView Grid Layout -->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <!-- Process & Date Row -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- Title & Shift Row -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- Open Button Row -->
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <!-- Process / Title Column -->
+                                <ColumnDefinition Width="*"/>
+                                <!-- Date / Shift Column -->
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Process Label -->
+                            <Label 
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,5,0,0"
+                                Text="{Binding Process.FullName}"
+                                FontSize="12"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"/>
+                            <!-- Date Label -->
+                            <Label 
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="0,5,0,0"
+                                Text="{Binding ProductionDateNoTime}"
+                                FontSize="12"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center"/>
+                            <!-- Title Label -->
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,5,0,0"
+                                Text="{Binding Title}"
+                                FontSize="12"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"/>
+                            <!-- Shift Label -->
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="0,5,0,0"
+                                Text="{Binding ProductionShift}"
+                                FontSize="12"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center"/>
+                            <!-- Open Ticket Button -->
+                            <Button
+                                x:Name="OpenPrintTicketFromCollectionViewButton"
+                                IsVisible="{Binding IsSelectedInList}"
+                                Clicked="OnOpenPrintTicketFromCollectionViewButtonClicked"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="5"
+                                Padding="0"
+                                CharacterSpacing="0"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center"
+                                WidthRequest="50"
+                                HeightRequest="25"
+                                MinimumHeightRequest="25"
+                                Text="Open >"
+                                FontSize="10"/>
+                            <!-- Bottom Border -->
+                            <BoxView
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,5,0,0"
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="End"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
+                        </Grid>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
             <!-- Panel Collapse/Raise Button -->
             <Button
                 x:Name="OpenPrintTicketsCollapseButton"
@@ -193,7 +196,7 @@
         <Grid
             Grid.Row="0"
             Grid.Column="1"
-            IsVisible="{Binding Options.IsWelcomeMenuShown}"
+            IsVisible="{Binding IsWelcomeMenuShown}"
             BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
             <Grid.RowDefinitions>
                 <!-- Header Row -->
@@ -216,7 +219,7 @@
                     VerticalOptions="Center"
                     FontSize="20"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                    Text="{Binding Options.WelcomeMenuTitleLabelText}"/>
+                    Text="{Binding WelcomeMenuTitleLabelText}"/>
             </VerticalStackLayout>
             <!-- Welcome Menu Body -->
             <HorizontalStackLayout
@@ -231,7 +234,7 @@
                     VerticalOptions="Start"
                     FontSize="14"
                     TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
-                    Text="{Binding Options.WelcomeMenuSubTitleLabelText}"/>
+                    Text="{Binding WelcomeMenuSubTitleLabelText}"/>
             </HorizontalStackLayout>
             <!-- Welcome Menu Footer -->
             <HorizontalStackLayout
@@ -243,7 +246,7 @@
                 <Button
                     x:Name="StartNewLabelButton"
                     Clicked="OnStartNewLabelButtonClicked"
-                    IsVisible="{Binding Options.IsWelcomeMenuShown}"
+                    IsVisible="{Binding IsWelcomeMenuShown}"
                     Grid.Row="1"
                     Grid.Column="0"
                     Margin="20"
@@ -254,832 +257,927 @@
         </Grid>
 
         <!-- Active Print Ticket Layout -->
-        <ScrollView
+        <Grid
             x:Name="ActivePrintTicketLayout"
             Grid.Row="0"
             Grid.Column="1"
-            IsVisible="{Binding Options.IsActivePrintTicketMenuShown}">
-            <!-- Layout Grid -->
-            <Grid
-                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
-                <Grid.RowDefinitions>
-                    <!-- Header Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Process Input Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Part Input Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Production Date Input Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Shift / Quantity / Operator Input Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Variable Fields Input Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Separator Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- First Partial Production Dataset Input Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Separator Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Second Partial Production Dataset Input Row -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Add Partial Production Dataset Button Row -->
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <!-- Main Column -->
-                    <ColumnDefinition Width="*"/>
-                    <!-- Print Button Column -->
-                    <ColumnDefinition Width="Auto"/>
-                    <!-- Close Button Column -->
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <!-- Header Fill -->
-                <HorizontalStackLayout
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
-                </HorizontalStackLayout>
+            IsVisible="{Binding IsActivePrintTicketMenuShown}">
+            <Grid.RowDefinitions>
+                <!-- Header Panel Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Scrolling Body Panel Row -->
+                <RowDefinition Height="*"/>
+                <!-- Footer Panel Row -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <!-- Header Panel -->
+            <HorizontalStackLayout
+                Grid.Row="0"
+                x:Name="ActivePrintTicketLayoutHeader"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
                 <!-- Header Row Label -->
                 <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
                     Margin="20"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
                     FontSize="20"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                    Text="{Binding ActivePrintTicket.Title, StringFormat='Input for Label: {0}'}"/>
-                <!-- Close Button -->
-                <Button
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    x:Name="CloseActivePrintTicketButton"
-                    Clicked="OnCloseActivePrintTicketButtonClicked"
-                    Margin="30"
-                    Padding="0"
-                    WidthRequest="100"
-                    HeightRequest="40"
-                    HorizontalOptions="End"
-                    VerticalOptions="Start"
-                    Text="Save &amp; Close"/>  
-                <!-- Finalize & Print Button -->
-                <Button
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    x:Name="FinalizeActivePrintTicketButton"
-                    Margin="30"
-                    Padding="0"
-                    WidthRequest="100"
-                    HeightRequest="40"
-                    HorizontalOptions="End"
-                    VerticalOptions="Start"
-                    Text="Finalize &amp; Print"/>
-
-                <!-- Initial Production Info Header Layout -->
-                <Grid
-                    Grid.Row="1"
-                    Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <!-- Title Row -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- Process Row -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- Part Row -->
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <!-- Title / Labels Column -->
-                        <ColumnDefinition Width="Auto"/>
-                        <!-- Process / Part Column -->
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <!-- Title Label -->
-                    <Label
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="2"
-                        Margin="20"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Center"
-                        FontSize="16"
-                        TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                        Text="Initial Production Data"/>  
-                    <!-- Process Field Label -->
-                    <Label
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        FontSize="16"
-                        TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
-                        Margin="20,0,0,10"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Center"
-                        Text="Process:"/>
-                    <!-- Process Value Label -->
-                    <Label
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        x:Name="ProcessLabel"
-                        FontSize="16"
-                        TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
-                        Margin="35,0,0,10"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Center"
-                        WidthRequest="300"
-                        MinimumWidthRequest="300"
-                        Text="{Binding ActivePrintTicket.Process.FullName}"/>
-                    <!-- Part Field Label -->
-                    <Label
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        FontSize="16"
-                        TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
-                        Margin="20,0,0,10"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Center"
-                        Text="Part:"/>
-                    <!-- Part Value Label -->
-                    <Label
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="2"
-                        x:Name="PartLabel"
-                        FontSize="16"
-                        TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
-                        Margin="35,0,0,10"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Center"
-                        WidthRequest="300"
-                        MinimumWidthRequest="300"
-                        Text="{Binding ActivePrintTicket.Part.GetInfo}"/>
-                </Grid>
-                
-                <!-- Process/Part Separator Bar -->
-                <BoxView
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    Margin="0"
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="End"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
-                <!-- Production Date Input -->
+                    Text="{Binding ActiveTicket.Untracked.Title, StringFormat='Input for Label: {0}'}"/>
+                <!-- Action Buttons Panel -->
                 <HorizontalStackLayout
-                    Grid.Row="3"
-                    Grid.Column="0"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill">
-                    <!-- Input Label -->
+                    <!-- Panel Label -->
                     <Label
-                        x:Name="ProductionDateLabel"
-                        Margin="20,10,10,10"
+                        Text="Actions"
+                        FontSize="12"
+                        FontAttributes="Bold"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        WidthRequest="80"
-                        MinimumWidthRequest="80"
-                        Text="Production Date"/>
-                    <!-- Input DatePicker Control and Border -->
-                    <Border
-                        x:Name="ProductionDateControl"
-                        Margin="0,10,0,10"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Start"
-                        WidthRequest="200"
-                        HeightRequest="40"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 10,10,10,10">
-                        <DatePicker
-                            x:Name="ProductionDatePicker"
-                            IsEnabled="False"
-                            Date="{Binding ActivePrintTicket.ProductionDate}"
-                            WidthRequest="195"/>
-                    </Border>
-                </HorizontalStackLayout>
-
-                <!-- Initial Shift/Quantity/Operator Layout -->
-                <!-- Enforces Alignment with Dynamic Display of Variably-Required Fields Below -->
-                <HorizontalStackLayout
-                    Grid.Row="4"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3">
-                    <!-- Shift Number Input -->
-                    <HorizontalStackLayout>
-                        <!-- Input Label -->
-                        <Label
-                            Margin="20,10,10,10"
-                            x:Name="ShiftLabel"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Shift"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="ShiftControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Picker
-                                x:Name="ShiftPicker"
-                                IsEnabled="False"
-                                SelectedItem="{Binding ActivePrintTicket.ProductionShift}">
-                                <Picker.ItemsSource>
-                                    <x:Array Type="{x:Type x:Int32}">
-                                        <x:Int32>1</x:Int32>
-                                        <x:Int32>2</x:Int32>
-                                        <x:Int32>3</x:Int32>
-                                    </x:Array>
-                                </Picker.ItemsSource>
-                            </Picker>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Quantity Input -->
-                    <HorizontalStackLayout>
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="QuantityLabel"
-                            Margin="20,10,10,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Quantity"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="QuantityControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="QuantityEntry"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Operator Input -->
-                    <HorizontalStackLayout>
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="OperatorLabel"
-                            Margin="20,10,10,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Operator"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="OperatorControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="OperatorEntry"
-                                IsEnabled="False"
-                                Text="{Binding ActivePrintTicket.ProductionOperator}"
-                                MaxLength="3"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                </HorizontalStackLayout>
-
-                <!-- Variable Fields Horizontal Stack Layout -->
-                <!-- Supports Dynamic Display of Variably-Required Fields -->
-                <HorizontalStackLayout
-                    Grid.Row="5"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
-                    <!-- JBK Input Layout -->
-                    <HorizontalStackLayout
-                        IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.JBKNumber}">
-                        <!-- JBK Input Label -->
-                        <Label
-                            x:Name="JBKNumberLabel"
-                            Margin="20,10,10,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="JBK #"/>
-                        <!-- JBK Input Entry Control and Border -->
-                        <Border
-                            x:Name="JBKNumberControl"
-                            Margin="0,10,0,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="JBKNumberEntry"
-                                IsEnabled="{Binding ActivePrintTicket.IsPassThrough}"
-                                Text="{Binding ActivePrintTicket.VariableFields.JBKNumber}"
-                                MaxLength="3"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Lot Input Layout -->
-                    <HorizontalStackLayout
-                        IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.LotNumber}">
-                        <!-- Lot Input Label -->
-                        <Label
-                            x:Name="LotNumberLabel"
-                            Margin="20,10,10,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Lot #"/>
-                        <!-- Lot Input Entry Control and Border -->
-                        <Border
-                            x:Name="LotNumberControl"
-                            Margin="0,10,0,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="LotNumberEntry"
-                                IsEnabled="{Binding ActivePrintTicket.IsPassThrough}"
-                                Text="{Binding ActivePrintTicket.VariableFields.LotNumber}"
-                                MaxLength="9"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Deburr JBK Input Layout -->
-                    <HorizontalStackLayout
-                        IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.DeburrJBKNumber}">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="DeburrJBKNumberLabel"
-                            Margin="20,10,10,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Deburr JBK #"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="DeburrJBKNumberControl"
-                            Margin="0,10,0,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="DeburrJBKNumberEntry"
-                                Text="{Binding ActivePrintTicket.VariableFields.DeburrJBKNumber}"
-                                MaxLength="3"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Die Number Input Layout -->
-                    <HorizontalStackLayout
-                        IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.DieNumber}">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="DieNumberLabel"
-                            Margin="20,10,10,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Die #"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="DieNumberControl"
-                            Margin="0,10,0,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="DieNumberEntry"
-                                Text="{Binding ActivePrintTicket.VariableFields.DieNumber}"
-                                MaxLength="3"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Model Input Layout -->
-                    <HorizontalStackLayout
-                        IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.ModelNumber}">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="ModelNumberLabel"
-                            Margin="20,10,10,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Model #"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="ModelNumberControl"
-                            Margin="0,10,0,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="ModelNumberEntry"
-                                Text="{Binding ActivePrintTicket.VariableFields.ModelNumber}"
-                                MaxLength="3"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Heat Number Input Layout -->
-                    <HorizontalStackLayout
-                        IsVisible="{Binding ActivePrintTicket.Process.RequiredFields.HeatNumber}">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="HeatNumberLabel"
-                            Margin="20,10,10,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Heat #"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="HeatNumberControl"
-                            Margin="0,10,0,20"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="HeatNumberEntry"
-                                Text="{Binding ActivePrintTicket.VariableFields.HeatNumber}"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                </HorizontalStackLayout>
-
-                <!-- Separator Bar -->
-                <BoxView
-                    Grid.Row="6"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    Margin="0"
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Center"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
-
-                <!-- First Partial Data Set Layout -->
-                <Grid
-                    Grid.Row="7"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    IsVisible="{Binding ActivePrintTicket.HasFirstPartialDataSet}">
-                    <Grid.RowDefinitions>
-                        <!-- Header Row -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- Inputs Row -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- Buttons Row -->
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <!-- Shift Input Column -->
-                        <ColumnDefinition Width="Auto"/>
-                        <!-- Quantity Input Column -->
-                        <ColumnDefinition Width="Auto"/>
-                        <!-- Operator Input Column -->
-                        <ColumnDefinition Width="Auto"/>
-                        <!-- Margin Column -->
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <!-- Header Label -->
-                    <Label
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        Margin="20"
-                        FontSize="16"
-                        TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                        Text="Partial Production Data #1"/>
-                    <!-- Shift Number Input Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="1"
-                        Grid.Column="0">
-                        <!-- Input Label -->
-                        <Label
-                            Margin="20,10,10,10"
-                            x:Name="FirstPartialDataSetShiftLabel"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Shift"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="FirstPartialDataSetShiftControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Picker
-                                x:Name="FirstPartialDataSetShiftPicker"
-                                SelectedItem="{Binding ActivePrintTicket.FirstPartialDataSet.Shift}">
-                                <Picker.ItemsSource>
-                                    <x:Array Type ="{x:Type x:Int32}">
-                                        <x:Int32>1</x:Int32>
-                                        <x:Int32>2</x:Int32>
-                                        <x:Int32>3</x:Int32>
-                                    </x:Array>
-                                </Picker.ItemsSource>
-                            </Picker>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Quantity Input Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="1"
-                        Grid.Column="1">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="FirstPartialDataSetQuantityLabel"
-                            Margin="20,10,10,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Quantity"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="FirstPartialDataSetQuantityControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="FirstPartialDataSetQuantityEntry"
-                                Text="{Binding ActivePrintTicket.FirstPartialDataSet.Quantity}"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Operator Input Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="1"
-                        Grid.Column="2">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="FirstPartialDataSetOperatorLabel"
-                            Margin="20,10,10,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Operator"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="FirstPartialDataSetOperatorControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="FirstPartialDataSetOperatorEntry"
-                                Text="{Binding ActivePrintTicket.FirstPartialDataSet.Operator}"
-                                MaxLength="3"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Print Button -->
+                        Margin="0,0,20,0"/>
+                    <!-- Close Button -->
                     <Button
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Text="Print Label"
-                        Margin="20"
-                        WidthRequest="100"
-                        HeightRequest="40"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Center"/>
-                    <!-- Remove Button -->
-                    <Button
-                        Grid.Row="3"
-                        Grid.Column="3"
-                        x:Name="RemoveFirstPartialProductionDataSetButton"
-                        Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
-                        Text="- Remove"
-                        Margin="20"
-                        WidthRequest="100"
-                        HeightRequest="40"
+                        x:Name="CloseActivePrintTicketButton"
+                        Clicked="OnCloseActivePrintTicketButtonClicked"
+                        Margin="5,0,0,0"
+                        Padding="0"
+                        CharacterSpacing="0"
+                        WidthRequest="110"
+                        HeightRequest="25"
+                        MinimumHeightRequest="25"
                         HorizontalOptions="End"
-                        VerticalOptions="Center"/>
-                </Grid>
-                
-                <!-- Separator Bar -->
-                <BoxView
-                    Grid.Row="8"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    Margin="0"
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Center"
-                    IsVisible="{Binding ActivePrintTicket.HasFirstPartialDataSet}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
-                    
-                <!-- Second Partial Dataset Layout -->
-                <Grid
-                    Grid.Row="9"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    IsVisible="{Binding ActivePrintTicket.HasSecondPartialDataSet}">
-                    <Grid.RowDefinitions>
-                        <!-- Header Row -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- Inputs Row -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- Buttons Row -->
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <!-- Shift Input Column -->
-                        <ColumnDefinition Width="Auto"/>
-                        <!-- Quantity Input Column -->
-                        <ColumnDefinition Width="Auto"/>
-                        <!-- Operator Input Column -->
-                        <ColumnDefinition Width="Auto"/>
-                        <!-- Margin Column -->
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <!-- Header Label -->
-                    <Label
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        Margin="20"
-                        FontSize="16"
-                        TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                        Text="Partial Production Data #2"/>
-                    <!-- Shift Number Input Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="1"
-                        Grid.Column="0">
-                        <!-- Input Label -->
-                        <Label
-                            Margin="20,10,10,10"
-                            x:Name="SecondPartialDataSetShiftLabel"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Shift"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="SecondPartialDataSetShiftControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Picker
-                                x:Name="SecondPartialDataSetShiftPicker"
-                                SelectedItem="{Binding ActivePrintTicket.SecondPartialDataSet.Shift}">
-                                <Picker.ItemsSource>
-                                    <x:Array Type ="{x:Type x:Int32}">
-                                        <x:Int32>1</x:Int32>
-                                        <x:Int32>2</x:Int32>
-                                        <x:Int32>3</x:Int32>
-                                    </x:Array>
-                                </Picker.ItemsSource>
-                            </Picker>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Quantity Input Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="1"
-                        Grid.Column="1">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="SecondPartialDataSetQuantityLabel"
-                            Margin="20,10,10,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Quantity"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="SecondPartialDataSetQuantityControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="SecondPartialDataSetQuantityEntry"
-                                Text="{Binding ActivePrintTicket.SecondPartialDataSet.Quantity}"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Operator Input Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="1"
-                        Grid.Column="2">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="SecondPartialDataSetOperatorLabel"
-                            Margin="20,10,10,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="80"
-                            MinimumWidthRequest="80"
-                            Text="Operator"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="SecondPartialDataSetOperatorControl"
-                            Margin="0,10,0,10"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            WidthRequest="200"
-                            HeightRequest="40"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 10,10,10,10">
-                            <Entry
-                                x:Name="SecondPartialDataSetOperatorEntry"
-                                Text="{Binding ActivePrintTicket.SecondPartialDataSet.Operator}"
-                                MaxLength="3"/>
-                        </Border>
-                    </HorizontalStackLayout>
-                    <!-- Print Button -->
+                        VerticalOptions="Center"
+                        Text="Cancel &amp; Close">
+                    </Button>  
+                    <!-- Save Button -->
                     <Button
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Text="Print Label"
-                        Margin="20"
-                        WidthRequest="100"
-                        HeightRequest="40"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Center"/>
-                    <!-- Remove Button -->
-                    <Button
-                        Grid.Row="3"
-                        Grid.Column="3"
-                        x:Name="RemoveSecondPartialProductionDataSetButton"
-                        Clicked="OnRemoveSecondPartialProductionDataSetButtonClicked"
-                        Text="- Remove"
-                        Margin="20"
-                        WidthRequest="100"
-                        HeightRequest="40"
+                        x:Name="SaveActivePrintTicketButton"
+                        Clicked="OnSaveActivePrintTicketButtonClicked"
+                        Margin="5,0,0,0"
+                        Padding="0"
+                        CharacterSpacing="0"
+                        WidthRequest="110"
+                        HeightRequest="25"
+                        MinimumHeightRequest="25"
                         HorizontalOptions="End"
-                        VerticalOptions="Center"/>
-                </Grid>
-                    
-                <!-- Footer Row Fill -->
-                <HorizontalStackLayout
-                    Grid.Row="10"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill"
-                    IsVisible="{Binding ActivePrintTicket.HasSpace}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
-                    <!-- Add Partial Production Dataset Button -->
+                        VerticalOptions="Center"
+                        Text="Save &amp; Close">
+                    </Button>  
+                    <!-- Delete Button -->
                     <Button
-                        x:Name="AddPartialProductionDatasetButton"
-                        Clicked="OnAddPartialProductionDataSetButtonClicked"
-                        Margin="20"
-                        WidthRequest="125"
-                        HeightRequest="40"
-                        HorizontalOptions="Start"
-                        VerticalOptions="Start"
-                        Text="+ Add Partial"/>
+                        x:Name="DeleteActivePrintTicketButton"
+                        Clicked="OnDeleteActivePrintTicketButtonClicked"
+                        Margin="5,0,0,0"
+                        Padding="0"
+                        CharacterSpacing="0"
+                        WidthRequest="110"
+                        HeightRequest="25"
+                        MinimumHeightRequest="25"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"
+                        Text="Delete Label">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="RedStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedNormalStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedDisabledStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedPressedStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource RedPointerOverStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                    </Button>  
+                    <!-- Finalize & Print Button -->
+                    <Button
+                        x:Name="PrintActivePrintTicketButton"
+                        Clicked="OnPrintActivePrintTicketButtonClicked"
+                        Margin="5,0,0,0"
+                        Padding="0"
+                        CharacterSpacing="0"
+                        WidthRequest="110"
+                        HeightRequest="25"
+                        MinimumHeightRequest="25"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"
+                        Text="Finalize &amp; Print">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="GreenStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenNormalStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenDisabledStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenPressedStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource GreenPointerOverStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                    </Button>
                 </HorizontalStackLayout>
-            </Grid>
-        </ScrollView>
+            </HorizontalStackLayout>
+            <!-- Scrolling Body Panel -->
+            <ScrollView
+                Grid.Row="1"
+                x:Name="ActivePrintTicketLayoutBody"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                <VerticalStackLayout>
+                    <!-- Initial Production Info Header Layout -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <!-- Title Row -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Process Row -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Part Row -->
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <!-- Title / Labels Column -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Process / Part Column -->
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Title Label -->
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="20"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                            Text="Initial Production Data"/>  
+                        <!-- Process Field Label -->
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
+                            Margin="20,0,0,10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            Text="Process:"/>
+                        <!-- Process Value Label -->
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            x:Name="ProcessLabel"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
+                            Margin="35,0,0,10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="300"
+                            MinimumWidthRequest="300"
+                            Text="{Binding ActiveTicket.Untracked.Process.FullName}"/>
+                        <!-- Part Field Label -->
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"
+                            Margin="20,0,0,10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            Text="Part:"/>
+                        <!-- Part Value Label -->
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            x:Name="PartLabel"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
+                            Margin="35,0,0,10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="300"
+                            MinimumWidthRequest="300"
+                            Text="{Binding ActiveTicket.Untracked.Part.GetInfo}"/>
+                    </Grid>
+                    <!-- Process/Part Separator Bar -->
+                    <BoxView
+                        Margin="0"
+                        HeightRequest="1"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="End"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
+                    <!-- Production Date Input -->
+                    <HorizontalStackLayout
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="ProductionDateLabel"
+                            Margin="20,10,10,10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="80"
+                            MinimumWidthRequest="80"
+                            Text="Production Date"/>
+                        <!-- Input DatePicker Control and Border -->
+                        <Border
+                            x:Name="ProductionDateControl"
+                            Margin="0,10,0,10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            WidthRequest="200"
+                            HeightRequest="40"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10,10,10,10">
+                            <DatePicker
+                                x:Name="ProductionDatePicker"
+                                IsEnabled="False"
+                                Date="{Binding ActiveTicket.Untracked.ProductionDate}"
+                                WidthRequest="195"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                    <!-- Initial Shift/Quantity/Operator Layout -->
+                    <!-- Enforces Alignment with Dynamic Display of Variably-Required Fields Below -->
+                    <HorizontalStackLayout>
+                        <!-- Shift Number Input -->
+                        <HorizontalStackLayout>
+                            <!-- Input Label -->
+                            <Label
+                                Margin="20,10,10,10"
+                                x:Name="ShiftLabel"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Shift"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="ShiftControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Picker
+                                    x:Name="ShiftPicker"
+                                    IsEnabled="False"
+                                    SelectedItem="{Binding ActiveTicket.Untracked.ProductionShift}">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:Int32}">
+                                            <x:Int32>1</x:Int32>
+                                            <x:Int32>2</x:Int32>
+                                            <x:Int32>3</x:Int32>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Quantity Input -->
+                        <HorizontalStackLayout>
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="QuantityLabel"
+                                Margin="20,10,10,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Quantity"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="QuantityControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="QuantityEntry"
+                                    Text="{Binding ActiveTicket.Tracked.ProductionQuantity}"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Operator Input -->
+                        <HorizontalStackLayout>
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="OperatorLabel"
+                                Margin="20,10,10,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Operator"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="OperatorControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="OperatorEntry"
+                                    IsEnabled="False"
+                                    Text="{Binding ActiveTicket.Untracked.ProductionOperator}"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                    <!-- Variable Fields Horizontal Stack Layout -->
+                    <!-- Supports Dynamic Display of Variably-Required Fields -->
+                    <HorizontalStackLayout
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                        <!-- JBK Input Layout -->
+                        <HorizontalStackLayout
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.JBKNumber}">
+                            <!-- JBK Input Label -->
+                            <Label
+                                x:Name="JBKNumberLabel"
+                                Margin="20,10,10,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="JBK #"/>
+                            <!-- JBK Input Entry Control and Border -->
+                            <Border
+                                x:Name="JBKNumberControl"
+                                Margin="0,10,0,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="JBKNumberEntry"
+                                    IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.JBKNumber}"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Lot Input Layout -->
+                        <HorizontalStackLayout
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.LotNumber}">
+                            <!-- Lot Input Label -->
+                            <Label
+                                x:Name="LotNumberLabel"
+                                Margin="20,10,10,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Lot #"/>
+                            <!-- Lot Input Entry Control and Border -->
+                            <Border
+                                x:Name="LotNumberControl"
+                                Margin="0,10,0,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="LotNumberEntry"
+                                    IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.LotNumber}"
+                                    MaxLength="9"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Deburr JBK Input Layout -->
+                        <HorizontalStackLayout
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.DeburrJBKNumber}">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="DeburrJBKNumberLabel"
+                                Margin="20,10,10,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Deburr JBK #"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="DeburrJBKNumberControl"
+                                Margin="0,10,0,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="DeburrJBKNumberEntry"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DeburrJBKNumber}"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Die Number Input Layout -->
+                        <HorizontalStackLayout
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.DieNumber}">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="DieNumberLabel"
+                                Margin="20,10,10,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Die #"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="DieNumberControl"
+                                Margin="0,10,0,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="DieNumberEntry"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DieNumber}"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Model Input Layout -->
+                        <HorizontalStackLayout
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.ModelNumber}">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="ModelNumberLabel"
+                                Margin="20,10,10,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Model #"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="ModelNumberControl"
+                                Margin="0,10,0,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="ModelNumberEntry"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.ModelNumber}"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Heat Number Input Layout -->
+                        <HorizontalStackLayout
+                            IsVisible="{Binding ActiveTicket.Untracked.Process.RequiredFields.HeatNumber}">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="HeatNumberLabel"
+                                Margin="20,10,10,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Heat #"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="HeatNumberControl"
+                                Margin="0,10,0,20"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="HeatNumberEntry"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.HeatNumber}"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                    <!-- Separator Bar -->
+                    <BoxView
+                        Margin="0"
+                        HeightRequest="1"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Center"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
+                    <!-- First Partial Data Set Layout -->
+                    <Grid
+                        IsVisible="{Binding ActiveTicket.Tracked.HasFirstPartialDataSet}">
+                        <Grid.RowDefinitions>
+                            <!-- Header Row -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Inputs Row -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Buttons Row -->
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <!-- Shift Input Column -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Quantity Input Column -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Operator Input Column -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Margin Column -->
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Header Label -->
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Margin="20"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                            Text="Partial Production Data #1"/>
+                        <!-- Shift Number Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="0">
+                            <!-- Input Label -->
+                            <Label
+                                Margin="20,10,10,10"
+                                x:Name="FirstPartialDataSetShiftLabel"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Shift"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="FirstPartialDataSetShiftControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Picker
+                                    x:Name="FirstPartialDataSetShiftPicker"
+                                    SelectedItem="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Shift}">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type ="{x:Type x:Int32}">
+                                            <x:Int32>1</x:Int32>
+                                            <x:Int32>2</x:Int32>
+                                            <x:Int32>3</x:Int32>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Quantity Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="1">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="FirstPartialDataSetQuantityLabel"
+                                Margin="20,10,10,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Quantity"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="FirstPartialDataSetQuantityControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="FirstPartialDataSetQuantityEntry"
+                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Quantity}"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Operator Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="2">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="FirstPartialDataSetOperatorLabel"
+                                Margin="20,10,10,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Operator"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="FirstPartialDataSetOperatorControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="FirstPartialDataSetOperatorEntry"
+                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Operator}"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Print Button -->
+                        <Button
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Text="Print Label"
+                            Margin="20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+                        <!-- Remove Button -->
+                        <Button
+                            Grid.Row="3"
+                            Grid.Column="3"
+                            x:Name="RemoveFirstPartialProductionDataSetButton"
+                            Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
+                            Text="- Remove"
+                            Margin="20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="RedStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </Button>
+                    </Grid>
+                    <!-- Separator Bar -->
+                    <BoxView
+                        Margin="0"
+                        HeightRequest="1"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding ActiveTicket.Tracked.HasFirstPartialDataSet}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/> 
+                    <!-- Second Partial Dataset Layout -->
+                    <Grid
+                        IsVisible="{Binding ActiveTicket.Tracked.HasSecondPartialDataSet}">
+                        <Grid.RowDefinitions>
+                            <!-- Header Row -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Inputs Row -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Buttons Row -->
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <!-- Shift Input Column -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Quantity Input Column -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Operator Input Column -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Margin Column -->
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Header Label -->
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Margin="20"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                            Text="Partial Production Data #2"/>
+                        <!-- Shift Number Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="0">
+                            <!-- Input Label -->
+                            <Label
+                                Margin="20,10,10,10"
+                                x:Name="SecondPartialDataSetShiftLabel"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Shift"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="SecondPartialDataSetShiftControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Picker
+                                    x:Name="SecondPartialDataSetShiftPicker"
+                                    SelectedItem="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Shift}">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type ="{x:Type x:Int32}">
+                                            <x:Int32>1</x:Int32>
+                                            <x:Int32>2</x:Int32>
+                                            <x:Int32>3</x:Int32>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Quantity Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="1">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="SecondPartialDataSetQuantityLabel"
+                                Margin="20,10,10,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Quantity"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="SecondPartialDataSetQuantityControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="SecondPartialDataSetQuantityEntry"
+                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Quantity}"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Operator Input Layout -->
+                        <HorizontalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="2">
+                            <!-- Input Label -->
+                            <Label
+                                x:Name="SecondPartialDataSetOperatorLabel"
+                                Margin="20,10,10,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                WidthRequest="80"
+                                MinimumWidthRequest="80"
+                                Text="Operator"/>
+                            <!-- Input Entry Control and Border -->
+                            <Border
+                                x:Name="SecondPartialDataSetOperatorControl"
+                                Margin="0,10,0,10"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                WidthRequest="200"
+                                HeightRequest="40"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10,10,10,10">
+                                <Entry
+                                    x:Name="SecondPartialDataSetOperatorEntry"
+                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Operator}"
+                                    MaxLength="3"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <!-- Print Button -->
+                        <Button
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Text="Print Label"
+                            Margin="20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+                        <!-- Remove Button -->
+                        <Button
+                            Grid.Row="3"
+                            Grid.Column="3"
+                            x:Name="RemoveSecondPartialProductionDataSetButton"
+                            Clicked="OnRemoveSecondPartialProductionDataSetButtonClicked"
+                            Text="- Remove"
+                            Margin="20"
+                            WidthRequest="100"
+                            HeightRequest="40"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="RedStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource RedPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </Button>
+                    </Grid>
+                </VerticalStackLayout>
+            </ScrollView>
+            <!-- Footer Panel -->
+            <HorizontalStackLayout
+                Grid.Row="2"
+                x:Name="ActivePrintTicketLayoutFooter"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
+                <!-- Add Partial Production Dataset Button -->
+                <Button
+                    x:Name="AddPartialProductionDatasetButton"
+                    Clicked="OnAddPartialProductionDataSetButtonClicked"
+                    IsVisible="{Binding ActiveTicket.Tracked.HasSpace}"
+                    Margin="20"
+                    WidthRequest="125"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Text="+ Add Partial"/>
+            </HorizontalStackLayout>
+        </Grid>
     </Grid>
 </ContentPage>
 

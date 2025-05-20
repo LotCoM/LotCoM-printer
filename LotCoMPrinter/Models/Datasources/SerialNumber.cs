@@ -61,12 +61,12 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
     {   
         return 
             "{" +
-                $"Mode:{Mode}," +
-                "Part:{" +
-                    $"PartNumber:{Part!.PartNumber}," +
-                    $"Process{Part!.ParentProcess}" +
+                $"\"Mode\":\"{Mode}\"," +
+                "\"Part\":{" +
+                    $"\"PartNumber\":\"{Part!.PartNumber}\"," +
+                    $"\"Process\":\"{Part!.ParentProcess}\"" +
                 "}," +
-                $"Value:{Value}" +
+                $"\"Value\":\"{Value}\"" +
             "}";
     }
 
@@ -81,7 +81,7 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
     /// <returns>A SerialNumber object.</returns>
     /// <exception cref="JsonException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    public static async Task<SerialNumber> ParseJSON(string Line)
+    public static SerialNumber ParseJSON(string Line)
     {
         SerializationModes Mode;
         Part Part;
@@ -127,7 +127,79 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
         }
         try
         {
-            Part = await new ProcessData().GetProcessPartDataAsync(PartNumber, ProcessName);
+            Part = new ProcessData().GetProcessPartData(ProcessName, PartNumber);
+        }
+        catch
+        {
+            throw new ArgumentException($"The Part '{PartNumber}' for Process '{ProcessName}' was not defined.");
+        }
+        // confirm the Value key has a valid value and that it is of type int
+        if (RawValue is null) 
+        {
+            throw new JsonException($"No Value found in cached Serial Number '{Line}'.");
+        }
+        Value = int.Parse(RawValue.ToString());
+        return new SerialNumber(Mode, Part, Value);
+    }
+
+    /// <summary>
+    /// Attempts to asynchronously parse a SerialNumber object from a JSON formatted string.
+    /// </summary>
+    /// <remarks>
+    /// Throws JsonException if there were any errors parsing any part of the Serial Number from Line.
+    /// Throws ArgumentException if the parsed Part Number was not defined for the parsed Process.
+    /// </remarks>
+    /// <param name="Line"></param>
+    /// <returns>A SerialNumber object.</returns>
+    /// <exception cref="JsonException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    public static async Task<SerialNumber> ParseJSONAsync(string Line)
+    {
+        SerializationModes Mode;
+        Part Part;
+        int Value;
+        // parse Line into JSON
+        JObject JSON = JObject.Parse(Line);
+        JToken? RawMode = JSON["Mode"];
+        JToken? RawPart = JSON["Part"];
+        JToken? RawValue = JSON["Value"];
+        // confirm the Mode key has a valid value and convert it to a SerializationMode
+        if (RawMode is null)
+        {
+            throw new JsonException($"No Serialization Mode found in cached Serial Number '{Line}'.");
+        }
+        if (RawMode.ToString().Equals("JBK"))
+        {
+            Mode = SerializationModes.JBK;
+        } else if (RawMode.ToString().Equals("Lot"))
+        {
+            Mode = SerializationModes.Lot;
+        } else {
+            throw new JsonException($"Invalid Serialization Mode '{RawMode}'");
+        }
+        // confirm the Part key has a valid value and convert it to a Part
+        if (RawPart is null)
+        {
+            throw new JsonException($"No Part found in cached Serial Number '{Line}'.");
+        }
+        string? PartNumber;
+        string? ProcessName;
+        try
+        {
+            PartNumber = RawPart["PartNumber"]!.ToString();
+            ProcessName = RawPart["Process"]!.ToString();
+        }
+        catch
+        {
+            throw new JsonException($"Could not parse a Part Number and/or Process from cached Serial Number '{Line}'.");
+        }
+        if (PartNumber is null || ProcessName is null)
+        {
+            throw new JsonException($"Could not parse a Part Number and/or Process from cached Serial Number '{Line}'.");
+        }
+        try
+        {
+            Part = await new ProcessData().GetProcessPartDataAsync(ProcessName, PartNumber);
         }
         catch
         {

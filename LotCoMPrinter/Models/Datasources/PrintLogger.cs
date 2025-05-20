@@ -4,28 +4,65 @@ namespace LotCoMPrinter.Models.Datasources;
 
 public static class PrintLogger 
 {
-    // print log path
     private const string PrintDatabase = "\\\\144.133.122.1\\Lot Control Management\\Database\\data_tables\\prints";
+
+    /// <summary>
+    /// Generates a Log message from Job.
+    /// </summary>
+    /// <param name="Job"></param>
+    /// <returns></returns>
+    private static string GenerateLog(LabelPrintJob Job)
+    {
+        // add initial universal requirements
+        string Log = $"{Job.Ticket.Process.FullName},{Job.Ticket.Part.PartNumber},{Job.Ticket.Part.PartName},{Job.Ticket.GetCombinedQuantities()}";
+        // add variable fields when required
+        RequiredFields Requirements = Job.Ticket.Process.RequiredFields;
+        if (Requirements.JBKNumber) 
+        {
+            Log = $"{Log},{Job.Ticket.VariableFields.JBKNumber}";
+        }
+        if (Requirements.LotNumber) 
+        {
+            Log = $"{Log},{Job.Ticket.VariableFields.LotNumber}";
+        }
+        if (Requirements.DeburrJBKNumber) 
+        {
+            Log = $"{Log},{Job.Ticket.VariableFields.DeburrJBKNumber}";
+        }
+        if (Requirements.DieNumber) 
+        {
+            Log = $"{Log},{Job.Ticket.VariableFields.DieNumber}";
+        }
+        if (Requirements.ModelNumber) 
+        {
+            Log = $"{Log},{Job.Ticket.VariableFields.ModelNumber}";
+        }
+        if (Requirements.HeatNumber) 
+        {
+            Log = $"{Log},{Job.Ticket.VariableFields.HeatNumber}";
+        }
+        // add remaining universal requirements
+        Log = $"{Log},{new Timestamp(Job.Ticket.ProductionDate).Stamp},{Job.Ticket.GetCombinedShifts()},{Job.Ticket.GetCombinedOperators()}";
+        return Log;
+    }
 
     /// <summary>
     /// Logs a LabelPrintJob's information to the database.
     /// </summary>
-    /// <param name="Capture">An InterfaceCapture object.</param>
+    /// <param name="Job">An LabelPrintJob object.</param>
     /// <returns></returns>
-    public static async Task LogPrintEvent(InterfaceCapture Capture) 
+    public static async Task LogPrintEvent(LabelPrintJob Job)
     {
-        // create a print event string from the Label Information
-        string PrintEvent = Capture.FormatAsCSV();
-        // try to open and append the print event to the print datatable for the Selected Process
-        string DatatablePath = $"{PrintDatabase}\\{Capture.Process.FullName}.txt";
-        try 
+        // create a Log string from the LabelPrintJob info and append the string to the appropriate Log file
+        string PrintEvent = GenerateLog(Job);
+        string DatatablePath = $"{PrintDatabase}\\{Job.Ticket.Process.FullName}.txt";
+        try
         {
             await File.AppendAllTextAsync(DatatablePath, $"{PrintEvent}\n");
-        // there was an error opening and writing the print event to the appropriate table
-        } 
-        catch (Exception _ex) 
+        }
+        catch (Exception _ex)
         {
-            // log the print to the bulk dump database table
+            // log the print to the dump database table (backup)
             await File.AppendAllTextAsync($"{PrintDatabase}\\_failed_logs.log", $"{PrintEvent}\n");
             throw new PrintLogException(_ex.Message);
         }
