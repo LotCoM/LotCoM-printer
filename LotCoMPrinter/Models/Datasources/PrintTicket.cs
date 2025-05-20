@@ -294,7 +294,7 @@ public partial class PrintTicket : ObservableObject
         HasSecondPartialDataSet = SecondPartialDataSet is not null;
         HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
         Title = $"{Part.ModelNumber} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
-        IsPassThrough = _process.Type == OriginationTypes.PassThrough;
+        IsPassThrough = _process.Type == OriginationType.PassThrough;
         ProductionDateNoTime = $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
     }
 
@@ -320,21 +320,14 @@ public partial class PrintTicket : ObservableObject
                 $"\"ProductionShift\":\"{ShiftExtensions.ToString(ProductionShift)}\"," +
                 $"\"ProductionQuantity\":\"{ProductionQuantity}\"," +
                 $"\"ProductionOperator\":\"{ProductionOperator}\"," +
-                "\"VariableFieldSet\":{" +
-                    $"\"JBKNumber\":\"{VariableFields.JBKNumber}\"," +
-                    $"\"LotNumber\":\"{VariableFields.LotNumber}\"," +
-                    $"\"DeburrJBKNumber\":\"{VariableFields.DeburrJBKNumber}\"," +
-                    $"\"DieNumber\":\"{VariableFields.DieNumber}\"," +
-                    $"\"ModelNumber\":\"{VariableFields.ModelNumber}\"," +
-                    $"\"HeatNumber\":\"{VariableFields.HeatNumber}\"" +
-                "}";
+                $"\"VariableFieldSet\":{VariableFields.ToJSON()}";
         // add partial data sets only if assigned
         if (HasFirstPartialDataSet)
         {
             JSON +=
                 ",\"FirstPartialDataSet\":{" +
                     $"\"Quantity\":\"{FirstPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(FirstPartialDataSet!.Shift)}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString((Shift)FirstPartialDataSet.Shift!)}\"," +
                     $"\"Operator\":\"{FirstPartialDataSet!.Operator}\"" +
                 "}";
         }
@@ -343,7 +336,7 @@ public partial class PrintTicket : ObservableObject
             JSON +=
                 ",\"SecondPartialDataSet\":{" +
                     $"\"Quantity\":\"{SecondPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondPartialDataSet!.Shift)}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString((Shift)SecondPartialDataSet.Shift!)}\"," +
                     $"\"Operator\":\"{SecondPartialDataSet!.Operator}\"" +
                 "}";
         }
@@ -439,54 +432,14 @@ public partial class PrintTicket : ObservableObject
             throw new JsonException($"Could not parse an Operator from '{JSON["ProductionOperator"]!}'.");
         }
         // parse the variable field set assigned to the Ticket
-        VariableFieldSet VariableFields = new VariableFieldSet();
+        VariableFieldSet VariableFields;
         try
         {
-            VariableFields.JBKNumber = int.Parse(JSON["VariableFieldSet"]!["JBKNumber"]!.ToString());
+            VariableFields = VariableFieldSet.ParseJSON(JSON["VariableFieldSet"]!.ToString());
         }
         catch
         {
-            VariableFields.JBKNumber = null;
-        }
-        try
-        {
-            VariableFields.LotNumber = JSON["VariableFieldSet"]!["LotNumber"]!.ToString();
-        }
-        catch
-        {
-            VariableFields.LotNumber = null;
-        }
-        try
-        {
-            VariableFields.DeburrJBKNumber = int.Parse(JSON["VariableFieldSet"]!["DeburrJBKNumber"]!.ToString());
-        }
-        catch
-        {
-            VariableFields.DeburrJBKNumber = null;
-        }
-        try
-        {
-            VariableFields.DieNumber = int.Parse(JSON["VariableFieldSet"]!["DieNumber"]!.ToString());
-        }
-        catch
-        {
-            VariableFields.DieNumber = null;
-        }
-        try
-        {
-            VariableFields.ModelNumber = JSON["VariableFieldSet"]!["ModelNumber"]!.ToString();
-        }
-        catch
-        {
-            VariableFields.ModelNumber = null;
-        }
-        try
-        {
-            VariableFields.HeatNumber = JSON["VariableFieldSet"]!["HeatNumber"]!.ToString();
-        }
-        catch
-        {
-            VariableFields.HeatNumber = null;
+            throw new JsonException($"Could not parse a VariableFieldSet from '{JSON["VariableFieldSet"]!}'.");
         }
         // check for and parse partial data sets
         PartialDataSet? FirstPartialDataSet = null;
@@ -614,54 +567,14 @@ public partial class PrintTicket : ObservableObject
             throw new JsonException($"Could not parse an Operator from '{JSON["ProductionOperator"]!}'.");
         }
         // parse the variable field set assigned to the Ticket
-        VariableFieldSet VariableFields = new VariableFieldSet();
+        VariableFieldSet VariableFields;
         try
         {
-            VariableFields.JBKNumber = int.Parse(JSON["VariableFieldSet"]!["JBKNumber"]!.ToString());
+            VariableFields = VariableFieldSet.ParseJSON(JSON["VariableFieldSet"]!.ToString());
         }
         catch
         {
-            VariableFields.JBKNumber = null;
-        }
-        try
-        {
-            VariableFields.LotNumber = JSON["VariableFieldSet"]!["LotNumber"]!.ToString();
-        }
-        catch
-        {
-            VariableFields.LotNumber = null;
-        }
-        try
-        {
-            VariableFields.DeburrJBKNumber = int.Parse(JSON["VariableFieldSet"]!["DeburrJBKNumber"]!.ToString());
-        }
-        catch
-        {
-            VariableFields.DeburrJBKNumber = null;
-        }
-        try
-        {
-            VariableFields.DieNumber = int.Parse(JSON["VariableFieldSet"]!["DieNumber"]!.ToString());
-        }
-        catch
-        {
-            VariableFields.DieNumber = null;
-        }
-        try
-        {
-            VariableFields.ModelNumber = JSON["VariableFieldSet"]!["ModelNumber"]!.ToString();
-        }
-        catch
-        {
-            VariableFields.ModelNumber = null;
-        }
-        try
-        {
-            VariableFields.HeatNumber = JSON["VariableFieldSet"]!["HeatNumber"]!.ToString();
-        }
-        catch
-        {
-            VariableFields.HeatNumber = null;
+            throw new JsonException($"Could not parse a VariableFieldSet from '{JSON["VariableFieldSet"]!}'.");
         }
         // check for and parse partial data sets
         PartialDataSet? FirstPartialDataSet = null;
@@ -787,27 +700,11 @@ public partial class PrintTicket : ObservableObject
         {
             throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) before printing a Label.");
         }
-        try
-        {
-            VariableFields = await VariableFields.SelfValidate(Process);
-        }
-        catch (Exception _ex)
-        {
-            throw new ArgumentException($"Please enter a valid {_ex.Message} # before printing a Label.");
-        }
         if (HasFirstPartialDataSet)
         {
             try
             {
-                await ValidatePositiveInteger(FirstPartialDataSet!.Shift);
-            }
-            catch
-            {
-                throw new ArgumentException("Please enter a valid Production Shift in Partial Production Data #1 before printing a Label.");
-            }
-            try
-            {
-                await ValidatePositiveInteger(FirstPartialDataSet.Quantity);
+                await ValidatePositiveInteger(FirstPartialDataSet!.Quantity);
             }
             catch
             {
@@ -826,15 +723,7 @@ public partial class PrintTicket : ObservableObject
         {
             try
             {
-                await ValidatePositiveInteger(SecondPartialDataSet!.Shift);
-            }
-            catch
-            {
-                throw new ArgumentException("Please enter a valid Production Shift in Partial Production Data #2 before printing a Label.");
-            }
-            try
-            {
-                await ValidatePositiveInteger(SecondPartialDataSet.Quantity);
+                await ValidatePositiveInteger(SecondPartialDataSet!.Quantity);
             }
             catch
             {
@@ -882,11 +771,11 @@ public partial class PrintTicket : ObservableObject
         string FullShift = $"{ShiftExtensions.ToString(ProductionShift)}";
         if (HasFirstPartialDataSet)
         {
-            FullShift = $"{FullShift}:{ShiftExtensions.ToString(FirstPartialDataSet!.Shift)}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString((Shift)FirstPartialDataSet!.Shift!)}";
         }
         if (HasSecondPartialDataSet)
         {
-            FullShift = $"{FullShift}:{ShiftExtensions.ToString(SecondPartialDataSet!.Shift)}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString((Shift)SecondPartialDataSet!.Shift!)}";
         }
         return FullShift;
     }
