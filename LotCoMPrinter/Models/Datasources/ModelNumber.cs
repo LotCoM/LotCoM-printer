@@ -17,10 +17,27 @@ public partial class ModelNumber
     /// </summary>
     public const int MaxLength = 4;
 
+    private string _code;
     /// <summary>
     /// The code value of the Model Number.
     /// </summary>
-    private readonly string Code;
+    public string Code
+    {
+        get { return _code; }
+        set
+        {
+            if (value.Length < MinLength || value.Length > MaxLength)
+            {
+                throw new ArgumentException($"{value} is outside the allowed length of codes for the ModelNumber class.");
+            }
+            // enforce formatting of the code as uppercase and alphanumerical
+            if (ModelRegex().IsMatch(value))
+            {
+                throw new ArgumentException($"'{value}' does not follow formatting requirements of codes for the ModelNumber class.", nameof(value));
+            }
+            _code = value.ToUpper();
+        }
+    }
 
     /// <summary>
     /// Creates a new ModelNumber from Value.
@@ -38,7 +55,7 @@ public partial class ModelNumber
         {
             throw new ArgumentException($"'{Value}' does not follow formatting requirements of codes for the ModelNumber class.", nameof(Value));
         }
-        Code = Value.ToUpper();
+        _code = Value.ToUpper();
     }
 
     // COMPILED REGEX PATTERNS 

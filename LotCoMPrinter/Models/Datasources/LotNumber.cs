@@ -15,16 +15,36 @@ public class LotNumber
     /// </summary>
     private const int MaxValue = 999999999;
 
+    private int _literal;
     /// <summary>
-    /// The raw literal value of the Lot Number. Does not follow the nine-digit formatting requirements.
+    /// The raw literal value of the Lot Number.
     /// </summary>
-    private readonly int Literal;
+    public int Literal
+    {
+        get { return _literal; }
+        set
+        {
+            if (value >= MinValue && value <= MaxValue)
+            {
+                _literal = value;
+                Formatted = "";
+                while (Formatted.Length < 3)
+                {
+                    Formatted = $"0{Formatted}";
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"{value} is outside the allowed range of the LotNumber class.");
+            }
+        }
+    }
 
     /// <summary>
     /// A formatted version of the Lot Number's literal value. 
     /// Prepends '0' digit characters to the front of the string to enforce nine-digit formatting requirements.
     /// </summary>
-    public readonly string Formatted;
+    public string Formatted { get; private set; }
 
     /// <summary>
     /// Creates a new LotNumber from Value.

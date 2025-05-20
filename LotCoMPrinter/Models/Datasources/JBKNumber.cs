@@ -15,16 +15,36 @@ public class JBKNumber
     /// </summary>
     private const int MaxValue = 999;
 
+    private int _literal;
     /// <summary>
     /// The raw literal value of the JBK Number. Does not follow the three-digit formatting requirements.
     /// </summary>
-    private readonly int Literal;
+    public int Literal
+    {
+        get { return _literal; }
+        set
+        {
+            if (value >= MinValue && value <= MaxValue)
+            {
+                _literal = value;
+                Formatted = "";
+                while (Formatted.Length < 3)
+                {
+                    Formatted = $"0{Formatted}";
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"{value} is outside the allowed range of the JBKNumber class.");
+            }
+        }
+    }
 
     /// <summary>
     /// A formatted version of the JBK Number's literal value. 
     /// Prepends '0' digit characters to the front of the string to enforce three-digit formatting requirements.
     /// </summary>
-    public readonly string Formatted;
+    public string Formatted { get; private set; }
 
     /// <summary>
     /// Creates a new JBKNumber from Value.

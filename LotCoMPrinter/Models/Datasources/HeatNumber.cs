@@ -15,10 +15,25 @@ public class HeatNumber
     /// </summary>
     private const int MaxValue = 999999999;
 
+    private int _literal;
     /// <summary>
     /// The raw literal value of the Heat Number.
     /// </summary>
-    private readonly int Literal;
+    public int Literal
+    {
+        get { return _literal; }
+        set
+        {
+            if (value >= MinValue && value <= MaxValue)
+            {
+                _literal = value;
+            }
+            else
+            {
+                throw new ArgumentException($"{value} is outside the allowed range of the HeatNumber class.");
+            }
+        }
+    }
 
     /// <summary>
     /// Creates a new HeatNumber from Value.

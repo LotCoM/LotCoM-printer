@@ -15,10 +15,25 @@ public class DieNumber
     /// </summary>
     private const int MaxValue = 50;
 
+    private int _literal;
     /// <summary>
     /// The raw literal value of the Die Number.
     /// </summary>
-    private readonly int Literal;
+    public int Literal
+    {
+        get { return _literal; }
+        set
+        {
+            if (value >= MinValue && value <= MaxValue)
+            {
+                _literal = value;
+            }
+            else
+            {
+                throw new ArgumentException($"{value} is outside the allowed range of the DieNumber class.");
+            }
+        }
+    }
 
     /// <summary>
     /// Creates a new DieNumber from Value.
