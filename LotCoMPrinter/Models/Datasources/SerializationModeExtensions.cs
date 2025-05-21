@@ -5,55 +5,48 @@ namespace LotCoMPrinter.Models.Datasources;
 /// </summary>
 public static class SerializationModeExtensions
 {
-    extension(SerializationMode Mode)
+    /// <summary>
+    /// Converts a SerializationMode to a string.
+    /// </summary>
+    /// <returns></returns>
+    public static string ToString(this SerializationMode Mode)
     {
-        /// <summary>
-        /// Converts a SerializationMode to a string.
-        /// </summary>
-        /// <param name="Mode"></param>
-        /// <returns></returns>
-        public string ToString()
+        if (Mode == SerializationMode.JBK)
         {
-            if (Mode == SerializationMode.JBK)
-            {
-                return "JBK";
-            }
-            else if (Mode == SerializationMode.Lot)
-            {
-                return "Lot";
-            }
-            else
-            {
-                return "None";
-            }
+            return "JBK";
+        }
+        else if (Mode == SerializationMode.Lot)
+        {
+            return "Lot";
+        }
+        else
+        {
+            return "None";
         }
     }
 
-    extension(string String)
+    /// <summary>
+    /// Attempts to convert a string literal to a SerializationMode enum value.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static SerializationMode FromString(this string String)
     {
-        /// <summary>
-        /// Attempts to convert a string literal to a SerializationMode enum value.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public SerializationMode FromString()
+        if (String.Equals("JBK"))
         {
-            if (String.Equals("JBK"))
-            {
-                return SerializationMode.JBK;
-            }
-            else if (String.Equals("Lot"))
-            {
-                return SerializationMode.Lot;
-            }
-            else if (String.Equals("None"))
-            {
-                return SerializationMode.None;
-            }
-            else
-            {
-                throw new ArgumentException($"Cannot convert {String} to a SerializationMode.");
-            }
+            return SerializationMode.JBK;
+        }
+        else if (String.Equals("Lot"))
+        {
+            return SerializationMode.Lot;
+        }
+        else if (String.Equals("None"))
+        {
+            return SerializationMode.None;
+        }
+        else
+        {
+            throw new ArgumentException($"Cannot convert {String} to a SerializationMode.");
         }
     }
 }
