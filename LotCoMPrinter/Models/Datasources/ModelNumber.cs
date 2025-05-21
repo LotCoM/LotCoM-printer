@@ -31,7 +31,7 @@ public partial class ModelNumber
                 throw new ArgumentException($"{value} is outside the allowed length of codes for the ModelNumber class.");
             }
             // enforce formatting of the code as uppercase and alphanumerical
-            if (ModelRegex().IsMatch(value))
+            if (!ModelRegex().IsMatch(value))
             {
                 throw new ArgumentException($"'{value}' does not follow formatting requirements of codes for the ModelNumber class.", nameof(value));
             }
@@ -51,7 +51,7 @@ public partial class ModelNumber
             throw new ArgumentException($"'{Value}' is outside the allowed length of codes for the ModelNumber class.", nameof(Value));
         }
         // enforce formatting of the code as uppercase and alphanumerical
-        if (ModelRegex().IsMatch(Value))
+        if (!ModelRegex().IsMatch(Value))
         {
             throw new ArgumentException($"'{Value}' does not follow formatting requirements of codes for the ModelNumber class.", nameof(Value));
         }
