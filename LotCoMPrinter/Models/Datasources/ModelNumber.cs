@@ -1,11 +1,12 @@
 using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// An identifying code for Part Models that follows a strict three- or four-character, alphanumerical, and uppercase format.
 /// </summary>
-public partial class ModelNumber
+public partial class ModelNumber : ObservableObject
 {
     /// <summary>
     /// Sets the absolute minimum length of a Model Number's code.
@@ -17,27 +18,11 @@ public partial class ModelNumber
     /// </summary>
     public const int MaxLength = 4;
 
-    private string _code;
     /// <summary>
     /// The code value of the Model Number.
     /// </summary>
-    public string Code
-    {
-        get { return _code; }
-        set
-        {
-            if (value.Length < MinLength || value.Length > MaxLength)
-            {
-                throw new ArgumentException($"{value} is outside the allowed length of codes for the ModelNumber class.");
-            }
-            // enforce formatting of the code as uppercase and alphanumerical
-            if (!ModelRegex().IsMatch(value))
-            {
-                throw new ArgumentException($"'{value}' does not follow formatting requirements of codes for the ModelNumber class.", nameof(value));
-            }
-            _code = value.ToUpper();
-        }
-    }
+    [ObservableProperty]
+    public partial string Code { get; set; }
 
     /// <summary>
     /// Creates a new ModelNumber from Value.
@@ -55,7 +40,7 @@ public partial class ModelNumber
         {
             throw new ArgumentException($"'{Value}' does not follow formatting requirements of codes for the ModelNumber class.", nameof(Value));
         }
-        _code = Value.ToUpper();
+        Code = Value.ToUpper();
     }
 
     // COMPILED REGEX PATTERNS 

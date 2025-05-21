@@ -1,9 +1,11 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
 /// An identifier for Dies used to cast Parts in a Basket. Follows a strict one- or two-digit format.
 /// </summary>
-public class DieNumber
+public partial class DieNumber : ObservableObject
 {
     /// <summary>
     /// The absolute lowest digit literal that can be assigned to a Die Number.
@@ -15,25 +17,11 @@ public class DieNumber
     /// </summary>
     private const int MaxValue = 50;
 
-    private int _literal;
     /// <summary>
     /// The raw literal value of the Die Number.
     /// </summary>
-    public int Literal
-    {
-        get { return _literal; }
-        set
-        {
-            if (value >= MinValue && value <= MaxValue)
-            {
-                _literal = value;
-            }
-            else
-            {
-                throw new ArgumentException($"{value} is outside the allowed range of the DieNumber class.");
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial int Literal { get; set; }
 
     /// <summary>
     /// Creates a new DieNumber from Value.
