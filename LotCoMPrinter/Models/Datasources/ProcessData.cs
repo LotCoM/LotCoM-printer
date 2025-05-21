@@ -73,7 +73,7 @@ public class ProcessData()
         Part ResolvedPart;
         try 
         {
-            ResolvedPart = new Part(GetIndividualProcess(ParentProcess), Number, Name, Model);
+            ResolvedPart = new Part(ParentProcess, Number, Name, Model);
         } 
         catch 
         {
