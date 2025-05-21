@@ -40,7 +40,7 @@ public static class SerializationModeExtensions
         {
             return SerializationMode.Lot;
         }
-        else if (String.Equals("None"))
+        else if (String.Equals(""))
         {
             return SerializationMode.None;
         }

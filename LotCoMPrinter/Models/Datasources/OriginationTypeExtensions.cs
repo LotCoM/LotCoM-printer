@@ -34,7 +34,7 @@ public static class OriginationTypeExtensions
         {
             return OriginationType.Originator;
         }
-        else if (String.Equals("PassThrough"))
+        else if (String.Equals("Pass-through"))
         {
             return OriginationType.PassThrough;
         }
