@@ -89,16 +89,28 @@ public class LabelDimensions
     /// The vertical position of the Label's Heading text.
     /// </summary>
     public int HeadingVerticalAnchor;
-    
-    /// <summary>
-    /// The horizontal position of the Label's Part Name text.
-    /// </summary>
-    public int PartNameHorizontalAnchor;
 
     /// <summary>
-    /// The vertical position of the Label's Part Name text.
+    /// The horizontal position of the Label's Sub-Heading text.
+    /// This text is the same size as the Heading text.
     /// </summary>
-    public int PartNameVerticalAnchor;
+    public int SubHeadingHorizontalAnchor;
+
+    /// <summary>
+    /// The vertical position of the Label's Sub-Heading text.
+    /// This text is the same size as the Heading text.
+    /// </summary>
+    public int SubHeadingVerticalAnchor;
+
+    /// <summary>
+    /// The horizontal position of the Label's Body Title text.
+    /// </summary>
+    public int BodyTitleHorizontalAnchor;
+    
+    /// <summary>
+    /// The vertical position of the Label's Body Title text.
+    /// </summary>
+    public int BodyTitleVerticalAnchor;
     
     /// <summary>
     /// The horizontal (left) position of the QR Code on the Label.
@@ -137,8 +149,10 @@ public class LabelDimensions
         InternalPadding = Convert.ToInt32(InternalPadding * DpiScale);
         HeadingHorizontalAnchor = Convert.ToInt32(HeadingHorizontalAnchor * DpiScale);
         HeadingVerticalAnchor = Convert.ToInt32(HeadingVerticalAnchor * DpiScale);
-        PartNameHorizontalAnchor = Convert.ToInt32(PartNameHorizontalAnchor * DpiScale);
-        PartNameVerticalAnchor = Convert.ToInt32(PartNameVerticalAnchor * DpiScale);
+        SubHeadingHorizontalAnchor = Convert.ToInt32(SubHeadingHorizontalAnchor * DpiScale);
+        SubHeadingVerticalAnchor = Convert.ToInt32(SubHeadingVerticalAnchor * DpiScale);
+        BodyTitleHorizontalAnchor = Convert.ToInt32(BodyTitleHorizontalAnchor * DpiScale);
+        BodyTitleVerticalAnchor = Convert.ToInt32(BodyTitleVerticalAnchor * DpiScale);
         CodeHorizontalAnchor = Convert.ToInt32(CodeHorizontalAnchor * DpiScale);
         CodeVerticalAnchor = Convert.ToInt32(CodeVerticalAnchor * DpiScale);
         BodyHorizontalAnchor = Convert.ToInt32(BodyHorizontalAnchor * DpiScale);
@@ -162,7 +176,7 @@ public class LabelDimensions
     /// <param name="CodeVerticalAnchor">The vertical (top) position of the QR Code on the Label.</param>
     /// <param name="BodyHorizontalAnchor">The horizontal position of the Label's Data Fields text.</param>
     /// <param name="BodyVerticalAnchor">The vertical position of the Label's Data Fields text.</param>
-    public LabelDimensions(int? Dimension, int? CodeDimension, int? TextSizeSmall, int? TextSizeMedium, int? TextSizeLarge, int? InternalPadding, int HeadingHorizontalAnchor, int HeadingVerticalAnchor, int PartNameHorizontalAnchor, int PartNameVerticalAnchor, int CodeHorizontalAnchor, int CodeVerticalAnchor, int BodyHorizontalAnchor, int BodyVerticalAnchor)
+    public LabelDimensions(int? Dimension, int? CodeDimension, int? TextSizeSmall, int? TextSizeMedium, int? TextSizeLarge, int? InternalPadding, int HeadingHorizontalAnchor, int HeadingVerticalAnchor, int SubHeadingHorizontalAnchor, int SubHeadingVerticalAnchor, int BodyTitleHorizontalAnchor, int BodyTitleVerticalAnchor, int CodeHorizontalAnchor, int CodeVerticalAnchor, int BodyHorizontalAnchor, int BodyVerticalAnchor)
     {
         if (Dimension is not null)
         {
@@ -190,8 +204,10 @@ public class LabelDimensions
         }
         this.HeadingHorizontalAnchor = HeadingHorizontalAnchor;
         this.HeadingVerticalAnchor = HeadingVerticalAnchor;
-        this.PartNameHorizontalAnchor = PartNameHorizontalAnchor; 
-        this.PartNameVerticalAnchor = PartNameVerticalAnchor;
+        this.SubHeadingHorizontalAnchor = SubHeadingHorizontalAnchor;
+        this.SubHeadingVerticalAnchor = SubHeadingVerticalAnchor;
+        this.BodyTitleHorizontalAnchor = BodyTitleHorizontalAnchor; 
+        this.BodyTitleVerticalAnchor = BodyTitleVerticalAnchor;
         this.CodeHorizontalAnchor = CodeHorizontalAnchor; 
         this.CodeVerticalAnchor = CodeVerticalAnchor;
         this.BodyHorizontalAnchor = BodyHorizontalAnchor;
