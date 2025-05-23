@@ -281,7 +281,7 @@ public partial class VariableFieldSet(JBKNumber? JBKNumber = null, LotNumber? Lo
         VariableFieldSet VariableFields = new VariableFieldSet();
         try
         {
-            VariableFields.JBKNumber = new JBKNumber(int.Parse(JSON["VariableFieldSet"]!["JBKNumber"]!.ToString()));
+            VariableFields.JBKNumber = new JBKNumber(int.Parse(JSON["JBKNumber"]!.ToString()));
         }
         catch
         {
@@ -289,7 +289,7 @@ public partial class VariableFieldSet(JBKNumber? JBKNumber = null, LotNumber? Lo
         }
         try
         {
-            VariableFields.LotNumber = new LotNumber(int.Parse(JSON["VariableFieldSet"]!["LotNumber"]!.ToString()));
+            VariableFields.LotNumber = new LotNumber(int.Parse(JSON["LotNumber"]!.ToString()));
         }
         catch
         {
@@ -297,7 +297,7 @@ public partial class VariableFieldSet(JBKNumber? JBKNumber = null, LotNumber? Lo
         }
         try
         {
-            VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(JSON["VariableFieldSet"]!["DeburrJBKNumber"]!.ToString()));
+            VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(JSON["DeburrJBKNumber"]!.ToString()));
         }
         catch
         {
@@ -305,7 +305,7 @@ public partial class VariableFieldSet(JBKNumber? JBKNumber = null, LotNumber? Lo
         }
         try
         {
-            VariableFields.DieNumber = new DieNumber(int.Parse(JSON["VariableFieldSet"]!["DieNumber"]!.ToString()));
+            VariableFields.DieNumber = new DieNumber(int.Parse(JSON["DieNumber"]!.ToString()));
         }
         catch
         {
@@ -313,7 +313,7 @@ public partial class VariableFieldSet(JBKNumber? JBKNumber = null, LotNumber? Lo
         }
         try
         {
-            VariableFields.ModelNumber = new ModelNumber(JSON["VariableFieldSet"]!["ModelNumber"]!.ToString());
+            VariableFields.ModelNumber = new ModelNumber(JSON["ModelNumber"]!.ToString());
         }
         catch
         {
@@ -321,7 +321,7 @@ public partial class VariableFieldSet(JBKNumber? JBKNumber = null, LotNumber? Lo
         }
         try
         {
-            VariableFields.HeatNumber = new HeatNumber(int.Parse(JSON["VariableFieldSet"]!["HeatNumber"]!.ToString()));
+            VariableFields.HeatNumber = new HeatNumber(int.Parse(JSON["HeatNumber"]!.ToString()));
         }
         catch
         {
