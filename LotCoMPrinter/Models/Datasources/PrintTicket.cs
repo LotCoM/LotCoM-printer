@@ -683,7 +683,7 @@ public partial class PrintTicket : ObservableObject
     /// <exception cref="ArgumentException"></exception>
     public async Task<PrintTicket> SelfValidate()
     {
-        // validate quantity, operator, variable field, and partial dataset field values
+        // validate quantity, operator
         try
         {
             await ValidatePositiveInteger(ProductionQuantity);
@@ -700,6 +700,32 @@ public partial class PrintTicket : ObservableObject
         {
             throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) before printing a Label.");
         }
+        // validate the variable fields
+        if (Process.RequiredFields.JBKNumber && VariableFields.JBKNumber is null)
+        {
+            throw new ArgumentException("Please enter a valid JBK # before printing a Label.");
+        }
+        if (Process.RequiredFields.LotNumber && VariableFields.LotNumber is null)
+        {
+            throw new ArgumentException("Please enter a valid Lot # before printing a Label.");
+        }
+        if (Process.RequiredFields.DeburrJBKNumber && VariableFields.DeburrJBKNumber is null)
+        {
+            throw new ArgumentException("Please enter a valid Deburr JBK # before printing a Label.");
+        }
+        if (Process.RequiredFields.DieNumber && VariableFields.DieNumber is null)
+        {
+            throw new ArgumentException("Please enter a valid Die # before printing a Label.");
+        }
+        if (Process.RequiredFields.ModelNumber && VariableFields.ModelNumber is null)
+        {
+            throw new ArgumentException("Please enter a valid Model # before printing a Label.");
+        }
+        if (Process.RequiredFields.HeatNumber && VariableFields.HeatNumber is null)
+        {
+            throw new ArgumentException("Please enter a valid Heat # before printing a Label.");
+        }
+        // validate partial data sets
         if (HasFirstPartialDataSet)
         {
             try
