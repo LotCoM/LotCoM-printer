@@ -293,7 +293,7 @@ public partial class PrintTicket : ObservableObject
         HasFirstPartialDataSet = FirstPartialDataSet is not null;
         HasSecondPartialDataSet = SecondPartialDataSet is not null;
         HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
-        Title = $"{Part.ModelNumber} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
+        Title = $"{Part.ModelNumber.Code} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
         IsPassThrough = _process.Type == OriginationType.PassThrough;
         ProductionDateNoTime = $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
     }
