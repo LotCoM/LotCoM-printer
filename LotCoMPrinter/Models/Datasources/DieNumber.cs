@@ -24,13 +24,23 @@ public partial class DieNumber : ObservableObject
     public partial int Literal { get; set; }
 
     /// <summary>
+    /// Confirms that Value is a valid value for this datatype.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    private static bool IsValidValue(int Value)
+    {
+        return Value <= MaxValue && Value >= MinValue;
+    }
+
+    /// <summary>
     /// Creates a new DieNumber from Value.
     /// </summary>
     /// <param name="Value"></param>
     public DieNumber(int Value)
     {
         // confirm that Value falls within the allowed literal range
-        if (Value > MaxValue || Value < MinValue)
+        if (!IsValidValue(Value))
         {
             throw new ArgumentException($"'{Value}' is outside the allowed range of the DieNumber class.", nameof(Value));
         }

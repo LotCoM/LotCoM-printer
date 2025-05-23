@@ -31,22 +31,41 @@ public partial class JBKNumber : ObservableObject
     public partial string Formatted { get; set; }
 
     /// <summary>
+    /// Confirms that Value is a valid value for this datatype.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    private static bool IsValidValue(int Value)
+    {
+        return Value <= MaxValue && Value >= MinValue;
+    }
+
+    /// <summary>
+    /// Formats the current Literal value according to the Datatype's formatting requirements.
+    /// </summary>
+    /// <returns>The Literal value as a Formatted string.</returns>
+    private string FormatLiteral()
+    {
+        string FormattedLiteral = Literal.ToString();
+        while (FormattedLiteral.Length < 3)
+        {
+            FormattedLiteral = $"0{FormattedLiteral}";
+        }
+        return FormattedLiteral;
+    }
+
+    /// <summary>
     /// Creates a new JBKNumber from Value.
     /// </summary>
     /// <param name="Value"></param>
     public JBKNumber(int Value)
     {
         // confirm that Value falls within the allowed literal range
-        if (Value > MaxValue || Value < MinValue)
+        if (!IsValidValue(Value))
         {
             throw new ArgumentException($"'{Value}' is outside the allowed range of the JBKNumber class.", nameof(Value));
         }
         Literal = Value;
-        Formatted = Literal.ToString();
-        // configure the Formatted property on instantiation
-        while (Formatted.Length < 3)
-        {
-            Formatted = $"0{Formatted}";
-        }
+        Formatted = FormatLiteral();
     }
 }

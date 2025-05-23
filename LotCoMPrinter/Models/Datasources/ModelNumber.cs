@@ -9,20 +9,22 @@ namespace LotCoMPrinter.Models.Datasources;
 public partial class ModelNumber : ObservableObject
 {
     /// <summary>
-    /// Sets the absolute minimum length of a Model Number's code.
-    /// </summary>
-    public const int MinLength = 3;
-
-    /// <summary>
-    /// Sets the absolute maximum length of a Model Number's code.
-    /// </summary>
-    public const int MaxLength = 4;
-
-    /// <summary>
     /// The code value of the Model Number.
     /// </summary>
     [ObservableProperty]
     public partial string Code { get; set; }
+
+    /// <summary>
+    /// Confirms that Value is a valid value for this datatype.
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="FormatException"></exception>
+    /// <returns></returns>
+    private static bool IsValidValue(string Value)
+    {
+        return ModelRegex().IsMatch(Value);
+    }
 
     /// <summary>
     /// Creates a new ModelNumber from Value.
@@ -31,14 +33,9 @@ public partial class ModelNumber : ObservableObject
     public ModelNumber(string Value)
     {
         // confirm that Value falls within the allowed code length
-        if (Value.Length > MaxLength || Value.Length < MinLength)
+        if (!IsValidValue(Value))
         {
             throw new ArgumentException($"'{Value}' is outside the allowed length of codes for the ModelNumber class.", nameof(Value));
-        }
-        // enforce formatting of the code as uppercase and alphanumerical
-        if (!ModelRegex().IsMatch(Value))
-        {
-            throw new ArgumentException($"'{Value}' does not follow formatting requirements of codes for the ModelNumber class.", nameof(Value));
         }
         Code = Value.ToUpper();
     }
