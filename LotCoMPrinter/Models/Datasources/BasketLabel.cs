@@ -21,7 +21,7 @@ public partial class BasketLabel : Label
             HeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
             HeadingVerticalAnchor: LabelDimensions.PaddingLevels.Thin - 28,
             SubHeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
-            SubHeadingVerticalAnchor: LabelDimensions.PaddingLevels.Thin + LabelDimensions.TextSizes.Large,
+            SubHeadingVerticalAnchor: (LabelDimensions.PaddingLevels.Wide * 2) + LabelDimensions.TextSizes.Large,
             BodyTitleHorizontalAnchor: LabelDimensions.PaddingLevels.Thin,
             BodyTitleVerticalAnchor: LabelDimensions.CodeSizes.Default,
             CodeHorizontalAnchor: LabelDimensions.LabelSizes.Default - LabelDimensions.CodeSizes.Default - LabelDimensions.PaddingLevels.Thin,
