@@ -12,6 +12,11 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private readonly MainPageViewModel ViewModel;
 
+    /// <summary>
+    /// StaticResource Grey500 color.
+    /// </summary>
+    private static readonly Color Grey500 = new Color(110, 110, 110);
+
 	/// <summary>
 	/// Animates the collapsing of the Open Print Tickets Panel across Duration milliseconds.
 	/// </summary>
@@ -354,8 +359,99 @@ public partial class MainPage : ContentPage
 		await AnimatedDisplayPrintTicket();
 	}
 
+	/// <summary>
+	/// Handler for the TextChanged event from the VariableFieldSet Entry controls.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnVariableFieldSetEntryTextChanged(object sender, TextChangedEventArgs e)
+	{
+		if (ViewModel.ActiveTicket is null || e.NewTextValue is null || e.NewTextValue.Equals(""))
+		{
+			return;
+		}
+		// JBK was updated
+		if (sender.Equals(JBKNumberEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.VariableFields.JBKNumber = new JBKNumber(int.Parse(e.NewTextValue));
+				JBKNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				JBKNumberControl.Stroke = Colors.Red;
+			}
+		}
+		// Lot was updated
+		else if (sender.Equals(LotNumberEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.VariableFields.LotNumber = new LotNumber(int.Parse(e.NewTextValue));
+				LotNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				LotNumberControl.Stroke = Colors.Red;
+			}
+		}
+		// Deburr JBK was updated
+		else if (sender.Equals(DeburrJBKNumberEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(e.NewTextValue));
+				DeburrJBKNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				DeburrJBKNumberControl.Stroke = Colors.Red;
+			}
+		}
+		// Die was updated
+		else if (sender.Equals(DieNumberEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.VariableFields.DieNumber = new DieNumber(int.Parse(e.NewTextValue));
+				DieNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				DieNumberControl.Stroke = Colors.Red;
+			}
+		}
+		// Model was updated
+		else if (sender.Equals(ModelNumberEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.VariableFields.ModelNumber = new ModelNumber(e.NewTextValue);
+				ModelNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				ModelNumberControl.Stroke = Colors.Red;
+			}
+		}
+		// Heat was updated
+		else if (sender.Equals(HeatNumberEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.VariableFields.HeatNumber = new HeatNumber(int.Parse(e.NewTextValue));
+				HeatNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				HeatNumberControl.Stroke = Colors.Red;
+			}
+		}
+	}
+
 	// full constructor
-	public MainPage() 
+	public MainPage()
 	{
 		// instantiate the ViewModel and bind the Page to it
 		ViewModel = new MainPageViewModel();
