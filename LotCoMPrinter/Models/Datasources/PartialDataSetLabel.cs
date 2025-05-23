@@ -12,20 +12,22 @@ public partial class PartialDataSetLabel : Label
     (
         new LabelDimensions
         (
-            LabelDimensions.LabelSizes.Default,
-            LabelDimensions.CodeSizes.Default,
-            LabelDimensions.TextSizes.Tiny,
-            LabelDimensions.TextSizes.Small,
-            LabelDimensions.TextSizes.Medium,
-            LabelDimensions.PaddingLevels.Thin,
-            LabelDimensions.PaddingLevels.Thin - 56,
-            LabelDimensions.PaddingLevels.Thin - 56,
-            LabelDimensions.PaddingLevels.Thin,
-            LabelDimensions.PaddingLevels.Thin - 56 + (LabelDimensions.TextSizes.Medium * 2) + LabelDimensions.PaddingLevels.Thin,
-            0, // no QR Codes
-            0, // no QR Codes
-            LabelDimensions.PaddingLevels.Thin * 2,
-            LabelDimensions.TextSizes.Medium + LabelDimensions.TextSizes.Small + (LabelDimensions.PaddingLevels.Thin * 4)
+            Dimension: LabelDimensions.LabelSizes.Default,
+            CodeDimension: LabelDimensions.CodeSizes.Default,
+            TextSizeSmall: LabelDimensions.TextSizes.Tiny,
+            TextSizeMedium: LabelDimensions.TextSizes.Small,
+            TextSizeLarge: LabelDimensions.TextSizes.Medium,
+            InternalPadding: LabelDimensions.PaddingLevels.Thin,
+            HeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
+            HeadingVerticalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
+            SubHeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
+            SubHeadingVerticalAnchor: LabelDimensions.PaddingLevels.Thin + LabelDimensions.TextSizes.Large,
+            BodyTitleHorizontalAnchor: LabelDimensions.PaddingLevels.Thin,
+            BodyTitleVerticalAnchor: LabelDimensions.PaddingLevels.Thin - 56 + (LabelDimensions.TextSizes.Medium * 2) + LabelDimensions.PaddingLevels.Thin,
+            CodeHorizontalAnchor: 0, // no QR Codes
+            CodeVerticalAnchor: 0, // no QR Codes
+            BodyHorizontalAnchor: LabelDimensions.PaddingLevels.Thin * 2,
+            BodyVerticalAnchor: LabelDimensions.TextSizes.Medium + LabelDimensions.TextSizes.Small + (LabelDimensions.PaddingLevels.Thin * 4)
         )
     )
     {

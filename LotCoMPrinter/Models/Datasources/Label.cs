@@ -139,24 +139,27 @@ public class Label
             Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
             Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             // draw the Heading text
-            Surface.DrawString(HeadingText, FontLarge!, Brushes.Black, Dimensions.HeadingHorizontalAnchor, Dimensions.HeadingVerticalAnchor);
+            Surface.DrawString
+            (
+                HeadingText,
+                FontLarge!,
+                Brushes.Black,
+                Dimensions.HeadingHorizontalAnchor,
+                Dimensions.HeadingVerticalAnchor
+            );
             Surface.Flush();
         });
     }
 
-    /// <summary>
-    /// Writes PartName text to the Label using the configured Part Name Anchors.
-    /// </summary>
-    /// <param name="PartName"></param>
-    /// <returns></returns>
-    public async Task AddPartNameAsync(string PartName) 
+
+    public async Task AddSubHeadingAsync(string SubHeadingText)
     {
-        // start a new CPU thread to apply the part name to the Label Base
+        // start a new CPU thread to apply the Sub-heading to the Label Base
         await Task.Run(() => 
         {
             if (Image is null)
             {
-                throw new NullReferenceException("Cannot apply a Part Name to a blank Label.");
+                throw new NullReferenceException("Cannot apply a Sub-Heading to a blank Label.");
             }
             // create a drawing surface to draw the text with
             Graphics Surface = Graphics.FromImage(Image);
@@ -165,8 +168,49 @@ public class Label
             Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
             Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
             Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-            // draw the Part Name text
-            Surface.DrawString(PartName, FontMedium!, Brushes.Black, Dimensions.PartNameHorizontalAnchor, Dimensions.PartNameVerticalAnchor);
+            // draw the Heading text
+            Surface.DrawString
+            (
+                SubHeadingText,
+                FontLarge!,
+                Brushes.Black,
+                Dimensions.SubHeadingHorizontalAnchor,
+                Dimensions.SubHeadingVerticalAnchor
+            );
+            Surface.Flush();
+        });
+    }
+
+    /// <summary>
+    /// Writes Body Title text to the Label using the configured Body Title Anchors.
+    /// </summary>
+    /// <param name="Text"></param>
+    /// <returns></returns>
+    public async Task AddBodyTitleAsync(string Text)
+    {
+        // start a new CPU thread to apply the Body Title to the Label Base
+        await Task.Run(() =>
+        {
+            if (Image is null)
+            {
+                throw new NullReferenceException("Cannot apply a Body Title to a blank Label.");
+            }
+            // create a drawing surface to draw the text with
+            Graphics Surface = Graphics.FromImage(Image);
+            // set the quality properties of the Surface
+            Surface.SmoothingMode = SmoothingMode.AntiAlias;
+            Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            // draw the Body Title text
+            Surface.DrawString
+            (
+                Text,
+                FontMedium!,
+                Brushes.Black,
+                Dimensions.BodyTitleHorizontalAnchor,
+                Dimensions.BodyTitleVerticalAnchor
+            );
             Surface.Flush();
         });
     }
@@ -194,8 +238,18 @@ public class Label
             Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
             Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
             // resize and draw the QR Code
-            Bitmap LabelCodeImage = Resizer.ResizeImage(LabelCode.Code!, Dimensions.CodeDimension, Dimensions.CodeDimension);
-            Surface.DrawImage(LabelCodeImage, Dimensions.CodeHorizontalAnchor, Dimensions.CodeVerticalAnchor);
+            Bitmap LabelCodeImage = Resizer.ResizeImage
+            (
+                LabelCode.Code!,
+                Dimensions.CodeDimension,
+                Dimensions.CodeDimension
+            );
+            Surface.DrawImage
+            (
+                LabelCodeImage,
+                Dimensions.CodeHorizontalAnchor,
+                Dimensions.CodeVerticalAnchor
+            );
             Surface.Flush();
         });
     }
@@ -237,7 +291,14 @@ public class Label
             Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
             Surface.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             // draw the Heading text
-            Surface.DrawString(LabelFieldsBody, FontSmall!, Brushes.Black, Dimensions.BodyHorizontalAnchor, Dimensions.BodyVerticalAnchor);
+            Surface.DrawString
+            (
+                LabelFieldsBody,
+                FontSmall!,
+                Brushes.Black,
+                Dimensions.BodyHorizontalAnchor,
+                Dimensions.BodyVerticalAnchor
+            );
             Surface.Flush();
         });
     }

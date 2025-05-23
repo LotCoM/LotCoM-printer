@@ -12,20 +12,22 @@ public partial class BasketLabel : Label
     (
         new LabelDimensions
         (
-            LabelDimensions.LabelSizes.Default,
-            LabelDimensions.CodeSizes.Default,
-            LabelDimensions.TextSizes.Tiny,
-            LabelDimensions.TextSizes.Small,
-            LabelDimensions.TextSizes.Large,
-            LabelDimensions.PaddingLevels.Thin,
-            LabelDimensions.PaddingLevels.Thin - 56,
-            LabelDimensions.PaddingLevels.Thin - 28,
-            LabelDimensions.PaddingLevels.Thin,
-            LabelDimensions.CodeSizes.Default,
-            LabelDimensions.LabelSizes.Default - LabelDimensions.CodeSizes.Default - LabelDimensions.PaddingLevels.Thin,
-            LabelDimensions.PaddingLevels.Thin,
-            LabelDimensions.PaddingLevels.Thin * 2,
-            LabelDimensions.CodeSizes.Default + LabelDimensions.TextSizes.Small + (LabelDimensions.PaddingLevels.Thin * 4)
+            Dimension: LabelDimensions.LabelSizes.Default,
+            CodeDimension: LabelDimensions.CodeSizes.Default,
+            TextSizeSmall: LabelDimensions.TextSizes.Tiny,
+            TextSizeMedium: LabelDimensions.TextSizes.Small,
+            TextSizeLarge: LabelDimensions.TextSizes.Large,
+            InternalPadding: LabelDimensions.PaddingLevels.Thin,
+            HeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
+            HeadingVerticalAnchor: LabelDimensions.PaddingLevels.Thin - 28,
+            SubHeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
+            SubHeadingVerticalAnchor: (LabelDimensions.PaddingLevels.Wide * 2) + LabelDimensions.TextSizes.Large,
+            BodyTitleHorizontalAnchor: LabelDimensions.PaddingLevels.Thin,
+            BodyTitleVerticalAnchor: LabelDimensions.CodeSizes.Default,
+            CodeHorizontalAnchor: LabelDimensions.LabelSizes.Default - LabelDimensions.CodeSizes.Default - LabelDimensions.PaddingLevels.Thin,
+            CodeVerticalAnchor: LabelDimensions.PaddingLevels.Thin,
+            BodyHorizontalAnchor: LabelDimensions.PaddingLevels.Thin * 2,
+            BodyVerticalAnchor: LabelDimensions.CodeSizes.Default + LabelDimensions.TextSizes.Small + (LabelDimensions.PaddingLevels.Thin * 4)
         )
     )
     {

@@ -100,7 +100,7 @@ public static class LabelGenerator
             }
             // add the remaining required fields and return the body text
             Body.Add($"Date: {new Timestamp(Ticket.ProductionDate).Stamp}");
-            Body.Add($"Shift: {Ticket.ProductionShift}");
+            Body.Add($"Shift: {ShiftExtensions.ToString(Ticket.ProductionShift)}");
             return Body;
         });
     }
@@ -129,7 +129,8 @@ public static class LabelGenerator
         List<string> Body = await GenerateBody(Ticket);
         // apply the header, the QR Code, and the Label Data to the Label
         await Label.AddHeaderAsync(Ticket.SerialNumber.GetFormattedValue());
-        await Label.AddPartNameAsync(Ticket.Part.PartName);
+        await Label.AddSubHeadingAsync(Ticket.Part.ModelNumber.Code);
+        await Label.AddBodyTitleAsync(Ticket.Part.PartName);
         await Label.AddQRCodeAsync(Code);
         await Label.AddBodyTextAsync(Body);
         // return the Label image
