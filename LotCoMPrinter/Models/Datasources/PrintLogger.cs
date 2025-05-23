@@ -19,27 +19,27 @@ public static class PrintLogger
         RequiredFields Requirements = Job.Ticket.Process.RequiredFields;
         if (Requirements.JBKNumber) 
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.JBKNumber}";
+            Log = $"{Log},{Job.Ticket.VariableFields.JBKNumber!.Formatted}";
         }
         if (Requirements.LotNumber) 
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.LotNumber}";
+            Log = $"{Log},{Job.Ticket.VariableFields.LotNumber!.Formatted}";
         }
         if (Requirements.DeburrJBKNumber) 
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.DeburrJBKNumber}";
+            Log = $"{Log},{Job.Ticket.VariableFields.DeburrJBKNumber!.Formatted}";
         }
         if (Requirements.DieNumber) 
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.DieNumber}";
+            Log = $"{Log},{Job.Ticket.VariableFields.DieNumber!.Literal}";
         }
         if (Requirements.ModelNumber) 
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.ModelNumber}";
+            Log = $"{Log},{Job.Ticket.VariableFields.ModelNumber!.Code}";
         }
         if (Requirements.HeatNumber) 
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.HeatNumber}";
+            Log = $"{Log},{Job.Ticket.VariableFields.HeatNumber!.Literal}";
         }
         // add remaining universal requirements
         Log = $"{Log},{new Timestamp(Job.Ticket.ProductionDate).Stamp},{Job.Ticket.GetCombinedShifts()},{Job.Ticket.GetCombinedOperators()}";

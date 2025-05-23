@@ -556,10 +556,10 @@
                                     IsEnabled="False"
                                     SelectedItem="{Binding ActiveTicket.Untracked.ProductionShift}">
                                     <Picker.ItemsSource>
-                                        <x:Array Type="{x:Type x:Int32}">
-                                            <x:Int32>1</x:Int32>
-                                            <x:Int32>2</x:Int32>
-                                            <x:Int32>3</x:Int32>
+                                        <x:Array Type="{x:Type Datasources:Shift}">
+                                            <Datasources:Shift>First</Datasources:Shift>
+                                            <Datasources:Shift>Second</Datasources:Shift>
+                                            <Datasources:Shift>Third</Datasources:Shift>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>
@@ -650,7 +650,8 @@
                                 <Entry
                                     x:Name="JBKNumberEntry"
                                     IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
-                                    Text="{Binding ActiveTicket.Tracked.VariableFields.JBKNumber}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.JBKNumber.Formatted}"
+                                    TextChanged="OnVariableFieldSetEntryTextChanged"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -679,7 +680,8 @@
                                 <Entry
                                     x:Name="LotNumberEntry"
                                     IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
-                                    Text="{Binding ActiveTicket.Tracked.VariableFields.LotNumber}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.LotNumber.Formatted}"
+                                    TextChanged="OnVariableFieldSetEntryTextChanged"
                                     MaxLength="9"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -707,7 +709,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="DeburrJBKNumberEntry"
-                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DeburrJBKNumber}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DeburrJBKNumber.Formatted}"
+                                    TextChanged="OnVariableFieldSetEntryTextChanged"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -735,8 +738,9 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="DieNumberEntry"
-                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DieNumber}"
-                                    MaxLength="3"/>
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.DieNumber.Literal}"
+                                    TextChanged="OnVariableFieldSetEntryTextChanged"
+                                    MaxLength="2"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Model Input Layout -->
@@ -763,7 +767,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="ModelNumberEntry"
-                                    Text="{Binding ActiveTicket.Tracked.VariableFields.ModelNumber}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.ModelNumber.Code}"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -791,7 +795,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="HeatNumberEntry"
-                                    Text="{Binding ActiveTicket.Tracked.VariableFields.HeatNumber}"/>
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.HeatNumber.Literal}"
+                                    TextChanged="OnVariableFieldSetEntryTextChanged"/>
                             </Border>
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>
@@ -857,12 +862,12 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Picker
                                     x:Name="FirstPartialDataSetShiftPicker"
-                                    SelectedItem="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Shift}">
+                                    SelectedItem="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Shift.Value}">
                                     <Picker.ItemsSource>
-                                        <x:Array Type ="{x:Type x:Int32}">
-                                            <x:Int32>1</x:Int32>
-                                            <x:Int32>2</x:Int32>
-                                            <x:Int32>3</x:Int32>
+                                        <x:Array Type ="{x:Type Datasources:Shift}">
+                                            <Datasources:Shift>First</Datasources:Shift>
+                                            <Datasources:Shift>Second</Datasources:Shift>
+                                            <Datasources:Shift>Third</Datasources:Shift>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>
@@ -1038,12 +1043,12 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Picker
                                     x:Name="SecondPartialDataSetShiftPicker"
-                                    SelectedItem="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Shift}">
+                                    SelectedItem="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Shift.Value}">
                                     <Picker.ItemsSource>
-                                        <x:Array Type ="{x:Type x:Int32}">
-                                            <x:Int32>1</x:Int32>
-                                            <x:Int32>2</x:Int32>
-                                            <x:Int32>3</x:Int32>
+                                        <x:Array Type ="{x:Type Datasources:Shift}">
+                                            <Datasources:Shift>First</Datasources:Shift>
+                                            <Datasources:Shift>Second</Datasources:Shift>
+                                            <Datasources:Shift>Third</Datasources:Shift>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>

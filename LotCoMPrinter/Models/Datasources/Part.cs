@@ -5,11 +5,12 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <summary>
 /// An objective version of a Part loaded from the Process Masterlist data source.
 /// </summary>
-/// <param name="ParentProcess">The Process that the Part is assigned to.</param>
+/// <param name="ParentProcess">The FullName of the Process that the Part is assigned to.</param>
 /// <param name="PartNumber">The Part Number assigned to the Part.</param>
 /// <param name="PartName">The Part Name assigned to the Part.</param>
 /// <param name="ModelNumber">The Model Number the Part is associated with.</param>
-public partial class Part(string ParentProcess, string PartNumber, string PartName, string ModelNumber): ObservableObject {
+public partial class Part(string ParentProcess, string PartNumber, string PartName, ModelNumber ModelNumber): ObservableObject 
+{
     /// <summary>
     /// Provides a formatted string to display in a ListView; includes the Part Number and Name.
     /// </summary>
@@ -37,5 +38,5 @@ public partial class Part(string ParentProcess, string PartNumber, string PartNa
     /// [Observable] The Model Number the Part is associated with.
     /// </summary>
     [ObservableProperty]
-    public partial string ModelNumber {get; set;} = ModelNumber;
+    public partial ModelNumber ModelNumber {get; set;} = ModelNumber;
 }

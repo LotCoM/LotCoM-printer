@@ -51,18 +51,18 @@ public class ProcessData()
     /// <param name="ParentProcess">The known Process that the Part should belong to.</param>
     /// <returns>A Part object with data resolved from the JToken.</returns>
     /// <exception cref="FormatException"></exception>
-    private static Part ResolvePartFromToken(JToken Token, string ParentProcess) 
+    private Part ResolvePartFromToken(JToken Token, string ParentProcess) 
     {
         // hold variables for each Part object property
         string Number;
         string Name;
-        string Model;
+        ModelNumber Model;
         // attempt to pull the needed fields from the passed JToken
         try 
         {
             Number = Token["Number"]!.ToString();
             Name = Token["Name"]!.ToString();
-            Model = Token["Model"]!.ToString();
+            Model = new ModelNumber(Token["Model"]!.ToString());
         // one of the needed fields was not accessible
         } 
         catch 
@@ -89,56 +89,28 @@ public class ProcessData()
     /// <param name="Token">A JToken object containing Part data.</param>
     /// <returns>A Process object with data resolved from the JToken.</returns>
     /// <exception cref="FormatException"></exception>
-    private static Process ResolveProcessFromToken(JToken Token) 
+    private Process ResolveProcessFromToken(JToken Token) 
     {
         // hold variables for each Process object property
         int LineCode;
         string Line;
         string Title;
-        OriginationTypes Type;
-        SerializationModes Mode;
-        JToken Parts;
-        JToken Requirements;
-        PassThroughTypes PassThroughType;
+        OriginationType Type;
+        SerializationMode Mode;
+        JToken RawParts;
+        JToken RawRequirements;
+        PassThroughType PassThroughType;
         // attempt to access each field of Data from the Process Token
         try 
         {
             LineCode = int.Parse(Token["LineCode"]!.ToString());
             Line = Token["Line"]!.ToString();
             Title = Token["Title"]!.ToString();
-            string RawType = Token["Type"]!.ToString();
-            if (RawType.Equals("Originator"))
-            {
-                Type = OriginationTypes.Originator;
-            }
-            else
-            {
-                Type = OriginationTypes.PassThrough;
-            }
-            string RawMode = Token["Serialization"]!.ToString();
-            if (RawMode.Equals("JBK"))
-            {
-                Mode = SerializationModes.JBK;
-            }
-            else
-            {
-                Mode = SerializationModes.Lot;
-            }
-            Parts = Token["Parts"]!;
-            Requirements = Token["Requirements"]!;
-            string RawPassThroughType = Token["PassThroughHeadingType"]!.ToString();
-            if (RawPassThroughType.Equals("null"))
-            {
-                PassThroughType = PassThroughTypes.None;
-            }
-            else if (RawPassThroughType.Equals("JBK"))
-            {
-                PassThroughType = PassThroughTypes.JBK;
-            }
-            else
-            {
-                PassThroughType = PassThroughTypes.Lot;
-            }
+            Type = OriginationTypeExtensions.FromString(Token["Type"]!.ToString());
+            Mode = SerializationModeExtensions.FromString(Token["Serialization"]!.ToString());
+            RawParts = Token["Parts"]!;
+            RawRequirements = Token["Requirements"]!;
+            PassThroughType = PassThroughTypeExtensions.FromString(Token["PassThroughHeadingType"]!.ToString());
         // one of the needed fields was not accessible
         } 
         catch 
@@ -146,12 +118,12 @@ public class ProcessData()
             throw new FormatException($"Could not resolve '{Token}' to a Process object.");
         }
         // process and add each part to the parts list individually
-        List<Part> PartObjects = [];
+        List<Part> Parts = [];
         string ProcessName = $"{LineCode}-{Line}-{Title}";
         try 
         {
-            PartObjects = Parts
-                .Select(x => 
+            Parts = RawParts
+                .Select(x =>
                 ResolvePartFromToken(x, ProcessName))
                 .ToList();
         // one of the Tokens could not be resolved to a Part
@@ -161,51 +133,20 @@ public class ProcessData()
             throw new FormatException($"Could not resolve '{Token}' to a Process object, due to the following Part resolution failure: {_ex.Message}");
         }
         // create a RequiredFields object to parse the Process requirements into
-        RequiredFields RequiredFields = new RequiredFields(false, false, false, false, false, false);
-        // add variable (process-dependent) fields
-        foreach (JToken? _requirement in Requirements)
+        RequiredFields Requirements;
+        try
         {
-            string _requirementString = _requirement.ToString();
-            if (_requirementString is null)
-            {
-                continue;
-            }
-            if (_requirementString.Equals("JBKNumber"))
-            {
-                RequiredFields.JBKNumber = true;
-                continue;
-            }
-            if (_requirementString.Equals("LotNumber"))
-            {
-                RequiredFields.LotNumber = true;
-                continue;
-            }
-            if (_requirementString.Equals("DeburrJBKNumber"))
-            {
-                RequiredFields.DeburrJBKNumber = true;
-                continue;
-            }
-            if (_requirementString.Equals("DieNumber"))
-            {
-                RequiredFields.DieNumber = true;
-                continue;
-            }
-            if (_requirementString.Equals("ModelNumber"))
-            {
-                RequiredFields.ModelNumber = true;
-                continue;
-            }
-            if (_requirementString.Equals("HeatNumber"))
-            {
-                RequiredFields.HeatNumber = true;
-                continue;
-            }
+            Requirements = RequiredFields.ParseJSON(RawRequirements.ToString());
+        }
+        catch
+        {
+            throw new FormatException($"Could not resolve '{Token}' to a RequiredFields object.");
         }
         // attempt to construct the Process object from the resolved data
         Process ResolvedProcess;
         try 
         {
-            ResolvedProcess = new Process(LineCode, Line, Title, Type, Mode, PartObjects, RequiredFields, PassThroughType);
+            ResolvedProcess = new Process(LineCode, Line, Title, Type, Mode, Parts, Requirements, PassThroughType);
         } 
         catch 
         {

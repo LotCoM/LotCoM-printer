@@ -9,12 +9,12 @@ namespace LotCoMPrinter.Models.Datasources;
 /// <param name="Mode">The mode of Serialization this Serial Number uses.</param>
 /// <param name="Part">The Part this Serial Number was assigned to.</param>
 /// <param name="Value">The Value to attempt to apply to this Serial Number.</param>
-public class SerialNumber(SerializationModes Mode, Part Part, int Value)
+public class SerialNumber(SerializationMode Mode, Part Part, int Value)
 {
     /// <summary>
     /// The mode of Serialization that the Serial Number uses.
     /// </summary>
-    public SerializationModes Mode {get;} = Mode;
+    public SerializationMode Mode {get;} = Mode;
 
     /// <summary>
     /// The Part the Serial Number has been assigned to.
@@ -34,7 +34,7 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
     {
         // enforce leading zero-padding format
         string FormattedNumber = Value.ToString();
-        if (Mode == SerializationModes.JBK) 
+        if (Mode == SerializationMode.JBK) 
         {
             // enforce 3-length format
             while (FormattedNumber.Length < 3) 
@@ -83,27 +83,20 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
     /// <exception cref="ArgumentException"></exception>
     public static SerialNumber ParseJSON(string Line)
     {
-        SerializationModes Mode;
+        SerializationMode Mode;
         Part Part;
         int Value;
         // parse Line into JSON
         JObject JSON = JObject.Parse(Line);
-        JToken? RawMode = JSON["Mode"];
         JToken? RawPart = JSON["Part"];
         JToken? RawValue = JSON["Value"];
-        // confirm the Mode key has a valid value and convert it to a SerializationMode
-        if (RawMode is null)
+        try
         {
-            throw new JsonException($"No Serialization Mode found in cached Serial Number '{Line}'.");
+            Mode = SerializationModeExtensions.FromString(JSON["Mode"]!.ToString());
         }
-        if (RawMode.ToString().Equals("JBK"))
+        catch
         {
-            Mode = SerializationModes.JBK;
-        } else if (RawMode.ToString().Equals("Lot"))
-        {
-            Mode = SerializationModes.Lot;
-        } else {
-            throw new JsonException($"Invalid Serialization Mode '{RawMode}'");
+            throw new JsonException($"No SerializationMode found in cached Serial Number '{Line}'.");
         }
         // confirm the Part key has a valid value and convert it to a Part
         if (RawPart is null)
@@ -155,7 +148,7 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
     /// <exception cref="ArgumentException"></exception>
     public static async Task<SerialNumber> ParseJSONAsync(string Line)
     {
-        SerializationModes Mode;
+        SerializationMode Mode;
         Part Part;
         int Value;
         // parse Line into JSON
@@ -163,19 +156,13 @@ public class SerialNumber(SerializationModes Mode, Part Part, int Value)
         JToken? RawMode = JSON["Mode"];
         JToken? RawPart = JSON["Part"];
         JToken? RawValue = JSON["Value"];
-        // confirm the Mode key has a valid value and convert it to a SerializationMode
-        if (RawMode is null)
+        try
         {
-            throw new JsonException($"No Serialization Mode found in cached Serial Number '{Line}'.");
+            Mode = SerializationModeExtensions.FromString(JSON["Mode"]!.ToString());
         }
-        if (RawMode.ToString().Equals("JBK"))
+        catch
         {
-            Mode = SerializationModes.JBK;
-        } else if (RawMode.ToString().Equals("Lot"))
-        {
-            Mode = SerializationModes.Lot;
-        } else {
-            throw new JsonException($"Invalid Serialization Mode '{RawMode}'");
+            throw new JsonException($"No SerializationMode found in cached Serial Number '{Line}'.");
         }
         // confirm the Part key has a valid value and convert it to a Part
         if (RawPart is null)

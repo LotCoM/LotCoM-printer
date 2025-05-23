@@ -3,6 +3,7 @@
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:Views="clr-namespace:LotCoMPrinter.Views"
                xmlns:ViewModels="clr-namespace:LotCoMPrinter.ViewModels"
+               xmlns:Datasources="clr-namespace:LotCoMPrinter.Models.Datasources"
                x:DataType="ViewModels:NewPrintTicketFormViewModel"
                x:Class="LotCoMPrinter.Views.NewPrintTicketForm">
     
@@ -237,10 +238,10 @@
                             x:Name="ShiftPicker"
                             SelectedItem="{Binding ProductionShift}">
                             <Picker.ItemsSource>
-                                <x:Array Type ="{x:Type x:Int32}">
-                                    <x:Int32>1</x:Int32>
-                                    <x:Int32>2</x:Int32>
-                                    <x:Int32>3</x:Int32>
+                                <x:Array Type ="{x:Type Datasources:Shift}">
+                                    <Datasources:Shift>First</Datasources:Shift>
+                                    <Datasources:Shift>Second</Datasources:Shift>
+                                    <Datasources:Shift>Third</Datasources:Shift>
                                 </x:Array>
                             </Picker.ItemsSource>
                         </Picker>

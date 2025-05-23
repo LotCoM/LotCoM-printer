@@ -1,6 +1,6 @@
 namespace LotCoMPrinter.Models.Datasources;
 
-public enum PassThroughTypes
+public enum PassThroughType
 {
     JBK,
     Lot,

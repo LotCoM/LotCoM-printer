@@ -1,6 +1,6 @@
 namespace LotCoMPrinter.Models.Datasources;
 
-public enum OriginationTypes
+public enum OriginationType
 {
     Originator,
     PassThrough

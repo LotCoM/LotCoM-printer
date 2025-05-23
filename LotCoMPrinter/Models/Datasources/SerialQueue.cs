@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LotCoMPrinter.Models.Datasources;
 
-public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit) 
+public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit) 
 {
     /// <summary>
     /// The path to the file containing queues for Mode.
@@ -14,7 +14,7 @@ public class SerialQueue(string QueuePath, SerializationModes Mode, int Limit)
     /// <summary>
     /// The Serialization method for this queue.
     /// </summary>
-    private readonly SerializationModes Mode = Mode;
+    private readonly SerializationMode Mode = Mode;
 
     /// <summary>
     /// The last number allowed for use by this queue.

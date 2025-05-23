@@ -12,7 +12,7 @@ public static class Serializer
     {
         // retrieve a new SerialNumber for the Part
         SerialNumber Number;
-        if (Process.Serialization == SerializationModes.JBK) 
+        if (Process.Serialization == SerializationMode.JBK) 
         {
             Number = await new JBKQueue().ConsumeAsync(Part);
         } 

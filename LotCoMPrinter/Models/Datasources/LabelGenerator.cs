@@ -22,27 +22,27 @@ public static class LabelGenerator
             RequiredFields RequiredFields = Ticket.Process.RequiredFields;
             if (RequiredFields.JBKNumber)
             {
-                Data.Add(Ticket.VariableFields.JBKNumber.ToString()!);
+                Data.Add(Ticket.VariableFields.JBKNumber!.Formatted);
             }
             if (RequiredFields.LotNumber)
             {
-                Data.Add(Ticket.VariableFields.LotNumber!);
+                Data.Add(Ticket.VariableFields.LotNumber!.Formatted);
             }
             if (RequiredFields.DeburrJBKNumber)
             {
-                Data.Add(Ticket.VariableFields.DeburrJBKNumber.ToString()!);
+                Data.Add(Ticket.VariableFields.DeburrJBKNumber!.Formatted);
             }
             if (RequiredFields.DieNumber)
             {
-                Data.Add(Ticket.VariableFields.DieNumber.ToString()!);
-            }
-            if (RequiredFields.HeatNumber)
-            {
-                Data.Add(Ticket.VariableFields.HeatNumber!);
+                Data.Add(Ticket.VariableFields.DieNumber!.Literal.ToString());
             }
             if (RequiredFields.ModelNumber)
             {
-                Data.Add(Ticket.VariableFields.ModelNumber!);
+                Data.Add(Ticket.VariableFields.ModelNumber!.Code);
+            }
+            if (RequiredFields.HeatNumber)
+            {
+                Data.Add(Ticket.VariableFields.HeatNumber!.Literal.ToString());
             }
             // add the remaining required fields and use the data to create a QR code
             Data.AddRange([new Timestamp(Ticket.ProductionDate).Stamp, Ticket.GetCombinedShifts(), Ticket.GetCombinedOperators()]);
@@ -52,7 +52,7 @@ public static class LabelGenerator
             }
             catch
             {
-                throw new ArgumentException();
+                throw new ArgumentException("There was an error creating a QR Code for the new Label.");
             }
         });
     }
@@ -76,27 +76,27 @@ public static class LabelGenerator
             RequiredFields RequiredFields = Ticket.Process.RequiredFields;
             if (RequiredFields.JBKNumber)
             {
-                Body.Add($"JBK #: {Ticket.VariableFields.JBKNumber}");
+                Body.Add($"JBK #: {Ticket.VariableFields.JBKNumber!.Formatted}");
             }
             if (RequiredFields.LotNumber)
             {
-                Body.Add($"Lot #: {Ticket.VariableFields.LotNumber}");
+                Body.Add($"Lot #: {Ticket.VariableFields.LotNumber!.Formatted}");
             }
             if (RequiredFields.DeburrJBKNumber)
             {
-                Body.Add($"Deburr JBK #: {Ticket.VariableFields.DeburrJBKNumber}");
+                Body.Add($"Deburr JBK #: {Ticket.VariableFields.DeburrJBKNumber!.Formatted}");
             }
             if (RequiredFields.DieNumber)
             {
-                Body.Add($"Die #: {Ticket.VariableFields.DieNumber}");
-            }
-            if (RequiredFields.HeatNumber)
-            {
-                Body.Add($"Heat #: {Ticket.VariableFields.HeatNumber}");
+                Body.Add($"Die #: {Ticket.VariableFields.DieNumber!.Literal}");
             }
             if (RequiredFields.ModelNumber)
             {
-                Body.Add($"Model #: {Ticket.VariableFields.ModelNumber}");
+                Body.Add($"Model #: {Ticket.VariableFields.ModelNumber!.Code}");
+            }
+            if (RequiredFields.HeatNumber)
+            {
+                Body.Add($"Heat #: {Ticket.VariableFields.HeatNumber!.Literal}");
             }
             // add the remaining required fields and return the body text
             Body.Add($"Date: {new Timestamp(Ticket.ProductionDate).Stamp}");
