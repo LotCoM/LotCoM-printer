@@ -107,8 +107,8 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _productionOperator = value;
-            OnPropertyChanged(_productionOperator);
-            OnPropertyChanged(ProductionOperator);
+            OnPropertyChanged(nameof(_productionOperator));
+            OnPropertyChanged(nameof(ProductionOperator));
         }
     }
     
