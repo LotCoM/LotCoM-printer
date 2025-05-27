@@ -3,7 +3,6 @@ using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Options;
 using LotCoMPrinter.Models.Services;
 
 namespace LotCoMPrinter.ViewModels;

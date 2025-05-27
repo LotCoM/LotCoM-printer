@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Enums;
 
 namespace LotCoMPrinter.Models.Datatypes;
