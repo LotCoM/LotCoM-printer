@@ -107,18 +107,10 @@ public partial class MainPage : ContentPage
 	private async void OnPrintPartialProductionDataSetButtonClicked(object sender, EventArgs e)
 	{
 		// set the targeted PartialDataSet
-		int DataSet;
+		int DataSet = 2;
 		if (sender.Equals(PrintFirstPartialProductionDataSetButton))
 		{
 			DataSet = 1;
-		}
-		else if (sender.Equals(PrintSecondPartialProductionDataSetButton))
-		{
-			DataSet = 2;
-		}
-		else
-		{
-			throw new ArgumentException($"The sender '{sender}' is invalid.", nameof(sender));
 		}
 		// set a printed flag and attempt to print a Partial Data Set Tag
 		bool Printed = false;
