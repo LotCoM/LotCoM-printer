@@ -1,3 +1,5 @@
+using LotCoMPrinter.Models.Datatypes;
+using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

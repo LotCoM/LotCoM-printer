@@ -48,7 +48,7 @@ public partial class BasicPopup : Popup {
     /// <summary>
     /// Handler for the Clicked event from the ConfirmationButton.
     /// </summary>
-    /// <param name="Sender"></param>
+    /// <param name="sender"></param>
     /// <param name="e"></param>
     private void OnConfirmation(object sender, EventArgs e) {
         Close();

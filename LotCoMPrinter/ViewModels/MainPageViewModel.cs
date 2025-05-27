@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Options;
 
 namespace LotCoMPrinter.ViewModels;
 
