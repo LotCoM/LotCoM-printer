@@ -206,6 +206,7 @@
                         StrokeShape="RoundRectangle 10,10,10,10">
                         <DatePicker
                             x:Name="ProductionDatePicker"
+                            IsEnabled="False"
                             WidthRequest="120"
                             Date="{Binding ProductionDate}"/>
                     </Border>
