@@ -1,7 +1,10 @@
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Enums;
+using LotCoMPrinter.Models.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// Create a new Serial Number for Part using SerializationMode.

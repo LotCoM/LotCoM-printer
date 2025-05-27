@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// An objective version of a Department loaded from the Process Masterlist data source.

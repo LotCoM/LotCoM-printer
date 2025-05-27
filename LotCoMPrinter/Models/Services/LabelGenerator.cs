@@ -1,6 +1,9 @@
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
+using LotCoMPrinter.Models.Extensions;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Services;
 
 public static class LabelGenerator 
 {

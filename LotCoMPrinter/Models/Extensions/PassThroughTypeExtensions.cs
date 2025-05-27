@@ -1,4 +1,6 @@
-namespace LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Enums;
+
+namespace LotCoMPrinter.Models.Extensions;
 
 public static class PassThroughTypeExtensions
 {

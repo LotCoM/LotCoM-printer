@@ -1,3 +1,5 @@
+using LotCoMPrinter.Models.Enums;
+
 namespace LotCoMPrinter.Models.Datasources;
 
 public partial class LotQueue() : SerialQueue

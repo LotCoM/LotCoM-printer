@@ -3,10 +3,11 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Services;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// Base class for Physical Label types that can be printed by the LotCom Application.

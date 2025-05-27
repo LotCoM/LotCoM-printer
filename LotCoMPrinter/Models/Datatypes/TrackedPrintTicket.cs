@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 public partial class TrackedPrintTicket(PrintTicket Ticket) : ObservableObject()
 {

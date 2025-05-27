@@ -1,3 +1,4 @@
+using LotCoMPrinter.Models.Datatypes;
 using Newtonsoft.Json;
 
 namespace LotCoMPrinter.Models.Datasources;

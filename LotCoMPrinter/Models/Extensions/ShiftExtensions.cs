@@ -1,4 +1,6 @@
-namespace LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Enums;
+
+namespace LotCoMPrinter.Models.Extensions;
 
 /// <summary>
 /// Provides extension methods on the Shift enum.

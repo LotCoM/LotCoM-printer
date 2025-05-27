@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// A serial identifier for Basket Labels that follows a strictly incrementing nine-digit format, using leading zeroes.

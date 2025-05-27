@@ -1,6 +1,7 @@
 using LotCoMPrinter.Models.Exceptions;
+using LotCoMPrinter.Models.Services;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// Creates a Print Job that can generate a Bitmap image Label and spool a print job to the printing system.

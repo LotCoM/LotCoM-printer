@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Enums;
 
 public enum PassThroughType
 {

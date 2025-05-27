@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:Datasources="clr-namespace:LotCoMPrinter.Models.Datasources"
+             xmlns:Datatypes="clr-namespace:LotCoMPrinter.Models.Datatypes"
+             xmlns:Enums="clr-namespace:LotCoMPrinter.Models.Enums"
              xmlns:ViewModels="clr-namespace:LotCoMPrinter.ViewModels"
              x:DataType="ViewModels:MainPageViewModel"
              x:Class="LotCoMPrinter.Views.MainPage">
@@ -81,7 +82,7 @@
                 BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate
-                        x:DataType="Datasources:PrintTicket">
+                        x:DataType="Datatypes:PrintTicket">
                         <!-- Configurable ListView Grid Layout -->
                         <Grid>
                             <Grid.RowDefinitions>
@@ -556,10 +557,10 @@
                                     IsEnabled="False"
                                     SelectedItem="{Binding ActiveTicket.Untracked.ProductionShift}">
                                     <Picker.ItemsSource>
-                                        <x:Array Type="{x:Type Datasources:Shift}">
-                                            <Datasources:Shift>First</Datasources:Shift>
-                                            <Datasources:Shift>Second</Datasources:Shift>
-                                            <Datasources:Shift>Third</Datasources:Shift>
+                                        <x:Array Type="{x:Type Enums:Shift}">
+                                            <Enums:Shift>First</Enums:Shift>
+                                            <Enums:Shift>Second</Enums:Shift>
+                                            <Enums:Shift>Third</Enums:Shift>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>
@@ -864,10 +865,10 @@
                                     x:Name="FirstPartialDataSetShiftPicker"
                                     SelectedItem="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Shift.Value}">
                                     <Picker.ItemsSource>
-                                        <x:Array Type ="{x:Type Datasources:Shift}">
-                                            <Datasources:Shift>First</Datasources:Shift>
-                                            <Datasources:Shift>Second</Datasources:Shift>
-                                            <Datasources:Shift>Third</Datasources:Shift>
+                                        <x:Array Type="{x:Type Enums:Shift}">
+                                            <Enums:Shift>First</Enums:Shift>
+                                            <Enums:Shift>Second</Enums:Shift>
+                                            <Enums:Shift>Third</Enums:Shift>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>
@@ -1045,10 +1046,10 @@
                                     x:Name="SecondPartialDataSetShiftPicker"
                                     SelectedItem="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Shift.Value}">
                                     <Picker.ItemsSource>
-                                        <x:Array Type ="{x:Type Datasources:Shift}">
-                                            <Datasources:Shift>First</Datasources:Shift>
-                                            <Datasources:Shift>Second</Datasources:Shift>
-                                            <Datasources:Shift>Third</Datasources:Shift>
+                                        <x:Array Type="{x:Type Enums:Shift}">
+                                            <Enums:Shift>First</Enums:Shift>
+                                            <Enums:Shift>Second</Enums:Shift>
+                                            <Enums:Shift>Third</Enums:Shift>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>

@@ -170,8 +170,10 @@ public class LabelDimensions
     /// <param name="InternalPadding">Padding width/height applied between each item on the Label.</param>
     /// <param name="HeadingHorizontalAnchor">The horizontal position of the Label's Heading text.</param>
     /// <param name="HeadingVerticalAnchor">The vertical position of the Label's Heading text.</param>
-    /// <param name="PartNameHorizontalAnchor">The horizontal position of the Label's Part Name text.</param>
-    /// <param name="PartNameVerticalAnchor">The vertical position of the Label's Part Name text.</param>
+    /// <param name="SubHeadingHorizontalAnchor">The horizontal position of the Label's Sub-heading text.</param>
+    /// <param name="SubHeadingVerticalAnchor">The vertical position of the Label's Sub-heading text.</param>
+    /// <param name="BodyTitleHorizontalAnchor">The horizontal position of the Label's Body Title text.</param>
+    /// <param name="BodyTitleVerticalAnchor">The vertical position of the Label's Body Title text.</param>
     /// <param name="CodeHorizontalAnchor">The horizontal (left) position of the QR Code on the Label.</param>
     /// <param name="CodeVerticalAnchor">The vertical (top) position of the QR Code on the Label.</param>
     /// <param name="BodyHorizontalAnchor">The horizontal position of the Label's Data Fields text.</param>

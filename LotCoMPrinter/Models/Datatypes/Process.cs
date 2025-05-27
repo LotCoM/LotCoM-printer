@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Enums;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// An objective version of a Process loaded from the Process Masterlist data source.

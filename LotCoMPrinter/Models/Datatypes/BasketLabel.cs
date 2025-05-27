@@ -1,4 +1,6 @@
-namespace LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Datasources;
+
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// A Label class used to produce full Basket Labels for the LotCom system.

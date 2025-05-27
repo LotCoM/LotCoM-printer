@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Enums;
+using LotCoMPrinter.Models.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

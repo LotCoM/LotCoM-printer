@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// An identifying code for Part Models that follows a strict three- or four-character, alphanumerical, and uppercase format.

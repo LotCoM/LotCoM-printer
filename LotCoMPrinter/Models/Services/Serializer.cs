@@ -1,4 +1,8 @@
-namespace LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Datatypes;
+using LotCoMPrinter.Models.Enums;
+
+namespace LotCoMPrinter.Models.Services;
 
 public static class Serializer 
 {

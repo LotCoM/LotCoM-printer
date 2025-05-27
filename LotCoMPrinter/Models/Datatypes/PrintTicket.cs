@@ -1,11 +1,14 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Enums;
+using LotCoMPrinter.Models.Extensions;
 using LotCoMPrinter.Models.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 public partial class PrintTicket : ObservableObject
 {

@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// Formats a DateTime object as a string like MM/DD/YYYY-HH:MM:SS.

@@ -1,9 +1,9 @@
 using System.Drawing.Printing;
 using System.Drawing;
-using LotCoMPrinter.Models.Services;
+using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotCoMPrinter.Models.Services;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 
@@ -17,7 +17,7 @@ public static class PrintHandler
     /// </summary>
     /// <param name="Sender"></param>
     /// <param name="e"></param>
-    private static void LoadLabelImage(object Sender, PrintPageEventArgs e, Label label)
+    private static void LoadLabelImage(object Sender, PrintPageEventArgs e, Datatypes.Label label)
     {
         // draw the Label Image onto the PrintDocument Graphic
         Bitmap Resized = Resizer.ResizeImage(label.GetImage(), 350, 350);
@@ -28,7 +28,7 @@ public static class PrintHandler
     /// Prints the Label passed to the PrintHandler.
     /// </summary>
     /// <exception cref="PrintRequestException"></exception>
-    public static async Task<bool> PrintLabelAsync(Label Label)
+    public static async Task<bool> PrintLabelAsync(Datatypes.Label Label)
     {
         return await Task.Run(() =>
         {
