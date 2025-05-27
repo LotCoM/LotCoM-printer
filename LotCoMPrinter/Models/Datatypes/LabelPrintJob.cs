@@ -50,12 +50,13 @@ public class LabelPrintJob(PrintTicket Ticket)
     /// <exception cref="PrintRequestException"></exception>
     public async Task<bool> Run() 
     {
-        // generate a Label from the saved PrintTicket
-        try 
+        // set the final ProductionDate and generate a Label from the saved PrintTicket
+        Ticket.ProductionDate = DateTime.Now;
+        try
         {
             await GenerateLabelImage();
-        } 
-        catch (LabelBuildException _ex) 
+        }
+        catch (LabelBuildException _ex)
         {
             throw new LabelBuildException(_ex.Message);
         }
