@@ -1,11 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LotCoMPrinter.Models.Options;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// Provides a structure to capture Data related to a Partially-completed Basket.

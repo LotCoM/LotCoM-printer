@@ -1,8 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCoMPrinter.Models.Datatypes;
 using Newtonsoft.Json.Linq;
 
-namespace LotCoMPrinter.Models.Options;
+namespace LotCoMPrinter.Models.Datatypes;
 
 /// <summary>
 /// Provides structured control over the values of each of the data fields in the variable set.
