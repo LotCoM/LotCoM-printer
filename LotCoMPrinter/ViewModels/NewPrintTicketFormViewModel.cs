@@ -54,7 +54,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         }
     }
 
-    private DateTime _productionDate = DateTime.Today;
+    private DateTime _productionDate = DateTime.Now;
     /// <summary>
     /// The Date and Time at which this Form was initiated.
     /// </summary>    
@@ -202,7 +202,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         {
             throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
         }
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, ProductionDate, (Shift)ProductionShift, 0, ProductionOperator, new VariableFieldSet());
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, (Shift)ProductionShift, 0, ProductionOperator, new VariableFieldSet());
         // apply the SerialNumber to the appropriate field and return the new Ticket
         if (NewTicket.SerializationMode == SerializationMode.JBK)
         {
