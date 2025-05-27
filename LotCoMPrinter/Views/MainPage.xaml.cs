@@ -100,21 +100,101 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
-    /// Handler for the Clicked event from the OpenPrintTicketsCollapseButton control.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void OnOpenPrintTicketsCollapseButtonClicked(object sender, EventArgs e) 
-    {
-        if (ViewModel.IsOpenPrintTicketsPanelShown) 
-        {
+	/// Event Handler for the Clicked Event from the PrintFirst or PrintSecondPartialProductionDataSet Buttons.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnPrintPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	{
+		// set the targeted PartialDataSet
+		int DataSet;
+		if (sender.Equals(PrintFirstPartialProductionDataSetButton))
+		{
+			DataSet = 1;
+		}
+		else if (sender.Equals(PrintSecondPartialProductionDataSetButton))
+		{
+			DataSet = 2;
+		}
+		else
+		{
+			throw new ArgumentException($"The sender '{sender}' is invalid.", nameof(sender));
+		}
+		// set a printed flag and attempt to print a Partial Data Set Tag
+		bool Printed = false;
+		try
+		{
+			Printed = await ViewModel.PrintPartialTag(DataSet);
+		}
+		// catch and handle validation messages
+		catch (ArgumentException _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Invalid Production Data",
+					$"{_ex.Message}\n\nResolve this issue and try again."
+				)
+			);
+		}
+		// catch and handle print spooling messages
+		catch (PrintRequestException _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Print Failed",
+					$"The Print request could not be completed." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+		}
+		// catch other, unexpected issues
+		catch (Exception _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Print Failed",
+					$"We encountered an unexpected error." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+		}
+		if (Printed)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Partial Tag Printed",
+					$"Partial Tag printing was successful. Retrieve your new Tag from the Printer!"
+				)
+			);
+		}
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the OpenPrintTicketsCollapseButton control.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnOpenPrintTicketsCollapseButtonClicked(object sender, EventArgs e)
+	{
+		if (ViewModel.IsOpenPrintTicketsPanelShown)
+		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
-        } 
-        else 
-        {
+		}
+		else
+		{
 			await AnimatedRaiseOpenPrintTicketsPanel();
-        }
-    }
+		}
+	}
 
 	/// <summary>
     /// Handler for the Clicked event from the OnStartNewLabelButton control.
