@@ -935,6 +935,8 @@
                         <Button
                             Grid.Row="3"
                             Grid.Column="0"
+                            x:Name="PrintFirstPartialProductionDataSetButton"
+                            Clicked="OnPrintFirstPartialProductionDataSetButtonClicked"
                             Text="Print Label"
                             Margin="20"
                             WidthRequest="100"
@@ -1116,6 +1118,8 @@
                         <Button
                             Grid.Row="3"
                             Grid.Column="0"
+                            x:Name="PrintSecondPartialProductionDataSetButton"
+                            Clicked="OnPrintSecondPartialProductionDataSetButtonClicked"
                             Text="Print Label"
                             Margin="20"
                             WidthRequest="100"
