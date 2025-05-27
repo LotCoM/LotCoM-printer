@@ -169,7 +169,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         {
             _allProcesses = value;
             OnPropertyChanged(nameof(_allProcesses));
-            OnPropertyChanged(nameof(_allProcesses));
+            OnPropertyChanged(nameof(AllProcesses));
         }
     }
 
