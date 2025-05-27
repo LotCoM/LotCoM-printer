@@ -5,12 +5,12 @@ namespace LotCoMPrinter.Models.Datatypes;
 /// <summary>
 /// A Label class used to track in-progress or partial Production data.
 /// </summary>
-public partial class PartialDataSetLabel : Label
+public partial class PartialTag : Label
 {   
     /// <summary>
     /// Creates a new Image of a Partial Production Data Set Label that can be sent to Print Spooling.
     /// </summary>
-    public PartialDataSetLabel() : base
+    public PartialTag() : base
     (
         new LabelDimensions
         (
