@@ -32,12 +32,16 @@ public partial class OperatorInitials : ObservableObject
     /// <exception cref="ArgumentException"></exception>
     public OperatorInitials(string Value)
     {
-        // ensure that the Value is in valid format and cast the initials to uppercase
-        if (!IsValidValue(Value))
-        {
-            throw new ArgumentException($"Cannot instantiate an OperatorInitials object with initials '{Initials}'.", nameof(Value));
-        }
         Initials = Value.ToUpper();
+    }
+
+    /// <summary>
+    /// Confirms that the OperatorInitials object contains a valid 2-3 length string of alphabetical characters.
+    /// </summary>
+    /// <returns></returns>
+    public bool ConfirmProperInitials()
+    {
+        return IsValidValue(Initials);
     }
 
     // COMPILED REGEX PATTERNS
