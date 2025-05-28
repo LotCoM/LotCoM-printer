@@ -18,18 +18,18 @@ public partial class PartialTag : Label
             CodeDimension: LabelDimensions.CodeSizes.Default,
             TextSizeSmall: LabelDimensions.TextSizes.Tiny,
             TextSizeMedium: LabelDimensions.TextSizes.Small,
-            TextSizeLarge: LabelDimensions.TextSizes.Medium,
+            TextSizeLarge: LabelDimensions.TextSizes.Large,
             InternalPadding: LabelDimensions.PaddingLevels.Thin,
             HeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
             HeadingVerticalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
-            SubHeadingHorizontalAnchor: LabelDimensions.PaddingLevels.Thin - 56,
-            SubHeadingVerticalAnchor: LabelDimensions.PaddingLevels.Thin + LabelDimensions.TextSizes.Large,
-            BodyTitleHorizontalAnchor: LabelDimensions.PaddingLevels.Thin,
-            BodyTitleVerticalAnchor: LabelDimensions.PaddingLevels.Thin - 56 + (LabelDimensions.TextSizes.Medium * 2) + LabelDimensions.PaddingLevels.Thin,
+            SubHeadingHorizontalAnchor: 0, // no sub-heading
+            SubHeadingVerticalAnchor: 0, // no sub-heading
+            BodyTitleHorizontalAnchor: LabelDimensions.PaddingLevels.Thin * 2,
+            BodyTitleVerticalAnchor: (LabelDimensions.PaddingLevels.Thin * 8) + LabelDimensions.TextSizes.Large,
             CodeHorizontalAnchor: 0, // no QR Codes
             CodeVerticalAnchor: 0, // no QR Codes
             BodyHorizontalAnchor: LabelDimensions.PaddingLevels.Thin * 2,
-            BodyVerticalAnchor: LabelDimensions.TextSizes.Medium + LabelDimensions.TextSizes.Small + (LabelDimensions.PaddingLevels.Thin * 4)
+            BodyVerticalAnchor: (LabelDimensions.PaddingLevels.Thin * 16) + LabelDimensions.TextSizes.Large + LabelDimensions.TextSizes.Small
         )
     )
     {
