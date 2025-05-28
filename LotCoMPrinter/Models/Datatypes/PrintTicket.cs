@@ -281,26 +281,26 @@ public partial class PrintTicket : ObservableObject
                 $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
                 $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
                 $"\"ProductionShift\":\"{ShiftExtensions.ToString(ProductionShift)}\"," +
-                $"\"ProductionQuantity\":\"{ProductionQuantity}\"," +
-                $"\"ProductionOperator\":\"{ProductionOperator}\"," +
+                $"\"ProductionQuantity\":\"{ProductionQuantity.Value}\"," +
+                $"\"ProductionOperator\":\"{ProductionOperator.Initials}\"," +
                 $"\"VariableFieldSet\":{VariableFields.ToJSON()}";
         // add partial data sets only if assigned
         if (HasFirstPartialDataSet)
         {
             JSON +=
                 ",\"FirstPartialDataSet\":{" +
-                    $"\"Quantity\":\"{FirstPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString((Shift)FirstPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{FirstPartialDataSet!.Operator}\"" +
+                    $"\"Quantity\":\"{FirstPartialDataSet!.Quantity.Value}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(FirstPartialDataSet.Shift!)}\"," +
+                    $"\"Operator\":\"{FirstPartialDataSet!.Operator.Initials}\"" +
                 "}";
         }
         if (HasSecondPartialDataSet)
         {
             JSON +=
                 ",\"SecondPartialDataSet\":{" +
-                    $"\"Quantity\":\"{SecondPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString((Shift)SecondPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{SecondPartialDataSet!.Operator}\"" +
+                    $"\"Quantity\":\"{SecondPartialDataSet!.Quantity.Value}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondPartialDataSet.Shift!)}\"," +
+                    $"\"Operator\":\"{SecondPartialDataSet!.Operator.Initials}\"" +
                 "}";
         }
         // close the JSON stream
