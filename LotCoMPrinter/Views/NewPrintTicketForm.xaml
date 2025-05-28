@@ -272,7 +272,8 @@
                         StrokeShape="RoundRectangle 10,10,10,10">
                         <Entry
                             x:Name="OperatorEntry"
-                            Text="{Binding ProductionOperator}"
+                            Text="{Binding ProductionOperator.Initials}"
+                            TextChanged="OnOperatorEntryTextChanged"
                             MaxLength="3"/>
                     </Border>
                 </HorizontalStackLayout>
