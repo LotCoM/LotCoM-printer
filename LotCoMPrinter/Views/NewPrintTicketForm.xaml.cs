@@ -120,7 +120,7 @@ public partial class NewPrintTicketForm : Popup
 		{
 			try
 			{
-				ViewModel.ProductionOperator = new OperatorInitials(e.NewTextValue);
+				ViewModel.ProductionOperator = new Operator(e.NewTextValue);
 				OperatorControl.Stroke = Grey500;
 			}
 			catch

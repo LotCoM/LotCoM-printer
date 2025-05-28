@@ -113,11 +113,11 @@ public partial class PrintTicket : ObservableObject
         }
     }
 
-    private OperatorInitials _productionOperator;
+    private Operator _productionOperator;
     /// <summary>
     /// The Operator that this Print Ticket was initiated by.
     /// </summary>
-    public OperatorInitials ProductionOperator
+    public Operator ProductionOperator
     {
         get { return _productionOperator; }
         set
@@ -239,7 +239,7 @@ public partial class PrintTicket : ObservableObject
     /// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
     /// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
     /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
-    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, Quantity TicketProductionQuantity, OperatorInitials TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
+    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, Quantity TicketProductionQuantity, Operator TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
     {
         _process = TicketProcess;
         _part = TicketPart;
@@ -361,7 +361,7 @@ public partial class PrintTicket : ObservableObject
         DateTime ParsedDate;
         Shift ParsedShift;
         Quantity ParsedQuantity;
-        OperatorInitials ParsedOperator;
+        Operator ParsedOperator;
         try
         {
             ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
@@ -388,7 +388,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedOperator = new OperatorInitials(JSON["ProductionOperator"]!.ToString());
+            ParsedOperator = new Operator(JSON["ProductionOperator"]!.ToString());
         }
         catch
         {
@@ -496,7 +496,7 @@ public partial class PrintTicket : ObservableObject
         DateTime ParsedDate;
         Shift ParsedShift;
         Quantity ParsedQuantity;
-        OperatorInitials ParsedOperator;
+        Operator ParsedOperator;
         try
         {
             ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
@@ -523,7 +523,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedOperator = new OperatorInitials(JSON["ProductionOperator"]!.ToString());
+            ParsedOperator = new Operator(JSON["ProductionOperator"]!.ToString());
         }
         catch
         {

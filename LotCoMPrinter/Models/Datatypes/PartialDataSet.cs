@@ -12,7 +12,7 @@ namespace LotCoMPrinter.Models.Datatypes;
 /// <param name="Quantity">The number of Parts produced during the Shift captured by the PartialDataSet.</param>
 /// <param name="Shift">The Shift Number captured by the PartialDataSet.</param>
 /// <param name="Operator">The Operator who created the PartialDataSet.</param>
-public partial class PartialDataSet(Quantity Quantity, Shift Shift, OperatorInitials Operator) : ObservableObject()
+public partial class PartialDataSet(Quantity Quantity, Shift Shift, Operator Operator) : ObservableObject()
 {
     /// <summary>
     /// The number of Parts produced during the Shift captured by the PartialDataSet.
@@ -30,7 +30,7 @@ public partial class PartialDataSet(Quantity Quantity, Shift Shift, OperatorInit
     /// The Operator who created the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial OperatorInitials Operator { get; set; } = Operator;
+    public partial Operator Operator { get; set; } = Operator;
 
     /// <summary>
     /// Attempts to parse and construct a PartialDataSet object from a JSON stream.
@@ -43,7 +43,7 @@ public partial class PartialDataSet(Quantity Quantity, Shift Shift, OperatorInit
         // attempt to parse a Quantity, Shift Number, and Operator from the passed JSON stream
         Quantity Quantity;
         Shift Shift;
-        OperatorInitials Operator;
+        Operator Operator;
         try
         {
             Quantity = new Quantity(int.Parse(JSON["Quantity"]!.ToString()));
@@ -62,7 +62,7 @@ public partial class PartialDataSet(Quantity Quantity, Shift Shift, OperatorInit
         }
         try
         {
-            Operator = new OperatorInitials(JSON["Operator"]!.ToString());
+            Operator = new Operator(JSON["Operator"]!.ToString());
         }
         catch
         {

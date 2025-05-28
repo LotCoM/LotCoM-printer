@@ -99,11 +99,11 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         }
     }
 
-    private OperatorInitials _productionOperator = new OperatorInitials("");
+    private Operator _productionOperator = new Operator("");
     /// <summary>
     /// The Operator by which this Form was initiated.
     /// </summary>
-    public OperatorInitials ProductionOperator
+    public Operator ProductionOperator
     {
         get {return _productionOperator;}
         set 

@@ -341,7 +341,7 @@ public partial class MainPageViewModel : ObservableObject
                 (
                     new Quantity(0),
                     Shift.None,
-                    new OperatorInitials("ABC")
+                    new Operator("ABC")
                 )
             );
         }

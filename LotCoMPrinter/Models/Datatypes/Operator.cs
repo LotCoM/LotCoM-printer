@@ -6,7 +6,7 @@ namespace LotCoMPrinter.Models.Datatypes;
 public partial class Operator : ObservableObject
 {
     /// <summary>
-    /// The 2-3 character string assigned to this OperatorInitials object.
+    /// The 2-3 character string assigned to this Operator object.
     /// </summary>
     [ObservableProperty]
     public partial string Initials { get; set; }
@@ -28,7 +28,7 @@ public partial class Operator : ObservableObject
     /// <summary>
     /// Creates a new Operator object to verify ownership of an item.
     /// </summary>
-    /// <param name="Value">The string to use as the Initials of the OperatorInitials object.</param>
+    /// <param name="Value">The string to use as the Initials of the Operator object.</param>
     /// <exception cref="ArgumentException"></exception>
     public Operator(string Value)
     {
@@ -36,7 +36,7 @@ public partial class Operator : ObservableObject
     }
 
     /// <summary>
-    /// Confirms that the OperatorInitials object contains a valid 2-3 length string of alphabetical characters.
+    /// Confirms that the Operator object contains a valid 2-3 length string of alphabetical characters.
     /// </summary>
     /// <returns></returns>
     public bool ConfirmProperInitials()

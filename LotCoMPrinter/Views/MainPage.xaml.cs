@@ -609,7 +609,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				Ticket.ProductionOperator = new OperatorInitials(e.NewTextValue);
+				Ticket.ProductionOperator = new Operator(e.NewTextValue);
 				OperatorControl.Stroke = Grey500;
 			}
 			catch
@@ -622,7 +622,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				Ticket.FirstPartialDataSet!.Operator = new OperatorInitials(e.NewTextValue);
+				Ticket.FirstPartialDataSet!.Operator = new Operator(e.NewTextValue);
 				FirstPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch
@@ -635,7 +635,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				Ticket.SecondPartialDataSet!.Operator = new OperatorInitials(e.NewTextValue);
+				Ticket.SecondPartialDataSet!.Operator = new Operator(e.NewTextValue);
 				SecondPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch
