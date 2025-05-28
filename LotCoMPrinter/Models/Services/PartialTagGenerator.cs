@@ -1,5 +1,6 @@
 using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
+using LotCoMPrinter.Models.Extensions;
 
 namespace LotCoMPrinter.Models.Services;
 
@@ -18,7 +19,7 @@ public static class PartialTagGenerator
             // create a List of PartialDataSet fields to use as Body text and add fields
             List<string> Body = [];
             Body.Add($"Part: {Part.PartNumber}");
-            Body.Add($"Shift: {Set.Shift!.Value}");
+            Body.Add($"Shift: {ShiftExtensions.ToString(Set.Shift!)}");
             Body.Add($"Quantity: {Set.Quantity}");
             Body.Add($"Operator: {Set.Operator}");
             return Body;
