@@ -73,7 +73,7 @@ public static class LabelGenerator
             List<string> Body = [];
             Body.Add($"Process: {Ticket.Process.FullName}");
             Body.Add($"Part: {Ticket.Part.PartNumber}");
-            Body.Add($"Quantity: {Ticket.GetTotalQuantity()}");
+            Body.Add($"Quantity: {Ticket.GetTotalQuantity().Value}");
             // retrieve the Process Requirements and add Variable Fields where required
             RequiredFields RequiredFields = Ticket.Process.RequiredFields;
             if (RequiredFields.JBKNumber)

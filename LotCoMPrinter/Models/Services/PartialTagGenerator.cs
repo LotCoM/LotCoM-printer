@@ -20,8 +20,8 @@ public static class PartialTagGenerator
             List<string> Body = [];
             Body.Add($"Part: {Part.PartNumber}");
             Body.Add($"Shift: {ShiftExtensions.ToString(Set.Shift!)}");
-            Body.Add($"Quantity: {Set.Quantity}");
-            Body.Add($"Operator: {Set.Operator}");
+            Body.Add($"Quantity: {Set.Quantity.Value}");
+            Body.Add($"Operator: {Set.Operator.Initials}");
             return Body;
         });
     }
