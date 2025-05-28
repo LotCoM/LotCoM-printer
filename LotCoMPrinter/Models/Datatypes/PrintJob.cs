@@ -114,7 +114,7 @@ public class PrintJob
             throw new PrintRequestException(_ex.Message);
         }
         // log successful print jobs
-        if (Printed)
+        if (Printed && Type == PrintJobType.Full)
         {
             try
             {
