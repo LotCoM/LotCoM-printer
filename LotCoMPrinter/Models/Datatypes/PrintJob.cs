@@ -43,7 +43,7 @@ public class PrintJob
             }
             else if (Type == PrintJobType.Partial)
             {
-                Label = await PartialTagGenerator.GenerateTagAsync(Source);
+                Label = await PartialTagGenerator.GenerateTagAsync(Source, PartialSetNumber);
             }
         }
         catch (LabelBuildException _ex)
