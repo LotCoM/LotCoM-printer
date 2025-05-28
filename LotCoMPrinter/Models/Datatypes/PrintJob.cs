@@ -9,23 +9,23 @@ public class PrintJob
     /// <summary>
     /// Contains the type 
     /// </summary>
-    private readonly PrintJobType Type; 
+    public readonly PrintJobType Type; 
 
     /// <summary>
     /// The object to use as the source of Data for this Print Job.
     /// </summary>
-    private object Source;
+    public object Source { get; private set; }
     
     /// <summary>
     /// The Part object to use as the source of Data for this Print Job.
     /// Only used for PartialDataSet PartialTags.
     /// </summary>
-    private readonly Part? Part;
+    public Part? Part { get; private set; }
 
     /// <summary>
     /// A generated Label object.
     /// </summary>
-    private Label? Label = null;
+    public Label? Label { get; private set; } = null;
 
     /// <summary>
     /// Creates a Label object from the Job's saved Source object. 
