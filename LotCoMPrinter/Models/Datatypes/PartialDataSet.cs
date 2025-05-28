@@ -12,25 +12,25 @@ namespace LotCoMPrinter.Models.Datatypes;
 /// <param name="Quantity">The number of Parts produced during the Shift captured by the PartialDataSet.</param>
 /// <param name="Shift">The Shift Number captured by the PartialDataSet.</param>
 /// <param name="Operator">The Operator who created the PartialDataSet.</param>
-public partial class PartialDataSet(Quantity? Quantity = null, Shift? Shift = null, OperatorInitials? Operator = null) : ObservableObject()
+public partial class PartialDataSet(Quantity Quantity, Shift Shift, OperatorInitials Operator) : ObservableObject()
 {
     /// <summary>
     /// The number of Parts produced during the Shift captured by the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial Quantity? Quantity { get; set; } = Quantity;
+    public partial Quantity Quantity { get; set; } = Quantity;
 
     /// <summary>
     /// The Shift Number captured by the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial Shift? Shift { get; set; } = Shift;
+    public partial Shift Shift { get; set; } = Shift;
 
     /// <summary>
     /// The Operator who created the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial OperatorInitials? Operator { get; set; } = Operator;
+    public partial OperatorInitials Operator { get; set; } = Operator;
 
     /// <summary>
     /// Attempts to parse and construct a PartialDataSet object from a JSON stream.
@@ -69,5 +69,18 @@ public partial class PartialDataSet(Quantity? Quantity = null, Shift? Shift = nu
             throw new JsonException($"Could not parse a Quantity value from {JSON["FirstPartialDataSet"]!["Operator"]!}.");
         }
         return new PartialDataSet(Quantity, Shift, Operator);
+    }
+
+    /// <summary>
+    /// Validates that the DataSet's Quantity is greater than 0.
+    /// </summary>
+    /// <exception cref="ArgumentException"></exception>
+    public void SelfValidate()
+    {
+        // validate quantity, operator
+        if (!Quantity.ConfirmPositiveCount())
+        {
+            throw new ArgumentException("Please enter a valid Production Quantity before printing a Label.");
+        }
     }
 }
