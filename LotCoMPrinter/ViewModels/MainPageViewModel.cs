@@ -395,15 +395,7 @@ public partial class MainPageViewModel : ObservableObject
             throw new ArgumentException(_argEx.Message);
         }
         // create a new PrintJob from the PartialDataSet and attempt to run it
-        PrintJob Job;
-        if (PartialSetNumber == 1)
-        {
-            Job = new PrintJob(ActiveTicket.Tracked.FirstPartialDataSet!, ActiveTicket.Tracked.Part);
-        }
-        else
-        {
-            Job = new PrintJob(ActiveTicket.Tracked.SecondPartialDataSet!, ActiveTicket.Tracked.Part);
-        }
+        PrintJob Job = new PrintJob(ActiveTicket.Tracked, PartialSetNumber);
         bool Printed;
         try
         {
