@@ -522,6 +522,129 @@ public partial class MainPage : ContentPage
 		}
 	}
 
+	/// <summary>
+	/// Handler for the TextChanged event from any of the Quantity Entry controls.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnQuantityEntryTextChanged(object sender, TextChangedEventArgs e)
+	{
+		if
+		(
+			ViewModel.ActiveTicket is null
+			|| e.NewTextValue is null
+			|| e.NewTextValue.Equals("")
+		)
+		{
+			return;
+		}
+		// Main Quantity was updated
+		if (sender.Equals(QuantityEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.ProductionQuantity = new Quantity(int.Parse(e.NewTextValue));
+				QuantityControl.Stroke = Grey500;
+			}
+			catch
+			{
+				QuantityControl.Stroke = Colors.Red;
+			}
+		}
+		// First Partial Quantity was updated
+		else if
+		(
+			sender.Equals(FirstPartialDataSetQuantityEntry)
+			&& ViewModel.ActiveTicket.Tracked.HasFirstPartialDataSet
+		)
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.FirstPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				FirstPartialDataSetQuantityControl.Stroke = Grey500;
+			}
+			catch
+			{
+				FirstPartialDataSetQuantityControl.Stroke = Colors.Red;
+			}
+		}
+		// Second Partial Quantity was updated
+		else if
+		(
+			sender.Equals(SecondPartialDataSetQuantityEntry)
+			&& ViewModel.ActiveTicket.Tracked.HasSecondPartialDataSet
+		)
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.SecondPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				SecondPartialDataSetQuantityControl.Stroke = Grey500;
+			}
+			catch
+			{
+				SecondPartialDataSetQuantityControl.Stroke = Colors.Red;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for the TextChanged event from any of the Operator Initials Entry controls.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnOperatorEntryTextChanged(object sender, TextChangedEventArgs e)
+	{
+		if
+		(
+			ViewModel.ActiveTicket is null
+			|| e.NewTextValue is null
+			|| e.NewTextValue.Equals("")
+		)
+		{
+			return;
+		}
+		PrintTicket Ticket = ViewModel.ActiveTicket.Tracked;
+		// Main Operator was updated
+		if (sender.Equals(OperatorEntry))
+		{
+			try
+			{
+				Ticket.ProductionOperator = new OperatorInitials(e.NewTextValue);
+				OperatorControl.Stroke = Grey500;
+			}
+			catch
+			{
+				OperatorControl.Stroke = Colors.Red;
+			}
+		}
+		// First Partial Operator was updated
+		else if (sender.Equals(FirstPartialDataSetOperatorEntry) && Ticket.HasFirstPartialDataSet)
+		{
+			try
+			{
+				Ticket.FirstPartialDataSet!.Operator = new OperatorInitials(e.NewTextValue);
+				FirstPartialDataSetOperatorControl.Stroke = Grey500;
+			}
+			catch
+			{
+				FirstPartialDataSetOperatorControl.Stroke = Colors.Red;
+			}
+		}
+		// Second Partial Operator was updated
+		else if (sender.Equals(SecondPartialDataSetOperatorEntry) && Ticket.HasSecondPartialDataSet)
+		{
+			try
+			{
+				Ticket.SecondPartialDataSet!.Operator = new OperatorInitials(e.NewTextValue);
+				SecondPartialDataSetOperatorControl.Stroke = Grey500;
+			}
+			catch
+			{
+				SecondPartialDataSetOperatorControl.Stroke = Colors.Red;
+			}
+		}
+    }
+
 	// full constructor
 	public MainPage()
 	{
