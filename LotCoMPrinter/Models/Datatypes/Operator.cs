@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LotCoMPrinter.Models.Datatypes;
 
-public partial class OperatorInitials : ObservableObject
+public partial class Operator : ObservableObject
 {
     /// <summary>
     /// The 2-3 character string assigned to this OperatorInitials object.
@@ -26,11 +26,11 @@ public partial class OperatorInitials : ObservableObject
     }
 
     /// <summary>
-    /// Creates a new OperatorInitials object to verify ownership of an item.
+    /// Creates a new Operator object to verify ownership of an item.
     /// </summary>
     /// <param name="Value">The string to use as the Initials of the OperatorInitials object.</param>
     /// <exception cref="ArgumentException"></exception>
-    public OperatorInitials(string Value)
+    public Operator(string Value)
     {
         Initials = Value.ToUpper();
     }
