@@ -272,8 +272,8 @@ public partial class MainPageViewModel : ObservableObject
         {
             throw new ArgumentException(_ex.Message);
         }
-        LabelPrintJob Job = new LabelPrintJob(ActiveTicket.Tracked);
-        bool Printed = false;
+        PrintJob Job = new PrintJob(Ticket: ActiveTicket.Tracked);
+        bool Printed;
         // attempt to run the Print Job
         try
         {
