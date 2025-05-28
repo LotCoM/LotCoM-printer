@@ -22,6 +22,7 @@ public partial class Quantity : ObservableObject
         {
             throw new ArgumentException("Cannot instantiate a Quantity that represents less than 0 items.", nameof(Value));
         }
+        this.Value = Value;
     }
 
     /// <summary>
