@@ -651,6 +651,10 @@ public partial class PrintTicket : ObservableObject
         {
             throw new ArgumentException("Please enter a valid Production Quantity before printing a Label.");
         }
+        if (!ProductionOperator.ConfirmProperInitials())
+        {
+            throw new ArgumentException("Please enter valid Operator Initials before printing a Label.");
+        }
         // validate the variable fields
         if (Process.RequiredFields.JBKNumber && VariableFields.JBKNumber is null)
         {

@@ -82,5 +82,9 @@ public partial class PartialDataSet(Quantity Quantity, Shift Shift, OperatorInit
         {
             throw new ArgumentException("Please enter a valid Production Quantity before printing a Label.");
         }
+        if (!Operator.ConfirmProperInitials())
+        {
+            throw new ArgumentException("Please enter valid Operator Initials before printing a Label.");
+        }
     }
 }
