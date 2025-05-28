@@ -7,20 +7,19 @@ namespace LotCoMPrinter.Models.Datatypes;
 public class PrintJob
 {
     /// <summary>
+    /// The PartialDataSet Number of Source to use for PartialTag Label PrintJobs.
+    /// </summary>
+    private int PartialSetNumber;
+
+    /// <summary>
     /// Contains the type 
     /// </summary>
     public readonly PrintJobType Type; 
 
     /// <summary>
-    /// The object to use as the source of Data for this Print Job.
+    /// The PrintTicket to use as the source of Data for this Print Job.
     /// </summary>
-    public object Source { get; private set; }
-    
-    /// <summary>
-    /// The Part object to use as the source of Data for this Print Job.
-    /// Only used for PartialDataSet PartialTags.
-    /// </summary>
-    public Part? Part { get; private set; }
+    public PrintTicket Source { get; private set; }
 
     /// <summary>
     /// A generated Label object.
@@ -33,18 +32,18 @@ public class PrintJob
     /// </summary>
     /// <returns></returns>
     /// <exception cref="LabelBuildException">Thrown if the LabelGenerator failed to create a Label.</exception>
-    private async Task GenerateLabelImage()
+    private async Task GenerateLabel()
     {
         // generate a new Label image and store it in the Label property
         try
         {
             if (Type == PrintJobType.Full)
             {
-                Label = await LabelGenerator.GenerateLabelAsync((PrintTicket)Source);
+                Label = await LabelGenerator.GenerateLabelAsync(Source);
             }
             else if (Type == PrintJobType.Partial)
             {
-                Label = await PartialTagGenerator.GenerateTagAsync((PartialDataSet)Source, Part!);
+                Label = await PartialTagGenerator.GenerateTagAsync(Source);
             }
         }
         catch (LabelBuildException _ex)
@@ -61,19 +60,18 @@ public class PrintJob
     {
         Type = PrintJobType.Full;
         Source = Ticket;
-        Part = null;
     }
 
     /// <summary>
     /// Creates a Print Job that can generate a PartialTag Label and spool a print job to the printing system.
     /// </summary>
-    /// <param name="Set">A PartialDataSet object to use as the source of data for this Job.</param>
-    /// <param name="Part">A Part object to use as a secondary source of data for this Job.</param>
-    public PrintJob(PartialDataSet Set, Part Part)
+    /// <param name="Source">A PrintTicket object to use as the source of data for this Job.</param>
+    /// <param name="PartialSetNumber">The PartialDataSet Number to use for a PartialTag PrintJob (1 or 2).</param>
+    public PrintJob(PrintTicket Ticket, int PartialSetNumber)
     {
         Type = PrintJobType.Partial;
-        Source = Set;
-        this.Part = Part;
+        Source = Ticket;
+        this.PartialSetNumber = PartialSetNumber;
     }
 
     /// <summary>
@@ -89,20 +87,14 @@ public class PrintJob
     public async Task<bool> Run()
     {
         // set the final ProductionDate and generate a Label from the saved Source
-        if (Type == PrintJobType.Full)
-        {
-            PrintTicket TypedSource = (PrintTicket)Source;
-            TypedSource.ProductionDate = DateTime.Now;
-            Source = TypedSource;
-        }
         try
-            {
-                await GenerateLabelImage();
-            }
-            catch (LabelBuildException _ex)
-            {
-                throw new LabelBuildException(_ex.Message);
-            }
+        {
+            await GenerateLabel();
+        }
+        catch (LabelBuildException _ex)
+        {
+            throw new LabelBuildException(_ex.Message);
+        }
         // create a PrintHandler object for the new Label and attempt to print it
         bool Printed = false;
         try
