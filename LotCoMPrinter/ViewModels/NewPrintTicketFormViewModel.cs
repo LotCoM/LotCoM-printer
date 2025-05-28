@@ -194,6 +194,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
             Process is null
             || Part is null
             || ProductionShift == Shift.None
+            || !ProductionOperator.ConfirmProperInitials()
         )
         {
             throw new ArgumentException("Cannot create a PrintTicket without a full Form.");
