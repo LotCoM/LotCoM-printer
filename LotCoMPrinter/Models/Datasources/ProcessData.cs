@@ -18,13 +18,7 @@ public class ProcessData()
     /// </summary>
     private List<Process>? CachedProcesses;
 
-    /// <summary>
-    /// Contains the List of Departments produced by the last LoadData/LoadDataAsync call. 
-    /// </summary>
-    private List<Department>? CachedDepartments;
-
     private bool AreProcessesLoaded => (CachedProcesses is not null) && (CachedProcesses.Count > 0);
-    private bool AreDepartmentsLoaded => (CachedDepartments is not null) && (CachedDepartments.Count > 0);
 
     /// <summary>
     /// Synchronously loads the data from the Process Masterlist data source. Stores this data in the LastRead property.
