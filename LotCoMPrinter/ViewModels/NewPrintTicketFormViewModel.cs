@@ -194,6 +194,11 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         {
             throw;
         }
+        // ensure access to Serial Queues
+        if (!Serializer.Ping())
+        {
+            throw new SystemException("Cannot connect to the Serial Number Queues.");
+        }
     }
 
     /// <summary>
