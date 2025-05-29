@@ -1,0 +1,105 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:views="clr-namespace:LotCoMPrinter.Views"
+               x:DataType="views:FailedStartupPopup"
+               x:Class="LotCoMPrinter.Views.FailedStartupPopup">
+    
+    <!-- Style the Popup Window -->
+    <toolkit:Popup.Resources>
+        <Style TargetType="{x:Type views:FailedStartupPopup}">
+            <Setter Property="Color" Value="Transparent" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Start" />
+            <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
+        </Style>
+        <!-- RecessedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
+    </toolkit:Popup.Resources>
+    
+    <!-- Use a Grid Layout to create a Windows-like Popup Window -->
+    <!-- Apply a Thin Border -->
+    <Border
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 10,10,10,10"
+        Stroke="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Header Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Body Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Button (Footer) Row -->
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Expand Columns to add more Controls -->
+                <ColumnDefinition Width="400"/>
+            </Grid.ColumnDefinitions>
+            <!-- Add a Border to Fill the Header Row -->
+            <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                StrokeThickness="0"
+                StrokeShape="Rectangle"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
+                <!-- Add an Error Title Label -->
+                <Label
+                    x:Name="PopupTitleLabel"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Margin="15"
+                    Text="{Binding Title}"
+                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                    FontSize="20"/>
+            </Border>
+            <!-- Use a ScrollView in the Body to Allow Lengthy Messages -->
+            <ScrollView
+                Grid.Row="1"
+                Grid.Column="0"
+                MinimumHeightRequest="50"
+                HeightRequest="150">
+                <!-- Add a Border to Fill the Body Row -->
+                <Border
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    StrokeThickness="0"
+                    StrokeShape="Rectangle"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                    <!-- Add an Error Message Body Label -->
+                    <Label
+                        x:Name="PopupMessageLabel"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Margin="25,5,0,5"
+                        Text="{Binding Message}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
+                </Border>
+            </ScrollView>
+            <!-- Add a Border to Fill the Footer Row -->
+            <Border
+                Grid.Row="2"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                StrokeThickness="0"
+                StrokeShape="Rectangle"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
+                <!-- Add an OK Button -->
+                <Button
+                    x:Name="ConfirmationButton"
+                    Clicked="OnConfirmation"
+                    HorizontalOptions="End"
+                    VerticalOptions="End"
+                    WidthRequest="150"
+                    HeightRequest="40"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="10"
+                    Text="Exit Application"/>
+            </Border>
+        </Grid>
+    </Border>
+</toolkit:Popup>
