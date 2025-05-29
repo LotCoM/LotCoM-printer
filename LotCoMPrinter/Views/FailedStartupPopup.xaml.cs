@@ -13,9 +13,9 @@ public partial class FailedStartupPopup : Popup
         get { return _title; }
         set
         {
-            OnPropertyChanged(_title);
-            OnPropertyChanged(Title);
             _title = value;
+            OnPropertyChanged(nameof(_title));
+            OnPropertyChanged(nameof(Title));
         }
     }
 
