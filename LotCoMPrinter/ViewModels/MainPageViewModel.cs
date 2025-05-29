@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Datatypes;
+using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.ViewModels;
@@ -11,7 +12,7 @@ namespace LotCoMPrinter.ViewModels;
 /// <summary>
 /// Constructs a ViewModel for the MainPage class.
 /// </summary>
-public partial class MainPageViewModel : ObservableObject 
+public partial class MainPageViewModel : ObservableObject
 {
     /// <summary>
     /// Provides default widths for the Open Print Tickets Panel.
@@ -79,7 +80,7 @@ public partial class MainPageViewModel : ObservableObject
             OnPropertyChanged(nameof(IsWelcomeMenuShown));
         }
     }
-    
+
     private string _welcomeMenuTitleLabelText = Defaults.WelcomeMenuTitleLabelText;
     /// <summary>
     /// Provides the text to display on the Window Title Label.
@@ -131,7 +132,7 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public List<Process> AllProcesses
     {
-        get {return _allProcesses;}
+        get { return _allProcesses; }
     }
 
     private ObservableCollection<PrintTicket> _openPrintTickets = [];
@@ -162,7 +163,7 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public TrackedPrintTicket? ActiveTicket
     {
-        get {return _activeTicket;}
+        get { return _activeTicket; }
         set
         {
             _activeTicket = value;
@@ -177,7 +178,7 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public PrintTicket? SelectedTicket
     {
-        get {return _selectedTicket;}
+        get { return _selectedTicket; }
         set
         {
             _selectedTicket = value;
@@ -203,7 +204,7 @@ public partial class MainPageViewModel : ObservableObject
             SelectedTicket = null;
         }
     }
-    
+
     /// <summary>
     /// Opens the Open Print Tickets Panel.
     /// </summary>
@@ -266,14 +267,14 @@ public partial class MainPageViewModel : ObservableObject
         // validate the PrintTicket
         try
         {
-            ActiveTicket.Tracked = await ActiveTicket.Tracked.SelfValidate();
+            ActiveTicket.Tracked = ActiveTicket.Tracked.SelfValidate();
         }
         catch (Exception _ex)
         {
             throw new ArgumentException(_ex.Message);
         }
-        LabelPrintJob Job = new LabelPrintJob(ActiveTicket.Tracked);
-        bool Printed = false;
+        PrintJob Job = new PrintJob(ActiveTicket.Tracked);
+        bool Printed;
         // attempt to run the Print Job
         try
         {
@@ -334,8 +335,81 @@ public partial class MainPageViewModel : ObservableObject
         if (ActiveTicket is not null && ActiveTicket.Tracked.HasSpace)
         {
             // create and add a blank PartialDataSet object to the ticket
-            ActiveTicket.Tracked.AddPartialDataSet(new PartialDataSet());
+            ActiveTicket.Tracked.AddPartialDataSet
+            (
+                new PartialDataSet
+                (
+                    new Quantity(0),
+                    Shift.None,
+                    new Operator("ABC")
+                )
+            );
         }
+    }
+
+    /// <summary>
+    /// Attempts to create and run a Partial Tag Print Job from ActiveTicket.Tracked.
+    /// </summary>
+    /// <param name="PartialSetNumber">The PartialDataSet to use as the source of partial Production Data, either 1 or 2.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="PrintRequestException"></exception>
+    public async Task<bool> PrintPartialTag(int PartialSetNumber)
+    {
+        // ensure the targeted PartialDataSet exists on the Active Print Ticket
+        if (PartialSetNumber < 1 || PartialSetNumber > 2)
+        {
+            throw new ArgumentException
+            (
+                $"Cannot print PartialDataSet '{PartialSetNumber}' as it is outside the allowed set (1, 2).",
+                nameof(PartialSetNumber)
+            );
+        }
+        if (ActiveTicket is null)
+        {
+            throw new NullReferenceException("Cannot print PartialDataSets from 'null' PrintTicket.");
+        }
+        // validate the target PartialDataSet
+        try
+        {
+            if (PartialSetNumber == 1 && ActiveTicket.Tracked.HasFirstPartialDataSet)
+            {
+                ActiveTicket.Tracked.FirstPartialDataSet!.SelfValidate();
+            }
+            else if (PartialSetNumber == 2 && ActiveTicket.Tracked.HasSecondPartialDataSet)
+            {
+                ActiveTicket.Tracked.SecondPartialDataSet!.SelfValidate();
+            }
+            else
+            {
+                throw new NullReferenceException($"Cannot print 'null' PartialDataSet Number '{PartialSetNumber}'.");
+            }
+        }
+        catch (NullReferenceException _nullEx)
+        {
+            throw new NullReferenceException(_nullEx.Message);
+        }
+        catch (ArgumentException _argEx)
+        {
+            throw new ArgumentException(_argEx.Message);
+        }
+        // create a new PrintJob from the PartialDataSet and attempt to run it
+        PrintJob Job = new PrintJob(ActiveTicket.Tracked, PartialSetNumber);
+        bool Printed;
+        try
+        {
+            Printed = await Job.Run();
+        }
+        catch (LabelBuildException)
+        {
+            throw new PrintRequestException("Could not create a Label from the entered information.");
+        }
+        catch (PrintRequestException)
+        {
+            throw new PrintRequestException("Failed to execute the print job for the generated Label.");
+        }
+        return Printed;
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility

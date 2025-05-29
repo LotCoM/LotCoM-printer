@@ -11,7 +11,7 @@ namespace LotCoMPrinter.Models.Datasources;
 /// </summary>
 public class ProcessData() 
 {
-    private const string Path = "\\\\144.133.122.1\\Lot Control Management\\Database\\process_control\\_process_masterlist.json";
+    private const string Path = "\\\\144.133.122.1\\Lot Control Management\\Database\\process_control\\process_data.json";
         
     /// <summary>
     /// Contains the List of Processes produced by the last LoadData/LoadDataAsync call. 

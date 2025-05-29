@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Enums;
@@ -101,9 +100,9 @@ public partial class PrintTicket : ObservableObject
         }
     }
 
-    private int _productionQuantity;
+    private Quantity _productionQuantity;
 
-    public int ProductionQuantity
+    public Quantity ProductionQuantity
     {
         get { return _productionQuantity; }
         set
@@ -114,11 +113,11 @@ public partial class PrintTicket : ObservableObject
         }
     }
 
-    private string _productionOperator;
+    private Operator _productionOperator;
     /// <summary>
     /// The Operator that this Print Ticket was initiated by.
     /// </summary>
-    public string ProductionOperator
+    public Operator ProductionOperator
     {
         get { return _productionOperator; }
         set
@@ -227,44 +226,6 @@ public partial class PrintTicket : ObservableObject
     }
 
     /// <summary>
-    /// Validates an integer as non-null.
-    /// </summary>
-    /// <param name="Value"></param>
-    /// <exception cref="FormatException"></exception>
-    private static async Task ValidatePositiveInteger(int? Value)
-    {
-        // run a new thread to ensure that the Integer contains at least one positive digit
-        await Task.Run(() =>
-        {
-            if (Value is null || Value < 1)
-            {
-                throw new FormatException();
-            }
-        });
-    }
-
-    /// <summary>
-    /// Validates a string as non-null. Enforces two or three length, uppercase character format.
-    /// </summary>
-    /// <param name="String"></param>
-    /// <returns>The string as an uppercase Operator Initial.</returns>
-    /// <exception cref="FormatException"></exception>
-    private static async Task<string> ValidateOperatorInitials(string? String)
-    {
-        // run a new thread to validate the string
-        return await Task.Run(() =>
-        {
-            // validate that the string is non-null
-            if (String is null || !OperatorRegex().IsMatch(String))
-            {
-                throw new FormatException("Please enter Operator Intials (ie. AB, ABC) before printing Labels.");
-            }
-            // cast the string to Uppercase and return it
-            return String.ToUpper();
-        });
-    }
-
-    /// <summary>
     /// Provides a structure for the creation and maintenance of a Printing Ticket.
     /// </summary>
     /// <param name="TicketProcess">The Process that initiated this Print Ticket.</param>
@@ -278,7 +239,7 @@ public partial class PrintTicket : ObservableObject
     /// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
     /// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
     /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
-    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, int TicketProductionQuantity, string TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
+    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, Quantity TicketProductionQuantity, Operator TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
     {
         _process = TicketProcess;
         _part = TicketPart;
@@ -320,26 +281,26 @@ public partial class PrintTicket : ObservableObject
                 $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
                 $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
                 $"\"ProductionShift\":\"{ShiftExtensions.ToString(ProductionShift)}\"," +
-                $"\"ProductionQuantity\":\"{ProductionQuantity}\"," +
-                $"\"ProductionOperator\":\"{ProductionOperator}\"," +
+                $"\"ProductionQuantity\":\"{ProductionQuantity.Value}\"," +
+                $"\"ProductionOperator\":\"{ProductionOperator.Initials}\"," +
                 $"\"VariableFieldSet\":{VariableFields.ToJSON()}";
         // add partial data sets only if assigned
         if (HasFirstPartialDataSet)
         {
             JSON +=
                 ",\"FirstPartialDataSet\":{" +
-                    $"\"Quantity\":\"{FirstPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString((Shift)FirstPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{FirstPartialDataSet!.Operator}\"" +
+                    $"\"Quantity\":\"{FirstPartialDataSet!.Quantity.Value}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(FirstPartialDataSet.Shift!)}\"," +
+                    $"\"Operator\":\"{FirstPartialDataSet!.Operator.Initials}\"" +
                 "}";
         }
         if (HasSecondPartialDataSet)
         {
             JSON +=
                 ",\"SecondPartialDataSet\":{" +
-                    $"\"Quantity\":\"{SecondPartialDataSet!.Quantity}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString((Shift)SecondPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{SecondPartialDataSet!.Operator}\"" +
+                    $"\"Quantity\":\"{SecondPartialDataSet!.Quantity.Value}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondPartialDataSet.Shift!)}\"," +
+                    $"\"Operator\":\"{SecondPartialDataSet!.Operator.Initials}\"" +
                 "}";
         }
         // close the JSON stream
@@ -399,8 +360,8 @@ public partial class PrintTicket : ObservableObject
         // parse out a timestamp for ProductionDate, Shift number, and Operator
         DateTime ParsedDate;
         Shift ParsedShift;
-        int ParsedQuantity;
-        string ParsedOperator;
+        Quantity ParsedQuantity;
+        Operator ParsedOperator;
         try
         {
             ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
@@ -419,7 +380,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedQuantity = int.Parse(JSON["ProductionQuantity"]!.ToString());
+            ParsedQuantity = new Quantity(int.Parse(JSON["ProductionQuantity"]!.ToString()));
         }
         catch
         {
@@ -427,7 +388,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedOperator = JSON["ProductionOperator"]!.ToString();
+            ParsedOperator = new Operator(JSON["ProductionOperator"]!.ToString());
         }
         catch
         {
@@ -534,8 +495,8 @@ public partial class PrintTicket : ObservableObject
         // parse out a timestamp for ProductionDate, Shift number, and Operator
         DateTime ParsedDate;
         Shift ParsedShift;
-        int ParsedQuantity;
-        string ParsedOperator;
+        Quantity ParsedQuantity;
+        Operator ParsedOperator;
         try
         {
             ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
@@ -554,7 +515,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedQuantity = int.Parse(JSON["ProductionQuantity"]!.ToString());
+            ParsedQuantity = new Quantity(int.Parse(JSON["ProductionQuantity"]!.ToString()));
         }
         catch
         {
@@ -562,7 +523,7 @@ public partial class PrintTicket : ObservableObject
         }
         try
         {
-            ParsedOperator = JSON["ProductionOperator"]!.ToString();
+            ParsedOperator = new Operator(JSON["ProductionOperator"]!.ToString());
         }
         catch
         {
@@ -683,24 +644,16 @@ public partial class PrintTicket : ObservableObject
     /// </summary>
     /// <returns>A modified (formatted) version of the object calling this method.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public async Task<PrintTicket> SelfValidate()
+    public PrintTicket SelfValidate()
     {
         // validate quantity, operator
-        try
-        {
-            await ValidatePositiveInteger(ProductionQuantity);
-        }
-        catch
+        if (!ProductionQuantity.ConfirmPositiveCount())
         {
             throw new ArgumentException("Please enter a valid Production Quantity before printing a Label.");
         }
-        try
+        if (!ProductionOperator.ConfirmProperInitials())
         {
-            ProductionOperator = await ValidateOperatorInitials(ProductionOperator);
-        }
-        catch
-        {
-            throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) before printing a Label.");
+            throw new ArgumentException("Please enter valid Operator Initials before printing a Label.");
         }
         // validate the variable fields
         if (Process.RequiredFields.JBKNumber && VariableFields.JBKNumber is null)
@@ -732,38 +685,22 @@ public partial class PrintTicket : ObservableObject
         {
             try
             {
-                await ValidatePositiveInteger(FirstPartialDataSet!.Quantity);
+                FirstPartialDataSet!.SelfValidate();
             }
-            catch
+            catch (ArgumentException)
             {
                 throw new ArgumentException("Please enter a valid Production Quantity in Partial Production Data #1 before printing a Label.");
-            }
-            try
-            {
-                FirstPartialDataSet.Operator = await ValidateOperatorInitials(FirstPartialDataSet.Operator);
-            }
-            catch
-            {
-                throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) in Partial Production Data #1 before printing a Label.");
             }
         }
         if (HasSecondPartialDataSet)
         {
             try
             {
-                await ValidatePositiveInteger(SecondPartialDataSet!.Quantity);
+                SecondPartialDataSet!.SelfValidate();
             }
-            catch
+            catch (ArgumentException)
             {
                 throw new ArgumentException("Please enter a valid Production Quantity in Partial Production Data #2 before printing a Label.");
-            }
-            try
-            {
-                SecondPartialDataSet.Operator = await ValidateOperatorInitials(SecondPartialDataSet.Operator);
-            }
-            catch
-            {
-                throw new ArgumentException("Please enter valid Operator Initials (ex. ABC) in Partial Production Data #2 before printing a Label.");
             }
         }
         // validation is okay; return an updated version of self
@@ -774,19 +711,19 @@ public partial class PrintTicket : ObservableObject
     /// Combines the possible three partial quantity values into one total quantity.
     /// </summary>
     /// <returns></returns>
-    public int GetTotalQuantity()
+    public Quantity GetTotalQuantity()
     {
         // compile the full PrintTicket quantity
-        int FullQuantity = ProductionQuantity;
+        int FullQuantity = ProductionQuantity.Value;
         if (HasFirstPartialDataSet)
         {
-            FullQuantity += (int)FirstPartialDataSet!.Quantity!;
+            FullQuantity += FirstPartialDataSet!.Quantity.Value;
         }
         if (HasSecondPartialDataSet)
         {
-            FullQuantity += (int)SecondPartialDataSet!.Quantity!;
+            FullQuantity += SecondPartialDataSet!.Quantity.Value;
         }
-        return FullQuantity;
+        return new Quantity(FullQuantity);
     }
 
     /// <summary>
@@ -799,11 +736,11 @@ public partial class PrintTicket : ObservableObject
         string FullShift = $"{ShiftExtensions.ToString(ProductionShift)}";
         if (HasFirstPartialDataSet)
         {
-            FullShift = $"{FullShift}:{ShiftExtensions.ToString((Shift)FirstPartialDataSet!.Shift!)}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString(FirstPartialDataSet!.Shift!)}";
         }
         if (HasSecondPartialDataSet)
         {
-            FullShift = $"{FullShift}:{ShiftExtensions.ToString((Shift)SecondPartialDataSet!.Shift!)}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString(SecondPartialDataSet!.Shift!)}";
         }
         return FullShift;
     }
@@ -815,14 +752,14 @@ public partial class PrintTicket : ObservableObject
     public string GetCombinedQuantities()
     {
         // compile the Quantity values into a single value
-        string FullQuantity = $"{ProductionQuantity}";
+        string FullQuantity = $"{ProductionQuantity.Value}";
         if (HasFirstPartialDataSet)
         {
-            FullQuantity = $"{FullQuantity}:{FirstPartialDataSet!.Quantity}";
+            FullQuantity = $"{FullQuantity}:{FirstPartialDataSet!.Quantity.Value}";
         }
         if (HasSecondPartialDataSet)
         {
-            FullQuantity = $"{FullQuantity}:{SecondPartialDataSet!.Quantity}";
+            FullQuantity = $"{FullQuantity}:{SecondPartialDataSet!.Quantity.Value}";
         }
         return FullQuantity;
     }
@@ -834,20 +771,15 @@ public partial class PrintTicket : ObservableObject
     public string GetCombinedOperators()
     {
         // compile the Operator values into a single value
-        string FullOperator = $"{ProductionOperator}";
+        string FullOperator = $"{ProductionOperator.Initials}";
         if (HasFirstPartialDataSet)
         {
-            FullOperator = $"{FullOperator}:{FirstPartialDataSet!.Operator}";
+            FullOperator = $"{FullOperator}:{FirstPartialDataSet!.Operator.Initials}";
         }
         if (HasSecondPartialDataSet)
         {
-            FullOperator = $"{FullOperator}:{SecondPartialDataSet!.Operator}";
+            FullOperator = $"{FullOperator}:{SecondPartialDataSet!.Operator.Initials}";
         }
         return FullOperator;
     }
-
-    // COMPILED REGEX PATTERNS
-
-    [GeneratedRegex(@"^[a-zA-Z][a-zA-Z][a-zA-Z]?$")]
-    private static partial Regex OperatorRegex();
 }

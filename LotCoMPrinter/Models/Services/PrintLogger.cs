@@ -5,45 +5,49 @@ namespace LotCoMPrinter.Models.Services;
 
 public static class PrintLogger 
 {
+    /// <summary>
+    /// Directory that contains the Print Log Tables for each Process. 
+    /// </summary>
     private const string PrintDatabase = "\\\\144.133.122.1\\Lot Control Management\\Database\\data_tables\\prints";
 
     /// <summary>
-    /// Generates a Log message from Job.
+    /// Generates a Log message from Job that has generated a full BasketLabel.
     /// </summary>
     /// <param name="Job"></param>
     /// <returns></returns>
-    private static string GenerateLog(LabelPrintJob Job)
+    private static string GenerateLog(PrintJob Job)
     {
         // add initial universal requirements
-        string Log = $"{Job.Ticket.Process.FullName},{Job.Ticket.Part.PartNumber},{Job.Ticket.Part.PartName},{Job.Ticket.GetCombinedQuantities()}";
+        PrintTicket JobSource = (PrintTicket)Job.Source;
+        string Log = $"{JobSource.Process.FullName},{JobSource.Part.PartNumber},{JobSource.Part.PartName},{JobSource.GetCombinedQuantities()}";
         // add variable fields when required
-        RequiredFields Requirements = Job.Ticket.Process.RequiredFields;
-        if (Requirements.JBKNumber) 
+        RequiredFields Requirements = JobSource.Process.RequiredFields;
+        if (Requirements.JBKNumber)
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.JBKNumber!.Formatted}";
+            Log = $"{Log},{JobSource.VariableFields.JBKNumber!.Formatted}";
         }
-        if (Requirements.LotNumber) 
+        if (Requirements.LotNumber)
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.LotNumber!.Formatted}";
+            Log = $"{Log},{JobSource.VariableFields.LotNumber!.Formatted}";
         }
-        if (Requirements.DeburrJBKNumber) 
+        if (Requirements.DeburrJBKNumber)
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.DeburrJBKNumber!.Formatted}";
+            Log = $"{Log},{JobSource.VariableFields.DeburrJBKNumber!.Formatted}";
         }
-        if (Requirements.DieNumber) 
+        if (Requirements.DieNumber)
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.DieNumber!.Literal}";
+            Log = $"{Log},{JobSource.VariableFields.DieNumber!.Literal}";
         }
-        if (Requirements.ModelNumber) 
+        if (Requirements.ModelNumber)
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.ModelNumber!.Code}";
+            Log = $"{Log},{JobSource.VariableFields.ModelNumber!.Code}";
         }
-        if (Requirements.HeatNumber) 
+        if (Requirements.HeatNumber)
         {
-            Log = $"{Log},{Job.Ticket.VariableFields.HeatNumber!.Literal}";
+            Log = $"{Log},{JobSource.VariableFields.HeatNumber!.Literal}";
         }
         // add remaining universal requirements
-        Log = $"{Log},{new Timestamp(Job.Ticket.ProductionDate).Stamp},{Job.Ticket.GetCombinedShifts()},{Job.Ticket.GetCombinedOperators()}";
+        Log = $"{Log},{new Timestamp(JobSource.ProductionDate).Stamp},{JobSource.GetCombinedShifts()},{JobSource.GetCombinedOperators()}";
         return Log;
     }
 
@@ -52,11 +56,12 @@ public static class PrintLogger
     /// </summary>
     /// <param name="Job">An LabelPrintJob object.</param>
     /// <returns></returns>
-    public static async Task LogPrintEvent(LabelPrintJob Job)
+    public static async Task LogPrintEvent(PrintJob Job)
     {
-        // create a Log string from the LabelPrintJob info and append the string to the appropriate Log file
+        // create a Log string from the PrintJob info and append the string to the appropriate Log file
         string PrintEvent = GenerateLog(Job);
-        string DatatablePath = $"{PrintDatabase}\\{Job.Ticket.Process.FullName}.txt";
+        PrintTicket JobSource = (PrintTicket)Job.Source;
+        string DatatablePath = $"{PrintDatabase}\\{JobSource.Process.FullName}.txt";
         try
         {
             await File.AppendAllTextAsync(DatatablePath, $"{PrintEvent}\n");
@@ -64,7 +69,7 @@ public static class PrintLogger
         catch (Exception _ex)
         {
             // log the print to the dump database table (backup)
-            await File.AppendAllTextAsync($"{PrintDatabase}\\_failed_logs.log", $"{PrintEvent}\n");
+            await File.AppendAllTextAsync($"{PrintDatabase}\\failed_prints.log", $"{PrintEvent}\n");
             throw new PrintLogException(_ex.Message);
         }
     }

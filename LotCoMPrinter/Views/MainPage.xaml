@@ -589,7 +589,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="QuantityEntry"
-                                    Text="{Binding ActiveTicket.Tracked.ProductionQuantity}"/>
+                                    Text="{Binding ActiveTicket.Tracked.ProductionQuantity.Value}"
+                                    TextChanged="OnQuantityEntryTextChanged"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Operator Input -->
@@ -616,7 +617,8 @@
                                 <Entry
                                     x:Name="OperatorEntry"
                                     IsEnabled="False"
-                                    Text="{Binding ActiveTicket.Untracked.ProductionOperator}"
+                                    Text="{Binding ActiveTicket.Untracked.ProductionOperator.Initials}"
+                                    TextChanged="OnOperatorEntryTextChanged"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -863,7 +865,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Picker
                                     x:Name="FirstPartialDataSetShiftPicker"
-                                    SelectedItem="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Shift.Value}">
+                                    SelectedItem="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Shift}">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type Enums:Shift}">
                                             <Enums:Shift>First</Enums:Shift>
@@ -899,7 +901,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="FirstPartialDataSetQuantityEntry"
-                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Quantity}"/>
+                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Quantity.Value}"
+                                    TextChanged="OnQuantityEntryTextChanged"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Operator Input Layout -->
@@ -927,7 +930,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="FirstPartialDataSetOperatorEntry"
-                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Operator}"
+                                    Text="{Binding ActiveTicket.Tracked.FirstPartialDataSet.Operator.Initials}"
+                                    TextChanged="OnOperatorEntryTextChanged"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -935,6 +939,8 @@
                         <Button
                             Grid.Row="3"
                             Grid.Column="0"
+                            x:Name="PrintFirstPartialProductionDataSetButton"
+                            Clicked="OnPrintPartialProductionDataSetButtonClicked"
                             Text="Print Label"
                             Margin="20"
                             WidthRequest="100"
@@ -1044,7 +1050,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Picker
                                     x:Name="SecondPartialDataSetShiftPicker"
-                                    SelectedItem="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Shift.Value}">
+                                    SelectedItem="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Shift}">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type Enums:Shift}">
                                             <Enums:Shift>First</Enums:Shift>
@@ -1080,7 +1086,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="SecondPartialDataSetQuantityEntry"
-                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Quantity}"/>
+                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Quantity.Value}"
+                                    TextChanged="OnQuantityEntryTextChanged"/>
                             </Border>
                         </HorizontalStackLayout>
                         <!-- Operator Input Layout -->
@@ -1108,7 +1115,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="SecondPartialDataSetOperatorEntry"
-                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Operator}"
+                                    Text="{Binding ActiveTicket.Tracked.SecondPartialDataSet.Operator.Initials}"
+                                    TextChanged="OnOperatorEntryTextChanged"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -1116,6 +1124,8 @@
                         <Button
                             Grid.Row="3"
                             Grid.Column="0"
+                            x:Name="PrintSecondPartialProductionDataSetButton"
+                            Clicked="OnPrintPartialProductionDataSetButtonClicked"
                             Text="Print Label"
                             Margin="20"
                             WidthRequest="100"

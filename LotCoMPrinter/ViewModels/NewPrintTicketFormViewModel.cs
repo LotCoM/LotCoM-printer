@@ -69,11 +69,11 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         }
     }
 
-    private Shift? _productionShift = null;
+    private Shift _productionShift = Shift.None;
     /// <summary>
     /// The Shift on which this Form was initiated.
     /// </summary>
-    public Shift? ProductionShift
+    public Shift ProductionShift
     {
         get {return _productionShift;}
         set 
@@ -84,11 +84,11 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         }
     }
 
-    private int? _productionQuantity = null;
+    private Quantity _productionQuantity = new Quantity(0);
     /// <summary>
     /// The Quantity produced by the Shift that this Form was initiated on.
     /// </summary>
-    public int? ProductionQuantity
+    public Quantity ProductionQuantity
     {
         get {return _productionQuantity;}
         set 
@@ -99,11 +99,11 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         }
     }
 
-    private string? _productionOperator = null;
+    private Operator _productionOperator = new Operator("");
     /// <summary>
     /// The Operator by which this Form was initiated.
     /// </summary>
-    public string? ProductionOperator
+    public Operator ProductionOperator
     {
         get {return _productionOperator;}
         set 
@@ -189,10 +189,13 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     public async Task<PrintTicket> OpenNewPrintTicket()
     {
         // confirm there are selections for all fields
-        if (Process is null 
-            || Part is null 
-            || ProductionShift is null 
-            || ProductionOperator is null)
+        if
+        (
+            Process is null
+            || Part is null
+            || ProductionShift == Shift.None
+            || !ProductionOperator.ConfirmProperInitials()
+        )
         {
             throw new ArgumentException("Cannot create a PrintTicket without a full Form.");
         }
@@ -202,7 +205,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         {
             throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
         }
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, (Shift)ProductionShift, 0, ProductionOperator, new VariableFieldSet());
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, (Shift)ProductionShift, ProductionQuantity, ProductionOperator, new VariableFieldSet());
         // apply the SerialNumber to the appropriate field and return the new Ticket
         if (NewTicket.SerializationMode == SerializationMode.JBK)
         {

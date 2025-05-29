@@ -100,21 +100,93 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
-    /// Handler for the Clicked event from the OpenPrintTicketsCollapseButton control.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void OnOpenPrintTicketsCollapseButtonClicked(object sender, EventArgs e) 
-    {
-        if (ViewModel.IsOpenPrintTicketsPanelShown) 
-        {
+	/// Event Handler for the Clicked Event from the PrintFirst or PrintSecondPartialProductionDataSet Buttons.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnPrintPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	{
+		// set the targeted PartialDataSet
+		int DataSet = 2;
+		if (sender.Equals(PrintFirstPartialProductionDataSetButton))
+		{
+			DataSet = 1;
+		}
+		// set a printed flag and attempt to print a Partial Data Set Tag
+		bool Printed = false;
+		try
+		{
+			Printed = await ViewModel.PrintPartialTag(DataSet);
+		}
+		// catch and handle validation messages
+		catch (ArgumentException _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Invalid Production Data",
+					$"{_ex.Message}\n\nResolve this issue and try again."
+				)
+			);
+		}
+		// catch and handle print spooling messages
+		catch (PrintRequestException _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Print Failed",
+					$"The Print request could not be completed." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+		}
+		// catch other, unexpected issues
+		catch (Exception _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Print Failed",
+					$"We encountered an unexpected error." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+		}
+		if (Printed)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Partial Tag Printed",
+					$"Partial Tag printing was successful. Retrieve your new Tag from the Printer!"
+				)
+			);
+		}
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the OpenPrintTicketsCollapseButton control.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnOpenPrintTicketsCollapseButtonClicked(object sender, EventArgs e)
+	{
+		if (ViewModel.IsOpenPrintTicketsPanelShown)
+		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
-        } 
-        else 
-        {
+		}
+		else
+		{
 			await AnimatedRaiseOpenPrintTicketsPanel();
-        }
-    }
+		}
+	}
 
 	/// <summary>
     /// Handler for the Clicked event from the OnStartNewLabelButton control.
@@ -449,6 +521,129 @@ public partial class MainPage : ContentPage
 			}
 		}
 	}
+
+	/// <summary>
+	/// Handler for the TextChanged event from any of the Quantity Entry controls.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnQuantityEntryTextChanged(object sender, TextChangedEventArgs e)
+	{
+		if
+		(
+			ViewModel.ActiveTicket is null
+			|| e.NewTextValue is null
+			|| e.NewTextValue.Equals("")
+		)
+		{
+			return;
+		}
+		// Main Quantity was updated
+		if (sender.Equals(QuantityEntry))
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.ProductionQuantity = new Quantity(int.Parse(e.NewTextValue));
+				QuantityControl.Stroke = Grey500;
+			}
+			catch
+			{
+				QuantityControl.Stroke = Colors.Red;
+			}
+		}
+		// First Partial Quantity was updated
+		else if
+		(
+			sender.Equals(FirstPartialDataSetQuantityEntry)
+			&& ViewModel.ActiveTicket.Tracked.HasFirstPartialDataSet
+		)
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.FirstPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				FirstPartialDataSetQuantityControl.Stroke = Grey500;
+			}
+			catch
+			{
+				FirstPartialDataSetQuantityControl.Stroke = Colors.Red;
+			}
+		}
+		// Second Partial Quantity was updated
+		else if
+		(
+			sender.Equals(SecondPartialDataSetQuantityEntry)
+			&& ViewModel.ActiveTicket.Tracked.HasSecondPartialDataSet
+		)
+		{
+			try
+			{
+				ViewModel.ActiveTicket.Tracked.SecondPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				SecondPartialDataSetQuantityControl.Stroke = Grey500;
+			}
+			catch
+			{
+				SecondPartialDataSetQuantityControl.Stroke = Colors.Red;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for the TextChanged event from any of the Operator Initials Entry controls.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnOperatorEntryTextChanged(object sender, TextChangedEventArgs e)
+	{
+		if
+		(
+			ViewModel.ActiveTicket is null
+			|| e.NewTextValue is null
+			|| e.NewTextValue.Equals("")
+		)
+		{
+			return;
+		}
+		PrintTicket Ticket = ViewModel.ActiveTicket.Tracked;
+		// Main Operator was updated
+		if (sender.Equals(OperatorEntry))
+		{
+			try
+			{
+				Ticket.ProductionOperator = new Operator(e.NewTextValue);
+				OperatorControl.Stroke = Grey500;
+			}
+			catch
+			{
+				OperatorControl.Stroke = Colors.Red;
+			}
+		}
+		// First Partial Operator was updated
+		else if (sender.Equals(FirstPartialDataSetOperatorEntry) && Ticket.HasFirstPartialDataSet)
+		{
+			try
+			{
+				Ticket.FirstPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				FirstPartialDataSetOperatorControl.Stroke = Grey500;
+			}
+			catch
+			{
+				FirstPartialDataSetOperatorControl.Stroke = Colors.Red;
+			}
+		}
+		// Second Partial Operator was updated
+		else if (sender.Equals(SecondPartialDataSetOperatorEntry) && Ticket.HasSecondPartialDataSet)
+		{
+			try
+			{
+				Ticket.SecondPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				SecondPartialDataSetOperatorControl.Stroke = Grey500;
+			}
+			catch
+			{
+				SecondPartialDataSetOperatorControl.Stroke = Colors.Red;
+			}
+		}
+    }
 
 	// full constructor
 	public MainPage()

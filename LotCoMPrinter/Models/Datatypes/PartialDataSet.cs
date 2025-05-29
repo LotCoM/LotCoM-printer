@@ -12,25 +12,25 @@ namespace LotCoMPrinter.Models.Datatypes;
 /// <param name="Quantity">The number of Parts produced during the Shift captured by the PartialDataSet.</param>
 /// <param name="Shift">The Shift Number captured by the PartialDataSet.</param>
 /// <param name="Operator">The Operator who created the PartialDataSet.</param>
-public partial class PartialDataSet(int? Quantity = null, Shift? Shift = null, string? Operator = null) : ObservableObject()
+public partial class PartialDataSet(Quantity Quantity, Shift Shift, Operator Operator) : ObservableObject()
 {
     /// <summary>
     /// The number of Parts produced during the Shift captured by the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial int? Quantity {get; set;} = Quantity;
+    public partial Quantity Quantity { get; set; } = Quantity;
 
     /// <summary>
     /// The Shift Number captured by the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial Shift? Shift {get; set;} = Shift;
+    public partial Shift Shift { get; set; } = Shift;
 
     /// <summary>
     /// The Operator who created the PartialDataSet.
     /// </summary>
     [ObservableProperty]
-    public partial string? Operator {get; set;} = Operator;
+    public partial Operator Operator { get; set; } = Operator;
 
     /// <summary>
     /// Attempts to parse and construct a PartialDataSet object from a JSON stream.
@@ -41,12 +41,12 @@ public partial class PartialDataSet(int? Quantity = null, Shift? Shift = null, s
     public static PartialDataSet ParseJSON(JToken JSON)
     {
         // attempt to parse a Quantity, Shift Number, and Operator from the passed JSON stream
-        int Quantity;
+        Quantity Quantity;
         Shift Shift;
-        string Operator;
+        Operator Operator;
         try
         {
-            Quantity = int.Parse(JSON["Quantity"]!.ToString());
+            Quantity = new Quantity(int.Parse(JSON["Quantity"]!.ToString()));
         }
         catch
         {
@@ -62,12 +62,29 @@ public partial class PartialDataSet(int? Quantity = null, Shift? Shift = null, s
         }
         try
         {
-            Operator = JSON["Operator"]!.ToString();
+            Operator = new Operator(JSON["Operator"]!.ToString());
         }
         catch
         {
             throw new JsonException($"Could not parse a Quantity value from {JSON["FirstPartialDataSet"]!["Operator"]!}.");
         }
         return new PartialDataSet(Quantity, Shift, Operator);
+    }
+
+    /// <summary>
+    /// Validates that the DataSet's Quantity is greater than 0.
+    /// </summary>
+    /// <exception cref="ArgumentException"></exception>
+    public void SelfValidate()
+    {
+        // validate quantity, operator
+        if (!Quantity.ConfirmPositiveCount())
+        {
+            throw new ArgumentException("Please enter a valid Production Quantity before printing a Label.");
+        }
+        if (!Operator.ConfirmProperInitials())
+        {
+            throw new ArgumentException("Please enter valid Operator Initials before printing a Label.");
+        }
     }
 }

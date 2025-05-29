@@ -1,5 +1,6 @@
 using CommunityToolkit.Maui.Views;
 using LotCoMPrinter.Models.Datatypes;
+using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
@@ -33,12 +34,12 @@ public partial class NewPrintTicketForm : Popup
             PartControl.Stroke = Colors.Red;
         }
         // missing Shift input
-        if (ViewModel.ProductionShift is null)
+        if (ViewModel.ProductionShift is Shift.None)
         {
             ShiftControl.Stroke = Colors.Red;
         }
         // missing Operator input
-        if (ViewModel.ProductionOperator is null)
+        if (!ViewModel.ProductionOperator.ConfirmProperInitials())
         {
             OperatorControl.Stroke = Colors.Red;
         }
@@ -104,9 +105,35 @@ public partial class NewPrintTicketForm : Popup
     }
 
     /// <summary>
+    /// Handler for the TextChanged event from the OperatorEntry control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnOperatorEntryTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (e.NewTextValue is null || e.NewTextValue.Equals(""))
+		{
+			return;
+		}
+		// JBK was updated
+		if (sender.Equals(OperatorEntry))
+		{
+			try
+			{
+				ViewModel.ProductionOperator = new Operator(e.NewTextValue);
+				OperatorControl.Stroke = Grey500;
+			}
+			catch
+			{
+				OperatorControl.Stroke = Colors.Red;
+			}
+		}
+    }
+
+    /// <summary>
     /// Creates an Input Form that prompts the user to configure and create a new Print Ticket.
     /// </summary>
-    public NewPrintTicketForm() 
+    public NewPrintTicketForm()
     {
         ViewModel = new NewPrintTicketFormViewModel();
         InitializeComponent();
