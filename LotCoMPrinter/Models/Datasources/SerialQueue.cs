@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LotCoMPrinter.Models.Datasources;
 
-public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit) 
+public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit)
 {
     /// <summary>
     /// The path to the file containing queues for Mode.
@@ -27,7 +27,7 @@ public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit)
     /// Reads the Serial Queue file and deserializes it into a JSON stream.
     /// </summary>
     /// <returns>A JObject object that contains all of the JSON stream from the file.</returns>
-    private async Task<JObject> ReadAsync() 
+    private async Task<JObject> ReadAsync()
     {
         return JObject.Parse(await File.ReadAllTextAsync(QueuePath));
     }
@@ -36,7 +36,7 @@ public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit)
     /// Overwrites the Serial Queue file with a new version of the Queue.
     /// </summary>
     /// <param name="Queue">The modified queue JObject.</param>
-    private async Task SaveAsync(JObject Queue) 
+    private async Task SaveAsync(JObject Queue)
     {
         await File.WriteAllTextAsync(QueuePath, JsonConvert.SerializeObject(Queue));
     }
@@ -46,7 +46,7 @@ public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit)
     /// This method WILL consume a Serial Number from the Queue when called.
     /// </summary>
     /// <param name="Part"></param>
-    public async Task<SerialNumber> ConsumeAsync(Part Part) 
+    public async Task<SerialNumber> ConsumeAsync(Part Part)
     {
         // retrieve the Queue
         JObject Queue;
@@ -74,7 +74,7 @@ public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit)
             throw new SerializationException($"Failed to parse an integer from the Queue for the Part '{Part.PartNumber} {Part.PartName}'.");
         }
         // increment the queue
-        if (Queued >= Limit) 
+        if (Queued >= Limit)
         {
             Queued = 0;
         }
@@ -83,5 +83,22 @@ public class SerialQueue(string QueuePath, SerializationMode Mode, int Limit)
         // save the incremented queue and return the new SerialNumber
         await SaveAsync(Queue);
         return new SerialNumber(Mode, Part, Queued);
+    }
+
+    /// <summary>
+    /// Pings the class' ability to read and consume numbers from the file at QueuePath.
+    /// </summary>
+    /// <returns></returns>
+    public bool Ping()
+    {
+        try
+        {
+            _ = File.ReadAllBytes(QueuePath);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

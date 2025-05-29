@@ -2,12 +2,12 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:views="clr-namespace:LotCoMPrinter.Views"
-               x:DataType="views:BasicPopup"
-               x:Class="LotCoMPrinter.Views.BasicPopup">
+               x:DataType="views:FailedStartupPopup"
+               x:Class="LotCoMPrinter.Views.FailedStartupPopup">
     
     <!-- Style the Popup Window -->
     <toolkit:Popup.Resources>
-        <Style TargetType="{x:Type views:BasicPopup}">
+        <Style TargetType="{x:Type views:FailedStartupPopup}">
             <Setter Property="Color" Value="Transparent" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Start" />
@@ -93,14 +93,13 @@
                     Clicked="OnConfirmation"
                     HorizontalOptions="End"
                     VerticalOptions="End"
-                    WidthRequest="75"
+                    WidthRequest="150"
                     HeightRequest="40"
                     Grid.Row="2"
                     Grid.Column="0"
                     Margin="10"
-                    Text="OK"/>
+                    Text="Exit Application"/>
             </Border>
         </Grid>
     </Border>
-    
 </toolkit:Popup>

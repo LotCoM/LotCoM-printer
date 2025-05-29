@@ -4,6 +4,7 @@ using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Services;
+using Newtonsoft.Json;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -158,7 +159,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
             OnPropertyChanged(nameof(SelectedPartIndex));
         }
     }
-    private List<Process> _allProcesses = new ProcessData().GetAllProcesses();
+    private List<Process> _allProcesses;
     /// <summary>
     /// The List of Processes in the Database, captured at the time of instantiation.
     /// </summary>
@@ -176,9 +177,28 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     /// <summary>
     /// Create a ViewModel to control the logic of a NewPrintTicketForm.
     /// </summary>
+    /// <exception cref="SystemException"></exception>
+    /// <exception cref="JsonException"></exception>
     public NewPrintTicketFormViewModel()
     {
-
+        // load Process data
+        try
+        {
+            _allProcesses = new ProcessData().GetAllProcesses();
+        }
+        catch (SystemException)
+        {
+            throw;
+        }
+        catch (JsonException)
+        {
+            throw;
+        }
+        // ensure access to Serial Queues
+        if (!Serializer.Ping())
+        {
+            throw new SystemException("Cannot connect to the Serial Number Queues.");
+        }
     }
 
     /// <summary>

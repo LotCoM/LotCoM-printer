@@ -10,7 +10,7 @@ public partial class NewPrintTicketForm : Popup
     /// <summary>
     /// The ViewModel object controlling this NewPrintTicketForm.
     /// </summary>
-    private readonly NewPrintTicketFormViewModel ViewModel;
+    private NewPrintTicketFormViewModel ViewModel;
 
     /// <summary>
     /// StaticResource Grey500 color.
@@ -56,7 +56,7 @@ public partial class NewPrintTicketForm : Popup
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void OnConfirmButtonClicked(object sender, EventArgs e) 
+    private async void OnConfirmButtonClicked(object sender, EventArgs e)
     {
         try
         {
@@ -75,7 +75,7 @@ public partial class NewPrintTicketForm : Popup
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void OnCancelButtonClicked(object sender, EventArgs e) 
+    private async void OnCancelButtonClicked(object sender, EventArgs e)
     {
         CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         await CloseAsync(null, TokenSource.Token);
@@ -86,7 +86,7 @@ public partial class NewPrintTicketForm : Popup
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnProcessPickerSelectedIndexChanged(object sender, EventArgs e) 
+    private void OnProcessPickerSelectedIndexChanged(object sender, EventArgs e)
     {
         ViewModel.SelectedProcessIndex = ProcessPicker.SelectedIndex;
         ViewModel.Process = (Process)ProcessPicker.ItemsSource[ViewModel.SelectedProcessIndex]!;
@@ -98,7 +98,7 @@ public partial class NewPrintTicketForm : Popup
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnPartPickerSelectedIndexChanged(object sender, EventArgs e) 
+    private void OnPartPickerSelectedIndexChanged(object sender, EventArgs e)
     {
         ViewModel.SelectedPartIndex = PartPicker.SelectedIndex;
         ViewModel.Part = (Part)PartPicker.ItemsSource[ViewModel.SelectedPartIndex]!;
@@ -131,12 +131,41 @@ public partial class NewPrintTicketForm : Popup
     }
 
     /// <summary>
+	/// Attempts to initialize a ViewModel for the Window to bind to.
+	/// </summary>
+	private bool InitializeViewModel()
+    {
+        // attempt to create a new ViewModel
+        try
+        {
+            ViewModel = new NewPrintTicketFormViewModel();
+            return true;
+        }
+        // there was an issue communicating with or processing data from the Database 
+        // or there was a formatting error in the JSON stream from the Database
+        catch (SystemException)
+        {
+            return false;
+        }
+    }
+
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    /// <summary>
     /// Creates an Input Form that prompts the user to configure and create a new Print Ticket.
     /// </summary>
+    /// <exception cref="SystemException"></exception>
     public NewPrintTicketForm()
     {
-        ViewModel = new NewPrintTicketFormViewModel();
-        InitializeComponent();
-        BindingContext = ViewModel;
+        bool Setup = InitializeViewModel();
+        if (Setup)
+        {
+            InitializeComponent();
+            BindingContext = ViewModel;
+        }
+        else
+        {
+            throw new SystemException("Failed to initialize the ViewModel.");
+        }
     }
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 }

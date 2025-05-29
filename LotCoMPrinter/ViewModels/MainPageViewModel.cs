@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Datatypes;
@@ -126,7 +127,7 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
-    private readonly List<Process> _allProcesses = new ProcessData().GetAllProcesses();
+    private readonly List<Process> _allProcesses;
     /// <summary>
     /// The List of Processes in the Database, captured at the time of instantiation.
     /// </summary>
@@ -190,10 +191,27 @@ public partial class MainPageViewModel : ObservableObject
     /// <summary>
     /// Create a ViewModel to control the logic of a Main Page instance.
     /// </summary>
+    /// <exception cref="SystemException"></exception>
+    /// <exception cref="JsonException"></exception>
     public MainPageViewModel()
     {
+        // load Process data
+        try
+        {
+            _allProcesses = new ProcessData().GetAllProcesses();
+        }
+        catch (SystemException)
+        {
+            throw;
+        }
+        catch (JsonException)
+        {
+            throw;
+        }
+        // configure Welcome menu
         WelcomeMenuTitleLabelText = "Welcome";
         WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
+        // read and set PrintTicket properties
         _openPrintTickets = new ObservableCollection<PrintTicket>(PrintTicketCache.GetAllPrintTickets());
         try
         {

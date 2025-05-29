@@ -2,7 +2,7 @@ using CommunityToolkit.Maui.Views;
 
 namespace LotCoMPrinter.Views;
 
-public partial class BasicPopup : Popup 
+public partial class FailedStartupPopup : Popup 
 {
     private string _title = "";
     /// <summary>
@@ -10,12 +10,12 @@ public partial class BasicPopup : Popup
     /// </summary>
     public string Title
     {
-        get {return _title;}
+        get { return _title; }
         set
         {
             _title = value;
-            OnPropertyChanged(_title);
-            OnPropertyChanged(Title);
+            OnPropertyChanged(nameof(_title));
+            OnPropertyChanged(nameof(Title));
         }
     }
 
@@ -29,8 +29,8 @@ public partial class BasicPopup : Popup
         set
         {
             _message = value;
-            OnPropertyChanged(_message);
-            OnPropertyChanged(Message);
+            OnPropertyChanged(nameof(_message));
+            OnPropertyChanged(nameof(Message));
         }
     }
 
@@ -42,17 +42,18 @@ public partial class BasicPopup : Popup
     private void OnConfirmation(object sender, EventArgs e)
     {
         Close();
+        Application.Current?.Quit();
     }
 
     /// <summary>
-    /// Creates a Simple Popup that contains a Title, a Message, and a single "OK" Button.
+    /// Creates a Simple Popup that explains a failed startup to the user, with an "Exit" button.
     /// </summary>
     /// <param name="PopupTitle"></param>
     /// <param name="PopupMessage"></param>
-    public BasicPopup(string PopupTitle, string PopupMessage)
+    public FailedStartupPopup(string PopupTitle, string PopupMessage)
     {
         InitializeComponent();
-        // assign properties
+        // configure the Popup window
         Title = PopupTitle;
         Message = PopupMessage;
         PopupTitleLabel.Text = PopupTitle;
