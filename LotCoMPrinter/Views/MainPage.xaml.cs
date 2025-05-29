@@ -5,17 +5,17 @@ using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
 
-public partial class MainPage : ContentPage 
+public partial class MainPage : ContentPage
 {
 	/// <summary>
 	/// The ViewModel controlling the UI and logic of the MainPage.
 	/// </summary>
-	private readonly MainPageViewModel ViewModel;
+	private MainPageViewModel ViewModel;
 
-    /// <summary>
-    /// StaticResource Grey500 color.
-    /// </summary>
-    private static readonly Color Grey500 = new Color(110, 110, 110);
+	/// <summary>
+	/// StaticResource Grey500 color.
+	/// </summary>
+	private static readonly Color Grey500 = new Color(110, 110, 110);
 
 	/// <summary>
 	/// Animates the collapsing of the Open Print Tickets Panel across Duration milliseconds.
@@ -68,16 +68,16 @@ public partial class MainPage : ContentPage
 			await AnimatedCollapseOpenPrintTicketsPanel();
 		}
 	}
-	
+
 	/// <summary>
 	/// Event Handler for the Clicked Event from the AddPartialProductionDataSet Button.
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-    private void OnAddPartialProductionDataSetButtonClicked(object sender, EventArgs e)
-    {
+	private void OnAddPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	{
 		ViewModel.AddPartialDataSet();
-    }
+	}
 
 	/// <summary>
 	/// Event Handler for the Clicked Event from the AddPartialProductionDataset Button.
@@ -207,7 +207,7 @@ public partial class MainPage : ContentPage
 			ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.OpenPrintTickets[^1]);
 			await AnimatedDisplayPrintTicket();
 		}
-    }
+	}
 
 	/// <summary>
 	/// Handler for the Clicked event from the CloseActivePrintTicketButton control.
@@ -225,7 +225,6 @@ public partial class MainPage : ContentPage
 					"We encountered an unexpected error. Please see Management to resolve this issue." +
 					"\n\nReference message: " +
 					"Cannot close 'null'."
-					
 				)
 			);
 		}
@@ -255,7 +254,6 @@ public partial class MainPage : ContentPage
 					"We encountered an unexpected error. Please see Management to resolve this issue." +
 					"\n\nReference message: " +
 					"Cannot save 'null' to OpenPrintTickets."
-					
 				)
 			);
 		}
@@ -271,7 +269,6 @@ public partial class MainPage : ContentPage
 					"We encountered an unexpected error. Please see Management to resolve this issue." +
 					"\n\nReference message: " +
 					"The Untracked ActivePrintTicket was not found in OpenPrintTickets."
-					
 				)
 			);
 		}
@@ -298,7 +295,6 @@ public partial class MainPage : ContentPage
 					"We encountered an unexpected error. Please see Management to resolve this issue." +
 					"\n\nReference message: " +
 					"Cannot delete 'null' from OpenPrintTickets."
-					
 				)
 			);
 		}
@@ -314,7 +310,6 @@ public partial class MainPage : ContentPage
 					"We encountered an unexpected error. Please see Management to resolve this issue." +
 					"\n\nReference message: " +
 					"The Untracked ActivePrintTicket was not found in OpenPrintTickets."
-					
 				)
 			);
 		}
@@ -643,16 +638,52 @@ public partial class MainPage : ContentPage
 				SecondPartialDataSetOperatorControl.Stroke = Colors.Red;
 			}
 		}
-    }
+	}
 
-	// full constructor
+	/// <summary>
+	/// Attempts to initialize a ViewModel for the Window to bind to.
+	/// If this method raises an exception, it will create a popup for the user and then Quit.
+	/// </summary>
+	private bool InitializeViewModel()
+	{
+		// attempt to create a new ViewModel
+		try
+		{
+			ViewModel = new MainPageViewModel();
+			return true;
+		}
+		// there was an issue communicating with or processing data from the Database 
+		// or there was a formatting error in the JSON stream from the Database
+		catch (SystemException)
+		{
+			this.ShowPopup
+			(
+				new FailedStartupPopup
+				(
+					PopupTitle: "Failed to Launch",
+					PopupMessage: "We're sorry, we couldn't launch LotCom WIP Labels. Please see Management to resolve this issue."
+				)
+			);
+			// return false so the application can begin exiting
+			return false;
+		}
+	}
+
+	#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+	/// <summary>
+	/// Creates a new MainPage Window for the Application.
+	/// </summary>
 	public MainPage()
 	{
 		// instantiate the ViewModel and bind the Page to it
-		ViewModel = new MainPageViewModel();
-		BindingContext = ViewModel;
-		// show the window from XAML
-		InitializeComponent();
+		bool Launch = InitializeViewModel();
+		if (Launch)
+		{
+			BindingContext = ViewModel;
+			// show the window from XAML
+			InitializeComponent();
+		}
 	}
+	#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 }
 
