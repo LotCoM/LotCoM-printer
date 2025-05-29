@@ -457,78 +457,6 @@ public class ProcessData()
     }
 
     /// <summary>
-    /// Synchronously retrieves a list of Process Full Names.
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="FormatException"></exception>
-    /// <exception cref="SystemException"></exception>
-    public List<string> GetAllProcessNames()
-    {
-        try
-        {
-            GetAllProcesses();
-        }
-        catch (FormatException)
-        {
-            throw;
-        }
-        catch (Exception _ex)
-        {
-            throw new SystemException
-            (
-                $"An exception of type '{_ex.GetType()}' occurred while reading or processing Process Data: {_ex.Message}"
-            );
-        }
-        // create a List of all Process Names
-        if (CachedProcesses is not null && CachedProcesses.Count > 0)
-        {
-            return CachedProcesses
-                    .Select(x => x.FullName)
-                    .ToList();
-        }
-        else
-        {
-            return [];
-        }
-    }
-
-    /// <summary>
-    /// Asynchronously retrieves a list of Process Full Names.
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="FormatException"></exception>
-    /// <exception cref="SystemException"></exception>
-    public async Task<List<string>> GetAllProcessNamesAsync() 
-    {
-        try
-        {
-            await GetAllProcessesAsync();
-        }
-        catch (FormatException)
-        {
-            throw;
-        }
-        catch (Exception _ex)
-        {
-            throw new SystemException
-            (
-                $"An exception of type '{_ex.GetType()}' occurred while reading or processing Process Data: {_ex.Message}"
-            );
-        }
-        // create a List of all Process Names
-        if (CachedProcesses is not null && CachedProcesses.Count > 0)
-        {
-            return CachedProcesses
-                    .Select(x => x.FullName)
-                    .ToList();
-        }
-        else
-        {
-            return [];
-        }
-    }
-
-    /// <summary>
     /// Loads and queries the Process Masterlist data for data connected to ProcessFullName. 
     /// Returns a Process object constructed from the first found match.
     /// </summary>
@@ -641,55 +569,6 @@ public class ProcessData()
     }
 
     /// <summary>
-    /// Searches for a Department that has a Title the matches DepartmentTitle.
-    /// </summary>
-    /// <param name="DepartmentTitle"></param>
-    /// <returns>A Department object.</returns>
-    /// <exception cref="ArgumentException"></exception>
-    public Department GetIndividualDepartment(string DepartmentTitle) 
-    {
-        GetAllDepartments();
-        // try to find a match for the passed Title
-        List<Department> Matches = CachedDepartments!
-            .Where(x => x.Title
-            .Equals(DepartmentTitle))
-            .ToList();
-        if (Matches.Count <= 0) 
-        {
-            // there was no match, throw an exception
-            throw new ArgumentException($"Could not match '{DepartmentTitle}' to a defined Department.");
-        }
-        // return the first of the Matches
-        return Matches[0];
-    }
-
-    /// <summary>
-    /// Asynchronously searches for a Department that has a Title the matches DepartmentTitle.
-    /// </summary>
-    /// <param name="DepartmentTitle"></param>
-    /// <returns>A Department object.</returns>
-    /// <exception cref="ArgumentException"></exception>
-    public async Task<Department> GetIndividualDepartmentAsync(string DepartmentTitle) 
-    {
-        await GetAllDepartmentsAsync();
-        return await Task.Run(() => 
-        {
-            // try to find a match for the passed Title
-            List<Department> Matches = CachedDepartments!
-                .Where(x => x.Title
-                .Equals(DepartmentTitle))
-                .ToList();
-            if (Matches.Count < 1) 
-            {
-                // there was no match, throw an exception
-                throw new ArgumentException($"Could not match '{DepartmentTitle}' to a defined Department.");
-            }
-            // return the first of the Matches
-            return Matches[0];
-        });
-    }
-
-    /// <summary>
     /// Retrieves the Process Part list for the specified Process.
     /// </summary>
     /// <param name="ProcessFullName"></param>
@@ -753,34 +632,6 @@ public class ProcessData()
         } 
         // return the Part list
         return Process.Parts;
-    }
-
-    /// <summary>
-    /// Retrieves and formats ProcessFullName's Part list as a list of Displayable strings.
-    /// </summary>
-    /// <param name="ProcessFullName">Process FULL Name ("Code-Title") to retrieve Part Data for.</param>
-    /// <returns>A List of strings.</returns>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="SystemException"></exception>
-    /// <exception cref="NullReferenceException"></exception>
-    public async Task<List<string>> GetDisplayableProcessPartsAsync(string ProcessFullName) 
-    {
-        // retrieve the Process' parts
-        List<Part> ProcessParts;
-        try
-        {
-            ProcessParts = await GetProcessPartsAsync(ProcessFullName);
-        }
-        catch (SystemException)
-        {
-            throw;
-        }
-        // convert each Part Token into a Displayable string
-        List<string> PartStrings = ProcessParts
-            .Select(x => $"{x.PartNumber}\n{x.PartName}")
-            .ToList();
-        // return the converted list
-        return PartStrings;
     }
 
     /// <summary>
