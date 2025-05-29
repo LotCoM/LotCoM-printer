@@ -326,7 +326,7 @@ public partial class PrintTicket : ObservableObject
         {
             Process = Data.GetIndividualProcess(JSON["Process"]!["FullName"]!.ToString());
         }
-        catch
+        catch (SystemException)
         {
             throw new JsonException($"Could not parse a Process from '{JSON["Process"]!}'.");
         }
