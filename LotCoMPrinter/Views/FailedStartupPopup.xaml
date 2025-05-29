@@ -73,7 +73,7 @@
                         x:Name="PopupMessageLabel"
                         HorizontalOptions="Start"
                         VerticalOptions="Start"
-                        Margin="25,5,0,5"
+                        Margin="25,5,25,5"
                         Text="{Binding Message}"
                         TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
                 </Border>
