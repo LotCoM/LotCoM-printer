@@ -97,7 +97,7 @@ public class SerialNumber(SerializationMode Mode, Part Part, int Value)
         {
             Mode = SerializationModeExtensions.FromString(JSON["Mode"]!.ToString());
         }
-        catch
+        catch (ArgumentException)
         {
             throw new JsonException($"No SerializationMode found in cached Serial Number '{Line}'.");
         }
@@ -125,7 +125,7 @@ public class SerialNumber(SerializationMode Mode, Part Part, int Value)
         {
             Part = new ProcessData().GetProcessPartData(ProcessName, PartNumber);
         }
-        catch
+        catch (SystemException)
         {
             throw new ArgumentException($"The Part '{PartNumber}' for Process '{ProcessName}' was not defined.");
         }
@@ -156,14 +156,13 @@ public class SerialNumber(SerializationMode Mode, Part Part, int Value)
         int Value;
         // parse Line into JSON
         JObject JSON = JObject.Parse(Line);
-        JToken? RawMode = JSON["Mode"];
         JToken? RawPart = JSON["Part"];
         JToken? RawValue = JSON["Value"];
         try
         {
             Mode = SerializationModeExtensions.FromString(JSON["Mode"]!.ToString());
         }
-        catch
+        catch (ArgumentException)
         {
             throw new JsonException($"No SerializationMode found in cached Serial Number '{Line}'.");
         }
@@ -191,7 +190,7 @@ public class SerialNumber(SerializationMode Mode, Part Part, int Value)
         {
             Part = await new ProcessData().GetProcessPartDataAsync(ProcessName, PartNumber);
         }
-        catch
+        catch (SystemException)
         {
             throw new ArgumentException($"The Part '{PartNumber}' for Process '{ProcessName}' was not defined.");
         }

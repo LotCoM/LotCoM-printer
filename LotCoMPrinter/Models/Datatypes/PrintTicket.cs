@@ -334,7 +334,7 @@ public partial class PrintTicket : ObservableObject
         {
             Part = Data.GetProcessPartData(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
         }
-        catch
+        catch (SystemException)
         {
             throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
         }
@@ -461,7 +461,7 @@ public partial class PrintTicket : ObservableObject
         {
             Process = await Data.GetIndividualProcessAsync(JSON["Process"]!["FullName"]!.ToString());
         }
-        catch
+        catch (SystemException)
         {
             throw new JsonException($"Could not parse a Process from '{JSON["Process"]!}'.");
         }
@@ -469,7 +469,7 @@ public partial class PrintTicket : ObservableObject
         {
             Part = await Data.GetProcessPartDataAsync(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
         }
-        catch
+        catch (SystemException)
         {
             throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
         }
