@@ -189,14 +189,30 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
-    /// Handler for the Clicked event from the OnStartNewLabelButton control.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
-    {
-		object? Result = await this.ShowPopupAsync(new NewPrintTicketForm(), CancellationToken.None);
+	/// Handler for the Clicked event from the OnStartNewLabelButton control.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
+	{
+		// attempt to create a NewPrintTicketForm
+		try
+		{
+			NewPrintTicketForm Form = new NewPrintTicketForm();
+		}
+		catch (SystemException)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue."
+				)
+			);
+		}
 		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
+		object? Result = await this.ShowPopupAsync(new NewPrintTicketForm(), CancellationToken.None);
 		if (Result is null)
 		{
 			return;
