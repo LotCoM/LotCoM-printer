@@ -234,10 +234,10 @@ public partial class PrintTicket : ObservableObject
     public partial bool IsPassThrough { get; set; }
 
     /// <summary>
-    /// Returns the Production Date without the Time segment.
+    /// Returns the Production Date without the Year or Time segment.
     /// </summary>
     [ObservableProperty]
-    public partial string ProductionDateNoTime { get; set; }
+    public partial string ProductionDateShort { get; set; }
 
     /// <summary>
     /// Controls whether the Print Ticket is selected in the Open Print Ticket ListView.
@@ -288,7 +288,7 @@ public partial class PrintTicket : ObservableObject
         HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
         Title = $"{Part.ModelNumber.Code} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
         IsPassThrough = _process.Type == OriginationType.PassThrough;
-        ProductionDateNoTime = $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
+        ProductionDateShort = $"{ProductionDate.Month}/{ProductionDate.Day}";
         if (Process.RequiredFields.JBKNumber && SerializationMode != SerializationMode.JBK)
         {
             JBKManualEntry = true;
