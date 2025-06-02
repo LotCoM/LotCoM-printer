@@ -2,31 +2,46 @@ using CommunityToolkit.Maui.Views;
 
 namespace LotCoMPrinter.Views;
 
-public partial class BasicPopup : Popup {
-    // binding properties
+public partial class BasicPopup : Popup 
+{
     private string _title = "";
     /// <summary>
     /// Serves the Title for the Popup.
     /// </summary>
-    public string Title {
+    public string Title
+    {
         get {return _title;}
-        set {
+        set
+        {
+            _title = value;
             OnPropertyChanged(_title);
             OnPropertyChanged(Title);
-            _title = value;
         }
     }
+
     private string _message = "";
     /// <summary>
     /// Serves the Message Body for the Popup.
     /// </summary>
-    public string Message {
+    public string Message
+    {
         get {return _message;}
-        set {
+        set
+        {
+            _message = value;
             OnPropertyChanged(_message);
             OnPropertyChanged(Message);
-            _message = value;
         }
+    }
+
+    /// <summary>
+    /// Handler for the Clicked event from the ConfirmationButton.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnConfirmation(object sender, EventArgs e)
+    {
+        Close();
     }
 
     /// <summary>
@@ -34,23 +49,13 @@ public partial class BasicPopup : Popup {
     /// </summary>
     /// <param name="PopupTitle"></param>
     /// <param name="PopupMessage"></param>
-    public BasicPopup(string PopupTitle, string PopupMessage) {
-        // create the popup
+    public BasicPopup(string PopupTitle, string PopupMessage)
+    {
         InitializeComponent();
-
         // assign properties
         Title = PopupTitle;
         Message = PopupMessage;
         PopupTitleLabel.Text = PopupTitle;
         PopupMessageLabel.Text = PopupMessage;
-    }
-
-    /// <summary>
-    /// Handler for the Clicked event from the ConfirmationButton.
-    /// </summary>
-    /// <param name="Sender"></param>
-    /// <param name="e"></param>
-    private void OnConfirmation(object sender, EventArgs e) {
-        Close();
     }
 }

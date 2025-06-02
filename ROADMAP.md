@@ -13,5 +13,9 @@
 - Print History Logging.
 - Branch Standards development.
 
-## `v0.7.0`
+## `0.7.0`
+- Partial information input (consolidation workflow).
+
+## `0.8.0`
 - Reprinting (from print history).
+  - Includes Quantity modification and record overwriting in data.

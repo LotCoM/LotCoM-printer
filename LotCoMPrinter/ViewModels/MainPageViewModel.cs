@@ -1,9 +1,10 @@
+using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotCoMPrinter.Models.Datasources;
+using LotCoMPrinter.Models.Datatypes;
+using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Printing;
-using LotCoMPrinter.Models.Serialization;
-using LotCoMPrinter.Models.Validators;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -12,364 +13,421 @@ namespace LotCoMPrinter.ViewModels;
 /// <summary>
 /// Constructs a ViewModel for the MainPage class.
 /// </summary>
-public partial class MainPageViewModel : ObservableObject {
-    // public class properties
-    private List<Process> _processes = ProcessData.GetProcesses();
+public partial class MainPageViewModel : ObservableObject
+{
     /// <summary>
-    /// Serves the Process masterlist to the ProcessPicker Control.
+    /// Provides default widths for the Open Print Tickets Panel.
     /// </summary>
-    public List<Process> Processes {
-        get {return _processes;}
-    }
-    private Process? _selectedProcess = null;
-    /// <summary>
-    /// Serves ProcessPicker's selected value as a Process object. 
-    /// </summary>
-    public Process? SelectedProcess {
-        get {return _selectedProcess;}
-        set {
-            OnPropertyChanged(nameof(_selectedProcess));
-            OnPropertyChanged(nameof(SelectedProcess));
-            _selectedProcess = value;
-        }
-    }
-    private List<Part>? _selectedProcessParts = null;
-    /// <summary>
-    /// Serves the Part Data associated with the Process in SelectedProcess.
-    /// </summary>
-    public List<Part>? SelectedProcessParts {
-        get {return _selectedProcessParts;}
-        set {
-            _selectedProcessParts = value;
-            OnPropertyChanged(nameof(_selectedProcessParts));
-            OnPropertyChanged(nameof(SelectedProcessParts));
-        }
-    }
-    private Part? _selectedPart = null;
-    /// <summary>
-    /// Serves PartPicker's selected value as a Part object.
-    /// </summary>
-    public Part? SelectedPart {
-        get {return _selectedPart;}
-        set {
-            _selectedPart = value;
-            OnPropertyChanged(nameof(_selectedPart));
-            OnPropertyChanged(nameof(SelectedPart));
-        }
-    }
-    private string _displayedJBKNumber = "";
-    /// <summary>
-    /// Serves the JBK Number currently displayed (when programmatically assigned).
-    /// </summary>
-    public string DisplayedJBKNumber {
-        get {return _displayedJBKNumber;}
-        set {
-            _displayedJBKNumber = value;
-            OnPropertyChanged(nameof(_displayedJBKNumber));
-            OnPropertyChanged(nameof(DisplayedJBKNumber));
-        }
-    }
-    private string _displayedLotNumber = "";
-    /// <summary>
-    /// Serves the Lot Number currently displayed (when programmatically assigned).
-    /// </summary>
-    public string DisplayedLotNumber {
-        get {return _displayedLotNumber;}
-        set {
-            _displayedLotNumber = value;
-            OnPropertyChanged(nameof(_displayedLotNumber));
-            OnPropertyChanged(nameof(DisplayedLotNumber));
-        }
-    }
-    private string _displayedModelNumber = "";
-    /// <summary>
-    /// Serves the Model Number that the current SelectedPart is associated with.
-    /// </summary>
-    public string DisplayedModelNumber {
-        get {return _displayedModelNumber;}
-        set {
-            _displayedModelNumber = value;
-            OnPropertyChanged(nameof(_displayedModelNumber));
-            OnPropertyChanged(nameof(DisplayedModelNumber));
-        }
-    }
-    private string _basketType = "Full";
-    /// <summary>
-    /// Serves BasketTypePicker's selected value.
-    /// </summary>
-    public string BasketType {
-        get {return _basketType;}
-        set {
-            _basketType = value;
-            OnPropertyChanged(nameof(_basketType));
-            OnPropertyChanged(nameof(BasketType));
-        }
-    }
-    private bool _printing = false;
-    /// <summary>
-    /// Serves the current status of the application (true if a LabelPrintJob is running; false if not).
-    /// </summary>
-    public bool Printing {
-        get {return _printing;}
-        set {
-            _printing = value;
-            OnPropertyChanged(nameof(_printing));
-            OnPropertyChanged(nameof(Printing));
-        }
-    }
-    
-    // full constructor
-    public MainPageViewModel() {}
-
-    /// <summary>
-    /// Checks if the Process requires Serialization (is an origination process).
-    /// If so, elicits the Serialization Mode, checks for Cached Serial Numbers, and assigns a Serial Number to the Label.
-    /// </summary>
-    /// <param name="Capture"></param>
-    /// <returns>An updated InterfaceCapture object.</returns>
-    /// <exception cref="LabelBuildException"></exception>
-    private async Task<InterfaceCapture> SerializeLabel(InterfaceCapture Capture) {
-        // retrieve values to save processing time (will not be null here; post-validation)
-        Process SelectedProcess = Capture.SelectedProcess!;
-        string Serialization = SelectedProcess.Serialization;
-        // check if the SelectedProcess is an Originator; if not, just return the passed Capture
-        if (!SelectedProcess.Type.Equals("Originator")) {
-            return Capture;
-        }
-        // serialize the Label using the Process' Serialization Mode
-        string? SerialNumber = await Serializer.Serialize(Capture);
-        // no serial number was assigned; this is fatal
-        if (SerialNumber == null) {
-            throw new LabelBuildException("Failed to assign a Serial Number to the Label");
-        }
-        // update the Serialized Number in the Capture object
-        if (Serialization == "JBK") {
-            Capture.JBKNumber = SerialNumber;
-        } else {
-            Capture.LotNumber = SerialNumber;
-        }
-        // return the updated Capture object
-        return Capture;
+    public enum OpenPrintTicketsPanelWidths
+    {
+        Open = 350,
+        Closed = 90
     }
 
     /// <summary>
-    /// Decides how to Head the Label, formats that field as a Header, and returns that string.
+    /// Provides constant Defaults for the MainPage Visual State Options.
     /// </summary>
-    /// <param name="Capture"></param>
-    /// <returns>A string to use as the Label Header text.</returns>
-    private static async Task<string> FormatLabelHeader(InterfaceCapture Capture) {
-        string LabelHeader = await Task.Run(() => {
-            // retrieve values to improve processing time
-            Process SelectedProcess = Capture.SelectedProcess!;
-            // decide to use the JBK or Date as the header
-            string Header;
-            if ((SelectedProcess.PassThroughHeadingType != null && SelectedProcess.PassThroughHeadingType == "JBK") 
-                || SelectedProcess.Serialization.Equals("JBK")) {
-                // header is the JBK # (remove "JBK #: ")
-                Header = Capture.JBKNumber!;
-            } else if ((SelectedProcess.PassThroughHeadingType != null && SelectedProcess.PassThroughHeadingType == "Lot") 
-                || SelectedProcess.Serialization.Equals("Lot")) {
-                // header is the MM/DD of the Production Date; retrieve the Date from the UI Capture
-                DateTime Date = Capture.ProductionDate;
-                Header = $"{Date.Month}/{Date.Day}";
-            } else {
-                throw new LabelBuildException("There was no Header type assigned to this Process.");
+    private static class Defaults
+    {
+        public const OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
+        public const bool IsOpenPrintTicketsPanelShown = false;
+        public const bool IsWelcomeMenuShown = true;
+        public const string WelcomeMenuTitleLabelText = "";
+        public const string WelcomeMenuSubTitleLabelText = "";
+        public const bool IsActivePrintTicketMenuShown = false;
+    }
+
+    private OpenPrintTicketsPanelWidths _openPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
+    /// <summary>
+    /// Provides the width Option of the Open Print Tickets Panel.
+    /// </summary>
+    public OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth
+    {
+        get { return _openPrintTicketsPanelWidth; }
+        set
+        {
+            _openPrintTicketsPanelWidth = value;
+            OnPropertyChanged(nameof(_openPrintTicketsPanelWidth));
+            OnPropertyChanged(nameof(OpenPrintTicketsPanelWidth));
+        }
+    }
+
+    private bool _isOpenPrintTicketsPanelShown = Defaults.IsOpenPrintTicketsPanelShown;
+    /// <summary>
+    /// Provides the Visibility state of the Open Print Tickets Panel.
+    /// </summary>
+    public bool IsOpenPrintTicketsPanelShown
+    {
+        get { return _isOpenPrintTicketsPanelShown; }
+        set
+        {
+            _isOpenPrintTicketsPanelShown = value;
+            OnPropertyChanged(nameof(_isOpenPrintTicketsPanelShown));
+            OnPropertyChanged(nameof(IsOpenPrintTicketsPanelShown));
+        }
+    }
+
+    private bool _isWelcomeMenuShown = Defaults.IsWelcomeMenuShown;
+    /// <summary>
+    /// Provides the Visibility state of the Welcome Menu.
+    /// </summary>
+    public bool IsWelcomeMenuShown
+    {
+        get { return _isWelcomeMenuShown; }
+        set
+        {
+            _isWelcomeMenuShown = value;
+            OnPropertyChanged(nameof(_isWelcomeMenuShown));
+            OnPropertyChanged(nameof(IsWelcomeMenuShown));
+        }
+    }
+
+    private string _welcomeMenuTitleLabelText = Defaults.WelcomeMenuTitleLabelText;
+    /// <summary>
+    /// Provides the text to display on the Window Title Label.
+    /// </summary>
+    public string WelcomeMenuTitleLabelText
+    {
+        get { return _welcomeMenuTitleLabelText; }
+        set
+        {
+            _welcomeMenuTitleLabelText = value;
+            OnPropertyChanged(nameof(_welcomeMenuTitleLabelText));
+            OnPropertyChanged(nameof(WelcomeMenuTitleLabelText));
+        }
+    }
+
+    private string _welcomeMenuSubTitleLabelText = Defaults.WelcomeMenuSubTitleLabelText;
+    /// <summary>
+    /// Provides the text to display on the Window Sub-Title Label.
+    /// </summary>
+    public string WelcomeMenuSubTitleLabelText
+    {
+        get { return _welcomeMenuSubTitleLabelText; }
+        set
+        {
+            _welcomeMenuSubTitleLabelText = value;
+            OnPropertyChanged(nameof(_welcomeMenuSubTitleLabelText));
+            OnPropertyChanged(nameof(WelcomeMenuSubTitleLabelText));
+        }
+    }
+
+    private bool _isActivePrintTicketMenuShown = Defaults.IsActivePrintTicketMenuShown;
+    /// <summary>
+    /// Provides the Visibility state of the ActivePrintTicket Menu.
+    /// </summary>
+    public bool IsActivePrintTicketMenuShown
+    {
+        get { return _isActivePrintTicketMenuShown; }
+        set
+        {
+            _isActivePrintTicketMenuShown = value;
+            OnPropertyChanged(nameof(_isActivePrintTicketMenuShown));
+            OnPropertyChanged(nameof(IsActivePrintTicketMenuShown));
+        }
+    }
+
+    private readonly List<Process> _allProcesses;
+    /// <summary>
+    /// The List of Processes in the Database, captured at the time of instantiation.
+    /// </summary>
+    public List<Process> AllProcesses
+    {
+        get { return _allProcesses; }
+    }
+
+    private ObservableCollection<PrintTicket> _openPrintTickets = [];
+    /// <summary>
+    /// The List of Open Print Tickets currently saved locally.
+    /// </summary>
+    public ObservableCollection<PrintTicket> OpenPrintTickets
+    {
+        get
+        {
+            if (_openPrintTickets == null)
+            {
+                _openPrintTickets = new ObservableCollection<PrintTicket>();
             }
-            return Header;
-        });
-        return LabelHeader;
+            return _openPrintTickets;
+        }
+        set
+        {
+            _openPrintTickets = value;
+            OnPropertyChanged(nameof(_openPrintTickets));
+            OnPropertyChanged(nameof(OpenPrintTickets));
+        }
+    }
+
+    private TrackedPrintTicket? _activeTicket = null;
+    /// <summary>
+    /// The currently active PrintTicket object with Tracked changes.
+    /// </summary>
+    public TrackedPrintTicket? ActiveTicket
+    {
+        get { return _activeTicket; }
+        set
+        {
+            _activeTicket = value;
+            OnPropertyChanged(nameof(_activeTicket));
+            OnPropertyChanged(nameof(ActiveTicket));
+        }
+    }
+
+    private PrintTicket? _selectedTicket = null;
+    /// <summary>
+    /// The currently selected PrintTicket object in the OpenPrintTickets CollectionView.
+    /// </summary>
+    public PrintTicket? SelectedTicket
+    {
+        get { return _selectedTicket; }
+        set
+        {
+            _selectedTicket = value;
+            OnPropertyChanged(nameof(_selectedTicket));
+            OnPropertyChanged(nameof(SelectedTicket));
+        }
     }
 
     /// <summary>
-    /// Creates, validates, and formats an InterfaceCapture object from the current UI status.
+    /// Create a ViewModel to control the logic of a Main Page instance.
     /// </summary>
-    /// <param name="ProcessPicker"></param>
-    /// <param name="PartPicker"></param>
-    /// <param name="QuantityEntry"></param>
-    /// <param name="JBKNumberEntry"></param>
-    /// <param name="LotNumberEntry"></param>
-    /// <param name="DeburrJBKNumberEntry"></param>
-    /// <param name="DieNumberEntry"></param>
-    /// <param name="ModelNumberEntry"></param>
-    /// <param name="BasketTypePicker"></param>
-    /// <param name="ProductionDatePicker"></param>
-    /// <param name="ProductionShiftPicker"></param>
-    /// <param name="OperatorIDEntry"></param>
-    /// <returns>An InterfaceCapture object.</returns>
-    /// <exception cref="NullProcessException"></exception>
+    /// <exception cref="SystemException"></exception>
+    /// <exception cref="JsonException"></exception>
+    public MainPageViewModel()
+    {
+        // load Process data
+        try
+        {
+            _allProcesses = new ProcessData().GetAllProcesses();
+        }
+        catch (SystemException)
+        {
+            throw;
+        }
+        catch (JsonException)
+        {
+            throw;
+        }
+        // configure Welcome menu
+        WelcomeMenuTitleLabelText = "Welcome";
+        WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
+        // read and set PrintTicket properties
+        _openPrintTickets = new ObservableCollection<PrintTicket>(PrintTicketCache.GetAllPrintTickets());
+        try
+        {
+            SelectedTicket = OpenPrintTickets[0];
+        }
+        catch
+        {
+            SelectedTicket = null;
+        }
+    }
+
+    /// <summary>
+    /// Opens the Open Print Tickets Panel.
+    /// </summary>
+    public void RaiseOpenPrintTicketsPanel()
+    {
+        OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Open;
+        IsOpenPrintTicketsPanelShown = true;
+    }
+
+    /// <summary>
+    /// Closes the Open Print Tickets Panel.
+    /// </summary>
+    public void CollapseOpenPrintTicketsPanel()
+    {
+        OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
+        IsOpenPrintTicketsPanelShown = false;
+    }
+
+    /// <summary>
+    /// Opens the ActivePrintTicket Menu to display the current ActiveTicket.
+    /// </summary>
+    /// <exception cref="NullReferenceException"></exception>
+    public void OpenActivePrintTicketMenu()
+    {
+        if (ActiveTicket is null)
+        {
+            throw new NullReferenceException("Cannot display a 'null' ActivePrintTicket.");
+        }
+        IsWelcomeMenuShown = false;
+        IsActivePrintTicketMenuShown = true;
+    }
+
+    /// <summary>
+    /// Closes the ActivePrintTicket Menu and shows the Welcome Menu.
+    /// Resets the ActiveTicket and SelectedTicket properties.
+    /// </summary>
+    public void CloseActivePrintTicketMenu()
+    {
+        ActiveTicket = null;
+        SelectedTicket = null;
+        IsWelcomeMenuShown = true;
+        IsActivePrintTicketMenuShown = false;
+    }
+
+    /// <summary>
+    /// Attempts to create and run a Label Print Job from ActiveTicket.Tracked.
+    /// Removes ActiveTicket from OpenPrintTickets.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="FormatException"></exception>
-    private static InterfaceCapture CreateCapture(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry HeatNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
-        // create an interface capture for this UI state
-        InterfaceCapture Capture = new InterfaceCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-        // validate the Capture
-        try {
-            Capture = InterfaceCaptureValidator.Validate(Capture);
-        // there was no process selected
-		} catch (NullProcessException) {
-            throw new NullProcessException();
-        // there was a problem retrieving the process data
-        } catch (ArgumentException) {
-            throw new ArgumentException();
-        // there was some invalid UI entry
-        } catch (FormatException _ex) {
-            throw new FormatException(_ex.Message);
-        }
-        // the Capture is valid and processed; return it
-        return Capture;
-    }
-
-    /// <summary>
-    /// Updates the Page's Selected Process and its Part Data.
-    /// </summary>
-    /// <param name="ProcessPicker"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedProcess(Picker ProcessPicker) {
-        await Task.Run(() => {
-            // retrieve the selected Process
-		    Process? PickedProcess = (Process?)Processes[ProcessPicker.SelectedIndex];
-            // update the SelectedProcess properties
-            if (ProcessPicker.SelectedIndex == -1) {
-                return;
-            }
-            if (PickedProcess == null) {
-                throw new ArgumentException("Process was not found in Process masterlist.");
-            }
-            // update SelectedProcess and assign the new list of Parts (as objects) to the SelectedProcessParts list
-            SelectedProcess = PickedProcess;
-            SelectedProcessParts = SelectedProcess.Parts;
-        });
-    }
-
-    /// <summary>
-    /// Updates the Page's Selected Basket Type (Full/Partial).
-    /// </summary>
-    /// <param name="BasketType">'Full' or 'Partial', as selected in the UI.</param>
-    /// <returns></returns>
-    public async Task UpdateBasketType(string BasketType) {
-        // update the BasketType property
-        await Task.Run(() => {
-            this.BasketType = BasketType;
-        });
-    }
-
-    /// <summary>
-    /// Updates the Page's Selected Part and Model Number.
-    /// </summary>
-    /// <param name="PartPicker">The Picker UI Control that allows the selection of a Part.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>"
-    public async Task UpdateSelectedPart(Picker PartPicker) {
-        await Task.Run(() => {
-            // configure the SelectedPart property
-            try {
-                // get the PartPicker's selected item
-                if (PartPicker.SelectedIndex == -1) {
-                    return;
-                }
-                Part? PickedPart = (Part?)PartPicker.ItemsSource[PartPicker.SelectedIndex];
-                // update the SelectedPart property and the DisplayedModelNumber property
-                if (PickedPart == null) {
-                    throw new ArgumentException("Part was not found in Process Part list.");
-                }
-                SelectedPart = PickedPart;
-                DisplayedModelNumber = SelectedPart.ModelNumber;
-            // the selected part number was somehow invalid
-            } catch (ArgumentException) {
-                throw new ArgumentException("Part was not found in Process Part list.");
-            }
-        });
-    }
-
-    /// <summary>
-    /// Processes a Print Request from the user. 
-    /// Captures the interface and validates it, then creates a new Label object from that captured data.
-    /// </summary>
-    /// <remarks>
-    /// Throws NullProcessException if there was no selection in the ProcessPicker Control.
-    /// Throws ArgumentException if the Process Data could not be retrieved.
-    /// Throws FormatException if there was a failed validation.
-    /// Throws LabelBuildException if there was an error creating, formatting, serializing, or printing the Label.
-    /// Throws PrintRequestException if there was an error communicating with the Printer or the Printing System.
-    /// </remarks>
-    /// <param name="ProcessPicker"></param>
-    /// <param name="PartPicker"></param>
-    /// <param name="QuantityEntry"></param>
-    /// <param name="JBKNumberEntry"></param>
-    /// <param name="LotNumberEntry"></param>
-    /// <param name="DeburrJBKNumberEntry"></param>
-    /// <param name="DieNumberEntry"></param>
-    /// <param name="ModelNumberEntry"></param>
-    /// <param name="BasketTypePicker"></param>
-    /// <param name="ProductionDatePicker"></param>
-    /// <param name="ProductionShiftPicker"></param>
-    /// <param name="OperatorIDEntry"></param>
-    /// <returns></returns>
-    /// <exception cref="NullProcessException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="FormatException"></exception>
-    /// <exception cref="LabelBuildException"></exception>
     /// <exception cref="PrintRequestException"></exception>
-    public async Task<bool> PrintRequest(Picker ProcessPicker, Picker PartPicker, Entry QuantityEntry, Entry JBKNumberEntry, Entry LotNumberEntry, Entry DeburrJBKNumberEntry, Entry DieNumberEntry, Entry HeatNumberEntry, Entry ModelNumberEntry, Picker BasketTypePicker, DatePicker ProductionDatePicker, Picker ProductionShiftPicker, Entry OperatorIDEntry) {
-        // capture the interface
-        InterfaceCapture Capture;
-        try {
-            Capture = CreateCapture(ProcessPicker, PartPicker, QuantityEntry, JBKNumberEntry, LotNumberEntry, DeburrJBKNumberEntry, DieNumberEntry, HeatNumberEntry, ModelNumberEntry, BasketTypePicker, ProductionDatePicker, ProductionShiftPicker, OperatorIDEntry);
-        // there was no process selection made
-        } catch (NullProcessException) {
-            throw new NullProcessException();
-        // there was a problem retrieving process data for the selected process
-        } catch (ArgumentException) {
-            throw new ArgumentException();
-        // a validation failed
-        } catch (FormatException _ex) {
-            throw new FormatException(_ex.Message);
+    public async Task<bool> PrintActivePrintTicket()
+    {
+        // create a LabelPrintJob from the Active Print Ticket
+        if (ActiveTicket is null)
+        {
+            throw new NullReferenceException("Cannot print 'null' PrintTicket.");
         }
-        // serialize the label (if needed)
-        try {
-            Capture = await SerializeLabel(Capture);
-        // failed to cache a new serial number or assign a serial number at all
-        } catch (Exception _ex) {
-            throw new LabelBuildException($"Failed to Serialize the Label due to the following exception:\n {_ex}: {_ex.Message}.");
+        // validate the PrintTicket
+        try
+        {
+            ActiveTicket.Tracked = ActiveTicket.Tracked.SelfValidate();
         }
-        // UI state is valid; format the Label's header
-        string Header; 
-        try {
-            Header = await FormatLabelHeader(Capture);
-        } catch (LabelBuildException _ex) {
-            throw new LabelBuildException(_ex.Message);
+        catch (Exception _ex)
+        {
+            throw new ArgumentException(_ex.Message);
         }
-        // create and run a Label print job
-        bool Printed = false;
-        LabelPrintJob Job = new LabelPrintJob(Capture, Header);
-        try { 
+        PrintJob Job = new PrintJob(ActiveTicket.Tracked);
+        bool Printed;
+        // attempt to run the Print Job
+        try
+        {
             Printed = await Job.Run();
-        // the print job failed
-        } catch (Exception _ex) {
-            if (_ex is LabelBuildException) {
-                // there was an error while constructing the Label to print
-                throw new LabelBuildException($"There was an error creating this Label:\n {_ex}: {_ex.Message}.");
-            } else if (_ex is PrintRequestException) {
-                // there was an error while communicating with the Printer or Printing System
-                throw new PrintRequestException($"There was an error communicating with the Printer:\n {_ex}: {_ex.Message}.");
-            } else if (_ex is PrintLogException) {
-                // the print logger failed to log to the specific process table and was forced to default
-                throw new PrintLogException(_ex.Message);
-            }
         }
-        // return the print success state
-        return Printed;
+        catch (LabelBuildException)
+        {
+            throw new PrintRequestException("Could not create a Label from the entered information.");
+        }
+        catch (PrintRequestException)
+        {
+            throw new PrintRequestException("Failed to execute the print job for the generated Label.");
+        }
+        // remove the Ticket if the print was successful
+        if (Printed)
+        {
+            bool Removed = OpenPrintTickets.Remove(ActiveTicket.Untracked);
+            // confirm that the ActiveTicket exists in OpenPrintTickets and remove it
+            if (!Removed)
+            {
+                throw new NullReferenceException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+            }
+            await SaveOpenPrintTickets();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
-    /// Resets the ViewModel's public properties.
+    /// Saves the current OpenPrintTickets List to the PrintTicketCache system.
     /// </summary>
-    public void Reset() {
-        SelectedPart = null;
-        DisplayedJBKNumber = "";
-        DisplayedLotNumber = "";
-        BasketType = "Full";
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
+    public async Task SaveOpenPrintTickets()
+    {
+        await PrintTicketCache.SaveAsync(OpenPrintTickets.ToList());
+    }
+
+    /// <summary>
+    /// Adds a PrintTicket to OpenPrintTickets.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    public async Task AddNewOpenPrintTicket(PrintTicket Ticket)
+    {
+        OpenPrintTickets = new ObservableCollection<PrintTicket>(OpenPrintTickets.Append(Ticket));
+        await SaveOpenPrintTickets();
+    }
+
+    /// <summary>
+    /// Attempts to add a blank PartialDataSet object to the Active Print Ticket.
+    /// </summary>
+    public void AddPartialDataSet()
+    {
+        if (ActiveTicket is not null && ActiveTicket.Tracked.HasSpace)
+        {
+            // create and add a blank PartialDataSet object to the ticket
+            ActiveTicket.Tracked.AddPartialDataSet
+            (
+                new PartialDataSet
+                (
+                    new Quantity(0),
+                    Shift.None,
+                    new Operator("ABC")
+                )
+            );
+        }
+    }
+
+    /// <summary>
+    /// Attempts to create and run a Partial Tag Print Job from ActiveTicket.Tracked.
+    /// </summary>
+    /// <param name="PartialSetNumber">The PartialDataSet to use as the source of partial Production Data, either 1 or 2.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="PrintRequestException"></exception>
+    public async Task<bool> PrintPartialTag(int PartialSetNumber)
+    {
+        // ensure the targeted PartialDataSet exists on the Active Print Ticket
+        if (PartialSetNumber < 1 || PartialSetNumber > 2)
+        {
+            throw new ArgumentException
+            (
+                $"Cannot print PartialDataSet '{PartialSetNumber}' as it is outside the allowed set (1, 2).",
+                nameof(PartialSetNumber)
+            );
+        }
+        if (ActiveTicket is null)
+        {
+            throw new NullReferenceException("Cannot print PartialDataSets from 'null' PrintTicket.");
+        }
+        // validate the target PartialDataSet
+        try
+        {
+            if (PartialSetNumber == 1 && ActiveTicket.Tracked.HasFirstPartialDataSet)
+            {
+                ActiveTicket.Tracked.FirstPartialDataSet!.SelfValidate();
+            }
+            else if (PartialSetNumber == 2 && ActiveTicket.Tracked.HasSecondPartialDataSet)
+            {
+                ActiveTicket.Tracked.SecondPartialDataSet!.SelfValidate();
+            }
+            else
+            {
+                throw new NullReferenceException($"Cannot print 'null' PartialDataSet Number '{PartialSetNumber}'.");
+            }
+        }
+        catch (NullReferenceException _nullEx)
+        {
+            throw new NullReferenceException(_nullEx.Message);
+        }
+        catch (ArgumentException _argEx)
+        {
+            throw new ArgumentException(_argEx.Message);
+        }
+        // create a new PrintJob from the PartialDataSet and attempt to run it
+        PrintJob Job = new PrintJob(ActiveTicket.Tracked, PartialSetNumber);
+        bool Printed;
+        try
+        {
+            Printed = await Job.Run();
+        }
+        catch (LabelBuildException)
+        {
+            throw new PrintRequestException("Could not create a Label from the entered information.");
+        }
+        catch (PrintRequestException)
+        {
+            throw new PrintRequestException("Failed to execute the print job for the generated Label.");
+        }
+        return Printed;
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
