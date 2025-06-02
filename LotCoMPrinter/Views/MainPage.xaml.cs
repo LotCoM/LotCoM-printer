@@ -460,7 +460,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.VariableFields.JBKNumber = new JBKNumber(int.Parse(e.NewTextValue));
+				new JBKNumber(int.Parse(e.NewTextValue));
 				JBKNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -473,7 +473,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.VariableFields.LotNumber = new LotNumber(int.Parse(e.NewTextValue));
+				new LotNumber(int.Parse(e.NewTextValue));
 				LotNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -531,6 +531,54 @@ public partial class MainPage : ContentPage
 			catch
 			{
 				HeatNumberControl.Stroke = Colors.Red;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for the Unfocused event from the JBKNumberEntry or LotNumberEntry controls.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private void OnSerialNumberEntryUnfocused(object sender, EventArgs e)
+	{
+		if (ViewModel.ActiveTicket is null)
+		{
+			return;
+		}
+		Entry Sender = (Entry)sender;
+		// JBK Number was unfocused
+		if (sender.Equals(JBKNumberEntry))
+		{
+			if (Sender.Text is null || Sender.Text.Equals(""))
+			{
+				JBKNumberControl.Stroke = Colors.Red;
+			}
+			try
+			{
+				ViewModel.ActiveTicket!.Tracked.VariableFields.JBKNumber = new JBKNumber(int.Parse(Sender.Text!));
+				JBKNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				JBKNumberControl.Stroke = Colors.Red;
+			}
+		}
+		// Lot Number was unfocused
+		if (sender.Equals(LotNumberEntry))
+		{
+			if (Sender.Text is null || Sender.Text.Equals(""))
+			{
+				LotNumberControl.Stroke = Colors.Red;
+			}
+			try
+			{
+				ViewModel.ActiveTicket!.Tracked.VariableFields.LotNumber = new LotNumber(int.Parse(Sender.Text!));
+				LotNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				LotNumberControl.Stroke = Colors.Red;
 			}
 		}
 	}

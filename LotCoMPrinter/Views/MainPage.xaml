@@ -652,9 +652,9 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="JBKNumberEntry"
-                                    IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
+                                    IsEnabled="{Binding ActiveTicket.Untracked.JBKManualEntry}"
                                     Text="{Binding ActiveTicket.Tracked.VariableFields.JBKNumber.Formatted}"
-                                    TextChanged="OnVariableFieldSetEntryTextChanged"
+                                    Unfocused="OnSerialNumberEntryUnfocused"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -682,9 +682,9 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="LotNumberEntry"
-                                    IsEnabled="{Binding ActiveTicket.Untracked.IsPassThrough}"
+                                    IsEnabled="{Binding ActiveTicket.Untracked.LotManualEntry}"
                                     Text="{Binding ActiveTicket.Tracked.VariableFields.LotNumber.Formatted}"
-                                    TextChanged="OnVariableFieldSetEntryTextChanged"
+                                    Unfocused="OnSerialNumberEntryUnfocused"
                                     MaxLength="9"/>
                             </Border>
                         </HorizontalStackLayout>
