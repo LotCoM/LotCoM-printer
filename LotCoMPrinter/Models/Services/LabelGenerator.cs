@@ -1,4 +1,5 @@
 using LotCoMPrinter.Models.Datatypes;
+using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Extensions;
 
@@ -130,7 +131,14 @@ public static class LabelGenerator
         QRCode? Code = await GenerateCode(Ticket);
         List<string> Body = await GenerateBody(Ticket);
         // apply the header, the QR Code, and the Label Data to the Label
-        await Label.AddHeaderAsync(Ticket.SerialNumber.GetFormattedValue());
+        if (Ticket.SerializationMode == SerializationMode.Lot)
+        {
+            await Label.AddHeaderAsync(Ticket.ProductionDateShort);
+        }
+        else
+        {
+            await Label.AddHeaderAsync(Ticket.SerialNumber.GetFormattedValue());
+        }
         await Label.AddSubHeadingAsync(Ticket.Part.ModelNumber.Code);
         await Label.AddBodyTitleAsync(Ticket.Part.PartName);
         await Label.AddQRCodeAsync(Code);
