@@ -226,3 +226,50 @@ Refactor database access paths to mirror schema change.
   - Allows `SerialCacheController.RemoveCachedSerialNumber()` to ignore and immediately return null when an empty string passed as the `SerialNumber` parameter.
     - This was previously causing the method to throw an error because it was incapable of locating the empty string in the cache file.
     - Pass-through Processes do not prompt for a Serial Number in the UI, so they pass an empty string as the `SerialNumber` parameter when invoking the `RemoveCachedSerialNumber()` method.
+
+# `0.7`
+## Print Ticketing Overhaul
+Introduction of Print Ticket system, a design change where operators can open and manage several Labels at once, saving them on their local computers.
+
+## `0.7.0`
+#### Feature Update
+**For Detailed Changes, see PR Messages**
+- [feature/136](https://github.com/LotCoM/LotCoM-printer/pull/139).
+  - Implementation of base-level architecture for Print Ticketing;
+  - Improve LotCom environment parity.
+- [bug/140](https://github.com/LotCoM/LotCoM-printer/pull/142).
+  - Deprecation/removal of Basket Type and Partial Label features.
+- [feature/141](https://github.com/LotCoM/LotCoM-printer/pull/143).
+  - Implementation of `Label` base class;
+  - Implementation of `LabelDimensions` class to control Label graphical designs/layouts. 
+- [feature/144](https://github.com/LotCoM/LotCoM-printer/pull/145).
+  - Overhaul of Serialization system to better serve Print Ticketing;
+  - Implementation controlled `SerialNumber` class;
+  - Deprecation/removal caching features.
+- [feature/146](https://github.com/LotCoM/LotCoM-printer/pull/149).
+  - Implementation of Print Ticket caching feature.
+- [feature/147](https://github.com/LotCoM/LotCoM-printer/pull/151).
+  - Implementation of Print Ticket creation feature.
+- [feature/148](https://github.com/LotCoM/LotCoM-printer/pull/152).
+  - Implementation of Print Ticket selection/loading features.
+- [feature/150](https://github.com/LotCoM/LotCoM-printer/pull/153).
+  - Stylization to bring to parity with LotCom system designs.
+- [feature/138](https://github.com/LotCoM/LotCoM-printer/pull/154).
+  - Overhaul of Printing back-end;
+  - Deprecation/removal of `InterfaceCapture` features and the single-screen input paradigm.
+- [feature/155](https://github.com/LotCoM/LotCoM-printer/pull/159).
+  - Implementation of specialized number data type classes.
+- [feature/156](https://github.com/LotCoM/LotCoM-printer/pull/160).
+  - Implementation of Model Code on Full Basket Labels.
+- [feature/157](https://github.com/LotCoM/LotCoM-printer/pull/162).
+  - Reorganization of `Models` namespace to support growing source.
+- [bug/158](https://github.com/LotCoM/LotCoM-printer/pull/164).
+  - Resolution of a bug causing timestamps to always read "00:00:00".
+- [feature/161](https://github.com/LotCoM/LotCoM-printer/pull/165).
+  - Implementation of Partial Tag printing back-end;
+  - Implementation of `Quantity` and `Operator` special data type classes.
+- [bug/166](https://github.com/LotCoM/LotCoM-printer/pull/167).
+  - Resolution of bugs causing silent crashes on startup;
+  - Implementation of improved exception handling throughout Database interactions.
+- [feature/163](https://github.com/LotCoM/LotCoM-printer/pull/168).
+  - Implementation of manual entry support for JBK and Lot Numbers on special Processes.
