@@ -173,6 +173,36 @@ public partial class PrintTicket : ObservableObject
         }
     }
 
+    private bool _jbkManualEntry = false;
+    /// <summary>
+    /// Whether this PrintTicket can accept a manually-entered JBK Number or not.
+    /// </summary>
+    public bool JBKManualEntry
+    {
+        get { return _jbkManualEntry; }
+        set
+        {
+            _jbkManualEntry = value;
+            OnPropertyChanged(nameof(_jbkManualEntry));
+            OnPropertyChanged(nameof(JBKManualEntry));
+        }
+    }
+
+    private bool _lotManualEntry = false;
+    /// <summary>
+    /// Whether this PrintTicket can accept a manually-entered Lot Number or not.
+    /// </summary>
+    public bool LotManualEntry
+    {
+        get { return _lotManualEntry; }
+        set
+        {
+            _lotManualEntry = value;
+            OnPropertyChanged(nameof(_lotManualEntry));
+            OnPropertyChanged(nameof(LotManualEntry));
+        }
+    }
+
     /// <summary>
     /// Returns whether the Print Ticket has one Partial Data Set associated with it.
     /// </summary>
@@ -259,6 +289,14 @@ public partial class PrintTicket : ObservableObject
         Title = $"{Part.ModelNumber.Code} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
         IsPassThrough = _process.Type == OriginationType.PassThrough;
         ProductionDateNoTime = $"{ProductionDate.Month}/{ProductionDate.Day}/{ProductionDate.Year}";
+        if (Process.RequiredFields.JBKNumber && SerializationMode != SerializationMode.JBK)
+        {
+            JBKManualEntry = true;
+        }
+        if (Process.RequiredFields.LotNumber && SerializationMode != SerializationMode.Lot)
+        {
+            LotManualEntry = true;
+        }
     }
 
     /// <summary>
