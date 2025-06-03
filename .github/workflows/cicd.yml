@@ -143,15 +143,17 @@ jobs:
         shell: pwsh
         run: |
           # extract the release PR tag from environment
-          $tag = "$env:tag"
+          # $tag = "$env:tag"
           # remove prefixes
-          $tag = $tag -replace "feature/", ""
-          $tag = $tag -replace "hotfix/", ""
+          # $tag = $tag -replace "feature/", ""
+          # $tag = $tag -replace "hotfix/", ""
           # ensure tag value
-          if (-not $tag) {
-              Write-Host "Tag not found. Using fallback tag."
-              $tag = "default-tag"
-          }
+          # if (-not $tag) {
+          #     Write-Host "Tag not found. Using fallback tag."
+          #     $tag = "default-tag"
+          # }
+          # use default tag for generated releases
+          $tag = "generated-release"
           
           # create github release and set default notes
           gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release"
@@ -169,5 +171,8 @@ jobs:
           Rename-Item -Path $msix.FullName -NewName "LotCoMPrinter_x64.msix"
           $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
 
+          # use default tag for generated releases
+          $tag = "generated-release"
+
           # upload the MSIX to the release
-          gh release upload ${{ steps.merged-pr-info.outputs.title }} $msix.FullName
+          gh release upload $tag $msix.FullName
