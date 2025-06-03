@@ -113,7 +113,7 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="0,5,0,0"
-                                Text="{Binding ProductionDateNoTime}"
+                                Text="{Binding ProductionDateShort}"
                                 FontSize="12"
                                 HorizontalOptions="End"
                                 VerticalOptions="Center"/>

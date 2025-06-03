@@ -273,3 +273,8 @@ Introduction of Print Ticket system, a design change where operators can open an
   - Implementation of improved exception handling throughout Database interactions.
 - [feature/163](https://github.com/LotCoM/LotCoM-printer/pull/168).
   - Implementation of manual entry support for JBK and Lot Numbers on special Processes.
+
+## `0.7.0.1`
+#### Hotfix
+- [hotfix/170](https://github.com/LotCoM/LotCoM-printer/pull/171).
+  - Restores Date information on list items in the Open Tickets Panel.
