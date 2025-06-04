@@ -1,5 +1,3 @@
-using LotCoMPrinter.Models.Services;
-
 namespace LotCoMPrinter.Models.Datasources;
 
 /// <summary>
@@ -15,7 +13,7 @@ public class LabelDimensions
         /// <summary>
         /// 3.00 x 3.00 inch Label size.
         /// </summary>
-        public const int Default = 1440;
+        public const int Default = 1800;
     }
 
     /// <summary>
@@ -27,7 +25,7 @@ public class LabelDimensions
         /// Roughly 1.20 x 1.20 inch QR Code 
         /// (smallest Code size while preserving peak readability).
         /// </summary>
-        public const int Default = 600;
+        public const int Default = 700;
     }
 
     /// <summary>
@@ -35,7 +33,7 @@ public class LabelDimensions
     /// </summary>
     public static class TextSizes
     {
-        public const int Tiny = 42;
+        public const int Tiny = 48;
         public const int Small = 76;
         public const int Medium = 128;
         public const int Large = 192;
@@ -46,8 +44,8 @@ public class LabelDimensions
     /// </summary>
     public static class PaddingLevels
     {
-        public const int Thin = 12;
-        public const int Wide = 24;
+        public const int Thin = 20;
+        public const int Wide = 32;
     }
 
     /// <summary>
@@ -133,33 +131,6 @@ public class LabelDimensions
     public int BodyVerticalAnchor;
 
     /// <summary>
-    /// Converts dimension values to match the DPI scaling of the Device.
-    /// Multiplies the default values by the set DPI scale.
-    /// </summary>
-    private void AdjustScale()
-    {
-        // retreive the DPI scale for the device's display
-        double DpiScale = DpiUtilities.GetDeviceDpiScale();
-        // scale the Label's dimensions to the DPI
-        Dimension = Convert.ToInt32(Dimension * DpiScale);
-        CodeDimension = Convert.ToInt32(CodeDimension * DpiScale);
-        TextSizeSmall = Convert.ToInt32(TextSizeSmall * DpiScale);
-        TextSizeMedium = Convert.ToInt32(TextSizeMedium * DpiScale);
-        TextSizeLarge = Convert.ToInt32(TextSizeLarge * DpiScale);
-        InternalPadding = Convert.ToInt32(InternalPadding * DpiScale);
-        HeadingHorizontalAnchor = Convert.ToInt32(HeadingHorizontalAnchor * DpiScale);
-        HeadingVerticalAnchor = Convert.ToInt32(HeadingVerticalAnchor * DpiScale);
-        SubHeadingHorizontalAnchor = Convert.ToInt32(SubHeadingHorizontalAnchor * DpiScale);
-        SubHeadingVerticalAnchor = Convert.ToInt32(SubHeadingVerticalAnchor * DpiScale);
-        BodyTitleHorizontalAnchor = Convert.ToInt32(BodyTitleHorizontalAnchor * DpiScale);
-        BodyTitleVerticalAnchor = Convert.ToInt32(BodyTitleVerticalAnchor * DpiScale);
-        CodeHorizontalAnchor = Convert.ToInt32(CodeHorizontalAnchor * DpiScale);
-        CodeVerticalAnchor = Convert.ToInt32(CodeVerticalAnchor * DpiScale);
-        BodyHorizontalAnchor = Convert.ToInt32(BodyHorizontalAnchor * DpiScale);
-        BodyVerticalAnchor = Convert.ToInt32(BodyVerticalAnchor * DpiScale);
-    }
-
-    /// <summary>
     /// Creates a Dimensions control structure for a Label object.
     /// </summary>
     /// <param name="Dimension">The length of each side of the Label (square).</param>
@@ -214,7 +185,5 @@ public class LabelDimensions
         this.CodeVerticalAnchor = CodeVerticalAnchor;
         this.BodyHorizontalAnchor = BodyHorizontalAnchor;
         this.BodyVerticalAnchor = BodyVerticalAnchor;
-        // adjust the DPI Scaling of the Label design
-        AdjustScale();
     }
 }
