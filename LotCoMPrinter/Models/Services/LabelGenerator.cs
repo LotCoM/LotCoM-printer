@@ -8,6 +8,11 @@ namespace LotCoMPrinter.Models.Services;
 public static class LabelGenerator 
 {
     /// <summary>
+    /// A special Header Message to show when there is an issue configuring the Label's Header text.
+    /// </summary>
+    private const string HeaderErrorMessage = "Failed to apply a Header as the Process was not assigned a Serialization Mode or a Pass Through Type.";
+
+    /// <summary>
     /// Creates a QR Code from the data captured by Ticket.
     /// </summary>
     /// <param name="Ticket"></param>
@@ -128,10 +133,7 @@ public static class LabelGenerator
         // the Label MUST be a pass-through type here
         if (!Ticket.IsPassThrough || Ticket.Process.PassThroughType == PassThroughType.None)
         {
-            throw new LabelBuildException
-            (
-                "Failed to apply a Header as the Process was not assigned a Serialization Mode or a Pass Through Type."
-            );
+            throw new LabelBuildException(HeaderErrorMessage);
         }
         // use one of the Pass-through types as Header values
         if (Ticket.Process.PassThroughType == PassThroughType.JBK)
@@ -152,10 +154,7 @@ public static class LabelGenerator
             // no JBK Number is available for Heading
             catch
             {
-                throw new LabelBuildException
-                (
-                    "Failed to apply a Header as the Process was not assigned a Serialization Mode or a Pass Through Type."
-                );
+                throw new LabelBuildException(HeaderErrorMessage);
             }
         }
         else if (Ticket.Process.PassThroughType == PassThroughType.Lot)
@@ -167,19 +166,13 @@ public static class LabelGenerator
             }
             catch
             {
-                throw new LabelBuildException
-                (
-                    "Failed to apply a Header as the Process was not assigned a Serialization Mode or a Pass Through Type."
-                );
+                throw new LabelBuildException(HeaderErrorMessage);
             }
         }
         // some mis-match between the SerializationMode and PassThroughType properties caused a Header failure
         else
         {
-            throw new LabelBuildException
-            (
-                "Failed to apply a Header as the Process was not assigned a Serialization Mode or a Pass Through Type."
-            );
+                throw new LabelBuildException(HeaderErrorMessage);
         }
     }
 
