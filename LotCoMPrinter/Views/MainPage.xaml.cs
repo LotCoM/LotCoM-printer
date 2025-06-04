@@ -581,6 +581,23 @@ public partial class MainPage : ContentPage
 				LotNumberControl.Stroke = Colors.Red;
 			}
 		}
+		// Deburr JBK Number was unfocused
+		if (sender.Equals(DeburrJBKNumberEntry))
+		{
+			if (Sender.Text is null || Sender.Text.Equals(""))
+			{
+				DeburrJBKNumberControl.Stroke = Colors.Red;
+			}
+			try
+			{
+				ViewModel.ActiveTicket!.Tracked.VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(Sender.Text!));
+				DeburrJBKNumberControl.Stroke = Grey500;
+			}
+			catch
+			{
+				DeburrJBKNumberControl.Stroke = Colors.Red;
+			}
+		}
 	}
 
 	/// <summary>
