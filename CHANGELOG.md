@@ -278,3 +278,14 @@ Introduction of Print Ticket system, a design change where operators can open an
 #### Hotfix
 - [hotfix/170](https://github.com/LotCoM/LotCoM-printer/pull/171).
   - Restores Date information on list items in the Open Tickets Panel.
+
+## `0.7.0.2`
+#### Bugfix Patch
+- [bug/173](https://github.com/LotCoM/LotCoM-printer/pull/176).
+  - Labels printed for the Deburr Process now print with JBK Number Headers.
+- [bug/175](https://github.com/LotCoM/LotCoM-printer/pull/177).
+  - Resolves forced formatting of Deburr JBK Number entry before entry is complete.
+- [bug/174](https://github.com/LotCoM/LotCoM-printer/pull/178).
+  - Resolves a scaling issue where Labels were cut-off on the production floor computers.
+- [bug/179](https://github.com/LotCoM/LotCoM-printer/pull/180).
+  - Model Number Entry now auto-fills.
