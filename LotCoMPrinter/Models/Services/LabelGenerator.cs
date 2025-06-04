@@ -8,6 +8,11 @@ namespace LotCoMPrinter.Models.Services;
 public static class LabelGenerator 
 {
     /// <summary>
+    /// A special Header Message to show when there is an issue configuring the Label's Header text.
+    /// </summary>
+    private const string HeaderErrorMessage = "Failed to apply a Header as the Process was not assigned a Serialization Mode or a Pass Through Type.";
+
+    /// <summary>
     /// Creates a QR Code from the data captured by Ticket.
     /// </summary>
     /// <param name="Ticket"></param>
@@ -109,6 +114,69 @@ public static class LabelGenerator
     }
 
     /// <summary>
+    /// Attempts to examine Ticket and extract the correct Header text from the object's data.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    /// <returns></returns>
+    /// <exception cref="LabelBuildException"></exception>
+    private static string ConfigureHeaderText(PrintTicket Ticket)
+    {
+        // apply the header, the QR Code, and the Label Data to the Label
+        if (Ticket.SerializationMode == SerializationMode.Lot)
+        {
+            return Ticket.ProductionDateShort;
+        }
+        else if (Ticket.SerializationMode == SerializationMode.JBK)
+        {
+            return Ticket.SerialNumber.GetFormattedValue();
+        }
+        // the Label MUST be a pass-through type here
+        if (!Ticket.IsPassThrough || Ticket.Process.PassThroughType == PassThroughType.None)
+        {
+            throw new LabelBuildException(HeaderErrorMessage);
+        }
+        // use one of the Pass-through types as Header values
+        if (Ticket.Process.PassThroughType == PassThroughType.JBK)
+        {
+            // the Label is a Pass-through that follows a Process Serialized by JBK Number 
+            try
+            {
+                return Ticket.VariableFields.JBKNumber!.Formatted;
+            }
+            catch
+            {
+                // JBK Field is not available; try Deburr JBK
+            }
+            try
+            {
+                return Ticket.VariableFields.DeburrJBKNumber!.Formatted;
+            }
+            // no JBK Number is available for Heading
+            catch
+            {
+                throw new LabelBuildException(HeaderErrorMessage);
+            }
+        }
+        else if (Ticket.Process.PassThroughType == PassThroughType.Lot)
+        {
+            // the Label is a Pass-through that follows a Process Serialized by Lot Number  
+            try
+            {
+                return Ticket.VariableFields.LotNumber!.Formatted;
+            }
+            catch
+            {
+                throw new LabelBuildException(HeaderErrorMessage);
+            }
+        }
+        // some mis-match between the SerializationMode and PassThroughType properties caused a Header failure
+        else
+        {
+                throw new LabelBuildException(HeaderErrorMessage);
+        }
+    }
+
+    /// <summary>
     /// Generates a Label object that mirrors the appearance of the physical Basket Label.
     /// Composition of Asynchronous tasks.
     /// </summary>
@@ -131,19 +199,21 @@ public static class LabelGenerator
         QRCode? Code = await GenerateCode(Ticket);
         List<string> Body = await GenerateBody(Ticket);
         // apply the header, the QR Code, and the Label Data to the Label
-        if (Ticket.SerializationMode == SerializationMode.Lot)
+        string Header;
+        try
         {
-            await Label.AddHeaderAsync(Ticket.ProductionDateShort);
+            Header = ConfigureHeaderText(Ticket);
         }
-        else
+        catch (LabelBuildException)
         {
-            await Label.AddHeaderAsync(Ticket.SerialNumber.GetFormattedValue());
+            throw;
         }
+        await Label.AddHeaderAsync(Header);
         await Label.AddSubHeadingAsync(Ticket.Part.ModelNumber.Code);
         await Label.AddBodyTitleAsync(Ticket.Part.PartName);
         await Label.AddQRCodeAsync(Code);
         await Label.AddBodyTextAsync(Body);
         // return the Label image
         return Label;
-    }
+        }
 }

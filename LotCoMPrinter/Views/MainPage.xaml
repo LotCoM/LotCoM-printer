@@ -713,7 +713,7 @@
                                 <Entry
                                     x:Name="DeburrJBKNumberEntry"
                                     Text="{Binding ActiveTicket.Tracked.VariableFields.DeburrJBKNumber.Formatted}"
-                                    TextChanged="OnVariableFieldSetEntryTextChanged"
+                                    Unfocused="OnSerialNumberEntryUnfocused"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
@@ -770,7 +770,8 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="ModelNumberEntry"
-                                    Text="{Binding ActiveTicket.Tracked.VariableFields.ModelNumber.Code}"
+                                    Text="{Binding ActiveTicket.Tracked.Part.ModelNumber.Code}"
+                                    IsEnabled="False"
                                     MaxLength="3"/>
                             </Border>
                         </HorizontalStackLayout>
