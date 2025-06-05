@@ -289,3 +289,8 @@ Introduction of Print Ticket system, a design change where operators can open an
   - Resolves a scaling issue where Labels were cut-off on the production floor computers.
 - [bug/179](https://github.com/LotCoM/LotCoM-printer/pull/180).
   - Model Number Entry now auto-fills.
+
+## `0.7.0.3`
+#### Bugfix Patch
+- [bug/179](https://github.com/LotCoM/LotCoM-printer/pull/182).
+  - The initial [fix](https://github.com/LotCoM/LotCoM-printer/pull/180) for this issue opened a binding-related issue. This subsequent fault has been addressed, restoring intended functionality and truly addressing the Model Number Entry issue.
