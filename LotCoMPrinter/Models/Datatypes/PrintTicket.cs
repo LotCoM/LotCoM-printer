@@ -271,6 +271,7 @@ public partial class PrintTicket : ObservableObject
     /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
     public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, Quantity TicketProductionQuantity, Operator TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
     {
+        // set the basic info input in the NewPrintTicketForm
         _process = TicketProcess;
         _part = TicketPart;
         _serializationMode = TicketSerializationMode;
@@ -279,7 +280,10 @@ public partial class PrintTicket : ObservableObject
         _productionShift = TicketProductionShift;
         _productionQuantity = TicketProductionQuantity;
         _productionOperator = TicketProductionOperator;
+        // save the passed VariableSet and set its Model Number using the Part selected
         _variableFields = VariableFields;
+        VariableFields.ModelNumber = Part.ModelNumber;
+        // set Partial Datasets if passed
         _firstPartialDataSet = FirstPartialDataSet;
         _secondPartialDataSet = SecondPartialDataSet;
         // calculate binding properties

@@ -770,7 +770,7 @@
                                 StrokeShape="RoundRectangle 10,10,10,10">
                                 <Entry
                                     x:Name="ModelNumberEntry"
-                                    Text="{Binding ActiveTicket.Tracked.Part.ModelNumber.Code}"
+                                    Text="{Binding ActiveTicket.Tracked.VariableFields.ModelNumber.Code}"
                                     IsEnabled="False"
                                     MaxLength="3"/>
                             </Border>
