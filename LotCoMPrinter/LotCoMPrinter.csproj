@@ -82,4 +82,7 @@
 		<PackageReference Include="System.Drawing.Common" Version="9.0.2" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\LotCom-libraries\LotCom\LotCom.csproj" />
+	</ItemGroup>
 </Project>
