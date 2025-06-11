@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
+using LotCom.Types;
 using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;

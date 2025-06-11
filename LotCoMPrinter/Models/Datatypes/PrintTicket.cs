@@ -1,8 +1,9 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Enums;
-using LotCoMPrinter.Models.Extensions;
+using LotCom.Database;
+using LotCom.Enums;
+using LotCom.Extensions;
+using LotCom.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
