@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:Datatypes="clr-namespace:LotCoMPrinter.Models.Datatypes"
-             xmlns:Enums="clr-namespace:LotCoMPrinter.Models.Enums"
+             xmlns:Enums="clr-namespace:LotCom.Enums;assembly=LotCom"
              xmlns:ViewModels="clr-namespace:LotCoMPrinter.ViewModels"
              x:DataType="ViewModels:MainPageViewModel"
              x:Class="LotCoMPrinter.Views.MainPage">
