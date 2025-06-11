@@ -43,9 +43,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "4L7wbb3Y4BJgIeSnmAf/C6S/qCs9rT1b0dX72uj3qo0qvUH7D0U1tU5ZlC7A3Wb8E/dXK4caOi4JkdLTVJaXhw=="
+        "requested": "[9.0.6, )",
+        "resolved": "9.0.6",
+        "contentHash": "TXy3SbJzGXQbxxIxCjdrp8bwEyTDImyYNpTpd6v7P3JL2Y7dno8EYG7dPezfYTa5SoWKdhbH9cbnwHHs3BR5gA=="
       },
       "Newtonsoft.Json": {
         "type": "Direct",
@@ -1176,6 +1176,13 @@
         "dependencies": {
           "Xamarin.Kotlin.StdLib": "2.0.21.2"
         }
+      },
+      "lotcom": {
+        "type": "Project",
+        "dependencies": {
+          "CommunityToolkit.Mvvm": "[8.4.0, )",
+          "Newtonsoft.Json": "[13.0.3, )"
+        }
       }
     },
     "net9.0-android35.0/android-arm64": {
@@ -1255,9 +1262,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "4L7wbb3Y4BJgIeSnmAf/C6S/qCs9rT1b0dX72uj3qo0qvUH7D0U1tU5ZlC7A3Wb8E/dXK4caOi4JkdLTVJaXhw=="
+        "requested": "[9.0.6, )",
+        "resolved": "9.0.6",
+        "contentHash": "TXy3SbJzGXQbxxIxCjdrp8bwEyTDImyYNpTpd6v7P3JL2Y7dno8EYG7dPezfYTa5SoWKdhbH9cbnwHHs3BR5gA=="
       },
       "Newtonsoft.Json": {
         "type": "Direct",
@@ -1417,6 +1424,13 @@
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
+      },
+      "lotcom": {
+        "type": "Project",
+        "dependencies": {
+          "CommunityToolkit.Mvvm": "[8.4.0, )",
+          "Newtonsoft.Json": "[13.0.3, )"
+        }
       }
     },
     "net9.0-ios18.4/android-arm64": {
@@ -1496,9 +1510,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "4L7wbb3Y4BJgIeSnmAf/C6S/qCs9rT1b0dX72uj3qo0qvUH7D0U1tU5ZlC7A3Wb8E/dXK4caOi4JkdLTVJaXhw=="
+        "requested": "[9.0.6, )",
+        "resolved": "9.0.6",
+        "contentHash": "TXy3SbJzGXQbxxIxCjdrp8bwEyTDImyYNpTpd6v7P3JL2Y7dno8EYG7dPezfYTa5SoWKdhbH9cbnwHHs3BR5gA=="
       },
       "Newtonsoft.Json": {
         "type": "Direct",
@@ -1658,6 +1672,13 @@
         "type": "Transitive",
         "resolved": "9.0.2",
         "contentHash": "5BkGZ6mHp2dHydR29sb0fDfAuqkv30AHtTih8wMzvPZysOmBFvHfnkR2w3tsc0pSiIg8ZoKyefJXWy9r3pBh0w=="
+      },
+      "lotcom": {
+        "type": "Project",
+        "dependencies": {
+          "CommunityToolkit.Mvvm": "[8.4.0, )",
+          "Newtonsoft.Json": "[13.0.3, )"
+        }
       }
     },
     "net9.0-maccatalyst18.4/android-arm64": {
@@ -1952,6 +1973,13 @@
         "type": "Transitive",
         "resolved": "9.0.0",
         "contentHash": "z8mvEVBfWSi0692vPOra8MougSEJCDzlaLj4g0aA87XDZpJoJD3BJTcJ0MuFbbN1fOT9Cr2ZFqXhZc+zzX0Gwg=="
+      },
+      "lotcom": {
+        "type": "Project",
+        "dependencies": {
+          "CommunityToolkit.Mvvm": "[8.4.0, )",
+          "Newtonsoft.Json": "[13.0.3, )"
+        }
       }
     },
     "net9.0-windows10.0.19041/android-arm64": {
