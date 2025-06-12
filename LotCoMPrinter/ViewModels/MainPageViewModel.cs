@@ -211,7 +211,7 @@ public partial class MainPageViewModel : ObservableObject
             throw;
         }
         // configure Welcome menu
-        WelcomeMenuTitleLabelText = "Welcome";
+        WelcomeMenuTitleLabelText = "Welcome, Operator!";
         WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
         // read and set PrintTicket properties
         _openPrintTickets = new ObservableCollection<PrintTicket>(PrintTicketCache.GetAllPrintTickets());
