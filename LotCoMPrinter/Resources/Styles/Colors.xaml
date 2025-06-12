@@ -44,8 +44,8 @@
     <Color x:Key="Info-60">#271625</Color>
 
     <!-- Neutral Colors -->
-    <Color x:Key="Neutral-LightTint">#81FFFFFF</Color>
-    <Color x:Key="Neutral-DarkTint">#3D000000</Color>
+    <Color x:Key="Neutral-LightTint">#38FFFFFF</Color>
+    <Color x:Key="Neutral-DarkTint">#1C000000</Color>
     <Color x:Key="Neutral-White">#ffffff</Color>
     <Color x:Key="Neutral-OffWhite">#efefef</Color>
     <Color x:Key="Neutral-0">#c6c6c6</Color>
