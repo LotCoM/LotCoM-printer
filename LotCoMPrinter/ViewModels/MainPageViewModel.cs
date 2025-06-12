@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LotCom.Types;
+using LotCom.Database;
+using LotCom.Enums;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.ViewModels;

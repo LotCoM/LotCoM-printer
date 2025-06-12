@@ -1,7 +1,8 @@
 using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Enums;
+using LotCom.Enums;
+using LotCom.Extensions;
+using LotCom.Types;
 using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Extensions;
 
 namespace LotCoMPrinter.Models.Services;
 

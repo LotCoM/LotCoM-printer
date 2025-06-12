@@ -65,7 +65,7 @@ public class PrintJob
     /// <summary>
     /// Creates a Print Job that can generate a PartialTag Label and spool a print job to the printing system.
     /// </summary>
-    /// <param name="Source">A PrintTicket object to use as the source of data for this Job.</param>
+    /// <param name="Ticket">A PrintTicket object to use as the source of data for this Job.</param>
     /// <param name="PartialSetNumber">The PartialDataSet Number to use for a PartialTag PrintJob (1 or 2).</param>
     public PrintJob(PrintTicket Ticket, int PartialSetNumber)
     {

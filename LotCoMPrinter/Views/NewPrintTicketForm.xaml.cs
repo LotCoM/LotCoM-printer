@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Views;
+using LotCom.Enums;
+using LotCom.Types;
 using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Enums;
 using LotCoMPrinter.ViewModels;
 
 namespace LotCoMPrinter.Views;
