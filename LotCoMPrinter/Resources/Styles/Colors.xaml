@@ -6,6 +6,64 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
+    <!-- Primary Colors -->
+    <Color x:Key="Primary-0">#4435df</Color>
+    <Color x:Key="Primary-20">#3c2eb6</Color>
+    <Color x:Key="Primary-40">#34268f</Color>
+    <Color x:Key="Primary-60">#2b1f6a</Color>
+    <Color x:Key="Primary-80">#211746</Color>
+    <Color x:Key="Primary-100">#160f26</Color>
+
+    <!-- Secondary Colors -->
+    <Color x:Key="Secondary-0">#fcb607</Color>
+    <Color x:Key="Secondary-20">#ce9513</Color>
+    <Color x:Key="Secondary-40">#a17517</Color>
+    <Color x:Key="Secondary-60">#775717</Color>
+    <Color x:Key="Secondary-80">#4f3b14</Color>
+    <Color x:Key="Secondary-100">#2a200e</Color>
+
+    <!-- Semantic Colors -->
+    <Color x:Key="Danger-0">#b41c2b</Color>
+    <Color x:Key="Danger-20">#851d22</Color>
+    <Color x:Key="Danger-40">#581919</Color>
+    <Color x:Key="Danger-60">#2f1310</Color>
+    
+    <Color x:Key="Success-0">#009f42</Color>
+    <Color x:Key="Success-20">#167533</Color>
+    <Color x:Key="Success-40">#184d25</Color>
+    <Color x:Key="Success-60">#132916</Color>
+    
+    <Color x:Key="Warn-0">#f0ad4e</Color>
+    <Color x:Key="Warn-20">#af7f3c</Color>
+    <Color x:Key="Warn-40">#71532a</Color>
+    <Color x:Key="Warn-60">#392b19</Color>
+    
+    <Color x:Key="Info-0">#e752db</Color>
+    <Color x:Key="Info-20">#943a8c</Color>
+    <Color x:Key="Info-40">#6d2e67</Color>
+    <Color x:Key="Info-60">#271625</Color>
+
+    <!-- Neutral Colors -->
+    <Color x:Key="Neutral-LightTint">#81FFFFFF</Color>
+    <Color x:Key="Neutral-DarkTint">#3D000000</Color>
+    <Color x:Key="Neutral-White">#ffffff</Color>
+    <Color x:Key="Neutral-OffWhite">#efefef</Color>
+    <Color x:Key="Neutral-0">#c6c6c6</Color>
+    <Color x:Key="Neutral-20">#919191</Color>
+    <Color x:Key="Neutral-40">#5e5e5e</Color>
+    <Color x:Key="Neutral-60">#303030</Color>
+    <Color x:Key="Neutral-Black">#000000</Color>
+
+    <!-- Text Colors -->
+    <Color x:Key="TextDark">#000000</Color> <!-- Neutral Black -->
+    <Color x:Key="TextDarkDisabled">#303030</Color> <!-- Neutral 60 -->
+    <Color x:Key="TextLight">#ffffff</Color> <!-- Neutral White -->
+    <Color x:Key="TextLightDisabled">#c6c6c6</Color> <!-- Neutral 60 -->
+
+
+
+    <!-- Old Colors -->
+
     <!-- Highlight Colors -->
     <Color x:Key="Primary">#FF5AA8F0</Color>
     <Color x:Key="PrimaryDark">#FF3B94E7</Color>
