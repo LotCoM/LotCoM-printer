@@ -7,20 +7,20 @@
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
     <!-- Primary Colors -->
-    <Color x:Key="Primary-0">#4435df</Color>
-    <Color x:Key="Primary-20">#3c2eb6</Color>
-    <Color x:Key="Primary-40">#34268f</Color>
-    <Color x:Key="Primary-60">#2b1f6a</Color>
-    <Color x:Key="Primary-80">#211746</Color>
-    <Color x:Key="Primary-100">#160f26</Color>
+    <Color x:Key="Primary-0">#0c76f2</Color>
+    <Color x:Key="Primary-20">#1c61c5</Color>
+    <Color x:Key="Primary-40">#204e9a</Color>
+    <Color x:Key="Primary-60">#1f3b72</Color>
+    <Color x:Key="Primary-80">#1b294b</Color>
+    <Color x:Key="Primary-100">#131828</Color>
 
     <!-- Secondary Colors -->
-    <Color x:Key="Secondary-0">#fcb607</Color>
-    <Color x:Key="Secondary-20">#ce9513</Color>
-    <Color x:Key="Secondary-40">#a17517</Color>
-    <Color x:Key="Secondary-60">#775717</Color>
-    <Color x:Key="Secondary-80">#4f3b14</Color>
-    <Color x:Key="Secondary-100">#2a200e</Color>
+    <Color x:Key="Secondary-0">#ffdd8e</Color>
+    <Color x:Key="Secondary-20">#d0b475</Color>
+    <Color x:Key="Secondary-40">#a28d5d</Color>
+    <Color x:Key="Secondary-60">#776846</Color>
+    <Color x:Key="Secondary-80">#4f4530</Color>
+    <Color x:Key="Secondary-100">#2a251b</Color>
 
     <!-- Semantic Colors -->
     <Color x:Key="Danger-0">#b41c2b</Color>
