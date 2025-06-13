@@ -37,6 +37,7 @@ public partial class MainPageViewModel : ObservableObject
         public const string WelcomeMenuTitleLabelText = "";
         public const string WelcomeMenuSubTitleLabelText = "";
         public const bool IsActivePrintTicketMenuShown = false;
+        public const bool IsTicketActionsPanelShown = false;
     }
 
     private OpenPrintTicketsPanelWidths _openPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
@@ -126,6 +127,21 @@ public partial class MainPageViewModel : ObservableObject
             _isActivePrintTicketMenuShown = value;
             OnPropertyChanged(nameof(_isActivePrintTicketMenuShown));
             OnPropertyChanged(nameof(IsActivePrintTicketMenuShown));
+        }
+    }
+
+    private bool _isTicketActionsPanelShown = Defaults.IsTicketActionsPanelShown;
+    /// <summary>
+    /// Provides the Visibility state of the ActivePrintTicket Menu.
+    /// </summary>
+    public bool IsTicketActionsPanelShown
+    {
+        get { return _isTicketActionsPanelShown; }
+        set
+        {
+            _isTicketActionsPanelShown = value;
+            OnPropertyChanged(nameof(_isTicketActionsPanelShown));
+            OnPropertyChanged(nameof(IsTicketActionsPanelShown));
         }
     }
 
