@@ -13,10 +13,21 @@ public partial class NewPrintTicketForm : Popup
     /// </summary>
     private NewPrintTicketFormViewModel ViewModel;
 
+
+    private const int DefaultStroke = 1;
+
+
+    private const int ErrorStroke = 2;
+
     /// <summary>
-    /// StaticResource Grey500 color.
+    /// StaticResource Neutral-20 color.
     /// </summary>
-    private static readonly Color Grey500 = new Color(110, 110, 110);
+    private static readonly Color Neutral20 = new Color(145, 145, 145);
+
+    /// <summary>
+    /// StaticResource Danger-20 color.
+    /// </summary>
+    private static readonly Color Danger0 = new Color(180, 28, 43);
 
     /// <summary>
     /// Highlights input borders that have null values with Red.
@@ -27,29 +38,37 @@ public partial class NewPrintTicketForm : Popup
         // missing Process input
         if (ViewModel.Process is null)
         {
-            ProcessControl.Stroke = Colors.Red;
+            ProcessControl.Stroke = Danger0;
+            ProcessControl.StrokeThickness = ErrorStroke;
         }
         // missing Part input
         if (ViewModel.Part is null)
         {
-            PartControl.Stroke = Colors.Red;
+            PartControl.Stroke = Danger0;
+            PartControl.StrokeThickness = ErrorStroke;
         }
         // missing Shift input
         if (ViewModel.ProductionShift is Shift.None)
         {
-            ShiftControl.Stroke = Colors.Red;
+            ShiftControl.Stroke = Danger0;
+            ShiftControl.StrokeThickness = ErrorStroke;
         }
         // missing Operator input
         if (!ViewModel.ProductionOperator.ConfirmProperInitials())
         {
-            OperatorControl.Stroke = Colors.Red;
+            OperatorControl.Stroke = Danger0;
+            OperatorControl.StrokeThickness = ErrorStroke;
         }
         // reset borders after 3 seconds
         await Task.Delay(3000);
-        ProcessControl.Stroke = Grey500;
-        PartControl.Stroke = Grey500;
-        ShiftControl.Stroke = Grey500;
-        OperatorControl.Stroke = Grey500;
+        ProcessControl.Stroke = Neutral20;
+        ProcessControl.StrokeThickness = DefaultStroke;
+        PartControl.Stroke = Neutral20;
+        PartControl.StrokeThickness = DefaultStroke;
+        ShiftControl.Stroke = Neutral20;
+        ShiftControl.StrokeThickness = DefaultStroke;
+        OperatorControl.Stroke = Neutral20;
+        OperatorControl.StrokeThickness = DefaultStroke;
     }
 
     /// <summary>
@@ -119,14 +138,16 @@ public partial class NewPrintTicketForm : Popup
 		// JBK was updated
 		if (sender.Equals(OperatorEntry))
 		{
-			try
-			{
-				ViewModel.ProductionOperator = new Operator(e.NewTextValue);
-				OperatorControl.Stroke = Grey500;
-			}
-			catch
-			{
-				OperatorControl.Stroke = Colors.Red;
+            try
+            {
+                ViewModel.ProductionOperator = new Operator(e.NewTextValue);
+                OperatorControl.Stroke = Neutral20;
+                OperatorControl.StrokeThickness = DefaultStroke;
+            }
+            catch
+            {
+                OperatorControl.Stroke = Danger0;
+                OperatorControl.StrokeThickness = ErrorStroke;
 			}
 		}
     }
