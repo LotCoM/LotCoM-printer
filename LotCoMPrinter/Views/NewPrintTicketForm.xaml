@@ -31,7 +31,7 @@
     <Border
         StrokeThickness="1"
         StrokeShape="RoundRectangle 10,10,10,10"
-        Stroke="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}">
+        Stroke="{StaticResource Neutral-40}">
         <Grid>
             <Grid.RowDefinitions>
                 <!-- Title Row -->
