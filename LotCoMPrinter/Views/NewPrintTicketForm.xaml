@@ -121,7 +121,7 @@
                     Source="information.png"
                     ToolTipProperties.Text="Select the Process for your new Label                                                        ________________________________________________________                                                        This should be the Process station that produced the Basket of Parts you are Labeling.">
                     <ImageButton.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
                     </ImageButton.Behaviors>
                     <VisualStateManager.VisualStateGroups>
                         <VisualStateGroupList>
@@ -222,7 +222,7 @@
                     Source="information.png"
                     ToolTipProperties.Text="Select the Part you would like to create a Label for                                                        ________________________________________________________                                                        This should be the Number and Name of the Part in the Basket you are Labeling.                                                        ________________________________________________________                                                        NOTE: You must select a Process before you can select a Part.">
                     <ImageButton.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
                     </ImageButton.Behaviors>
                     <VisualStateManager.VisualStateGroups>
                         <VisualStateGroupList>
@@ -304,7 +304,7 @@
                         Source="information.png"
                         ToolTipProperties.Text="The Date on which you produced this Label                                                        ________________________________________________________                                                        NOTE: This field cannot be edited to protect Lot Control data.">
                         <ImageButton.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
+                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
                         </ImageButton.Behaviors>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroupList>
@@ -380,7 +380,7 @@
                         Source="information.png"
                         ToolTipProperties.Text="Select the Shift you are currently on                                                        ________________________________________________________                                                        This should be the Shift that produced the Basket of Parts you are Labeling.">
                         <ImageButton.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
+                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
                         </ImageButton.Behaviors>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroupList>
@@ -460,7 +460,7 @@
                         Source="information.png"
                         ToolTipProperties.Text="Enter your Initials                                                        ________________________________________________________                                                        This should be the Operator responsible for producing the Basket of Parts you are Labeling.">
                         <ImageButton.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
+                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
                         </ImageButton.Behaviors>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroupList>
