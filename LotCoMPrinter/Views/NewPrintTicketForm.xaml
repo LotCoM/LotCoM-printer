@@ -113,11 +113,13 @@
                     x:Name="ProcessInfoButton"
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
-                    HeightRequest="15"
-                    WidthRequest="15"
+                    HeightRequest="30"
+                    MinimumHeightRequest="30"
+                    WidthRequest="30"
+                    MinimumWidthRequest="30"
                     CornerRadius="30"
                     Source="information.png"
-                    ToolTipProperties.Text="Click for Info">
+                    ToolTipProperties.Text="Select the Process for your new Label                                                        ________________________________________________________                                                        This should be the Process station that produced the Basket of Parts you are Labeling.">
                     <ImageButton.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
                     </ImageButton.Behaviors>
@@ -212,11 +214,13 @@
                     x:Name="PartInfoButton"
                     VerticalOptions="Center"
                     HorizontalOptions="Center"
-                    HeightRequest="15"
-                    WidthRequest="15"
+                    HeightRequest="30"
+                    MinimumHeightRequest="30"
+                    WidthRequest="30"
+                    MinimumWidthRequest="30"
                     CornerRadius="30"
                     Source="information.png"
-                    ToolTipProperties.Text="Click for Info">
+                    ToolTipProperties.Text="Select the Part you would like to create a Label for                                                        ________________________________________________________                                                        This should be the Number and Name of the Part in the Basket you are Labeling.                                                        ________________________________________________________                                                        NOTE: You must select a Process before you can select a Part.">
                     <ImageButton.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
                     </ImageButton.Behaviors>
@@ -292,11 +296,13 @@
                         x:Name="DateInfoButton"
                         VerticalOptions="Center"
                         HorizontalOptions="Center"
-                        HeightRequest="15"
-                        WidthRequest="15"
+                        HeightRequest="30"
+                        MinimumHeightRequest="30"
+                        WidthRequest="30"
+                        MinimumWidthRequest="30"
                         CornerRadius="30"
                         Source="information.png"
-                        ToolTipProperties.Text="Click for Info">
+                        ToolTipProperties.Text="The Date on which you produced this Label                                                        ________________________________________________________                                                        NOTE: This field cannot be edited to protect Lot Control data.">
                         <ImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
                         </ImageButton.Behaviors>
@@ -366,11 +372,13 @@
                         x:Name="ShiftInfoButton"
                         VerticalOptions="Center"
                         HorizontalOptions="Center"
-                        HeightRequest="15"
-                        WidthRequest="15"
+                        HeightRequest="30"
+                        MinimumHeightRequest="30"
+                        WidthRequest="30"
+                        MinimumWidthRequest="30"
                         CornerRadius="30"
                         Source="information.png"
-                        ToolTipProperties.Text="Click for Info">
+                        ToolTipProperties.Text="Select the Shift you are currently on                                                        ________________________________________________________                                                        This should be the Shift that produced the Basket of Parts you are Labeling.">
                         <ImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
                         </ImageButton.Behaviors>
@@ -444,13 +452,13 @@
                         x:Name="OperatorInfoButton"
                         VerticalOptions="Center"
                         HorizontalOptions="Center"
-                        HeightRequest="15"
-                        MaximumHeightRequest="15"
-                        WidthRequest="15"
-                        MaximumWidthRequest="15"
+                        HeightRequest="30"
+                        MinimumHeightRequest="30"
+                        WidthRequest="30"
+                        MinimumWidthRequest="30"
                         CornerRadius="30"
                         Source="information.png"
-                        ToolTipProperties.Text="Click for Info">
+                        ToolTipProperties.Text="Enter your Initials                                                        ________________________________________________________                                                        This should be the Operator responsible for producing the Basket of Parts you are Labeling.">
                         <ImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-BLACK}"/>
                         </ImageButton.Behaviors>
