@@ -311,7 +311,7 @@
                     <!-- Start New Label Column -->
                     <ColumnDefinition Width="*"/>
                     <!-- Edit Existing Label Column -->
-                    <ColumnDefinition Width="*"/>
+                    <!-- <ColumnDefinition Width="*"/> -->
                 </Grid.ColumnDefinitions>
                 <!-- Start New Label Control -->
                 <BoxView
@@ -376,7 +376,7 @@
                     </VisualStateManager.VisualStateGroups>
                 </ImageButton>
                 <!-- Edit Existing Label Control -->
-                <BoxView
+                <!-- <BoxView
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="10"
@@ -385,8 +385,8 @@
                     CornerRadius="40"
                     WidthRequest="200"
                     HeightRequest="275"
-                    BackgroundColor="{StaticResource Neutral-OffWhite}"/>
-                <Label 
+                    BackgroundColor="{StaticResource Neutral-OffWhite}"/> -->
+                <!-- <Label 
                     Grid.Row="0"
                     Grid.Column="1"
                     Margin="10"
@@ -395,8 +395,8 @@
                     FontSize="32"
                     FontAttributes="Bold"
                     TextColor="{StaticResource TextDark}"
-                    Text="Edit Existing Label"/>
-                <ImageButton
+                    Text="Edit Existing Label"/> -->
+                <!-- <ImageButton
                     Grid.Row="1"
                     Grid.Column="1"
                     Source="edit.png"
@@ -435,7 +435,7 @@
                             </VisualStateGroup>
                         </VisualStateGroupList>
                     </VisualStateManager.VisualStateGroups>
-                </ImageButton>
+                </ImageButton> -->
                 <!-- Sub-Title Label -->
                 <!-- <Label
                     Margin="20"
