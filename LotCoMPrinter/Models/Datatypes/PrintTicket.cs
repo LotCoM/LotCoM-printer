@@ -253,7 +253,10 @@ public partial class PrintTicket : ObservableObject
     private void ShiftPartialDataSet()
     {
         FirstPartialDataSet = SecondPartialDataSet;
+        HasFirstPartialDataSet = true;
         SecondPartialDataSet = null;
+        HasSecondPartialDataSet = false;
+        HasSpace = true;
     }
 
     /// <summary>

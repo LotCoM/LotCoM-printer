@@ -36,7 +36,8 @@ public partial class MainPageViewModel : ObservableObject
         public const bool IsWelcomeMenuShown = true;
         public const string WelcomeMenuTitleLabelText = "";
         public const string WelcomeMenuSubTitleLabelText = "";
-        public const bool IsActivePrintTicketMenuShown = false;
+        public const bool IsTicketEditorMenuShown = false;
+        public const bool IsTicketActionsPanelShown = false;
     }
 
     private OpenPrintTicketsPanelWidths _openPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
@@ -114,18 +115,33 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
-    private bool _isActivePrintTicketMenuShown = Defaults.IsActivePrintTicketMenuShown;
+    private bool _isTicketEditorMenuShown = Defaults.IsTicketEditorMenuShown;
     /// <summary>
-    /// Provides the Visibility state of the ActivePrintTicket Menu.
+    /// Provides the Visibility state of the Ticket Editor Menu.
     /// </summary>
-    public bool IsActivePrintTicketMenuShown
+    public bool IsTicketEditorMenuShown
     {
-        get { return _isActivePrintTicketMenuShown; }
+        get { return _isTicketEditorMenuShown; }
         set
         {
-            _isActivePrintTicketMenuShown = value;
-            OnPropertyChanged(nameof(_isActivePrintTicketMenuShown));
-            OnPropertyChanged(nameof(IsActivePrintTicketMenuShown));
+            _isTicketEditorMenuShown = value;
+            OnPropertyChanged(nameof(_isTicketEditorMenuShown));
+            OnPropertyChanged(nameof(IsTicketEditorMenuShown));
+        }
+    }
+
+    private bool _isTicketActionsPanelShown = Defaults.IsTicketActionsPanelShown;
+    /// <summary>
+    /// Provides the Visibility state of the Ticket Editor Menu.
+    /// </summary>
+    public bool IsTicketActionsPanelShown
+    {
+        get { return _isTicketActionsPanelShown; }
+        set
+        {
+            _isTicketActionsPanelShown = value;
+            OnPropertyChanged(nameof(_isTicketActionsPanelShown));
+            OnPropertyChanged(nameof(IsTicketActionsPanelShown));
         }
     }
 
@@ -160,18 +176,18 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
-    private TrackedPrintTicket? _activeTicket = null;
+    private TrackedPrintTicket? _editorTicket = null;
     /// <summary>
-    /// The currently active PrintTicket object with Tracked changes.
+    /// The PrintTicket currently being edited, with Tracked changes.
     /// </summary>
-    public TrackedPrintTicket? ActiveTicket
+    public TrackedPrintTicket? EditorTicket
     {
-        get { return _activeTicket; }
+        get { return _editorTicket; }
         set
         {
-            _activeTicket = value;
-            OnPropertyChanged(nameof(_activeTicket));
-            OnPropertyChanged(nameof(ActiveTicket));
+            _editorTicket = value;
+            OnPropertyChanged(nameof(_editorTicket));
+            OnPropertyChanged(nameof(EditorTicket));
         }
     }
 
@@ -211,7 +227,7 @@ public partial class MainPageViewModel : ObservableObject
             throw;
         }
         // configure Welcome menu
-        WelcomeMenuTitleLabelText = "Welcome";
+        WelcomeMenuTitleLabelText = "Welcome, Operator!";
         WelcomeMenuSubTitleLabelText = "Click 'Start New Label' to create a new Label or open In-Progress Labels by clicking the arrow button below.";
         // read and set PrintTicket properties
         _openPrintTickets = new ObservableCollection<PrintTicket>(PrintTicketCache.GetAllPrintTickets());
@@ -244,56 +260,56 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Opens the ActivePrintTicket Menu to display the current ActiveTicket.
+    /// Opens the Ticket Editor Menu to display the currently editing PrintTicket.
     /// </summary>
     /// <exception cref="NullReferenceException"></exception>
-    public void OpenActivePrintTicketMenu()
+    public void OpenPrintTicketEditorMenu()
     {
-        if (ActiveTicket is null)
+        if (EditorTicket is null)
         {
-            throw new NullReferenceException("Cannot display a 'null' ActivePrintTicket.");
+            throw new NullReferenceException("Cannot display a 'null' EditorTicket.");
         }
         IsWelcomeMenuShown = false;
-        IsActivePrintTicketMenuShown = true;
+        IsTicketEditorMenuShown = true;
     }
 
     /// <summary>
-    /// Closes the ActivePrintTicket Menu and shows the Welcome Menu.
-    /// Resets the ActiveTicket and SelectedTicket properties.
+    /// Closes the Ticket Editor Menu and shows the Welcome Menu.
+    /// Resets the EditorTicket and SelectedTicket properties.
     /// </summary>
-    public void CloseActivePrintTicketMenu()
+    public void CloseTicketEditorMenu()
     {
-        ActiveTicket = null;
+        EditorTicket = null;
         SelectedTicket = null;
         IsWelcomeMenuShown = true;
-        IsActivePrintTicketMenuShown = false;
+        IsTicketEditorMenuShown = false;
     }
 
     /// <summary>
-    /// Attempts to create and run a Label Print Job from ActiveTicket.Tracked.
-    /// Removes ActiveTicket from OpenPrintTickets.
+    /// Attempts to create and run a Label Print Job from EditorTicket.Tracked.
+    /// Removes EditorTicket from OpenPrintTickets.
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="PrintRequestException"></exception>
-    public async Task<bool> PrintActivePrintTicket()
+    public async Task<bool> PrintEditorTicket()
     {
-        // create a LabelPrintJob from the Active Print Ticket
-        if (ActiveTicket is null)
+        // create a LabelPrintJob from the editing Print Ticket
+        if (EditorTicket is null)
         {
             throw new NullReferenceException("Cannot print 'null' PrintTicket.");
         }
         // validate the PrintTicket
         try
         {
-            ActiveTicket.Tracked = ActiveTicket.Tracked.SelfValidate();
+            EditorTicket.Tracked = EditorTicket.Tracked.SelfValidate();
         }
         catch (Exception _ex)
         {
             throw new ArgumentException(_ex.Message);
         }
-        PrintJob Job = new PrintJob(ActiveTicket.Tracked);
+        PrintJob Job = new PrintJob(EditorTicket.Tracked);
         bool Printed;
         // attempt to run the Print Job
         try
@@ -311,11 +327,11 @@ public partial class MainPageViewModel : ObservableObject
         // remove the Ticket if the print was successful
         if (Printed)
         {
-            bool Removed = OpenPrintTickets.Remove(ActiveTicket.Untracked);
-            // confirm that the ActiveTicket exists in OpenPrintTickets and remove it
+            bool Removed = OpenPrintTickets.Remove(EditorTicket.Untracked);
+            // confirm that the EditorTicket exists in OpenPrintTickets and remove it
             if (!Removed)
             {
-                throw new NullReferenceException("The Untracked ActivePrintTicket was not found in OpenPrintTickets.");
+                throw new NullReferenceException("The Untracked EditorTicket was not found in OpenPrintTickets.");
             }
             await SaveOpenPrintTickets();
             return true;
@@ -348,14 +364,14 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Attempts to add a blank PartialDataSet object to the Active Print Ticket.
+    /// Attempts to add a blank PartialDataSet object to the editing Print Ticket.
     /// </summary>
     public void AddPartialDataSet()
     {
-        if (ActiveTicket is not null && ActiveTicket.Tracked.HasSpace)
+        if (EditorTicket is not null && EditorTicket.Tracked.HasSpace)
         {
             // create and add a blank PartialDataSet object to the ticket
-            ActiveTicket.Tracked.AddPartialDataSet
+            EditorTicket.Tracked.AddPartialDataSet
             (
                 new PartialDataSet
                 (
@@ -368,7 +384,7 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Attempts to create and run a Partial Tag Print Job from ActiveTicket.Tracked.
+    /// Attempts to create and run a Partial Tag Print Job from EditorTicket.Tracked.
     /// </summary>
     /// <param name="PartialSetNumber">The PartialDataSet to use as the source of partial Production Data, either 1 or 2.</param>
     /// <returns></returns>
@@ -377,7 +393,7 @@ public partial class MainPageViewModel : ObservableObject
     /// <exception cref="PrintRequestException"></exception>
     public async Task<bool> PrintPartialTag(int PartialSetNumber)
     {
-        // ensure the targeted PartialDataSet exists on the Active Print Ticket
+        // ensure the targeted PartialDataSet exists on the editing Print Ticket
         if (PartialSetNumber < 1 || PartialSetNumber > 2)
         {
             throw new ArgumentException
@@ -386,20 +402,20 @@ public partial class MainPageViewModel : ObservableObject
                 nameof(PartialSetNumber)
             );
         }
-        if (ActiveTicket is null)
+        if (EditorTicket is null)
         {
             throw new NullReferenceException("Cannot print PartialDataSets from 'null' PrintTicket.");
         }
         // validate the target PartialDataSet
         try
         {
-            if (PartialSetNumber == 1 && ActiveTicket.Tracked.HasFirstPartialDataSet)
+            if (PartialSetNumber == 1 && EditorTicket.Tracked.HasFirstPartialDataSet)
             {
-                ActiveTicket.Tracked.FirstPartialDataSet!.SelfValidate();
+                EditorTicket.Tracked.FirstPartialDataSet!.SelfValidate();
             }
-            else if (PartialSetNumber == 2 && ActiveTicket.Tracked.HasSecondPartialDataSet)
+            else if (PartialSetNumber == 2 && EditorTicket.Tracked.HasSecondPartialDataSet)
             {
-                ActiveTicket.Tracked.SecondPartialDataSet!.SelfValidate();
+                EditorTicket.Tracked.SecondPartialDataSet!.SelfValidate();
             }
             else
             {
@@ -415,7 +431,7 @@ public partial class MainPageViewModel : ObservableObject
             throw new ArgumentException(_argEx.Message);
         }
         // create a new PrintJob from the PartialDataSet and attempt to run it
-        PrintJob Job = new PrintJob(ActiveTicket.Tracked, PartialSetNumber);
+        PrintJob Job = new PrintJob(EditorTicket.Tracked, PartialSetNumber);
         bool Printed;
         try
         {

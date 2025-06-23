@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-    <Style x:Key="RedNormalStyle" TargetType="Button">
+    <Style x:Key="InfoNormalStyle" TargetType="Button">
         <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
-        <Setter Property="BackgroundColor" Value="{StaticResource Danger-0}"/>                    
+        <Setter Property="BackgroundColor" Value="{StaticResource Info-0}"/>                    
     </Style>
-    <Style x:Key="RedDisabledStyle" TargetType="Button">
+    <Style x:Key="InfoDisabledStyle" TargetType="Button">
         <Setter Property="TextColor" Value="{StaticResource TextLightDisabled}" />
-        <Setter Property="BackgroundColor" Value="{StaticResource Danger-40}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Info-40}" />
     </Style>
-    <Style x:Key="RedPressedStyle" TargetType="Button">
+    <Style x:Key="InfoPressedStyle" TargetType="Button">
         <Setter Property="TextColor" Value="{StaticResource TextLight}" />
-        <Setter Property="BackgroundColor" Value="{StaticResource Danger-40}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Info-40}" />
     </Style>
-    <Style x:Key="RedPointerOverStyle" TargetType="Button">
+    <Style x:Key="InfoPointerOverStyle" TargetType="Button">
         <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
-        <Setter Property="BackgroundColor" Value="{StaticResource Danger-20}"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource Info-20}"/>
     </Style>
 </ResourceDictionary>
