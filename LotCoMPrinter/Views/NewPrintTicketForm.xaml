@@ -78,7 +78,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{StaticResource Neutral-White}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Message Label -->
                 <Label
                     x:Name="PopupMessageLabel"
@@ -96,7 +96,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{StaticResource Neutral-White}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Input Label -->
                 <Label
                     x:Name="ProcessLabel"
@@ -197,7 +197,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{StaticResource Neutral-White}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Input Label -->
                 <Label
                     x:Name="PartLabel"
@@ -277,7 +277,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{StaticResource Neutral-White}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Production Date Input Horizontal Layout -->
                 <HorizontalStackLayout>
                     <!-- Input Label -->
@@ -513,7 +513,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{StaticResource Neutral-White}"/>
+                BackgroundColor="{StaticResource Neutral-OffWhite}"/>
             <!-- Cancel Button -->
             <Button
                 Grid.Row="6"

@@ -272,7 +272,7 @@
             Grid.Row="0"
             Grid.Column="1"
             IsVisible="{Binding IsWelcomeMenuShown}"
-            BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+            BackgroundColor="{StaticResource Neutral-OffWhite}">
             <Grid.RowDefinitions>
                 <!-- Header Row -->
                 <RowDefinition Height="150"/>
@@ -484,7 +484,7 @@
             <Grid
                 Grid.Row="0"
                 x:Name="TicketEditorMenuHeader"
-                BackgroundColor="{StaticResource Neutral-OffWhite}">
+                BackgroundColor="{StaticResource Neutral-0}">
                 <Grid.RowDefinitions>
                     <!-- Editor Title Row -->
                     <RowDefinition Height="Auto"/>
@@ -616,7 +616,7 @@
                 x:Name="TicketEditorMenuBody"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{StaticResource Neutral-White}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <VerticalStackLayout>
                     <!-- Initial Production Info Header Layout -->
                     <Grid>
@@ -1537,7 +1537,7 @@
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal">
                                                 <VisualState.Setters>
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                                                     <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
                                                 </VisualState.Setters>
                                             </VisualState>
@@ -1583,7 +1583,7 @@
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal">
                                                 <VisualState.Setters>
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                                                     <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
                                                 </VisualState.Setters>
                                             </VisualState>
@@ -1828,7 +1828,7 @@
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal">
                                                 <VisualState.Setters>
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                                                     <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
                                                 </VisualState.Setters>
                                             </VisualState>
@@ -1874,7 +1874,7 @@
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal">
                                                 <VisualState.Setters>
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                                                     <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
                                                 </VisualState.Setters>
                                             </VisualState>
