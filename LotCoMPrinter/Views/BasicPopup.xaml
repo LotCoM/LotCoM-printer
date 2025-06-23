@@ -17,12 +17,11 @@
         <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
     </toolkit:Popup.Resources>
     
-    <!-- Use a Grid Layout to create a Windows-like Popup Window -->
-    <!-- Apply a Thin Border -->
+    <!-- Main Layout -->
     <Border
         StrokeThickness="1"
         StrokeShape="RoundRectangle 10,10,10,10"
-        Stroke="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}">
+        Stroke="{StaticResource Neutral-40}">
         <Grid>
             <Grid.RowDefinitions>
                 <!-- Header Row -->
@@ -34,7 +33,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <!-- Expand Columns to add more Controls -->
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="500"/>
             </Grid.ColumnDefinitions>
             <!-- Add a Border to Fill the Header Row -->
             <Border
@@ -44,7 +43,7 @@
                 VerticalOptions="Fill"
                 StrokeThickness="0"
                 StrokeShape="Rectangle"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
+                BackgroundColor="{StaticResource Primary-80}">
                 <!-- Add an Error Title Label -->
                 <Label
                     x:Name="PopupTitleLabel"
@@ -52,8 +51,8 @@
                     VerticalOptions="Center"
                     Margin="15"
                     Text="{Binding Title}"
-                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                    FontSize="20"/>
+                    TextColor="{StaticResource TextLight}"
+                    FontSize="32"/>
             </Border>
             <!-- Use a ScrollView in the Body to Allow Lengthy Messages -->
             <ScrollView
@@ -67,7 +66,7 @@
                     VerticalOptions="Fill"
                     StrokeThickness="0"
                     StrokeShape="Rectangle"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                    BackgroundColor="{StaticResource Neutral-White}">
                     <!-- Add an Error Message Body Label -->
                     <Label
                         x:Name="PopupMessageLabel"
@@ -75,7 +74,9 @@
                         VerticalOptions="Start"
                         Margin="25,5,25,5"
                         Text="{Binding Message}"
-                        TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
+                        FontSize="20"
+                        LineBreakMode="WordWrap"
+                        TextColor="{StaticResource TextDark}"/>
                 </Border>
             </ScrollView>
             <!-- Add a Border to Fill the Footer Row -->
@@ -86,7 +87,7 @@
                 VerticalOptions="Fill"
                 StrokeThickness="0"
                 StrokeShape="Rectangle"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
+                BackgroundColor="{StaticResource Primary-80}">
                 <!-- Add an OK Button -->
                 <Button
                     x:Name="ConfirmationButton"
