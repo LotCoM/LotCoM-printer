@@ -189,7 +189,8 @@
                         <VisualState.Setters>
                             <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
                             <Setter Property="PlaceholderColor" Value="{StaticResource TextDarkDisabled}"/>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                            <!-- <Setter Property="BackgroundColor" Value="{StaticResource Neutral-YellowTint}"/> -->
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/> 
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
@@ -330,7 +331,8 @@
                         <VisualState.Setters>
                             <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
                             <Setter Property="TitleColor" Value="{StaticResource TextDark}"/>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                            <!-- <Setter Property="BackgroundColor" Value="{StaticResource Neutral-YellowTint}"/> -->
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/> 
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
