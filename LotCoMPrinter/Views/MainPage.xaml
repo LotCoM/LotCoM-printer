@@ -787,7 +787,7 @@
                             <!-- Input DatePicker Control and Border -->
                             <Border
                                 x:Name="ProductionDateControl"
-                                Margin="0,15,0,15"
+                                Margin="30,15,0,15"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
                                 HeightRequest="40"
@@ -821,7 +821,7 @@
                             <!-- Input Entry Control and Border -->
                             <Border
                                 x:Name="ShiftControl"
-                                Margin="0,15,0,15"
+                                Margin="30,15,0,15"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
                                 HeightRequest="40"
@@ -863,7 +863,7 @@
                             <!-- Input Entry Control and Border -->
                             <Border
                                 x:Name="OperatorControl"
-                                Margin="0,15,0,15"
+                                Margin="30,15,0,15"
                                 HorizontalOptions="Start"
                                 VerticalOptions="Start"
                                 HeightRequest="40"
@@ -2013,11 +2013,12 @@
                         Clicked="OnAddPartialProductionDataSetButtonClicked"
                         IsVisible="{Binding EditorTicket.Tracked.HasSpace}"
                         Margin="20"
-                        WidthRequest="175"
+                        WidthRequest="250"
                         HeightRequest="40"
                         HorizontalOptions="Start"
                         VerticalOptions="Start"
                         Text="+ Add Partial Basket"
+                        FontSize="18"
                         ToolTipProperties.Text="Create a new set of Partial Production Data to fill out."/>
 
                 </VerticalStackLayout>
