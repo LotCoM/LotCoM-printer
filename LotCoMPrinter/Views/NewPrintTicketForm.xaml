@@ -185,7 +185,7 @@
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         x:Name="ProcessTypeLabel"
-                        Text="{Binding Process.Type}"
+                        Text="{Binding Process.Origination}"
                         TextColor="{StaticResource TextDark}"
                         FontSize="14"/>
                 </Border>

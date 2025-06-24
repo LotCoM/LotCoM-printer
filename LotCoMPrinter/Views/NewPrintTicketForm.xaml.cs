@@ -110,7 +110,7 @@ public partial class NewPrintTicketForm : Popup
     {
         ViewModel.SelectedProcessIndex = ProcessPicker.SelectedIndex;
         ViewModel.Process = (Process)ProcessPicker.ItemsSource[ViewModel.SelectedProcessIndex]!;
-        ViewModel.SelectedProcessParts = ViewModel.Process.Parts;
+        ViewModel.SelectedProcessParts = ViewModel.Process.PrintParts;
     }
 
     /// <summary>

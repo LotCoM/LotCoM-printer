@@ -295,7 +295,7 @@ public partial class PrintTicket : ObservableObject
         HasSecondPartialDataSet = SecondPartialDataSet is not null;
         HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
         Title = $"{Part.ModelNumber.Code} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
-        IsPassThrough = _process.Type == OriginationType.PassThrough;
+        IsPassThrough = _process.Origination == OriginationType.PassThrough;
         ProductionDateShort = $"{ProductionDate.Month}/{ProductionDate.Day}";
         if (Process.RequiredFields.JBKNumber && SerializationMode != SerializationMode.JBK)
         {
