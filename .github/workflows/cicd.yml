@@ -28,7 +28,7 @@ jobs:
       run: |
         # retrieve the most recent commit via SHA
         $sha = "${{ github.sha }}"
-        $commitMessage = gh api /repos/masonritchason/yna-cicd-testing/commits/$sha --jq ".commit.message"
+        $commitMessage = gh api /repos/lotcom/lotcom-printer/commits/$sha --jq ".commit.message"
 
         # parse the version number out of the commit message
         $pattern = '\d+\.\d+\.\d+\.?\d+?'
