@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Style TargetType="ActivityIndicator">
-        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}" />
+        <Setter Property="Color" Value="{StaticResource Secondary-0}" />
     </Style>
 
     <Style TargetType="IndicatorView">
@@ -14,20 +14,21 @@
     </Style>
 
     <Style TargetType="Border">
-        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
+        <Setter Property="Stroke" Value="{StaticResource Neutral-20}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
         <Setter Property="StrokeShape" Value="Rectangle"/>
-        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeThickness" Value="2"/>
     </Style>
 
     <Style TargetType="BoxView">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}" />
     </Style>
 
     <Style TargetType="Button">
         <Setter Property="FontFamily" Value="AptosRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="Padding" Value="14,10"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
@@ -36,26 +37,26 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-0}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}" />
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource DisabledBackground}, Dark={StaticResource DisabledBackgroundDark}}" />
+                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Hovered}, Dark={StaticResource HoveredDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -71,22 +72,51 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"/>
+                            <Setter Property="Color" Value="{StaticResource Neutral-OffWhite}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource DisabledBackground}, Dark={StaticResource DisabledBackgroundDark}}" />
+                            <Setter Property="Color" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Hovered}, Dark={StaticResource HoveredDark}}" />
+                            <Setter Property="Color" Value="{StaticResource Neutral-White}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="IsChecked">
                         <VisualState.Setters>
-                            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                            <Setter Property="Color" Value="{StaticResource Neutral-OffWhite}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CollectionView">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Focused">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-0}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -104,20 +134,20 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource DisabledBackground}, Dark={StaticResource DisabledBackgroundDark}}" />
+                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Hovered}, Dark={StaticResource HoveredDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -126,11 +156,11 @@
     </Style>
 
     <Style TargetType="Editor">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+        <Setter Property="TextColor" Value="{StaticResource TextDark}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="AptosRegular"/>
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource TextDarkDisabled}" />
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -139,7 +169,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -157,30 +187,31 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="PlaceholderColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <!-- <Setter Property="BackgroundColor" Value="{StaticResource Neutral-YellowTint}"/> -->
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/> 
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}"/>
-                            <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource DisabledSecondaryText}, Dark={StaticResource DisabledSecondaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource DisabledBackground}, Dark={StaticResource DisabledBackgroundDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <Setter Property="PlaceholderColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Focused">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Hovered}, Dark={StaticResource HoveredDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="PlaceholderColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Hovered}, Dark={StaticResource HoveredDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="PlaceholderColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -205,13 +236,26 @@
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
-                    <VisualState x:Name="Normal" />
-                    <VisualState x:Name="Disabled">
+                    <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="Opacity" Value="0.5" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="PointerOver" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-40}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-40}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-0}"/>
+                        </VisualState.Setters>
+                    </VisualState>
                 </VisualStateGroup>
             </VisualStateGroupList>
         </Setter>
@@ -226,12 +270,12 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}" />
+                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -267,7 +311,7 @@
                     <VisualState x:Name="Normal"/>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource DisabledBackground}, Dark={StaticResource DisabledBackgroundDark}}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-40}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -285,30 +329,31 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"/>
-                            <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="TitleColor" Value="{StaticResource TextDark}"/>
+                            <!-- <Setter Property="BackgroundColor" Value="{StaticResource Neutral-YellowTint}"/> -->
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/> 
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DisabledSecondaryText}, Dark={StaticResource DisabledSecondaryTextDark}}"/>
-                            <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource DisabledPrimaryText}, Dark={StaticResource DisabledPrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource DisabledBackground}, Dark={StaticResource DisabledBackgroundDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <Setter Property="TitleColor" Value="{StaticResource TextDarkDisabled}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Focused">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"/>
-                            <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Hovered}, Dark={StaticResource HoveredDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="TitleColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"/>
-                            <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Hovered}, Dark={StaticResource HoveredDark}}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="TitleColor" Value="{StaticResource TextDark}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>

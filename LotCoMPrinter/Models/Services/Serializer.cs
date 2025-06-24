@@ -1,6 +1,6 @@
-using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Enums;
+using LotCom.Database;
+using LotCom.Enums;
+using LotCom.Types;
 
 namespace LotCoMPrinter.Models.Services;
 

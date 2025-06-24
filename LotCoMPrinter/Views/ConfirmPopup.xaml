@@ -2,12 +2,12 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:views="clr-namespace:LotCoMPrinter.Views"
-               x:DataType="views:BasicPopup"
-               x:Class="LotCoMPrinter.Views.BasicPopup">
+               x:DataType="views:ConfirmPopup"
+               x:Class="LotCoMPrinter.Views.ConfirmPopup">
     
     <!-- Style the Popup Window -->
     <toolkit:Popup.Resources>
-        <Style TargetType="{x:Type views:BasicPopup}">
+        <Style TargetType="{x:Type views:ConfirmPopup}">
             <Setter Property="Color" Value="Transparent" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Start" />
@@ -15,6 +15,8 @@
         </Style>
         <!-- RecessedButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
+        <!-- WarnButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/WarnButton.xaml"/>
     </toolkit:Popup.Resources>
     
     <!-- Main Layout -->
@@ -88,19 +90,56 @@
                 StrokeThickness="0"
                 StrokeShape="Rectangle"
                 BackgroundColor="{StaticResource Primary-80}">
-                <!-- Add an OK Button -->
-                <Button
-                    x:Name="ConfirmationButton"
-                    Clicked="OnConfirmation"
-                    HorizontalOptions="End"
-                    VerticalOptions="End"
-                    WidthRequest="75"
-                    HeightRequest="40"
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="10"
-                    Text="OK"/>
             </Border>
+            <!-- Confirmation Button -->
+            <Button
+                x:Name="ConfirmationButton"
+                Clicked="OnConfirmationButtonClicked"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="10"
+                Text="{Binding ConfirmText}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="GreenStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource WarnNormalStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource WarnDisabledStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource WarnPressedStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource WarnPointerOverStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
+            <!-- Cancellation Button -->
+            <Button
+                x:Name="CancellationButton"
+                Clicked="OnCancellationButtonClicked"
+                HorizontalOptions="Start"
+                VerticalOptions="End"
+                HeightRequest="40"
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="10"
+                Text="{Binding CancelText}"/>
         </Grid>
     </Border>
     
