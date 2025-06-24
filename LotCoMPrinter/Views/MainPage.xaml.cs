@@ -85,9 +85,27 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void OnRemoveFirstPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	private async void OnRemoveFirstPartialProductionDataSetButtonClicked(object sender, EventArgs e)
 	{
-		ViewModel.EditorTicket!.Tracked.RemoveFirstPartialDataSet();
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Remove Partial Basket Data?",
+			"Are you sure you would like to remove the Partial Basket info from this Label? This is an irreversible action!",
+			"Yes, remove",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
+		{
+			return;
+		}
+		// close was confirmed
+		else
+		{
+			ViewModel.EditorTicket!.Tracked.RemoveFirstPartialDataSet();
+		}
 	}
 
 	/// <summary>
@@ -95,9 +113,27 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void OnRemoveSecondPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	private async void OnRemoveSecondPartialProductionDataSetButtonClicked(object sender, EventArgs e)
 	{
-		ViewModel.EditorTicket!.Tracked.RemoveSecondPartialDataSet();
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Remove Partial Basket Data?",
+			"Are you sure you would like to remove the Partial Basket info from this Label? This is an irreversible action!",
+			"Yes, remove",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
+		{
+			return;
+		}
+		// close was confirmed
+		else
+		{
+			ViewModel.EditorTicket!.Tracked.RemoveSecondPartialDataSet();
+		}
 	}
 
 	/// <summary>
