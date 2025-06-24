@@ -10,8 +10,6 @@ permissions:
 env:
   DOTNET_VERSION: '9.0.103' # The .NET SDK version to use
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages # action runner's installed NuGet packages
-  SIGNING_CERTIFICATE_BASE64: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
-  SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
 
 jobs:
 
@@ -22,157 +20,90 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Get version number from commit
+      env:
+        GH_TOKEN: ${{ github.token }}
+      id: version-number
+      shell: pwsh
+      run: |
+        # retrieve the most recent commit via SHA
+        $sha = "${{ github.sha }}"
+        $commitMessage = gh api /repos/masonritchason/yna-cicd-testing/commits/$sha --jq ".commit.message"
+
+        # parse the version number out of the commit message
+        $pattern = '\d+\.\d+\.\d+\.?\d+?'
+        $result = $commitMessage | Select-String -Pattern $pattern
+        $result = $result.Matches.Value
+        Write-Host "New release version number: $result" 
+
+        # set the output of this step to the VERSION_NUMBER environment var
+        echo "VERSION_NUMBER=$result" >> $env:GITHUB_ENV
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4.3.0
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         cache: true
         cache-dependency-path: "./LotCoMPrinter/packages.lock.json"
+    
     - name: Install dependencies
       run: dotnet restore
     
     - name: Install required workloads
       run: |
+        # install dotnet tools
+        dotnet tool install --global wix
         dotnet workload restore
         dotnet workload install android
         dotnet workload install maui
       
     - name: Build
-      run: dotnet publish -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=MSIX -p:WindowsAppSDKSelfContained=true --sc
+      run: dotnet build -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=None -p:WindowsAppSDKSelfContained=true --sc
 
-    - name: Copy MSIX to known path
+    - name: Run setup
       shell: pwsh
       run: |
-        # find the MSIX package
-        $msix = Get-ChildItem -Path "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
+        # run the LotComPrinterSetup.exe script (Wix)
+        cd LotCoMPrinter\Setup
+        .\LotComPrinterSetup.exe "$env:VERSION_NUMBER"
 
-        # copy the MSIX to a set path
+        # save the MSI to a Package directory
+        cd ..\bin\Release\net9.0-windows10.0.19041.0\win10-x64\Installer
         New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
-        Copy-Item -Path $msix -Destination D:\a\Package
+        Copy-Item -Path ".\LotComPrinter_$env:VERSION_NUMBER.msi" -Destination "D:\a\Package"
 
-    - name: Archive build package (MSIX) artifact
+    - name: Archive MSI package artifact
       uses: actions/upload-artifact@v4
       with:
-        name: latest-windows-package
+        name: windows-latest
         path: |
           D:\a\Package
-          
-  sign:
 
-    name: sign-msix
-    needs: build
-    runs-on: windows-2022
-
-    steps:
-    - name: Download MSIX package
+    - name: Download MSI package
       uses: actions/download-artifact@v4
       with:
-        name: latest-windows-package
+        name: windows-latest
         path: |
           D:\a\Package
         
-    - name: Sign MSIX with certificate
+    - name: Create release
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_1 }}
       shell: pwsh
       run: |
-        # Save MSIX directory
-        $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
-
-        # Save certificate directories (encoded and decoded)
-        $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
-        $pfx = "D:\a\Certificate\signing-certificate.pfx"
-
-        # Save certificate password and encoded data
-        $password = "$env:SIGNING_CERTIFICATE_PASSWORD"
-        $certificate = "$env:SIGNING_CERTIFICATE_BASE64"
+        # use default tag for generated releases
+        $tag = "$env:VERSION_NUMBER"
         
-        # Decode the Base64 Certificate
-        New-Item -ItemType directory -Path "D:\a\Certificate" -ErrorAction SilentlyContinue
-        Set-Content -Path $pfxEnc -Value $certificate
-        certutil -decode $pfxEnc $pfx
-
-        # Install the PFX certificate to the Local Machine's Trusted Root CA store
-        $securePassword = ConvertTo-SecureString -String $password -Force -AsPlainText
-        Import-PfxCertificate -FilePath $pfx -CertStoreLocation "Cert:\LocalMachine\Root" -Password $securePassword
-        
-        # Sign the MSIX Package using SignTools
-        Set-Location "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x86"
-        .\signtool.exe sign /fd SHA256 /a /f $pfx /t "http://timestamp.digicert.com" /p $password $msix
-
-    - name: Archive signed MSIX artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: latest-windows-signed
-        path: |
-          D:\a\Package
-
-  release:
-  
-    name: auto-release
-    needs: sign
-    runs-on: windows-2022
+        # create github release and set default notes
+        gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release"
     
-    steps:
-      - uses: actions/checkout@v3
-      - name: Retrieve PR tag
-        id: merged-pr-info
-        uses: coin-tracker/get-merged-pull-request@v1.1
-        with: 
-          github_token: ${{ secrets.PAT_1 }}
+    - name: Upload MSI to release
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_1 }}
+      shell: pwsh
+      run: |
+        # use default tag for generated releases
+        $tag = "$env:VERSION_NUMBER"
 
-      - name: Download MSIX package
-        uses: actions/download-artifact@v4
-        with:
-          name: latest-windows-signed
-          path: |
-            D:\a\Package
-
-      - name: Copy MSIX to known path
-        shell: pwsh
-        run: |
-          # find the MSIX package
-          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
-
-          # copy the MSIX to a set path
-          New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
-          Copy-Item -Path $msix -Destination D:\a\Package -ErrorAction SilentlyContinue
-          
-      - name: Create release
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_1 }}
-          tag: ${{ steps.merged-pr-info.outputs.title }}
-        shell: pwsh
-        run: |
-          # extract the release PR tag from environment
-          # $tag = "$env:tag"
-          # remove prefixes
-          # $tag = $tag -replace "feature/", ""
-          # $tag = $tag -replace "hotfix/", ""
-          # ensure tag value
-          # if (-not $tag) {
-          #     Write-Host "Tag not found. Using fallback tag."
-          #     $tag = "default-tag"
-          # }
-          # use default tag for generated releases
-          $tag = "generated-release"
-          
-          # create github release and set default notes
-          gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release"
-      
-      - name: Upload MSIX to release
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_1 }}
-        shell: pwsh
-        run: |
-          # locate the MSIX file and rename it
-          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
-          Write-Host "MSIX: $msix"
-          Write-Host "MSIX Full Path:" 
-          Write-Host $msix.FullName
-          Rename-Item -Path $msix.FullName -NewName "LotCoMPrinter_x64.msix"
-          $msix = Get-ChildItem -Path "D:\a\Package" -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue
-
-          # use default tag for generated releases
-          $tag = "generated-release"
-
-          # upload the MSIX to the release
-          gh release upload $tag $msix.FullName
+        # upload the MSIX to the release
+        gh release upload $tag "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER.msi"
