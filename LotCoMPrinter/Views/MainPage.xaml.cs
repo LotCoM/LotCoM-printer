@@ -233,23 +233,43 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private async void OnCloseTicketEditorButtonClicked(object sender, EventArgs e)
 	{
-		// get the index of the EditorTicket in OpenPrintTickets
-		if (ViewModel.EditorTicket is null)
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Close without saving?",
+			"Are you sure you would like to close this Label editor and discard your changes?",
+			"Yes, close",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"Cannot close 'null'."
-				)
-			);
+			return;
 		}
-		ViewModel.EditorTicket = new TrackedPrintTicket(ViewModel.EditorTicket!.Untracked);
-		// close the Ticket Editor Menu window
-		await AnimatedClosePrintTicket();
+		// close was confirmed
+		else
+		{
+			if (ViewModel.EditorTicket is null)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Cannot close 'null'."
+					)
+				);
+			}
+			else
+			{
+				// close the Ticket Editor Menu window
+				ViewModel.EditorTicket = new TrackedPrintTicket(ViewModel.EditorTicket!.Untracked);
+				await AnimatedClosePrintTicket();
+			}
+		}
 	}
 
 	/// <summary>
@@ -262,40 +282,60 @@ public partial class MainPage : ContentPage
 	/// <exception cref="OperationCanceledException"></exception>
 	private async void OnSaveTicketEditorButtonClicked(object sender, EventArgs e)
 	{
-		// get the index of the EditorTicket in OpenPrintTickets
-		if (ViewModel.EditorTicket is null)
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Close and save?",
+			"Are you sure you would like to close this Label editor and save your changes?",
+			"Yes, save",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"Cannot save 'null' to OpenPrintTickets."
-				)
-			);
+			return;
 		}
-		int Index = ViewModel.OpenPrintTickets.IndexOf(ViewModel.EditorTicket!.Untracked);
-		// confirm that the EditorTicket exists in OpenPrintTickets and replace it with the Tracked PrintTicket
-		if (Index == -1)
+		// close was confirmed
+		else
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
+			// confirm the index of the EditorTicket exists in OpenPrintTickets
+			if (ViewModel.EditorTicket is null)
+			{
+				this.ShowPopup
 				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"The Untracked PrintTicket was not found in OpenPrintTickets."
-				)
-			);
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Cannot save 'null' to OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// confirm that the EditorTicket exists in OpenPrintTickets and replace it with the Tracked PrintTicket
+			int Index = ViewModel.OpenPrintTickets.IndexOf(ViewModel.EditorTicket!.Untracked);
+			if (Index == -1)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"The Untracked PrintTicket was not found in OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// close the Ticket Editor Menu window
+			ViewModel.EditorTicket.MergeChanges();
+			ViewModel.OpenPrintTickets[Index] = ViewModel.EditorTicket.Untracked;
+			await ViewModel.SaveOpenPrintTickets();
+			await AnimatedClosePrintTicket();
 		}
-		ViewModel.EditorTicket.MergeChanges();
-		ViewModel.OpenPrintTickets[Index] = ViewModel.EditorTicket.Untracked;
-		await ViewModel.SaveOpenPrintTickets();
-		// close the Ticket Editor Menu window
-		await AnimatedClosePrintTicket();
 	}
 
 	/// <summary>
@@ -303,38 +343,58 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private async void OnDeleteTicketEditorButtonClicked(object sender, EventArgs e)
 	{
-		// get the index of the EditorTicket in OpenPrintTickets
-		if (ViewModel.EditorTicket is null)
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Delete Label?",
+			"Are you sure you would like to Delete this Label? This is an irreversible action!",
+			"Yes, delete",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"Cannot delete 'null' from OpenPrintTickets."
-				)
-			);
+			return;
 		}
-		bool Removed = ViewModel.OpenPrintTickets.Remove(ViewModel.EditorTicket!.Untracked);
-		// confirm that the EditorTicket exists in OpenPrintTickets and remove it
-		if (!Removed)
+		// close was confirmed
+		else
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
+			// get the index of the EditorTicket in OpenPrintTickets
+			if (ViewModel.EditorTicket is null)
+			{
+				this.ShowPopup
 				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"The Untracked PrintTicket was not found in OpenPrintTickets."
-				)
-			);
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Cannot delete 'null' from OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// confirm that the EditorTicket exists in OpenPrintTickets and remove it
+			bool Removed = ViewModel.OpenPrintTickets.Remove(ViewModel.EditorTicket!.Untracked);
+			if (!Removed)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"The Untracked PrintTicket was not found in OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// close the Ticket Editor Menu window
+			await ViewModel.SaveOpenPrintTickets();
+			await AnimatedClosePrintTicket();
 		}
-		await ViewModel.SaveOpenPrintTickets();
-		// close the Ticket Editor Menu window
-		await AnimatedClosePrintTicket();
 	}
 
 	/// <summary>
@@ -342,62 +402,85 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	private async void OnPrintTicketEditorButtonClicked(object sender, EventArgs e)
 	{
-		bool Printed = false;
-		try
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Finalize Label and Print?",
+			"Are you sure you would like to finish editing this Label and Print it?",
+			"Yes, print",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
 		{
-			Printed = await ViewModel.PrintEditorTicket();
+			return;
 		}
-		// catch and handle validation messages
-		catch (ArgumentException _ex)
+		// close was confirmed
+		else
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
+			// attempt to print the Label
+			bool Printed = false;
+			try
+			{
+				Printed = await ViewModel.PrintEditorTicket();
+			}
+			// catch and handle validation messages
+			catch (ArgumentException _ex)
+			{
+				this.ShowPopup
 				(
-					"Invalid Production Data",
-					$"{_ex.Message}\n\nResolve this issue and try again."
-				)
-			);
-		}
-		// catch and handle print spooling messages
-		catch (PrintRequestException _ex)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
+					new BasicPopup
+					(
+						"Invalid Production Data",
+						$"{_ex.Message}\n\nResolve this issue and try again."
+					)
+				);
+				return;
+			}
+			// catch and handle print spooling messages
+			catch (PrintRequestException _ex)
+			{
+				this.ShowPopup
 				(
-					"Print Failed",
-					$"The Print request could not be completed." +
-					" Please see Management to resolve this issue." +
-					$"\n\nReference message: {_ex.Message}."
-				)
-			);
-		}
-		// catch other, unexpected issues
-		catch (Exception _ex)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
+					new BasicPopup
+					(
+						"Print Failed",
+						$"The Print request could not be completed." +
+						" Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex.Message}."
+					)
+				);
+				return;
+			}
+			// catch other, unexpected issues
+			catch (Exception _ex)
+			{
+				this.ShowPopup
 				(
-					"Print Failed",
-					$"We encountered an unexpected error." +
-					" Please see Management to resolve this issue." +
-					$"\n\nReference message: {_ex.Message}."
-				)
-			);
-		}
-		if (Printed)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
+					new BasicPopup
+					(
+						"Print Failed",
+						$"We encountered an unexpected error." +
+						" Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex.Message}."
+					)
+				);
+				return;
+			}
+			// print was successful
+			if (Printed)
+			{
+				this.ShowPopup
 				(
-					"Label Printed",
-					$"Label printing was successful. Retrieve your new Label from the Printer!"
-				)
-			);
-			await AnimatedClosePrintTicket();
+					new BasicPopup
+					(
+						"Label Printed",
+						$"Label printing was successful. Retrieve your new Label from the Printer!"
+					)
+				);
+				await AnimatedClosePrintTicket();
+			}
 		}
 	}
 
