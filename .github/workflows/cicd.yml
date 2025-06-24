@@ -48,6 +48,13 @@ jobs:
     
     - name: Install dependencies
       run: dotnet restore
+
+    - name: Download LotCom Libraries
+      uses: actions/checkout@v4
+      with:
+        repository: lotcom/lotcom-libraries
+        token: ${{ secrets.PAT_1 }}
+        path: D:\a\LotCom-libraries
     
     - name: Install required workloads
       run: |
