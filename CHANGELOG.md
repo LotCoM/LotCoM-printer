@@ -294,3 +294,30 @@ Introduction of Print Ticket system, a design change where operators can open an
 #### Bugfix Patch
 - [bug/179](https://github.com/LotCoM/LotCoM-printer/pull/182).
   - The initial [fix](https://github.com/LotCoM/LotCoM-printer/pull/180) for this issue opened a binding-related issue. This subsequent fault has been addressed, restoring intended functionality and truly addressing the Model Number Entry issue.
+
+## `0.7.0.4`
+#### Minor feature update
+This update implements the following minor functional features:
+- Integration with **LotCom Libraries**, **LotCom's** dedicated library of models;
+- Large-scale UI redesign to meet user friendliness requests;
+- Integration with new Database Schema `v3`;
+- Implementation of Confirmation Popups for impactful user actions;
+- CI/CD automation refactor to produce `MSI` installers over `MSIX` packages.
+
+#### PRs
+
+- [`feature/184`](https://github.com/LotCoM/LotCoM-printer/pull/185):
+  - Project Model updated to utilize the **LotCom Libraries** class library. 
+  - Pulling classes such as **Type** and **Datasources** from the class library helps improve project maintainability by removing the need to maintain copies on each **LotCom** component.
+- [`feature/187`](https://github.com/LotCoM/LotCoM-printer/pull/193):
+  - References to modified Process properties updated to restore intended functionality.
+  - The modifications and additions made to the Database Schema (documented in [LotCom Libraries #6](https://github.com/LotCoM/LotCom-libraries/pull/7)) created faulting references throughout the **LotCom** environment. These references impacted the functionality and usability of the application.
+- [`feature/191`](https://github.com/LotCoM/LotCoM-printer/pull/194):
+  - Implemented Confirmation popups following impactful buttons and actions.
+  - To protect the application and the user from unintentionally making impactful changes, confirmation popups were added. Now, there are two levels of action between the user and an impactful choice.
+- [`feature/188`](https://github.com/LotCoM/LotCoM-printer/pull/195):
+  - Implemented new CI/CD automation pipeline to better interface with YNA IT and to improve deployment cleanliness.
+  - YNA IT's automation processes generally center on the use of MSI installers. The key difference between MSI and MSIX installers is that MSI installs as the system, while MSIX only installs as the user. This causes issues for their automation and creates incongruous installations. There have been multiple cases of faulting application instances on different computers due to deployment issues. With the MSI installation process, YNA IT can force installation at the system level, ensuring clean and uniform application instances.
+- [`feature/186`](https://github.com/LotCoM/LotCoM-printer/pull/192):
+  - User Interface components redesigned to meet user requests and improve user-friendliness.
+  - The original UI was very sterile and low contrast. This interface style is not good for users who aren't familiar with computer systems/don't use a lot of software. Higher contrast and more intense interfaces generally work better for users who are less adept with computer applications.

@@ -1,6 +1,5 @@
 using System.Drawing.Printing;
 using System.Drawing;
-using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
 
 namespace LotCoMPrinter.Models.Services;

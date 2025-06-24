@@ -3,31 +3,35 @@
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:Views="clr-namespace:LotCoMPrinter.Views"
                xmlns:ViewModels="clr-namespace:LotCoMPrinter.ViewModels"
-               xmlns:Enums="clr-namespace:LotCoMPrinter.Models.Enums"
+               xmlns:Enums="clr-namespace:LotCom.Enums;assembly=LotCom"
                x:DataType="ViewModels:NewPrintTicketFormViewModel"
                x:Class="LotCoMPrinter.Views.NewPrintTicketForm">
     
     <!-- Style the Popup Window -->
     <toolkit:Popup.Resources>
         <Style TargetType="{x:Type Views:NewPrintTicketForm}">
-            <Setter Property="Color" Value="{StaticResource OffBlack}" />
+            <Setter Property="Color" Value="Transparent" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Start" />
             <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
         </Style>
+        <!-- SecondaryButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/SecondaryButton.xaml"/>
         <!-- RecessedButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
         <!-- GreenButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/GreenButton.xaml"/>
         <!-- RedButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/RedButton.xaml"/>
+        <!-- TransparentImageButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/TransparentImageButton.xaml"/>
     </toolkit:Popup.Resources>
 
     <!-- Main Layout -->
     <Border
         StrokeThickness="1"
         StrokeShape="RoundRectangle 10,10,10,10"
-        Stroke="{AppThemeBinding Light={StaticResource Foreground}, Dark={StaticResource ForegroundDark}}">
+        Stroke="{StaticResource Neutral-40}">
         <Grid>
             <Grid.RowDefinitions>
                 <!-- Title Row -->
@@ -56,16 +60,16 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}">
+                BackgroundColor="{StaticResource Primary-80}">
                 <!-- Title Label -->
                 <Label
                     x:Name="PopupTitleLabel"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
-                    Margin="10,20,0,20"
-                    Text="Open New Label Ticket"
-                    FontSize="20"
-                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+                    Margin="20,20,0,20"
+                    Text="Create a New Label"
+                    FontSize="32"
+                    TextColor="{StaticResource TextLight}"/>
             </HorizontalStackLayout>
             
             <!-- Message Fill -->
@@ -74,15 +78,16 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Message Label -->
                 <Label
                     x:Name="PopupMessageLabel"
                     HorizontalOptions="Start"
                     VerticalOptions="Start"
-                    Margin="20"
-                    Text="Enter basic information for this new Label:"
-                    TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}"/>
+                    Margin="20,10,0,5"
+                    FontSize="20"
+                    Text="Enter basic information for this new Label"
+                    TextColor="{StaticResource TextDark}"/>
             </HorizontalStackLayout>
 
             <!-- Process Input Layout-->
@@ -91,7 +96,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Input Label -->
                 <Label
                     x:Name="ProcessLabel"
@@ -100,19 +105,64 @@
                     VerticalOptions="Center"
                     WidthRequest="75"
                     MinimumWidthRequest="75"
+                    FontSize="20"
+                    TextColor="{StaticResource TextDark}"
                     Text="Process"/>
+                <!-- Info Button -->
+                <ImageButton
+                    x:Name="ProcessInfoButton"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    HeightRequest="30"
+                    MinimumHeightRequest="30"
+                    WidthRequest="30"
+                    MinimumWidthRequest="30"
+                    CornerRadius="30"
+                    Source="information.png"
+                    ToolTipProperties.Text="Select the Process for your new Label                                                        ________________________________________________________                                                        This should be the Process station that produced the Basket of Parts you are Labeling.">
+                    <ImageButton.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                    </ImageButton.Behaviors>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="TransparentStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </ImageButton>
                 <!-- Input Picker Control and Border -->
                 <Border
                     x:Name="ProcessControl"
                     Margin="0,10,0,10"
                     HorizontalOptions="Start"
-                    VerticalOptions="Start"
-                    WidthRequest="250"
+                    VerticalOptions="Center"
                     HeightRequest="40"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 10,10,10,10">
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 0">
                     <Picker
                         x:Name="ProcessPicker"
+                        WidthRequest="275"
+                        FontSize="16"
                         ItemsSource="{Binding AllProcesses}"
                         ItemDisplayBinding="{Binding FullName}"
                         SelectedIndex="{Binding SelectedProcessIndex}"
@@ -126,18 +176,18 @@
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
                     HeightRequest="25"
-                    WidthRequest="85"
+                    WidthRequest="100"
                     Stroke="#00ACACAC"
                     StrokeThickness="0"
                     StrokeShape="RoundRectangle 10,10,10,10"
-                    Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                    Background="{StaticResource Secondary-0}">
                     <Label
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         x:Name="ProcessTypeLabel"
-                        Text="{Binding Process.Type}"
-                        TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-                        FontSize="11"/>
+                        Text="{Binding Process.Origination}"
+                        TextColor="{StaticResource TextDark}"
+                        FontSize="14"/>
                 </Border>
             </HorizontalStackLayout>
 
@@ -147,7 +197,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Input Label -->
                 <Label
                     x:Name="PartLabel"
@@ -156,19 +206,64 @@
                     VerticalOptions="Center"
                     WidthRequest="75"
                     MinimumWidthRequest="75"
+                    FontSize="20"
+                    TextColor="{StaticResource TextDark}"
                     Text="Part"/>
+                <!-- Info Button -->
+                <ImageButton
+                    x:Name="PartInfoButton"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    HeightRequest="30"
+                    MinimumHeightRequest="30"
+                    WidthRequest="30"
+                    MinimumWidthRequest="30"
+                    CornerRadius="30"
+                    Source="information.png"
+                    ToolTipProperties.Text="Select the Part you would like to create a Label for                                                        ________________________________________________________                                                        This should be the Number and Name of the Part in the Basket you are Labeling.                                                        ________________________________________________________                                                        NOTE: You must select a Process before you can select a Part.">
+                    <ImageButton.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                    </ImageButton.Behaviors>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="TransparentStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </ImageButton>
                 <!-- Input Picker Control and Border -->
                 <Border
                     x:Name="PartControl"
                     Margin="0,10,0,10"
                     HorizontalOptions="Start"
-                    VerticalOptions="Start"
-                    WidthRequest="250"
+                    VerticalOptions="Center"
                     HeightRequest="40"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 10,10,10,10">
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 0">
                     <Picker
                         x:Name="PartPicker"
+                        WidthRequest="275"
+                        FontSize="14"
                         ItemsSource="{Binding SelectedProcessParts}"
                         ItemDisplayBinding="{Binding GetInfo}"
                         SelectedIndex="{Binding SelectedPartIndex}"
@@ -182,7 +277,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <!-- Production Date Input Horizontal Layout -->
                 <HorizontalStackLayout>
                     <!-- Input Label -->
@@ -193,21 +288,65 @@
                         VerticalOptions="Center"
                         WidthRequest="75"
                         MinimumWidthRequest="75"
+                        FontSize="20"
+                        TextColor="{StaticResource TextDark}"
                         Text="Date"/>
+                    <!-- Info Button -->
+                    <ImageButton
+                        x:Name="DateInfoButton"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        HeightRequest="30"
+                        MinimumHeightRequest="30"
+                        WidthRequest="30"
+                        MinimumWidthRequest="30"
+                        CornerRadius="30"
+                        Source="information.png"
+                        ToolTipProperties.Text="The Date on which you produced this Label                                                        ________________________________________________________                                                        NOTE: This field cannot be edited to protect Lot Control data.">
+                        <ImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                        </ImageButton.Behaviors>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="TransparentStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                    </ImageButton>
                     <!-- Input DatePicker Control and Border -->
                     <Border
                         x:Name="ProductionDateControl"
                         Margin="0,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        WidthRequest="125"
                         HeightRequest="40"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 10,10,10,10">
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 0">
                         <DatePicker
                             x:Name="ProductionDatePicker"
+                            WidthRequest="140"
+                            FontSize="16"
                             IsEnabled="False"
-                            WidthRequest="120"
                             Date="{Binding ProductionDate}"/>
                     </Border>
                 </HorizontalStackLayout>
@@ -222,21 +361,66 @@
                         x:Name="ShiftLabel"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        WidthRequest="50"
-                        MinimumWidthRequest="50"
+                        WidthRequest="45"
+                        MinimumWidthRequest="45"
+                        FontSize="20"
+                        TextColor="{StaticResource TextDark}"
                         Text="Shift"/>
+                    <!-- Info Button -->
+                    <ImageButton
+                        x:Name="ShiftInfoButton"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        HeightRequest="30"
+                        MinimumHeightRequest="30"
+                        WidthRequest="30"
+                        MinimumWidthRequest="30"
+                        CornerRadius="30"
+                        Source="information.png"
+                        ToolTipProperties.Text="Select the Shift you are currently on                                                        ________________________________________________________                                                        This should be the Shift that produced the Basket of Parts you are Labeling.">
+                        <ImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                        </ImageButton.Behaviors>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="TransparentStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                    </ImageButton>
                     <!-- Input Entry Control and Border -->
                     <Border
                         x:Name="ShiftControl"
                         Margin="0,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        WidthRequest="75"
                         HeightRequest="40"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 10,10,10,10">
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 0">
                         <Picker
                             x:Name="ShiftPicker"
+                            WidthRequest="100"
+                            FontSize="16"
                             SelectedItem="{Binding ProductionShift}">
                             <Picker.ItemsSource>
                                 <x:Array Type="{x:Type Enums:Shift}">
@@ -257,21 +441,66 @@
                         Margin="20,10,0,10"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
-                        WidthRequest="75"
-                        MinimumWidthRequest="75"
+                        WidthRequest="85"
+                        MinimumWidthRequest="85"
+                        FontSize="20"
+                        TextColor="{StaticResource TextDark}"
                         Text="Operator"/>
+                    <!-- Info Button -->
+                    <ImageButton
+                        x:Name="OperatorInfoButton"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        HeightRequest="30"
+                        MinimumHeightRequest="30"
+                        WidthRequest="30"
+                        MinimumWidthRequest="30"
+                        CornerRadius="30"
+                        Source="information.png"
+                        ToolTipProperties.Text="Enter your Initials                                                        ________________________________________________________                                                        This should be the Operator responsible for producing the Basket of Parts you are Labeling.">
+                        <ImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                        </ImageButton.Behaviors>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="TransparentStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                    </ImageButton>
                     <!-- Input Entry Control and Border -->
                     <Border
                         x:Name="OperatorControl"
                         Margin="0,10,20,10"
                         HorizontalOptions="Start"
-                        VerticalOptions="Start"
-                        WidthRequest="75"
+                        VerticalOptions="Center"
                         HeightRequest="40"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 10,10,10,10">
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 0">
                         <Entry
                             x:Name="OperatorEntry"
+                            WidthRequest="100"
+                            FontSize="16"
                             Text="{Binding ProductionOperator.Initials}"
                             TextChanged="OnOperatorEntryTextChanged"
                             MaxLength="3"/>
@@ -284,7 +513,7 @@
                 Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Framing}, Dark={StaticResource FramingDark}}"/>
+                BackgroundColor="{StaticResource Neutral-OffWhite}"/>
             <!-- Cancel Button -->
             <Button
                 Grid.Row="6"
@@ -294,7 +523,8 @@
                 HorizontalOptions="Start"
                 VerticalOptions="Center"
                 Margin="10"
-                Text="Cancel">
+                Text="Cancel"
+                ToolTipProperties.Text="Cancel creation of a new Label and return to the Welcome Page">
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroupList>
                         <VisualStateGroup x:Name="RedStates">
@@ -331,7 +561,8 @@
                 HorizontalOptions="End"
                 VerticalOptions="Center"
                 Margin="10"
-                Text="Create Label">
+                Text="Create Label"
+                ToolTipProperties.Text="Create a new Label with this information and continue to edit it">
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroupList>
                         <VisualStateGroup x:Name="GreenStates">

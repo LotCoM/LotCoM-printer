@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <Style x:Key="TransparentNormalStyle" TargetType="ImageButton">
+        <Setter Property="BackgroundColor" Value="Transparent"/>   
+    </Style>
+    <Style x:Key="TransparentDisabledStyle" TargetType="ImageButton">
+        <Setter Property="BackgroundColor" Value="{StaticResource Neutral-DarkTint}"/>
+    </Style>
+    <Style x:Key="TransparentPressedStyle" TargetType="ImageButton">
+        <Setter Property="BackgroundColor" Value="{StaticResource Neutral-DarkTint}"/>
+    </Style>
+    <Style x:Key="TransparentPointerOverStyle" TargetType="ImageButton">
+        <Setter Property="BackgroundColor" Value="{StaticResource Neutral-LightTint}"/>   
+    </Style>
+</ResourceDictionary>

@@ -1,3 +1,4 @@
+using LotCom.Types;
 using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
 

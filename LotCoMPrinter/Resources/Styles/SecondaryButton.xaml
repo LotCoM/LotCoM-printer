@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <Style x:Key="SecondaryNormalStyle" TargetType="Button">
+        <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource Secondary-20}"/>                    
+    </Style>
+    <Style x:Key="SecondaryDisabledStyle" TargetType="Button">
+        <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource Secondary-40}"/>    
+    </Style>
+    <Style x:Key="SecondaryPressedStyle" TargetType="Button">
+        <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource Secondary-40}"/>   
+    </Style>
+    <Style x:Key="SecondaryPointerOverStyle" TargetType="Button">
+        <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource Secondary-0}"/>   
+    </Style>
+</ResourceDictionary>

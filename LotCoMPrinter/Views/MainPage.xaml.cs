@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
+using LotCom.Types;
 using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.ViewModels;
@@ -40,14 +41,14 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
-	/// Opens and fades the ActivePrintTicket Menu in over Duration milliseconds.
+	/// Opens and fades the TicketEditor Menu in over Duration milliseconds.
 	/// </summary>
 	/// <param name="Duration">The time, in milliseconds, that it takes for this animation to complete.</param>
 	/// <returns></returns>
 	private async Task AnimatedDisplayPrintTicket(uint Duration = 200)
 	{
-		ViewModel.OpenActivePrintTicketMenu();
-		await ActivePrintTicketLayout.FadeTo(1, Duration);
+		ViewModel.OpenPrintTicketEditorMenu();
+		await TicketEditorMenu.FadeTo(1, Duration);
 		if (ViewModel.IsOpenPrintTicketsPanelShown)
 		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
@@ -55,14 +56,14 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
-	/// Fades the ActivePrintTicket Menu out over Duration milliseconds, then closes the display.
+	/// Fades the TicketEditor Menu out over Duration milliseconds, then closes the display.
 	/// </summary>
 	/// <returns></returns>
 	/// <param name="Duration">The time, in milliseconds, that it takes for this animation to complete.</param>
 	private async Task AnimatedClosePrintTicket(uint Duration = 200)
 	{
-		await ActivePrintTicketLayout.FadeTo(0, Duration);
-		ViewModel.CloseActivePrintTicketMenu();
+		await TicketEditorMenu.FadeTo(0, Duration);
+		ViewModel.CloseTicketEditorMenu();
 		if (ViewModel.IsOpenPrintTicketsPanelShown)
 		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
@@ -84,9 +85,27 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void OnRemoveFirstPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	private async void OnRemoveFirstPartialProductionDataSetButtonClicked(object sender, EventArgs e)
 	{
-		ViewModel.ActiveTicket!.Tracked.RemoveFirstPartialDataSet();
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Remove Partial Basket Data?",
+			"Are you sure you would like to remove the Partial Basket info from this Label? This is an irreversible action!",
+			"Yes, remove",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
+		{
+			return;
+		}
+		// close was confirmed
+		else
+		{
+			ViewModel.EditorTicket!.Tracked.RemoveFirstPartialDataSet();
+		}
 	}
 
 	/// <summary>
@@ -94,9 +113,27 @@ public partial class MainPage : ContentPage
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void OnRemoveSecondPartialProductionDataSetButtonClicked(object sender, EventArgs e)
+	private async void OnRemoveSecondPartialProductionDataSetButtonClicked(object sender, EventArgs e)
 	{
-		ViewModel.ActiveTicket!.Tracked.RemoveSecondPartialDataSet();
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Remove Partial Basket Data?",
+			"Are you sure you would like to remove the Partial Basket info from this Label? This is an irreversible action!",
+			"Yes, remove",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
+		{
+			return;
+		}
+		// close was confirmed
+		else
+		{
+			ViewModel.EditorTicket!.Tracked.RemoveSecondPartialDataSet();
+		}
 	}
 
 	/// <summary>
@@ -222,181 +259,264 @@ public partial class MainPage : ContentPage
 		if (Result.GetType().Equals(typeof(PrintTicket)))
 		{
 			await ViewModel.AddNewOpenPrintTicket((PrintTicket)Result);
-			ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.OpenPrintTickets[^1]);
+			ViewModel.EditorTicket = new TrackedPrintTicket(ViewModel.OpenPrintTickets[^1]);
 			await AnimatedDisplayPrintTicket();
 		}
 	}
 
 	/// <summary>
-	/// Handler for the Clicked event from the CloseActivePrintTicketButton control.
+	/// Handler for the Clicked event from the CloseTicketEditorButton control.
 	/// </summary>
-	private async void OnCloseActivePrintTicketButtonClicked(object sender, EventArgs e)
+	private async void OnCloseTicketEditorButtonClicked(object sender, EventArgs e)
 	{
-		// get the index of the ActiveTicket in OpenPrintTickets
-		if (ViewModel.ActiveTicket is null)
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Close without saving?",
+			"Are you sure you would like to close this Label editor and discard your changes?",
+			"Yes, close",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"Cannot close 'null'."
-				)
-			);
+			return;
 		}
-		ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.ActiveTicket!.Untracked);
-		// close the ActivePrintTicket window
-		await AnimatedClosePrintTicket();
+		// close was confirmed
+		else
+		{
+			if (ViewModel.EditorTicket is null)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Cannot close 'null'."
+					)
+				);
+			}
+			else
+			{
+				// close the Ticket Editor Menu window
+				ViewModel.EditorTicket = new TrackedPrintTicket(ViewModel.EditorTicket!.Untracked);
+				await AnimatedClosePrintTicket();
+			}
+		}
 	}
 
 	/// <summary>
-	/// Handler for the Clicked event from the SaveActivePrintTicketButton control.
+	/// Handler for the Clicked event from the SaveTicketEditorButton control.
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
 	/// <exception cref="ArgumentNullException"></exception>
 	/// <exception cref="ArgumentException"></exception>
 	/// <exception cref="OperationCanceledException"></exception>
-	private async void OnSaveActivePrintTicketButtonClicked(object sender, EventArgs e)
+	private async void OnSaveTicketEditorButtonClicked(object sender, EventArgs e)
 	{
-		// get the index of the ActiveTicket in OpenPrintTickets
-		if (ViewModel.ActiveTicket is null)
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Close and save?",
+			"Are you sure you would like to close this Label editor and save your changes?",
+			"Yes, save",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"Cannot save 'null' to OpenPrintTickets."
-				)
-			);
+			return;
 		}
-		int Index = ViewModel.OpenPrintTickets.IndexOf(ViewModel.ActiveTicket!.Untracked);
-		// confirm that the ActiveTicket exists in OpenPrintTickets and replace it with the Tracked PrintTicket
-		if (Index == -1)
+		// close was confirmed
+		else
 		{
-			this.ShowPopup
-			(
-				new BasicPopup
+			// confirm the index of the EditorTicket exists in OpenPrintTickets
+			if (ViewModel.EditorTicket is null)
+			{
+				this.ShowPopup
 				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"The Untracked ActivePrintTicket was not found in OpenPrintTickets."
-				)
-			);
-		}
-		ViewModel.ActiveTicket.MergeChanges();
-		ViewModel.OpenPrintTickets[Index] = ViewModel.ActiveTicket.Untracked;
-		await ViewModel.SaveOpenPrintTickets();
-		// close the ActivePrintTicket window
-		await AnimatedClosePrintTicket();
-	}
-
-	/// <summary>
-	/// Handler for the Clicked event from the DeleteActivePrintTicketButton control.
-	/// </summary>
-	private async void OnDeleteActivePrintTicketButtonClicked(object sender, EventArgs e)
-	{
-		// get the index of the ActiveTicket in OpenPrintTickets
-		if (ViewModel.ActiveTicket is null)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Cannot save 'null' to OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// confirm that the EditorTicket exists in OpenPrintTickets and replace it with the Tracked PrintTicket
+			int Index = ViewModel.OpenPrintTickets.IndexOf(ViewModel.EditorTicket!.Untracked);
+			if (Index == -1)
+			{
+				this.ShowPopup
 				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"Cannot delete 'null' from OpenPrintTickets."
-				)
-			);
-		}
-		bool Removed = ViewModel.OpenPrintTickets.Remove(ViewModel.ActiveTicket!.Untracked);
-		// confirm that the ActiveTicket exists in OpenPrintTickets and remove it
-		if (!Removed)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					"\n\nReference message: " +
-					"The Untracked ActivePrintTicket was not found in OpenPrintTickets."
-				)
-			);
-		}
-		await ViewModel.SaveOpenPrintTickets();
-		// close the ActivePrintTicket window
-		await AnimatedClosePrintTicket();
-	}
-
-	/// <summary>
-	/// Handler for the Clicked event from the PrintActivePrintTicketButton control.
-	/// </summary>
-	private async void OnPrintActivePrintTicketButtonClicked(object sender, EventArgs e)
-	{
-		bool Printed = false;
-		try
-		{
-			Printed = await ViewModel.PrintActivePrintTicket();
-		}
-		// catch and handle validation messages
-		catch (ArgumentException _ex)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Invalid Production Data",
-					$"{_ex.Message}\n\nResolve this issue and try again."
-				)
-			);
-		}
-		// catch and handle print spooling messages
-		catch (PrintRequestException _ex)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Print Failed",
-					$"The Print request could not be completed." +
-					" Please see Management to resolve this issue." +
-					$"\n\nReference message: {_ex.Message}."
-				)
-			);
-		}
-		// catch other, unexpected issues
-		catch (Exception _ex)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Print Failed",
-					$"We encountered an unexpected error." +
-					" Please see Management to resolve this issue." +
-					$"\n\nReference message: {_ex.Message}."
-				)
-			);
-		}
-		if (Printed)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Label Printed",
-					$"Label printing was successful. Retrieve your new Label from the Printer!"
-				)
-			);
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"The Untracked PrintTicket was not found in OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// close the Ticket Editor Menu window
+			ViewModel.EditorTicket.MergeChanges();
+			ViewModel.OpenPrintTickets[Index] = ViewModel.EditorTicket.Untracked;
+			await ViewModel.SaveOpenPrintTickets();
 			await AnimatedClosePrintTicket();
+		}
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the DeleteTicketEditorButton control.
+	/// </summary>
+	private async void OnDeleteTicketEditorButtonClicked(object sender, EventArgs e)
+	{
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Delete Label?",
+			"Are you sure you would like to Delete this Label? This is an irreversible action!",
+			"Yes, delete",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
+		{
+			return;
+		}
+		// close was confirmed
+		else
+		{
+			// get the index of the EditorTicket in OpenPrintTickets
+			if (ViewModel.EditorTicket is null)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Cannot delete 'null' from OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// confirm that the EditorTicket exists in OpenPrintTickets and remove it
+			bool Removed = ViewModel.OpenPrintTickets.Remove(ViewModel.EditorTicket!.Untracked);
+			if (!Removed)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"The Untracked PrintTicket was not found in OpenPrintTickets."
+					)
+				);
+				return;
+			}
+			// close the Ticket Editor Menu window
+			await ViewModel.SaveOpenPrintTickets();
+			await AnimatedClosePrintTicket();
+		}
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the PrintTicketEditorButton control.
+	/// </summary>
+	private async void OnPrintTicketEditorButtonClicked(object sender, EventArgs e)
+	{
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Finalize Label and Print?",
+			"Are you sure you would like to finish editing this Label and Print it?",
+			"Yes, print",
+			"No, go back"
+		);
+		// confirm the close action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// close was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
+		{
+			return;
+		}
+		// close was confirmed
+		else
+		{
+			// attempt to print the Label
+			bool Printed = false;
+			try
+			{
+				Printed = await ViewModel.PrintEditorTicket();
+			}
+			// catch and handle validation messages
+			catch (ArgumentException _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Invalid Production Data",
+						$"{_ex.Message}\n\nResolve this issue and try again."
+					)
+				);
+				return;
+			}
+			// catch and handle print spooling messages
+			catch (PrintRequestException _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Print Failed",
+						$"The Print request could not be completed." +
+						" Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex.Message}."
+					)
+				);
+				return;
+			}
+			// catch other, unexpected issues
+			catch (Exception _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Print Failed",
+						$"We encountered an unexpected error." +
+						" Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex.Message}."
+					)
+				);
+				return;
+			}
+			// print was successful
+			if (Printed)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Label Printed",
+						$"Label printing was successful. Retrieve your new Label from the Printer!"
+					)
+				);
+				await AnimatedClosePrintTicket();
+			}
 		}
 	}
 
@@ -440,7 +560,7 @@ public partial class MainPage : ContentPage
 		{
 			return;
 		}
-		ViewModel.ActiveTicket = new TrackedPrintTicket(ViewModel.SelectedTicket);
+		ViewModel.EditorTicket = new TrackedPrintTicket(ViewModel.SelectedTicket);
 		await AnimatedDisplayPrintTicket();
 	}
 
@@ -451,7 +571,7 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private void OnVariableFieldSetEntryTextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (ViewModel.ActiveTicket is null || e.NewTextValue is null || e.NewTextValue.Equals(""))
+		if (ViewModel.EditorTicket is null || e.NewTextValue is null || e.NewTextValue.Equals(""))
 		{
 			return;
 		}
@@ -486,7 +606,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(e.NewTextValue));
 				DeburrJBKNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -499,7 +619,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.VariableFields.DieNumber = new DieNumber(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.VariableFields.DieNumber = new DieNumber(int.Parse(e.NewTextValue));
 				DieNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -512,7 +632,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.VariableFields.ModelNumber = new ModelNumber(e.NewTextValue);
+				ViewModel.EditorTicket.Tracked.VariableFields.ModelNumber = new ModelNumber(e.NewTextValue);
 				ModelNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -525,7 +645,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.VariableFields.HeatNumber = new HeatNumber(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.VariableFields.HeatNumber = new HeatNumber(int.Parse(e.NewTextValue));
 				HeatNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -542,7 +662,7 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private void OnSerialNumberEntryUnfocused(object sender, EventArgs e)
 	{
-		if (ViewModel.ActiveTicket is null)
+		if (ViewModel.EditorTicket is null)
 		{
 			return;
 		}
@@ -556,7 +676,7 @@ public partial class MainPage : ContentPage
 			}
 			try
 			{
-				ViewModel.ActiveTicket!.Tracked.VariableFields.JBKNumber = new JBKNumber(int.Parse(Sender.Text!));
+				ViewModel.EditorTicket!.Tracked.VariableFields.JBKNumber = new JBKNumber(int.Parse(Sender.Text!));
 				JBKNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -573,7 +693,7 @@ public partial class MainPage : ContentPage
 			}
 			try
 			{
-				ViewModel.ActiveTicket!.Tracked.VariableFields.LotNumber = new LotNumber(int.Parse(Sender.Text!));
+				ViewModel.EditorTicket!.Tracked.VariableFields.LotNumber = new LotNumber(int.Parse(Sender.Text!));
 				LotNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -590,7 +710,7 @@ public partial class MainPage : ContentPage
 			}
 			try
 			{
-				ViewModel.ActiveTicket!.Tracked.VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(Sender.Text!));
+				ViewModel.EditorTicket!.Tracked.VariableFields.DeburrJBKNumber = new JBKNumber(int.Parse(Sender.Text!));
 				DeburrJBKNumberControl.Stroke = Grey500;
 			}
 			catch
@@ -609,7 +729,7 @@ public partial class MainPage : ContentPage
 	{
 		if
 		(
-			ViewModel.ActiveTicket is null
+			ViewModel.EditorTicket is null
 			|| e.NewTextValue is null
 			|| e.NewTextValue.Equals("")
 		)
@@ -621,7 +741,7 @@ public partial class MainPage : ContentPage
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.ProductionQuantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.ProductionQuantity = new Quantity(int.Parse(e.NewTextValue));
 				QuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -633,12 +753,12 @@ public partial class MainPage : ContentPage
 		else if
 		(
 			sender.Equals(FirstPartialDataSetQuantityEntry)
-			&& ViewModel.ActiveTicket.Tracked.HasFirstPartialDataSet
+			&& ViewModel.EditorTicket.Tracked.HasFirstPartialDataSet
 		)
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.FirstPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.FirstPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
 				FirstPartialDataSetQuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -650,12 +770,12 @@ public partial class MainPage : ContentPage
 		else if
 		(
 			sender.Equals(SecondPartialDataSetQuantityEntry)
-			&& ViewModel.ActiveTicket.Tracked.HasSecondPartialDataSet
+			&& ViewModel.EditorTicket.Tracked.HasSecondPartialDataSet
 		)
 		{
 			try
 			{
-				ViewModel.ActiveTicket.Tracked.SecondPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.SecondPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
 				SecondPartialDataSetQuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -674,14 +794,14 @@ public partial class MainPage : ContentPage
 	{
 		if
 		(
-			ViewModel.ActiveTicket is null
+			ViewModel.EditorTicket is null
 			|| e.NewTextValue is null
 			|| e.NewTextValue.Equals("")
 		)
 		{
 			return;
 		}
-		PrintTicket Ticket = ViewModel.ActiveTicket.Tracked;
+		PrintTicket Ticket = ViewModel.EditorTicket.Tracked;
 		// Main Operator was updated
 		if (sender.Equals(OperatorEntry))
 		{
@@ -720,6 +840,48 @@ public partial class MainPage : ContentPage
 			{
 				SecondPartialDataSetOperatorControl.Stroke = Colors.Red;
 			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the TicketActions Button.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnTicketActionsButtonClicked(object sender, EventArgs e)
+	{
+		// create a new TicketActionsPanel popup and configure its anchor and layout
+		TicketActionsPanelPopup Actions = new TicketActionsPanelPopup("Label Actions");
+		Actions.Anchor = TicketActionsButton;
+		Actions.HorizontalOptions = Microsoft.Maui.Primitives.LayoutAlignment.End;
+		Actions.VerticalOptions = Microsoft.Maui.Primitives.LayoutAlignment.Center;
+		Actions.Size = new Size(175, 230);
+		// show the popup and wait for a resulting action
+		object? Result = await this.ShowPopupAsync
+		(
+			Actions
+		);
+		if (Result is null)
+		{
+			return;
+		}
+		// execute the selected action
+		string Action = (string)Result;
+		if (Action.Equals("Close"))
+		{
+			OnCloseTicketEditorButtonClicked(sender, e);
+		}
+		else if (Action.Equals("Save"))
+		{
+			OnSaveTicketEditorButtonClicked(sender, e);
+		}
+		else if (Action.Equals("Delete"))
+		{
+			OnDeleteTicketEditorButtonClicked(sender, e);
+		}
+		else if (Action.Equals("Print"))
+		{
+			OnPrintTicketEditorButtonClicked(sender, e);
 		}
 	}
 
