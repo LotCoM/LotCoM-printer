@@ -99,33 +99,6 @@ jobs:
         path: |
           D:\a\Package
 
-    - name: Sign MSI with Certificate
-      shell: pwsh
-      run: |
-        # Save MSI directory
-        $msi = "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER.msi"
-
-        # Save certificate directories (encoded and decoded)
-        $pfxEnc = "D:\a\Certificate\signing-certificate.txt"
-        $pfx = "D:\a\Certificate\signing-certificate.pfx"
-
-        # Save certificate password and encoded data
-        $password = "$env:SIGNING_CERTIFICATE_PASSWORD"
-        $certificate = "$env:SIGNING_CERTIFICATE_BASE64"
-        
-        # Decode the Base64 Certificate
-        New-Item -ItemType directory -Path "D:\a\Certificate" -ErrorAction SilentlyContinue
-        Set-Content -Path $pfxEnc -Value $certificate
-        certutil -decode $pfxEnc $pfx
-
-        # Install the PFX certificate to the Local Machine's Trusted Root CA store
-        $securePassword = ConvertTo-SecureString -String $password -Force -AsPlainText
-        Import-PfxCertificate -FilePath $pfx -CertStoreLocation "Cert:\LocalMachine\Root" -Password $securePassword
-        
-        # Sign the MSI Package using SignTools
-        Set-Location "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x86"
-        .\signtool.exe sign /fd SHA256 /a /f $pfx /t "http://timestamp.digicert.com" /p $password $msi
-        
     - name: Create release
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_1 }}
