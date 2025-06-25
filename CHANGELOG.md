@@ -321,3 +321,6 @@ This update implements the following minor functional features:
 - [`feature/186`](https://github.com/LotCoM/LotCoM-printer/pull/192):
   - User Interface components redesigned to meet user requests and improve user-friendliness.
   - The original UI was very sterile and low contrast. This interface style is not good for users who aren't familiar with computer systems/don't use a lot of software. Higher contrast and more intense interfaces generally work better for users who are less adept with computer applications.
+
+## `0.7.0.5` & `0.7.0.6`
+#### Build and CI/CD fixes
