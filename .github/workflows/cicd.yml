@@ -52,7 +52,7 @@ jobs:
       shell: pwsh
       run: |
         # download LotCom Libraries latest
-        cd "D:\a\yna-cicd-testing"
+        cd "D:\a\LotCoM-printer"
         git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-libraries.git
 
     - name: Install dependencies
