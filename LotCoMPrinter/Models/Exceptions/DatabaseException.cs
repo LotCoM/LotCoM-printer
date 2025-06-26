@@ -1,4 +1,4 @@
-namespace LotComWatcher.Models.Exceptions;
+namespace LotCoMPrinter.Models.Exceptions;
 
 /// <summary>
 /// Special exception type to indicate an error interfacing with the Database.
