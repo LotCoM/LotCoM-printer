@@ -28,12 +28,11 @@ public static class PrintHistory
     private static IEnumerable<string> Read(Process process)
     {
         // create Table path and Database set variables
-        string TablePath = "";
+        string TablePath = $"{PrintFolder}\\{process.FullName}";
         IEnumerable<string> DatabaseSet;
         // attempt to read the Process' Print History datatable
         try
         {
-            TablePath = $"{PrintFolder}\\{process.FullName}";
             DatabaseSet = File.ReadAllLines(TablePath);
             return DatabaseSet;
         }
@@ -75,7 +74,7 @@ public static class PrintHistory
         // parse the production date
         DateTime PrintLogProductionDate = DateTime.ParseExact(SplitPrintLog[^3], "MM/DD/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
         // parse initial quantity, shift, and operator values and possible PartialDataSets
-        Quantity PrintLogQuanity;
+        Quantity PrintLogQuantity;
         Shift PrintLogShift;
         Operator PrintLogOperator;
         PartialDataSet? FirstPartialData = null;
@@ -85,7 +84,7 @@ public static class PrintHistory
         {
             // split quantity field and save the first, second values
             List<string> SplitQuantity = SplitPrintLog[3].Split(":").ToList();
-            PrintLogQuanity = new Quantity(int.Parse(SplitQuantity[0]));
+            PrintLogQuantity = new Quantity(int.Parse(SplitQuantity[0]));
             Quantity FirstPartialQuantity = new Quantity(int.Parse(SplitQuantity[1]));
             // split shift field and save the first, second values
             List<string> SplitShift = SplitPrintLog[^2].Split(":").ToList();
@@ -111,7 +110,7 @@ public static class PrintHistory
         else
         {
             // retrieve values directly from the CSV fields
-            PrintLogQuanity = new Quantity(int.Parse(SplitPrintLog[3]));
+            PrintLogQuantity = new Quantity(int.Parse(SplitPrintLog[3]));
             PrintLogShift = ShiftExtensions.FromString(SplitPrintLog[^2]);
             PrintLogOperator = new Operator(SplitPrintLog[^1]);
         }
@@ -200,7 +199,7 @@ public static class PrintHistory
             }
         }
         // construct and return a new PrintTicket object
-        return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, PrintLogShift, PrintLogQuanity, PrintLogOperator, PrintLogVariableFieldSet, FirstPartialData, SecondPartialData);
+        return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, PrintLogShift, PrintLogQuantity, PrintLogOperator, PrintLogVariableFieldSet, FirstPartialData, SecondPartialData);
     }
 
     /// <summary>
@@ -210,11 +209,10 @@ public static class PrintHistory
     /// <returns></returns>
     public static List<PrintTicket> GetPrintTickets(Process process)
     {
-        // create a list to hold parsed tickets
-        List<PrintTicket> printTickets = [];
         // read the datatable
         IEnumerable<string> DatabaseSet = Read(process);
         // parse all of the logs to PrintTickets and return them
+        List<PrintTicket> printTickets = [];
         foreach (string PrintLog in DatabaseSet)
         {
             printTickets.Add(ParsePrintTicket(PrintLog, process));
