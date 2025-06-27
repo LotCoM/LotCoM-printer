@@ -1,13 +1,10 @@
-using System.IO;
-using System.Collections.Generic;
-using LotCom.Types;
-using LotCoMPrinter.models.Exceptions;
 using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Datatypes;
 using LotCom.Database;
 using LotCom.Enums;
-using System.Globalization;
 using LotCom.Extensions;
+using LotCom.Types;
+using System.Globalization;
 
 namespace LotCoMPrinter.Models.Datasources;
 
