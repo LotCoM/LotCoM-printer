@@ -53,6 +53,40 @@ public static class PrintHistory
     }
 
     /// <summary>
+    /// Asynchronously opens and reads the Print History for process.
+    /// </summary>
+    /// <param name="process"></param>
+    /// <returns></returns>
+    /// <exception cref="ProcessNameException"></exception>
+    /// <exception cref="DatabaseException"></exception>
+    private static  async Task<IEnumerable<string>> ReadAsync(Process process)
+    {
+        // create Table path and Database set variables
+        string TablePath = $"{PrintFolder}\\{process.FullName}";
+        IEnumerable<string> DatabaseSet;
+        // attempt to read the Process' Print History datatable
+        try
+        {
+            DatabaseSet = await File.ReadAllLinesAsync(TablePath);
+            return DatabaseSet;
+        }
+        // the file was not found in the Database
+        catch (FileNotFoundException)
+        {
+            throw new ProcessNameException($"Could not find a table for the Process '{process}'.");
+        }
+        // there was some unexpected exception in the reading process
+        catch (SystemException _ex)
+        {
+            throw new DatabaseException
+            (
+                Message: $"Failed to open the file at '{TablePath}' due to the following exception:\n{_ex.Message}.",
+                InnerException: _ex
+            );
+        }
+    }
+
+    /// <summary>
     /// Attempts to parse a PrintTicket object from a PrintLog string.
     /// Uses process as the Process object to reference for PrintTicket information.
     /// </summary>
@@ -217,6 +251,23 @@ public static class PrintHistory
         {
             printTickets.Add(ParsePrintTicket(PrintLog, process));
         }
+        return printTickets;
+    }
+
+    /// <summary>
+    /// Asynchronously parses the Print History for process and returns a List of PrintTicket objects.
+    /// </summary>
+    /// <param name="process"></param>
+    /// <returns></returns>
+    public static async Task<List<PrintTicket>> GetPrintTicketsAsync(Process process)
+    {
+        // read the datatable
+        IEnumerable<string> DatabaseSet = await ReadAsync(process);
+        // parse all of the logs to PrintTickets and return them
+        List<PrintTicket> printTickets = [];
+        printTickets = DatabaseSet
+            .Select(x => ParsePrintTicket(x, process))
+            .ToList();
         return printTickets;
     }
 }   
