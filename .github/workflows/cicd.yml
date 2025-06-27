@@ -31,7 +31,7 @@ jobs:
         $commitMessage = gh api /repos/lotcom/lotcom-printer/commits/$sha --jq ".commit.message"
 
         # parse the version number out of the commit message
-        $pattern = '\d+\.\d+\.\d+\.?[\d?]+'
+        $pattern = '\d+\.\d+\.\d+\.?[\d]*'
         $result = $commitMessage | Select-String -Pattern $pattern
         $result = $result.Matches.Value
         Write-Host "New release version number: $result" 
