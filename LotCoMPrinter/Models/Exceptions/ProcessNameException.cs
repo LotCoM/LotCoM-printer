@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.models.Exceptions;
+namespace LotCoMPrinter.Models.Exceptions;
 
 /// <summary>
 /// Indicates an error referencing an undefined Process name that is not null.
