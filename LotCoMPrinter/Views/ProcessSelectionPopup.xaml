@@ -1,0 +1,214 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:Views="clr-namespace:LotCoMPrinter.Views"
+               xmlns:ViewModels="clr-namespace:LotCoMPrinter.ViewModels"
+               xmlns:Types="clr-namespace:LotCom.Types;assembly=LotCom"
+               x:DataType="Views:ProcessSelectionPopup"
+               x:Class="LotCoMPrinter.Views.ProcessSelectionPopup">
+    
+    <!-- Style the Popup Window -->
+    <toolkit:Popup.Resources>
+        <Style TargetType="{x:Type Views:ProcessSelectionPopup}">
+            <Setter Property="Color" Value="Transparent" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Start" />
+            <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
+        </Style>
+        <!-- SecondaryButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/SecondaryButton.xaml"/>
+        <!-- RecessedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
+        <!-- GreenButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/GreenButton.xaml"/>
+        <!-- RedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RedButton.xaml"/>
+        <!-- TransparentImageButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/TransparentImageButton.xaml"/>
+    </toolkit:Popup.Resources>
+
+    <!-- Main Layout -->
+    <Border
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 10,10,10,10"
+        Stroke="{StaticResource Neutral-40}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Title Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Message Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Process CollectionView Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Buttons Row -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Main Column -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Title Fill -->
+            <HorizontalStackLayout
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Primary-80}">
+                <!-- Title Label -->
+                <Label
+                    x:Name="PopupTitleLabel"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Margin="20"
+                    Text="Select a Process"
+                    FontSize="32"
+                    TextColor="{StaticResource TextLight}"/>
+            </HorizontalStackLayout>
+            
+            <!-- Message Fill -->
+            <HorizontalStackLayout
+                Grid.Row="1"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
+                <!-- Message Label -->
+                <Label
+                    x:Name="PopupMessageLabel"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Margin="20,10,20,5"
+                    FontSize="20"
+                    Text="Choose a Process and click 'Next' to Select a Label to Reprint."
+                    TextColor="{StaticResource TextDark}"/>
+            </HorizontalStackLayout>
+
+            <!-- Process CollectionView Layout-->
+            <VerticalStackLayout
+                Grid.Row="2"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
+                <Border
+                    x:Name="ProcessCollectionControl"
+                    Margin="20,10,20,5"
+                    WidthRequest="550"
+                    HeightRequest="150"
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 0">
+                    <CollectionView
+                        x:Name="ProcessCollectionView"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="545"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedProcess}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate
+                                x:DataType="Types:Process">
+                                <HorizontalStackLayout>
+                                    <Label
+                                        Text="{Binding FullName}"
+                                        FontSize="20"/>
+                                </HorizontalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Border>
+                <!-- Selected Process Indicator Label -->
+                <Label
+                    Text="{Binding SelectedProcess, StringFormat='Selected Process: {0}'}"
+                    Margin="20,10,20,10"
+                    FontSize="16"/>
+            </VerticalStackLayout>
+
+            <!-- Footer Fill -->
+            <HorizontalStackLayout
+                Grid.Row="3"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}"/>
+            
+            <!-- Cancel Button -->
+            <Button
+                Grid.Row="3"
+                Grid.Column="0"
+                x:Name="CancelButton"
+                Clicked="OnCancelButtonClicked"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Margin="10"
+                Text="Cancel"
+                ToolTipProperties.Text="Cancel Label Reprinting and return to the Welcome Page">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="RedStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedNormalStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedDisabledStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedPressedStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedPointerOverStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
+
+            <!-- Confirm Button -->
+            <Button
+                Grid.Row="3"
+                Grid.Column="0"
+                x:Name="ConfirmButton"
+                Clicked="OnConfirmButtonClicked"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                Margin="10"
+                Text="Next"
+                ToolTipProperties.Text="Continue to select a printed Label for this Process to Reprint">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="GreenStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenNormalStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenDisabledStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenPressedStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenPointerOverStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
+        </Grid>
+    </Border>
+</toolkit:Popup>
