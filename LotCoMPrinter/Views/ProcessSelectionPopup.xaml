@@ -25,6 +25,22 @@
         <ResourceDictionary Source="/Resources/Styles/RedButton.xaml"/>
         <!-- TransparentImageButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/TransparentImageButton.xaml"/>
+        <!-- Directly Modify CollectionView Selected Item Background color -->
+        <Style TargetType="HorizontalStackLayout">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor"
+                                        Value="{StaticResource Neutral-0}"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
     </toolkit:Popup.Resources>
 
     <!-- Main Layout -->
