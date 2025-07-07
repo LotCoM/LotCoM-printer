@@ -28,7 +28,7 @@ public static class PrintHistory
     private static IEnumerable<string> Read(Process process)
     {
         // create Table path and Database set variables
-        string TablePath = $"{PrintFolder}\\{process.FullName}";
+        string TablePath = $"{PrintFolder}\\{process.FullName}.txt";
         IEnumerable<string> DatabaseSet;
         // attempt to read the Process' Print History datatable
         try
@@ -62,7 +62,7 @@ public static class PrintHistory
     private static  async Task<IEnumerable<string>> ReadAsync(Process process)
     {
         // create Table path and Database set variables
-        string TablePath = $"{PrintFolder}\\{process.FullName}";
+        string TablePath = $"{PrintFolder}\\{process.FullName}.txt";
         IEnumerable<string> DatabaseSet;
         // attempt to read the Process' Print History datatable
         try
@@ -122,7 +122,7 @@ public static class PrintHistory
         DateTime PrintLogProductionDate;
         try
         {
-            PrintLogProductionDate = DateTime.ParseExact(SplitPrintLog[^3], "MM/DD/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
+            PrintLogProductionDate = DateTime.ParseExact(SplitPrintLog[^3], "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
         }
         catch (FormatException)
         {
@@ -323,6 +323,7 @@ public static class PrintHistory
             }
         }
         // construct and return a new PrintTicket object
+        Console.WriteLine("Parse success.");
         return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, PrintLogShift, PrintLogQuantity, PrintLogOperator, PrintLogVariableFieldSet, FirstPartialData, SecondPartialData);
     }
 
