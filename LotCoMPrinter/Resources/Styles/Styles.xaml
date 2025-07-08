@@ -101,7 +101,7 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
@@ -116,7 +116,7 @@
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-0}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
