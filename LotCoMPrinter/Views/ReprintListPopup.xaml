@@ -53,6 +53,8 @@
                 <RowDefinition Height="Auto"/>
                 <!-- Message Row -->
                 <RowDefinition Height="Auto"/>
+                <!-- Reprint Date DatePicker Row -->
+                <RowDefinition Height="Auto"/>
                 <!-- Label Reprint CollectionView Row -->
                 <RowDefinition Height="Auto"/>
                 <!-- Buttons Row -->
@@ -60,13 +62,12 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <!-- Main Column -->
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="500"/>
             </Grid.ColumnDefinitions>
             
             <!-- Title Fill -->
             <HorizontalStackLayout
                 Grid.Row="0"
-                Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
                 BackgroundColor="{StaticResource Primary-80}">
@@ -84,7 +85,6 @@
             <!-- Message Fill -->
             <HorizontalStackLayout
                 Grid.Row="1"
-                Grid.Column="0"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
                 BackgroundColor="{StaticResource Neutral-OffWhite}">
@@ -93,32 +93,55 @@
                     x:Name="PopupMessageLabel"
                     HorizontalOptions="Start"
                     VerticalOptions="Start"
-                    Margin="20,10,20,5"
+                    Margin="20,10,20,10"
                     FontSize="20"
-                    Text="Choose a Printed Label to begin Reprinting."
+                    WidthRequest="450"
+                    LineBreakMode="WordWrap"
+                    Text="Choose a Date to view Labels Printed on that day. Select a Printed Label to begin Reprinting."
                     TextColor="{StaticResource TextDark}"/>
             </HorizontalStackLayout>
 
-            <!-- Reprint CollectionView Layout-->
+            <!-- Reprint DatePicker Layout -->
             <VerticalStackLayout
                 Grid.Row="2"
-                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
+                <Border
+                    x:Name="LabelReprintDateControl"
+                    Margin="0"
+                    WidthRequest="450"
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 0">
+                    <!-- Datepicker for Print Ticket History -->
+                    <DatePicker
+                        x:Name="ReprintDatePicker"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="447"
+                        Date="{Binding SelectedLabel}"
+                        DateSelected="OnReprintDatePickerDateSelected"/>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Reprint CollectionView Layout -->
+            <VerticalStackLayout
+                Grid.Row="3"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
                 BackgroundColor="{StaticResource Neutral-OffWhite}">
                 <Border
                     x:Name="LabelReprintCollectionControl"
-                    Margin="20,10,20,5"
-                    WidthRequest="550"
-                    HeightRequest="350"
+                    Margin="0"
+                    WidthRequest="450"
+                    HeightRequest="300"
                     StrokeThickness="1.5"
                     StrokeShape="RoundRectangle 0">
                     <!-- CollectionView for Print Ticket History -->
                     <CollectionView
-                        Grid.Row="0"
-                        HorizontalOptions="Start"
+                        HorizontalOptions="Center"
                         VerticalOptions="Center"
-                        WidthRequest="545"
+                        WidthRequest="447"
                         SelectedItem="{Binding SelectedLabel}"
                         x:Name="LabelReprintCollectionView"
                         ItemsSource="{Binding List}"
@@ -160,16 +183,14 @@
 
             <!-- Footer Fill -->
             <HorizontalStackLayout
-                Grid.Row="3"
-                Grid.Column="0"
+                Grid.Row="4"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
                 BackgroundColor="{StaticResource Neutral-OffWhite}"/>
             
             <!-- Cancel Button -->
             <Button
-                Grid.Row="3"
-                Grid.Column="0"
+                Grid.Row="4"
                 x:Name="CancelButton"
                 Clicked="OnCancelButtonClicked"
                 HorizontalOptions="Start"
@@ -207,8 +228,7 @@
 
             <!-- Confirm Button -->
             <Button
-                Grid.Row="3"
-                Grid.Column="0"
+                Grid.Row="4"
                 x:Name="ConfirmButton"
                 Clicked="OnConfirmButtonClicked"
                 HorizontalOptions="End"
