@@ -7,6 +7,26 @@ namespace LotCoMPrinter.Views;
 
 public partial class ReprintListPopup : Popup 
 {
+    /// <summary>
+    /// Contains the Process object passed to the Popup for History retrieval.
+    /// </summary>
+    private Process SelectedProcess;
+
+    private DateTime _selectedDate = DateTime.Now;
+    /// <summary>
+    /// Contains the selected DateTime used to select print history for the popup.
+    /// </summary>
+    public DateTime SelectedDate
+    {
+        get { return _selectedDate; }
+        set
+        {
+            _selectedDate = value;
+            OnPropertyChanged(nameof(_selectedDate));
+            OnPropertyChanged(nameof(SelectedDate));
+        }
+    }
+
     private List<PrintTicket> _list = [];
     /// <summary>
     /// Serves a List of Print History Tickets for the Popup.
@@ -38,6 +58,18 @@ public partial class ReprintListPopup : Popup
     }
 
     /// <summary>
+    /// Retrieves SelectedProcess' Print History for a specific Date.
+    /// </summary>
+    /// <param name="Date"></param>
+    /// <returns></returns>
+    private List<PrintTicket> GetHistoryForDate(DateTime Date)
+    {
+        List = PrintHistory.GetPrintTicketsForDate(Date, SelectedProcess);
+        List.Reverse();
+        return List;
+    }
+
+    /// <summary>
     /// Handler for the Clicked event from the ConfirmButton control.
     /// </summary>
     /// <param name="sender"></param>
@@ -60,6 +92,17 @@ public partial class ReprintListPopup : Popup
     }
 
     /// <summary>
+    /// Handler for the DateSelected event from the ReprintDatePicker control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnReprintDatePickerDateSelected(object sender, EventArgs e)
+    {
+        SelectedDate = ((DatePicker)sender).Date;
+        LabelReprintCollectionView.ItemsSource = GetHistoryForDate(SelectedDate);
+    }
+
+    /// <summary>
     /// Creates a Simple Popup that contains a List of Print History from a Process.
     /// </summary>
     /// <param name="Process"></param>
@@ -67,8 +110,7 @@ public partial class ReprintListPopup : Popup
     {
         InitializeComponent();
         // assign properties
-        List = PrintHistory.GetPrintTickets(Process);
-        List.Reverse();
-        LabelReprintCollectionView.ItemsSource = List;
+        SelectedProcess = Process;
+        LabelReprintCollectionView.ItemsSource = GetHistoryForDate(DateTime.Now);
     }
 }
