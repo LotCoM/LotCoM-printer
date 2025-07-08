@@ -26,7 +26,7 @@
         <!-- TransparentImageButton Styles -->
         <ResourceDictionary Source="/Resources/Styles/TransparentImageButton.xaml"/>
         <!-- Directly Modify CollectionView Selected Item Background color -->
-        <Style TargetType="HorizontalStackLayout">
+        <Style TargetType="VerticalStackLayout">
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>
                     <VisualStateGroup x:Name="CommonStates">
@@ -111,7 +111,7 @@
                     x:Name="ProcessCollectionControl"
                     Margin="20,10,20,5"
                     WidthRequest="550"
-                    HeightRequest="150"
+                    HeightRequest="250"
                     StrokeThickness="1.5"
                     StrokeShape="RoundRectangle 0">
                     <CollectionView
@@ -124,11 +124,16 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate
                                 x:DataType="Types:Process">
-                                <HorizontalStackLayout>
+                                <VerticalStackLayout>
+                                    <BoxView
+                                        HorizontalOptions="Fill"
+                                        HeightRequest="1"
+                                        BackgroundColor="{StaticResource Neutral-0}"/>
                                     <Label
+                                        Margin="0,4,5,0"
                                         Text="{Binding FullName}"
                                         FontSize="20"/>
-                                </HorizontalStackLayout>
+                                </VerticalStackLayout>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
