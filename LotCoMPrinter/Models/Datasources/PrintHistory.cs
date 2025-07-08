@@ -59,7 +59,7 @@ public static class PrintHistory
     /// <returns></returns>
     /// <exception cref="ProcessNameException"></exception>
     /// <exception cref="DatabaseException"></exception>
-    private static  async Task<IEnumerable<string>> ReadAsync(Process process)
+    private static async Task<IEnumerable<string>> ReadAsync(Process process)
     {
         // create Table path and Database set variables
         string TablePath = $"{PrintFolder}\\{process.FullName}.txt";
@@ -323,7 +323,6 @@ public static class PrintHistory
             }
         }
         // construct and return a new PrintTicket object
-        Console.WriteLine("Parse success.");
         return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, PrintLogShift, PrintLogQuantity, PrintLogOperator, PrintLogVariableFieldSet, FirstPartialData, SecondPartialData);
     }
 
@@ -390,6 +389,82 @@ public static class PrintHistory
         {
             return printTickets!;
         }
+    }
+
+    /// <summary>
+    /// Retrieves all PrintTickets printed by Process on Date.
+    /// </summary>
+    /// <param name="Date"></param>
+    /// <param name="Process"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static List<PrintTicket> GetPrintTicketsForDate(DateTime Date, Process Process)
+    {
+        // read the datatable
+        IEnumerable<string> DatabaseSet = Read(Process);
+        // parse all of the logs from the passed date and return them
+        List<PrintTicket> PrintTickets = [];
+        foreach (string PrintLog in DatabaseSet)
+        {
+            // parse the production date
+            DateTime LogDate;
+            try
+            {
+                LogDate = DateTime.ParseExact(PrintLog.Split(',')[^3], "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
+            }
+            catch (FormatException)
+            {
+                throw new ArgumentException($"Could not parse a date from '{PrintLog.Split()[^3]}'.");
+            }
+            // confirm that the LogDate year hasn't already passed
+            if (LogDate.Year > Date.Year)
+            {
+                // time is out of range by Year; stop process
+                return PrintTickets;
+            }
+            // LogDate year is either equal to or below requested Date
+            else if (LogDate.Year < Date.Year)
+            {
+                // skip Log; too early
+                continue;
+            }
+            // LogDate year is equal to requested Date year; repeat for Month
+            // confirm that the LogDate month hasn't already passed
+            if (LogDate.Month > Date.Month)
+            {
+                // time is out of range by Month; stop process
+                return PrintTickets;
+            }
+            // LogDate month is either equal to or below requested Date
+            else if (LogDate.Month < Date.Month)
+            {
+                // skip Log; too early
+                continue;
+            }
+            // LogDate month is equal to requested Date month; repeat for Day
+            // confirm that the LogDate day hasn't already passed
+            if (LogDate.Day > Date.Day)
+            {
+                // time is out of range by Day; stop process
+                return PrintTickets;
+            }
+            // LogDate day is either equal to or below requested Date
+            else if (LogDate.Day < Date.Day)
+            {
+                // skip Log; too early
+                continue;
+            }
+            // Dates are the same
+            try
+            {
+                PrintTickets.Add(ParsePrintTicket(PrintLog, Process));
+            }
+            catch
+            {
+                continue;
+            }
+        }
+        return PrintTickets;
     }
 }   
 
