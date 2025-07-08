@@ -886,6 +886,39 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
+	/// Handler for the Clicked event from the ReprintLabelButton Button.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnReprintLabelButtonClicked(object sender, EventArgs e)
+	{
+		// create a new ProcessSelection popup
+		ProcessSelectionPopup ProcessSelection = new ProcessSelectionPopup();
+		object? Result = await this.ShowPopupAsync
+		(
+			ProcessSelection
+		);
+		if (Result is null)
+		{
+			return;
+		}
+		// save the selected Process object
+		Process SelectedProcess = (Process)Result;
+		// create a new ReprintList popup for the Selected Process
+		ReprintListPopup ReprintSelection = new ReprintListPopup(SelectedProcess);
+		Result = await this.ShowPopupAsync
+		(
+			ReprintSelection
+		);
+		if (Result is null)
+		{
+			return;
+		}
+		// save the selected PrintTicket object
+		PrintTicket SelectedReprintTicket = (PrintTicket)Result;
+	}
+
+	/// <summary>
 	/// Attempts to initialize a ViewModel for the Window to bind to.
 	/// If this method raises an exception, it will create a popup for the user and then Quit.
 	/// </summary>
