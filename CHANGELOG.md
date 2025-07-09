@@ -322,5 +322,10 @@ This update implements the following minor functional features:
   - User Interface components redesigned to meet user requests and improve user-friendliness.
   - The original UI was very sterile and low contrast. This interface style is not good for users who aren't familiar with computer systems/don't use a lot of software. Higher contrast and more intense interfaces generally work better for users who are less adept with computer applications.
 
-## `0.7.0.5` & `0.7.0.6`
+## `0.7.0.5`, `0.7.0.6`, & `0.7.0.7`
 #### Build and CI/CD fixes
+
+## `0.7.0.8`
+#### Dependency update
+- Update to new version of **LotCom Libraries**:
+  - [Hotfix](https://github.com/LotCoM/LotCom-libraries/commit/af74e5d0dbc933db70809675086366c6116f2fbd) addressing a silent crash created by `SerializationModeExtensions` when loading the application at Pass-through Process stations.
