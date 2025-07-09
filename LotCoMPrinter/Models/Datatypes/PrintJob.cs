@@ -14,7 +14,7 @@ public class PrintJob
     /// <summary>
     /// Contains the type 
     /// </summary>
-    public readonly PrintJobType Type; 
+    public PrintJobType Type { get; private set; }
 
     /// <summary>
     /// The PrintTicket to use as the source of Data for this Print Job.
@@ -72,6 +72,36 @@ public class PrintJob
         Type = PrintJobType.Partial;
         Source = Ticket;
         this.PartialSetNumber = PartialSetNumber;
+    }
+
+    /// <summary>
+    /// Creates a Print Job that can generate a Reprint Label from a PrintTicket.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    /// <param name="Type">PrintJobType.Full or PrintJobType.Reprint.</param>
+    public static PrintJob CreateReprintJob(PrintTicket Ticket)
+    {
+        /**
+        Jared: this method is flawed. 
+
+        Right now, it runs just like the basic constructor.
+        The default is to create a `PrintJob` to print a `Full` Label.
+        This will treat the Label as a 'new' one, which will prompt logging.
+        
+        Two questions:
+        - Is this what we want?
+        - If not, how can we make a `PrintJob` that won't log?
+
+        That's your job!
+
+        Look at the `PrintLogger` class to see how it Logs.
+        Understanding that class will help you a lot.
+
+        Good luck!
+        **/
+        PrintJob ReprintJob = new PrintJob(Ticket);
+        ReprintJob.Type = PrintJobType.Full; // Modify this so it doesn't Log
+        return ReprintJob;
     }
 
     /// <summary>
