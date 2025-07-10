@@ -4,6 +4,9 @@ using LotCoMPrinter.Models.Services;
 
 namespace LotCoMPrinter.Models.Datatypes;
 
+/// <summary>
+/// A configured PrintJob that takes source information, generates a Label, and prints that Label.
+/// </summary>
 public class PrintJob
 {
     /// <summary>
@@ -41,6 +44,7 @@ public class PrintJob
             {
                 Label = await PartialTagGenerator.GenerateTagAsync(Source, (int)PartialSetNumber!);
             }
+            // both Full and Reprint Labels are identical
             else
             {
                 Label = await LabelGenerator.GenerateLabelAsync(Source);
@@ -52,22 +56,33 @@ public class PrintJob
         }
     }
 
-
+    /// <summary>
+    /// Creates a new PrintJob of Type with Ticket as its source of data.
+    /// Optionally accepts a PartialDataSetNumber for Reprint type PrintJobs.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    /// <param name="Type"></param>
+    /// <param name="PartialSetNumber"></param>
+    /// <exception cref="ArgumentException"></exception>
     public PrintJob(PrintTicket Ticket, PrintJobType Type, int? PartialSetNumber = null)
     {
         Source = Ticket;
         this.Type = Type;
-        this.PartialSetNumber = PartialSetNumber;
-
+        // confirm that Partial Type Jobs contain an acceptable Set number
         if (Type == PrintJobType.Partial)
         {
             if (PartialSetNumber != 1 && PartialSetNumber != 2)
             {
                 throw new ArgumentException("Partial print jobs must have a partial set number");
             }
+            this.PartialSetNumber = PartialSetNumber;
+        }
+        // nullify PartialSetNumber if it is a reprint Job
+        else
+        {
+            this.PartialSetNumber = null;
         }
     }
-
 
     /// <summary>
     /// Runs the Print Job (creates a Handler for the Job and spools it to the OS' printing system).

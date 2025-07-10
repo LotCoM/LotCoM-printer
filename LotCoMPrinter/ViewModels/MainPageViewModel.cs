@@ -456,33 +456,10 @@ public partial class MainPageViewModel : ObservableObject
     /// <returns></returns>
     public async Task<bool> ReprintLabel(PrintTicket ReprintTicket)
     {
-
-        /**
-        Jared: implement your solution here.
-        
-        Note: ReprintTicket is the PrintTicket from the UI.
-        Note: You can look at `MainPageViewModel.PrintEditorTicket() for reference.
-              - It does a very similar thing but needs to be tweaked for this method.
-
-        You should:
-        x 1. Create a new `PrintJob` from `ReprintTicket`;
-        2. Make sure that `PrintJob` object is set to Reprint:
-           - This is not a new Label, so we need to skip logging;
-        x 3. Run the `PrintJob`;
-        x 4. Handle any printing exceptions that might occur:
-           - Hint: look at `PrintJob.Run()`
-           - You will be able to see which exceptions it throws;
-        x 5. Capture the results of that run:
-           - Hint: the ReprintLabel() method will tell you what 
-             type of variable you need to capture and return;
-        x 6. Return that result.
-        
-        Good Luck! As always, questions are welcome!!
-        **/
-
+        // setup a reprint Job from the selected PrintTicket
         PrintJob Job = new PrintJob(ReprintTicket, PrintJobType.Reprint);
         bool Printed;
-        // attempt to run the Print Job
+        // attempt to run the Print Job, handle exceptions, and return the result
         try
         {
             Printed = await Job.Run();
