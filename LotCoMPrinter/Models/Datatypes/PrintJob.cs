@@ -37,13 +37,13 @@ public class PrintJob
         // generate a new Label image and store it in the Label property
         try
         {
-            if (Type == PrintJobType.Full)
-            {
-                Label = await LabelGenerator.GenerateLabelAsync(Source);
-            }
-            else if (Type == PrintJobType.Partial)
+            if (Type == PrintJobType.Partial)
             {
                 Label = await PartialTagGenerator.GenerateTagAsync(Source, (int)PartialSetNumber!);
+            }
+            else
+            {
+                Label = await LabelGenerator.GenerateLabelAsync(Source);
             }
         }
         catch (LabelBuildException _ex)
