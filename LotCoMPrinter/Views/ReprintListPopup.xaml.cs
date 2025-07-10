@@ -103,6 +103,16 @@ public partial class ReprintListPopup : Popup
     }
 
     /// <summary>
+    /// Handler for the DateSelected event from the LabelReprintCollectionView control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnLabelReprintCollectionViewItemSelectionChanged(object sender, EventArgs e)
+    {
+        SelectedTicket = (PrintTicket)((CollectionView)sender).SelectedItem;
+    }
+
+    /// <summary>
     /// Creates a Simple Popup that contains a List of Print History from a Process.
     /// </summary>
     /// <param name="Process"></param>
