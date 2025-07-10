@@ -310,7 +310,7 @@ public partial class MainPageViewModel : ObservableObject
         {
             throw new ArgumentException(_ex.Message);
         }
-        PrintJob Job = new PrintJob(EditorTicket.Tracked);
+        PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Full);
         bool Printed;
         // attempt to run the Print Job
         try
@@ -432,7 +432,7 @@ public partial class MainPageViewModel : ObservableObject
             throw new ArgumentException(_argEx.Message);
         }
         // create a new PrintJob from the PartialDataSet and attempt to run it
-        PrintJob Job = new PrintJob(EditorTicket.Tracked, PartialSetNumber);
+        PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Partial, PartialSetNumber);
         bool Printed;
         try
         {
