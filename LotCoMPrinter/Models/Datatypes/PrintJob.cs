@@ -9,7 +9,7 @@ public class PrintJob
     /// <summary>
     /// The PartialDataSet Number of Source to use for PartialTag Label PrintJobs.
     /// </summary>
-    private int PartialSetNumber;
+    private int? PartialSetNumber;
 
     /// <summary>
     /// Contains the type 
@@ -37,13 +37,13 @@ public class PrintJob
         // generate a new Label image and store it in the Label property
         try
         {
-            if (Type == PrintJobType.Full)
+            if (Type == PrintJobType.Partial)
+            {
+                Label = await PartialTagGenerator.GenerateTagAsync(Source, (int)PartialSetNumber!);
+            }
+            else
             {
                 Label = await LabelGenerator.GenerateLabelAsync(Source);
-            }
-            else if (Type == PrintJobType.Partial)
-            {
-                Label = await PartialTagGenerator.GenerateTagAsync(Source, PartialSetNumber);
             }
         }
         catch (LabelBuildException _ex)
@@ -52,57 +52,22 @@ public class PrintJob
         }
     }
 
-    /// <summary>
-    /// Creates a Print Job that can generate a BasketLabel and spool a print job to the printing system.
-    /// </summary>
-    /// <param name="Ticket">A PrintTicket object to use as the source of data for this Job.</param>
-    public PrintJob(PrintTicket Ticket)
-    {
-        Type = PrintJobType.Full;
-        Source = Ticket;
-    }
 
-    /// <summary>
-    /// Creates a Print Job that can generate a PartialTag Label and spool a print job to the printing system.
-    /// </summary>
-    /// <param name="Ticket">A PrintTicket object to use as the source of data for this Job.</param>
-    /// <param name="PartialSetNumber">The PartialDataSet Number to use for a PartialTag PrintJob (1 or 2).</param>
-    public PrintJob(PrintTicket Ticket, int PartialSetNumber)
+    public PrintJob(PrintTicket Ticket, PrintJobType Type, int? PartialSetNumber = null)
     {
-        Type = PrintJobType.Partial;
         Source = Ticket;
+        this.Type = Type;
         this.PartialSetNumber = PartialSetNumber;
+
+        if (Type == PrintJobType.Partial)
+        {
+            if (PartialSetNumber != 1 && PartialSetNumber != 2)
+            {
+                throw new ArgumentException("Partial print jobs must have a partial set number");
+            }
+        }
     }
 
-    /// <summary>
-    /// Creates a Print Job that can generate a Reprint Label from a PrintTicket.
-    /// </summary>
-    /// <param name="Ticket"></param>
-    /// <param name="Type">PrintJobType.Full or PrintJobType.Reprint.</param>
-    public static PrintJob CreateReprintJob(PrintTicket Ticket)
-    {
-        /**
-        Jared: this method is flawed. 
-
-        Right now, it runs just like the basic constructor.
-        The default is to create a `PrintJob` to print a `Full` Label.
-        This will treat the Label as a 'new' one, which will prompt logging.
-        
-        Two questions:
-        - Is this what we want?
-        - If not, how can we make a `PrintJob` that won't log?
-
-        That's your job!
-
-        Look at the `PrintLogger` class to see how it Logs.
-        Understanding that class will help you a lot.
-
-        Good luck!
-        **/
-        PrintJob ReprintJob = new PrintJob(Ticket);
-        ReprintJob.Type = PrintJobType.Full; // Modify this so it doesn't Log
-        return ReprintJob;
-    }
 
     /// <summary>
     /// Runs the Print Job (creates a Handler for the Job and spools it to the OS' printing system).
