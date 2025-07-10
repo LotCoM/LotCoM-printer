@@ -119,7 +119,7 @@
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         WidthRequest="447"
-                        Date="{Binding SelectedLabel}"
+                        Date="{Binding SelectedDate}"
                         DateSelected="OnReprintDatePickerDateSelected"/>
                 </Border>
             </VerticalStackLayout>
@@ -142,8 +142,9 @@
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         WidthRequest="447"
-                        SelectedItem="{Binding SelectedLabel}"
+                        SelectedItem="{Binding SelectedTicket}"
                         x:Name="LabelReprintCollectionView"
+                        SelectionChanged="OnLabelReprintCollectionViewItemSelectionChanged"
                         ItemsSource="{Binding List}"
                         SelectionMode="Single">
                         <CollectionView.ItemTemplate>
