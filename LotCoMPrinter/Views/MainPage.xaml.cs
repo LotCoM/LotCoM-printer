@@ -886,6 +886,88 @@ public partial class MainPage : ContentPage
 	}
 
 	/// <summary>
+	/// Handler for the Clicked event from the ReprintLabelButton Button.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	private async void OnReprintLabelButtonClicked(object sender, EventArgs e)
+	{
+		// create a new ProcessSelection popup
+		ProcessSelectionPopup ProcessSelection = new ProcessSelectionPopup();
+		object? Result = await this.ShowPopupAsync
+		(
+			ProcessSelection
+		);
+		if (Result is null)
+		{
+			return;
+		}
+		// save the selected Process object
+		Process SelectedProcess = (Process)Result;
+		// create a new ReprintList popup for the Selected Process
+		ReprintListPopup ReprintSelection = new ReprintListPopup(SelectedProcess);
+		Result = await this.ShowPopupAsync
+		(
+			ReprintSelection
+		);
+		if (Result is null)
+		{
+			return;
+		}
+		// save the selected PrintTicket object
+		PrintTicket SelectedReprintTicket = (PrintTicket)Result;
+		// attempt to print the Label
+		bool Printed = false;
+		try
+		{
+			Printed = await ViewModel.ReprintLabel(SelectedReprintTicket);
+		}
+		// catch and handle print spooling messages
+		catch (PrintRequestException _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Reprint Failed",
+					$"The Print request could not be completed." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+			return;
+		}
+		// catch other, unexpected issues
+		catch (Exception _ex)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Reprint Failed",
+					$"We encountered an unexpected error." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+			return;
+		}
+		// print was successful
+		if (Printed)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Label Reprinted",
+					$"Label reprinting was successful. Retrieve your new Label Copy from the Printer!"
+				)
+			);
+			await AnimatedClosePrintTicket();
+		}
+	}
+
+	/// <summary>
 	/// Attempts to initialize a ViewModel for the Window to bind to.
 	/// If this method raises an exception, it will create a popup for the user and then Quit.
 	/// </summary>

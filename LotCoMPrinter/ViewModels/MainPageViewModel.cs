@@ -7,6 +7,7 @@ using LotCom.Enums;
 using LotCoMPrinter.Models.Datasources;
 using LotCoMPrinter.Models.Datatypes;
 using LotCoMPrinter.Models.Exceptions;
+using LotCoMPrinter.Models.Enums;
 
 namespace LotCoMPrinter.ViewModels;
 
@@ -309,7 +310,7 @@ public partial class MainPageViewModel : ObservableObject
         {
             throw new ArgumentException(_ex.Message);
         }
-        PrintJob Job = new PrintJob(EditorTicket.Tracked);
+        PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Full);
         bool Printed;
         // attempt to run the Print Job
         try
@@ -431,8 +432,34 @@ public partial class MainPageViewModel : ObservableObject
             throw new ArgumentException(_argEx.Message);
         }
         // create a new PrintJob from the PartialDataSet and attempt to run it
-        PrintJob Job = new PrintJob(EditorTicket.Tracked, PartialSetNumber);
+        PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Partial, PartialSetNumber);
         bool Printed;
+        try
+        {
+            Printed = await Job.Run();
+        }
+        catch (LabelBuildException)
+        {
+            throw new PrintRequestException("Could not create a Label from the entered information.");
+        }
+        catch (PrintRequestException)
+        {
+            throw new PrintRequestException("Failed to execute the print job for the generated Label.");
+        }
+        return Printed;
+    }
+
+    /// <summary>
+    /// Reprints a Label using the information from the selected PrintTicket.
+    /// </summary>
+    /// <param name="ReprintTicket"></param>
+    /// <returns></returns>
+    public async Task<bool> ReprintLabel(PrintTicket ReprintTicket)
+    {
+        // setup a reprint Job from the selected PrintTicket
+        PrintJob Job = new PrintJob(ReprintTicket, PrintJobType.Reprint);
+        bool Printed;
+        // attempt to run the Print Job, handle exceptions, and return the result
         try
         {
             Printed = await Job.Run();

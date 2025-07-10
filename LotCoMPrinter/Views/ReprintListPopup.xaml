@@ -1,0 +1,269 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:datatypes="clr-namespace:LotCoMPrinter.Models.Datatypes"
+               xmlns:views="clr-namespace:LotCoMPrinter.Views"
+               x:DataType="views:ReprintListPopup"
+               x:Class="LotCoMPrinter.Views.ReprintListPopup">
+    
+    <!-- Style the Popup Window -->
+    <toolkit:Popup.Resources>
+        <Style TargetType="{x:Type views:ReprintListPopup}">
+            <Setter Property="Color" Value="Transparent" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Start" />
+            <Setter Property="CanBeDismissedByTappingOutsideOfPopup" Value="False" />
+        </Style>
+        <!-- SecondaryButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/SecondaryButton.xaml"/>
+        <!-- RecessedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
+        <!-- GreenButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/GreenButton.xaml"/>
+        <!-- RedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RedButton.xaml"/>
+        <!-- TransparentImageButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/TransparentImageButton.xaml"/>
+        <!-- Directly Modify CollectionView Selected Item Background color -->
+        <Style TargetType="VerticalStackLayout">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor"
+                                        Value="{StaticResource Neutral-0}"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </toolkit:Popup.Resources>
+
+    <!-- Main Layout -->
+    <Border
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 10,10,10,10"
+        Stroke="{StaticResource Neutral-40}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Title Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Message Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Reprint Date DatePicker Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Label Reprint CollectionView Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Buttons Row -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Main Column -->
+                <ColumnDefinition Width="500"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Title Fill -->
+            <HorizontalStackLayout
+                Grid.Row="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Primary-80}">
+                <!-- Title Label -->
+                <Label
+                    x:Name="PopupTitleLabel"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Margin="20"
+                    Text="Reprint a Label"
+                    FontSize="32"
+                    TextColor="{StaticResource TextLight}"/>
+            </HorizontalStackLayout>
+            
+            <!-- Message Fill -->
+            <HorizontalStackLayout
+                Grid.Row="1"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
+                <!-- Message Label -->
+                <Label
+                    x:Name="PopupMessageLabel"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Margin="20,10,20,10"
+                    FontSize="20"
+                    WidthRequest="450"
+                    LineBreakMode="WordWrap"
+                    Text="Choose a Date to view Labels Printed on that day. Select a Printed Label to begin Reprinting."
+                    TextColor="{StaticResource TextDark}"/>
+            </HorizontalStackLayout>
+
+            <!-- Reprint DatePicker Layout -->
+            <VerticalStackLayout
+                Grid.Row="2"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
+                <Border
+                    x:Name="LabelReprintDateControl"
+                    Margin="0"
+                    WidthRequest="450"
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 0">
+                    <!-- Datepicker for Print Ticket History -->
+                    <DatePicker
+                        x:Name="ReprintDatePicker"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="447"
+                        Date="{Binding SelectedDate}"
+                        DateSelected="OnReprintDatePickerDateSelected"/>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Reprint CollectionView Layout -->
+            <VerticalStackLayout
+                Grid.Row="3"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}">
+                <Border
+                    x:Name="LabelReprintCollectionControl"
+                    Margin="0"
+                    WidthRequest="450"
+                    HeightRequest="300"
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 0">
+                    <!-- CollectionView for Print Ticket History -->
+                    <CollectionView
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="447"
+                        SelectedItem="{Binding SelectedTicket}"
+                        x:Name="LabelReprintCollectionView"
+                        SelectionChanged="OnLabelReprintCollectionViewItemSelectionChanged"
+                        ItemsSource="{Binding List}"
+                        SelectionMode="Single">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate
+                                x:DataType="datatypes:PrintTicket">
+                                <VerticalStackLayout>
+                                    <BoxView
+                                        HorizontalOptions="Fill"
+                                        HeightRequest="1"
+                                        BackgroundColor="{StaticResource Neutral-0}"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label
+                                            Grid.Column="0"
+                                            VerticalOptions="Center"
+                                            Margin="5,0,0,0"
+                                            Text="{Binding Title}"
+                                            FontSize="16"/>
+                                        <Label
+                                            Grid.Column="1"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="End"
+                                            Margin="25,0,5,0"
+                                            Text="{Binding ProductionDate}"
+                                            FontSize="12"
+                                            TextColor="{StaticResource TextDarkDisabled}"/>
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Footer Fill -->
+            <HorizontalStackLayout
+                Grid.Row="4"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                BackgroundColor="{StaticResource Neutral-OffWhite}"/>
+            
+            <!-- Cancel Button -->
+            <Button
+                Grid.Row="4"
+                x:Name="CancelButton"
+                Clicked="OnCancelButtonClicked"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Margin="10"
+                Text="Cancel"
+                ToolTipProperties.Text="Cancel Label Reprinting and return to the Welcome Page">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="RedStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedNormalStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedDisabledStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedPressedStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource RedPointerOverStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
+
+            <!-- Confirm Button -->
+            <Button
+                Grid.Row="4"
+                x:Name="ConfirmButton"
+                Clicked="OnConfirmButtonClicked"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                Margin="10"
+                Text="Next"
+                ToolTipProperties.Text="Select this Label and start a Label Reprint">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="GreenStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenNormalStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenDisabledStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenPressedStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="Style" Value="{StaticResource GreenPointerOverStyle}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
+        </Grid>
+    </Border>
+</toolkit:Popup>
