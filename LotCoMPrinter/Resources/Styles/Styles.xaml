@@ -101,7 +101,7 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
@@ -116,7 +116,7 @@
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-0}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -134,20 +134,20 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
                             <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
                             <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-White}"/>
+                            <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                            <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>

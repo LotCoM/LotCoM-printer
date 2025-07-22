@@ -843,45 +843,127 @@ public partial class MainPage : ContentPage
 		}
 	}
 
+	// /// <summary>
+	// /// Handler for the Clicked event from the TicketActions Button.
+	// /// </summary>
+	// /// <param name="sender"></param>
+	// /// <param name="e"></param>
+	// private async void OnTicketActionsButtonClicked(object sender, EventArgs e)
+	// {
+	// 	// create a new TicketActionsPanel popup and configure its anchor and layout
+	// 	TicketActionsPanelPopup Actions = new TicketActionsPanelPopup("Label Actions");
+	// 	Actions.Anchor = TicketActionsButton;
+	// 	Actions.HorizontalOptions = Microsoft.Maui.Primitives.LayoutAlignment.End;
+	// 	Actions.VerticalOptions = Microsoft.Maui.Primitives.LayoutAlignment.Center;
+	// 	Actions.Size = new Size(175, 230);
+	// 	// show the popup and wait for a resulting action
+	// 	object? Result = await this.ShowPopupAsync
+	// 	(
+	// 		Actions
+	// 	);
+	// 	if (Result is null)
+	// 	{
+	// 		return;
+	// 	}
+	// 	// execute the selected action
+	// 	string Action = (string)Result;
+	// 	if (Action.Equals("Close"))
+	// 	{
+	// 		OnCloseTicketEditorButtonClicked(sender, e);
+	// 	}
+	// 	else if (Action.Equals("Save"))
+	// 	{
+	// 		OnSaveTicketEditorButtonClicked(sender, e);
+	// 	}
+	// 	else if (Action.Equals("Delete"))
+	// 	{
+	// 		OnDeleteTicketEditorButtonClicked(sender, e);
+	// 	}
+	// 	else if (Action.Equals("Print"))
+	// 	{
+	// 		OnPrintTicketEditorButtonClicked(sender, e);
+	// 	}
+	// }
+
 	/// <summary>
-	/// Handler for the Clicked event from the TicketActions Button.
+	/// Handler for the Clicked event from the ReprintLabelButton Button.
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private async void OnTicketActionsButtonClicked(object sender, EventArgs e)
+	private async void OnReprintLabelButtonClicked(object sender, EventArgs e)
 	{
-		// create a new TicketActionsPanel popup and configure its anchor and layout
-		TicketActionsPanelPopup Actions = new TicketActionsPanelPopup("Label Actions");
-		Actions.Anchor = TicketActionsButton;
-		Actions.HorizontalOptions = Microsoft.Maui.Primitives.LayoutAlignment.End;
-		Actions.VerticalOptions = Microsoft.Maui.Primitives.LayoutAlignment.Center;
-		Actions.Size = new Size(175, 230);
-		// show the popup and wait for a resulting action
+		// create a new ProcessSelection popup
+		ProcessSelectionPopup ProcessSelection = new ProcessSelectionPopup();
 		object? Result = await this.ShowPopupAsync
 		(
-			Actions
+			ProcessSelection
 		);
 		if (Result is null)
 		{
 			return;
 		}
-		// execute the selected action
-		string Action = (string)Result;
-		if (Action.Equals("Close"))
+		// save the selected Process object
+		Process SelectedProcess = (Process)Result;
+		// create a new ReprintList popup for the Selected Process
+		ReprintListPopup ReprintSelection = new ReprintListPopup(SelectedProcess);
+		Result = await this.ShowPopupAsync
+		(
+			ReprintSelection
+		);
+		if (Result is null)
 		{
-			OnCloseTicketEditorButtonClicked(sender, e);
+			return;
 		}
-		else if (Action.Equals("Save"))
+		// save the selected PrintTicket object
+		PrintTicket SelectedReprintTicket = (PrintTicket)Result;
+		// attempt to print the Label
+		bool Printed = false;
+		try
 		{
-			OnSaveTicketEditorButtonClicked(sender, e);
+			Printed = await ViewModel.ReprintLabel(SelectedReprintTicket);
 		}
-		else if (Action.Equals("Delete"))
+		// catch and handle print spooling messages
+		catch (PrintRequestException _ex)
 		{
-			OnDeleteTicketEditorButtonClicked(sender, e);
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Reprint Failed",
+					$"The Print request could not be completed." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+			return;
 		}
-		else if (Action.Equals("Print"))
+		// catch other, unexpected issues
+		catch (Exception _ex)
 		{
-			OnPrintTicketEditorButtonClicked(sender, e);
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Reprint Failed",
+					$"We encountered an unexpected error." +
+					" Please see Management to resolve this issue." +
+					$"\n\nReference message: {_ex.Message}."
+				)
+			);
+			return;
+		}
+		// print was successful
+		if (Printed)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Label Reprinted",
+					$"Label reprinting was successful. Retrieve your new Label Copy from the Printer!"
+				)
+			);
+			await AnimatedClosePrintTicket();
 		}
 	}
 

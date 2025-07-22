@@ -299,6 +299,7 @@
             </VerticalStackLayout>
             <!-- Welcome Menu Body -->
             <Grid
+                Padding="0,100,0,100"
                 Grid.Row="1"
                 BackgroundColor="{StaticResource Neutral-White}">
                 <Grid.RowDefinitions>
@@ -310,39 +311,40 @@
                 <Grid.ColumnDefinitions>
                     <!-- Start New Label Column -->
                     <ColumnDefinition Width="*"/>
-                    <!-- Edit Existing Label Column -->
-                    <!-- <ColumnDefinition Width="*"/> -->
+                    <!-- Reprint Existing Label Column -->
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!-- Start New Label Control -->
-                <BoxView
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="10"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    CornerRadius="40"
-                    WidthRequest="200"
-                    HeightRequest="275"
-                    BackgroundColor="{StaticResource Neutral-OffWhite}"/>
                 <Label 
                     Grid.Row="0"
                     Grid.Column="0"
                     Margin="10"
                     HorizontalOptions="Center"
-                    VerticalOptions="End"
+                    VerticalOptions="Center"
                     FontSize="32"
                     FontAttributes="Bold"
                     TextColor="{StaticResource TextDark}"
                     Text="Start New Label"/>
+                <BoxView
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="10"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    CornerRadius="40"
+                    WidthRequest="200"
+                    HeightRequest="275"
+                    BackgroundColor="{StaticResource Neutral-OffWhite}"/>
                 <ImageButton
                     Clicked="OnStartNewLabelButtonClicked"
                     Grid.Row="1"
                     Grid.Column="0"
+                    Margin="0,60,0,0"
                     Source="plus.png"
                     WidthRequest="150"
                     HeightRequest="150"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center"
+                    VerticalOptions="Start"
                     CornerRadius="100"
                     ToolTipProperties.Text="Create and Edit a New Label">
                     <ImageButton.Behaviors>
@@ -375,37 +377,40 @@
                         </VisualStateGroupList>
                     </VisualStateManager.VisualStateGroups>
                 </ImageButton>
-                <!-- Edit Existing Label Control -->
-                <!-- <BoxView
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="10"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    CornerRadius="40"
-                    WidthRequest="200"
-                    HeightRequest="275"
-                    BackgroundColor="{StaticResource Neutral-OffWhite}"/> -->
-                <!-- <Label 
+                <!-- Reprint Existing Label Control -->
+                <Label 
                     Grid.Row="0"
                     Grid.Column="1"
                     Margin="10"
                     HorizontalOptions="Center"
-                    VerticalOptions="End"
+                    VerticalOptions="Center"
                     FontSize="32"
                     FontAttributes="Bold"
                     TextColor="{StaticResource TextDark}"
-                    Text="Edit Existing Label"/> -->
-                <!-- <ImageButton
+                    Text="Reprint Existing Label"/>
+                <BoxView
                     Grid.Row="1"
                     Grid.Column="1"
+                    Margin="10"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    CornerRadius="40"
+                    WidthRequest="200"
+                    HeightRequest="275"
+                    BackgroundColor="{StaticResource Neutral-OffWhite}"/>
+                <ImageButton
+                    x:Name="ReprintLabelButton"
+                    Clicked="OnReprintLabelButtonClicked"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,60,0,0"
                     Source="edit.png"
                     WidthRequest="150"
                     HeightRequest="150"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center"
+                    VerticalOptions="Start"
                     CornerRadius="100"
-                    ToolTipProperties.Text="Modify an Existing Label">
+                    ToolTipProperties.Text="Reprint an Existing Label">
                     <ImageButton.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary-20}"/>
                     </ImageButton.Behaviors>
@@ -435,7 +440,7 @@
                             </VisualStateGroup>
                         </VisualStateGroupList>
                     </VisualStateManager.VisualStateGroups>
-                </ImageButton> -->
+                </ImageButton>
                 <!-- Sub-Title Label -->
                 <!-- <Label
                     Margin="20"
@@ -533,6 +538,7 @@
                         Clicked="OnPrintTicketEditorButtonClicked"
                         Text="Print"
                         FontSize="20"
+                        Margin="20"
                         WidthRequest="100"
                         HeightRequest="40"
                         HorizontalOptions="Start"
@@ -566,7 +572,7 @@
                     </Button>
 
                     <!-- Actions Button -->
-                    <ImageButton
+                    <!-- <ImageButton
                         x:Name="TicketActionsButton"
                         Clicked="OnTicketActionsButtonClicked"
                         Margin="0"
@@ -606,7 +612,7 @@
                                 </VisualStateGroup>
                             </VisualStateGroupList>
                         </VisualStateManager.VisualStateGroups>
-                    </ImageButton>
+                    </ImageButton> -->
                 </HorizontalStackLayout>
             </Grid>
 
