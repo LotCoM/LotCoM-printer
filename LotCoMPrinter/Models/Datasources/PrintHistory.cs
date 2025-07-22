@@ -1,7 +1,7 @@
-using LotCoMPrinter.Models.Exceptions;
 using LotCoMPrinter.Models.Datatypes;
 using LotCom.Database;
 using LotCom.Enums;
+using LotCom.Exceptions;
 using LotCom.Extensions;
 using LotCom.Types;
 using System.Globalization;
@@ -129,201 +129,35 @@ public static class PrintHistory
             throw new ArgumentException($"Could not parse a date from '{SplitPrintLog[^3]}'.");
         }
         // parse initial quantity, shift, and operator values and possible PartialDataSets
-        Quantity PrintLogQuantity;
-        Shift PrintLogShift;
-        Operator PrintLogOperator;
-        PartialDataSet? FirstPartialData = null;
-        Quantity FirstPartialQuantity;
-        Shift FirstPartialShift;
-        Operator FirstPartialOperator;
-        PartialDataSet? SecondPartialData = null;
-        Quantity SecondPartialQuantity;
-        Shift SecondPartialShift;
-        Operator SecondPartialOperator;
-        // colon indicates the existence of a split basket in the PrintLog
-        if (SplitPrintLog[3].Contains(':'))
+        List<PartialDataSet?> Partials;
+        try
         {
-            // split quantity field and save the first, second values
-            List<string> SplitQuantity = SplitPrintLog[3].Split(":").ToList();
-            try
-            {
-                PrintLogQuantity = new Quantity(int.Parse(SplitQuantity[0]));
-                FirstPartialQuantity = new Quantity(int.Parse(SplitQuantity[1]));
-            }
-            catch (FormatException)
-            {
-                throw new ArgumentException($"Could not parse integer Quantities from '{SplitPrintLog[3]}'.");
-            }
-            // split shift field and save the first, second values
-            List<string> SplitShift = SplitPrintLog[^2].Split(":").ToList();
-            try
-            {
-                PrintLogShift = ShiftExtensions.FromString(SplitShift[0]);
-                FirstPartialShift = ShiftExtensions.FromString(SplitShift[1]);
-            }
-            catch (FormatException)
-            {
-                throw new ArgumentException($"Could not parse Shifts from '{SplitPrintLog[^2]}'.");
-            }
-            // split operator field and save the first, second values
-            List<string> SplitOperator = SplitPrintLog[^1].Split(":").ToList();
-            try
-            {
-                PrintLogOperator = new Operator(SplitOperator[0]);
-                FirstPartialOperator = new Operator(SplitOperator[1]);
-            }
-            catch (FormatException)
-            {
-                throw new ArgumentException($"Could not parse string Operators from '{SplitPrintLog[^1]}'.");
-            }
-            // construct and save the First PartialDataSet object
-            FirstPartialData = new PartialDataSet(FirstPartialQuantity, FirstPartialShift, FirstPartialOperator);
-            // length of three in the split quantity field indicates two PartialDataSets
-            if (SplitQuantity.Count == 3)
-            {
-                // retrieve the third set of values and construct the Second PartialDataSet object
-                try
-                {
-                    SecondPartialQuantity = new Quantity(int.Parse(SplitQuantity[2]));
-                }
-                catch (FormatException)
-                {
-                    throw new ArgumentException($"Could not parse int Quantity from '{SplitQuantity[2]}'.");
-                }
-                try
-                {
-                    SecondPartialShift = ShiftExtensions.FromString(SplitShift[2]);
-                }
-                catch (FormatException)
-                {
-                    throw new ArgumentException($"Could not parse Shift from '{SplitShift[2]}'.");
-                }
-                try
-                {
-                    SecondPartialOperator = new Operator(SplitOperator[2]);
-                }
-                catch (FormatException)
-                {
-                    throw new ArgumentException($"Could not parse string Operator from '{SplitOperator[2]}'.");
-                }
-                SecondPartialData = new PartialDataSet(SecondPartialQuantity, SecondPartialShift, SecondPartialOperator);
-            }
+            Partials = PartialDataSet.Parse(SplitPrintLog[3], SplitPrintLog[^2], SplitPrintLog[^1])!;
         }
-        // there is no PartialDataSet information
-        else
+        catch (ArgumentException)
         {
-            // retrieve values directly from the CSV fields
-            try
-            {
-                PrintLogQuantity = new Quantity(int.Parse(SplitPrintLog[3]));
-            }
-            catch (FormatException)
-            {
-                throw new ArgumentException($"Could not parse int Quantity from '{SplitPrintLog[3]}'.");
-            }
-            try
-            {
-                PrintLogShift = ShiftExtensions.FromString(SplitPrintLog[^2]);
-            }
-            catch (FormatException)
-            {
-                throw new ArgumentException($"Could not parse Shift from '{SplitPrintLog[^2]}'.");
-            }
-            try
-            {
-                PrintLogOperator = new Operator(SplitPrintLog[^1]);
-            }
-            catch (FormatException)
-            {
-                throw new ArgumentException($"Could not parse string Operator from '{SplitPrintLog[^1]}'.");
-            }
+            throw;
+        }
+        while (Partials.Count < 3)
+        {
+            Partials.Add(null);
         }
         // enumerate over the required fields and parse them from the CSV fields 
-        VariableFieldSet PrintLogVariableFieldSet = new VariableFieldSet();
-        RequiredFields PrintLogRequiredFields = process.RequiredFields;
-        // creates an offset that indicates which variable field to look in
-        int NextValue = 0;
-        // parse a JBK # if required
-        if (PrintLogRequiredFields.JBKNumber)
+            VariableFieldSet PrintLogVariableFieldSet;
+        try
         {
-            try
-            {
-                PrintLogVariableFieldSet.JBKNumber = new JBKNumber(int.Parse(SplitPrintLog[4 + NextValue]));
-                NextValue += 1;
-            }
-            catch (ArgumentException)
-            {
-                throw new ArgumentException($"Failed to create a JBK Number from the required value {SplitPrintLog[4 + NextValue]}.");
-            }
+            PrintLogVariableFieldSet = VariableFieldSet.ParseCSV(SplitPrintLog[4..^3].ToArray(), process.RequiredFields);
         }
-        // parse a Lot # if required
-        if (PrintLogRequiredFields.LotNumber)
+        catch (ArgumentException)
         {
-            try
-            {
-                PrintLogVariableFieldSet.LotNumber = new LotNumber(int.Parse(SplitPrintLog[4 + NextValue]));
-                NextValue += 1;
-            }
-            catch (ArgumentException)
-            {
-                throw new ArgumentException($"Failed to create a Lot Number from the required value {SplitPrintLog[4 + NextValue]}.");
-            }
-        }
-        // parse a Deburr JBK # if required
-        if (PrintLogRequiredFields.DeburrJBKNumber)
-        {
-            try
-            {
-                PrintLogVariableFieldSet.DeburrJBKNumber = new JBKNumber(int.Parse(SplitPrintLog[4 + NextValue]));
-                NextValue += 1;
-            }
-            catch (ArgumentException)
-            {
-                throw new ArgumentException($"Failed to create a JBK Number from the required value {SplitPrintLog:[4 + NextValue]}.");
-            }
-        }
-        // parse a Die # if required
-        if (PrintLogRequiredFields.DieNumber)
-        {
-            try
-            {
-                PrintLogVariableFieldSet.DieNumber = new DieNumber(int.Parse(SplitPrintLog[4 + NextValue]));
-                NextValue += 1;
-            }
-            catch (ArgumentException)
-            {
-                throw new ArgumentException($"Failed to create a Die Number from the required value {SplitPrintLog[4 + NextValue]}.");
-            }
-        }
-        // parse a Model # if required
-        if (PrintLogRequiredFields.ModelNumber)
-        {
-            try
-            {
-                PrintLogVariableFieldSet.ModelNumber = new ModelNumber(SplitPrintLog[4 + NextValue]);
-                NextValue += 1;
-            }
-            catch (ArgumentException)
-            {
-                throw new ArgumentException($"Failed to create a Model Number from the required value {SplitPrintLog[4 + NextValue]}.");
-            }
-        }
-        // parse a Heat # if required
-        if (PrintLogRequiredFields.HeatNumber)
-        {
-            try
-            {
-                PrintLogVariableFieldSet.HeatNumber = new HeatNumber(int.Parse(SplitPrintLog[4 + NextValue]));
-
-                NextValue += 1;
-            }
-            catch (ArgumentException)
-            {
-                throw new ArgumentException($"Failed to create a Heat Number from the required value {SplitPrintLog[4 + NextValue]}.");
-            }
+            throw;
         }
         // construct and return a new PrintTicket object
-        return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, PrintLogShift, PrintLogQuantity, PrintLogOperator, PrintLogVariableFieldSet, FirstPartialData, SecondPartialData);
+        if (Partials[0] is null)
+        {
+            throw new ArgumentException("No initial Quantity, Shift, and Operator information.");
+        }
+        return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, Partials[0]!.Shift, Partials[0]!.Quantity, Partials[0]!.Operator, PrintLogVariableFieldSet, Partials[1], Partials[2]);
     }
 
     /// <summary>

@@ -538,6 +538,7 @@
                         Clicked="OnPrintTicketEditorButtonClicked"
                         Text="Print"
                         FontSize="20"
+                        Margin="20"
                         WidthRequest="100"
                         HeightRequest="40"
                         HorizontalOptions="Start"
@@ -571,7 +572,7 @@
                     </Button>
 
                     <!-- Actions Button -->
-                    <ImageButton
+                    <!-- <ImageButton
                         x:Name="TicketActionsButton"
                         Clicked="OnTicketActionsButtonClicked"
                         Margin="0"
@@ -611,7 +612,7 @@
                                 </VisualStateGroup>
                             </VisualStateGroupList>
                         </VisualStateManager.VisualStateGroups>
-                    </ImageButton>
+                    </ImageButton> -->
                 </HorizontalStackLayout>
             </Grid>
 

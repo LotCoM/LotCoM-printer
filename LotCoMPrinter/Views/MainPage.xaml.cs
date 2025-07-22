@@ -843,47 +843,47 @@ public partial class MainPage : ContentPage
 		}
 	}
 
-	/// <summary>
-	/// Handler for the Clicked event from the TicketActions Button.
-	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
-	private async void OnTicketActionsButtonClicked(object sender, EventArgs e)
-	{
-		// create a new TicketActionsPanel popup and configure its anchor and layout
-		TicketActionsPanelPopup Actions = new TicketActionsPanelPopup("Label Actions");
-		Actions.Anchor = TicketActionsButton;
-		Actions.HorizontalOptions = Microsoft.Maui.Primitives.LayoutAlignment.End;
-		Actions.VerticalOptions = Microsoft.Maui.Primitives.LayoutAlignment.Center;
-		Actions.Size = new Size(175, 230);
-		// show the popup and wait for a resulting action
-		object? Result = await this.ShowPopupAsync
-		(
-			Actions
-		);
-		if (Result is null)
-		{
-			return;
-		}
-		// execute the selected action
-		string Action = (string)Result;
-		if (Action.Equals("Close"))
-		{
-			OnCloseTicketEditorButtonClicked(sender, e);
-		}
-		else if (Action.Equals("Save"))
-		{
-			OnSaveTicketEditorButtonClicked(sender, e);
-		}
-		else if (Action.Equals("Delete"))
-		{
-			OnDeleteTicketEditorButtonClicked(sender, e);
-		}
-		else if (Action.Equals("Print"))
-		{
-			OnPrintTicketEditorButtonClicked(sender, e);
-		}
-	}
+	// /// <summary>
+	// /// Handler for the Clicked event from the TicketActions Button.
+	// /// </summary>
+	// /// <param name="sender"></param>
+	// /// <param name="e"></param>
+	// private async void OnTicketActionsButtonClicked(object sender, EventArgs e)
+	// {
+	// 	// create a new TicketActionsPanel popup and configure its anchor and layout
+	// 	TicketActionsPanelPopup Actions = new TicketActionsPanelPopup("Label Actions");
+	// 	Actions.Anchor = TicketActionsButton;
+	// 	Actions.HorizontalOptions = Microsoft.Maui.Primitives.LayoutAlignment.End;
+	// 	Actions.VerticalOptions = Microsoft.Maui.Primitives.LayoutAlignment.Center;
+	// 	Actions.Size = new Size(175, 230);
+	// 	// show the popup and wait for a resulting action
+	// 	object? Result = await this.ShowPopupAsync
+	// 	(
+	// 		Actions
+	// 	);
+	// 	if (Result is null)
+	// 	{
+	// 		return;
+	// 	}
+	// 	// execute the selected action
+	// 	string Action = (string)Result;
+	// 	if (Action.Equals("Close"))
+	// 	{
+	// 		OnCloseTicketEditorButtonClicked(sender, e);
+	// 	}
+	// 	else if (Action.Equals("Save"))
+	// 	{
+	// 		OnSaveTicketEditorButtonClicked(sender, e);
+	// 	}
+	// 	else if (Action.Equals("Delete"))
+	// 	{
+	// 		OnDeleteTicketEditorButtonClicked(sender, e);
+	// 	}
+	// 	else if (Action.Equals("Print"))
+	// 	{
+	// 		OnPrintTicketEditorButtonClicked(sender, e);
+	// 	}
+	// }
 
 	/// <summary>
 	/// Handler for the Clicked event from the ReprintLabelButton Button.
