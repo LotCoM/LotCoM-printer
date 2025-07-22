@@ -129,17 +129,21 @@ public static class PrintHistory
             throw new ArgumentException($"Could not parse a date from '{SplitPrintLog[^3]}'.");
         }
         // parse initial quantity, shift, and operator values and possible PartialDataSets
-        List<PartialDataSet> Partials;
+        List<PartialDataSet?> Partials;
         try
         {
-            Partials = PartialDataSet.Parse(SplitPrintLog[3], SplitPrintLog[^2], SplitPrintLog[^1]);
+            Partials = PartialDataSet.Parse(SplitPrintLog[3], SplitPrintLog[^2], SplitPrintLog[^1])!;
         }
         catch (ArgumentException)
         {
             throw;
         }
+        while (Partials.Count < 3)
+        {
+            Partials.Add(null);
+        }
         // enumerate over the required fields and parse them from the CSV fields 
-        VariableFieldSet PrintLogVariableFieldSet;
+            VariableFieldSet PrintLogVariableFieldSet;
         try
         {
             PrintLogVariableFieldSet = VariableFieldSet.ParseCSV(SplitPrintLog[4..^3].ToArray(), process.RequiredFields);
@@ -149,7 +153,11 @@ public static class PrintHistory
             throw;
         }
         // construct and return a new PrintTicket object
-        return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, Partials[0].Shift, Partials[0].Quantity, Partials[0].Operator, PrintLogVariableFieldSet, Partials[1], Partials[2]);
+        if (Partials[0] is null)
+        {
+            throw new ArgumentException("No initial Quantity, Shift, and Operator information.");
+        }
+        return new PrintTicket(process, part, Mode, serialNumber, PrintLogProductionDate, Partials[0]!.Shift, Partials[0]!.Quantity, Partials[0]!.Operator, PrintLogVariableFieldSet, Partials[1], Partials[2]);
     }
 
     /// <summary>
