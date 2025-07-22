@@ -329,3 +329,17 @@ This update implements the following minor functional features:
 #### Dependency update
 - Update to new version of **LotCom Libraries**:
   - [Hotfix](https://github.com/LotCoM/LotCom-libraries/commit/af74e5d0dbc933db70809675086366c6116f2fbd) addressing a silent crash created by `SerializationModeExtensions` when loading the application at Pass-through Process stations.
+
+# `0.8`
+### Reprint Feature Update
+Introduction of the Label Reprint feature, which provides operators with the ability to recreate existing Labels with no additional requirements.
+
+## `0.8.0.0`
+#### Feature Update
+- Design new UI components for the Reprint Label features:
+  - [feature/197](https://github.com/LotCoM/LotCoM-printer/pull/208).
+- Implement a new datasource class to read past printed Labels:
+  - [feature/198](https://github.com/LotCoM/LotCoM-printer/pull/203).
+- Modify print system to process Label reprints separately and differently from initial prints.
+- Updates to Model layer classes to match additions/changes in **LotCom Libraries**:
+  - [feature/210](https://github.com/LotCoM/LotCoM-printer/pull/212).
