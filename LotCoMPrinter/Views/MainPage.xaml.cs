@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Maui.Views;
 using LotCom.Types;
-using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.ViewModels;
+using LotComPrinter.Models.Datatypes;
+using LotComPrinter.Models.Exceptions;
+using LotComPrinter.ViewModels;
 
-namespace LotCoMPrinter.Views;
+namespace LotComPrinter.Views;
 
 public partial class MainPage : ContentPage
 {

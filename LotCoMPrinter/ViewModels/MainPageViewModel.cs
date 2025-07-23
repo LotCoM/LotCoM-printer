@@ -4,12 +4,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LotCom.Types;
 using LotCom.Database;
 using LotCom.Enums;
-using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Enums;
+using LotComPrinter.Models.Datasources;
+using LotComPrinter.Models.Datatypes;
+using LotComPrinter.Models.Exceptions;
+using LotComPrinter.Models.Enums;
 
-namespace LotCoMPrinter.ViewModels;
+namespace LotComPrinter.ViewModels;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 

@@ -1,6 +1,6 @@
-namespace LotCoMPrinter.Models.Exceptions;
+namespace LotComPrinter.Models.Exceptions;
 
 /// <summary>
-/// Custom exception to raise when a Label construction is attempted but fails in the LotCoM Printer application.
+/// Custom exception to raise when a Label construction is attempted but fails in the LotCom Printer application.
 /// </summary>
 public partial class LabelBuildException(string Message) : Exception(message: Message) {}

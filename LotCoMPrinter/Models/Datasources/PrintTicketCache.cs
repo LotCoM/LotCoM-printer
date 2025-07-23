@@ -1,7 +1,7 @@
-using LotCoMPrinter.Models.Datatypes;
+using LotComPrinter.Models.Datatypes;
 using Newtonsoft.Json;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotComPrinter.Models.Datasources;
 
 public static class PrintTicketCache
 {

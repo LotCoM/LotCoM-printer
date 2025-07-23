@@ -2,7 +2,7 @@ using LotCom.Database;
 using LotCom.Enums;
 using LotCom.Types;
 
-namespace LotCoMPrinter.Models.Services;
+namespace LotComPrinter.Models.Services;
 
 public static class Serializer
 {

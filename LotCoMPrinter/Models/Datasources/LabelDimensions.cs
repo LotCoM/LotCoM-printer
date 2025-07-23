@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotComPrinter.Models.Datasources;
 
 /// <summary>
 /// Provides a set of Label dimensions and item positions with defaults and controlled values.

@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui.Views;
 
-namespace LotCoMPrinter.Views;
+namespace LotComPrinter.Views;
 
 public partial class FailedStartupPopup : Popup 
 {

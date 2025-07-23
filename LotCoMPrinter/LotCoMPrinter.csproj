@@ -14,7 +14,7 @@
 		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
 		<OutputType>Exe</OutputType>
-		<RootNamespace>LotCoMPrinter</RootNamespace>
+		<RootNamespace>LotComPrinter</RootNamespace>
 		<UseMaui>true</UseMaui>
 		<MauiVersion>9.0.40</MauiVersion>
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
@@ -23,10 +23,10 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>LotCoMPrinter</ApplicationTitle>
+		<ApplicationTitle>LotComPrinter</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.LotCoMprinter</ApplicationId>
+		<ApplicationId>com.companyname.LotComPrinter</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>0.8.0.0</ApplicationDisplayVersion>

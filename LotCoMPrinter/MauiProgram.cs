@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 
-namespace LotCoMPrinter;
+namespace LotComPrinter;
 
 public static class MauiProgram
 {
