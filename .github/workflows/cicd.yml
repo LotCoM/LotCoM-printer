@@ -97,7 +97,7 @@ jobs:
         .\LotComPrinterSetup.exe "$env:VERSION_NUMBER"
 
         # save the MSI to a Package directory
-        cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter\bin\Release\net9.0-windows10.0.19041.0\win-x64\Installer"
+        cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\Installer"
         New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
         Copy-Item -Path ".\LotComPrinter_$env:VERSION_NUMBER.msi" -Destination "D:\a\Package"
 
