@@ -1,8 +1,8 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="LotCoMPrinter.WinUI.App"
+    x:Class="LotComPrinter.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:LotCoMPrinter.WinUI">
+    xmlns:local="using:LotComPrinter.WinUI">
 
 </maui:MauiWinUIApplication>

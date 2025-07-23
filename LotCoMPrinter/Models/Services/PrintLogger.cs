@@ -1,8 +1,8 @@
 using LotCom.Types;
-using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Exceptions;
+using LotComPrinter.Models.Datatypes;
+using LotComPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Services;
+namespace LotComPrinter.Models.Services;
 
 public static class PrintLogger 
 {

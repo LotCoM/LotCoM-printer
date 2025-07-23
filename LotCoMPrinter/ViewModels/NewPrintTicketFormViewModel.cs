@@ -3,11 +3,11 @@ using LotCom.Database;
 using LotCom.Enums;
 using LotCom.Exceptions;
 using LotCom.Types;
-using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.Models.Services;
+using LotComPrinter.Models.Datatypes;
+using LotComPrinter.Models.Services;
 using Newtonsoft.Json;
 
-namespace LotCoMPrinter.ViewModels;
+namespace LotComPrinter.ViewModels;
 
 public partial class NewPrintTicketFormViewModel : ObservableObject
 {

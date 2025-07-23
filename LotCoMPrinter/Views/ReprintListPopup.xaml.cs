@@ -1,9 +1,9 @@
 using CommunityToolkit.Maui.Views;
 using LotCom.Types;
-using LotCoMPrinter.Models.Datasources;
-using LotCoMPrinter.Models.Datatypes;
+using LotComPrinter.Models.Datasources;
+using LotComPrinter.Models.Datatypes;
 
-namespace LotCoMPrinter.Views;
+namespace LotComPrinter.Views;
 
 public partial class ReprintListPopup : Popup 
 {

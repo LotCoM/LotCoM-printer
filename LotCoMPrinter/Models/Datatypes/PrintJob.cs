@@ -1,8 +1,8 @@
-using LotCoMPrinter.Models.Enums;
-using LotCoMPrinter.Models.Exceptions;
-using LotCoMPrinter.Models.Services;
+using LotComPrinter.Models.Enums;
+using LotComPrinter.Models.Exceptions;
+using LotComPrinter.Models.Services;
 
-namespace LotCoMPrinter.Models.Datatypes;
+namespace LotComPrinter.Models.Datatypes;
 
 /// <summary>
 /// A configured PrintJob that takes source information, generates a Label, and prints that Label.

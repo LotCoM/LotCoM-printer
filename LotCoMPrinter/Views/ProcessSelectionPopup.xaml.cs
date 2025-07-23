@@ -2,7 +2,7 @@ using CommunityToolkit.Maui.Views;
 using LotCom.Database;
 using LotCom.Types;
 
-namespace LotCoMPrinter.Views;
+namespace LotComPrinter.Views;
 
 public partial class ProcessSelectionPopup : Popup
 {

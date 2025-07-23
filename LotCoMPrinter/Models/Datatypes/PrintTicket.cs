@@ -7,7 +7,7 @@ using LotCom.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LotCoMPrinter.Models.Datatypes;
+namespace LotComPrinter.Models.Datatypes;
 
 public partial class PrintTicket : ObservableObject
 {

@@ -44,7 +44,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         cache: true
-        cache-dependency-path: "./LotCoMPrinter/packages.lock.json"
+        cache-dependency-path: "./LotComPrinter/packages.lock.json"
 
     - name: Download LotCom Libraries
       env:
@@ -52,7 +52,7 @@ jobs:
       shell: pwsh
       run: |
         # download LotCom Libraries latest
-        cd "D:\a\LotCoM-printer"
+        cd "D:\a\LotCom-printer"
         git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-libraries.git
 
     - name: Install dependencies
