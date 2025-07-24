@@ -10,7 +10,7 @@
 
     <!-- Customize NavigationPage Bar and Properties -->
     <NavigationPage.HasBackButton>
-        <x:Boolean>True</x:Boolean>
+        <x:Boolean>False</x:Boolean>
     </NavigationPage.HasBackButton>
     <NavigationPage.HasNavigationBar>
         <x:Boolean>False</x:Boolean>
