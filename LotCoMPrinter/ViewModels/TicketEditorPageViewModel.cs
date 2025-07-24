@@ -13,11 +13,6 @@ namespace LotComPrinter.ViewModels;
 /// </summary>
 public class TicketEditorPageViewModel : ObservableObject
 {
-    /// <summary>
-    /// The MainPage instance that precedes the Editor in the Navigation Stack.
-    /// </summary>
-    private readonly MainPage Presenter;
-
     private TrackedPrintTicket? _editorTicket = null;
     /// <summary>
     /// The PrintTicket currently being edited, with Tracked changes.
@@ -36,10 +31,64 @@ public class TicketEditorPageViewModel : ObservableObject
     /// <summary>
     /// Creates a new ViewModel to bind to a TicketEditorPage.
     /// </summary>
-    public TicketEditorPageViewModel(PrintTicket EditorTicket, MainPage Presenter)
+    public TicketEditorPageViewModel(PrintTicket EditorTicket)
     {
-        this.Presenter = Presenter;
         this.EditorTicket = new TrackedPrintTicket(EditorTicket);
+    }
+
+    /// <summary>
+    /// Saves all tracked changes to the OpenPrintTickets list.
+    /// </summary>
+    /// <param name="Previous"></param>
+    /// <returns></returns>
+    /// <exception cref="SystemException"></exception>
+    public async Task SaveTickets(Page Previous)
+    {
+        // confirm that the passed Page is a MainPage
+        if (!Previous.GetType().Equals(typeof(MainPage)))
+        {
+            throw new SystemException("Cannot navigate to previous MainPage view to save Print Tickets.");
+        }
+        // convert the Page to MainPage, remove the Ticket, and save the open ticket list
+        MainPage Main = (MainPage)Previous;
+        try
+        {
+            await Main.ViewModel.SaveOpenPrintTickets();
+        }
+        catch (SystemException)
+        {
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Goes through the navigation stack to remove the Editor's PrintTicket from the Open Ticket List.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="SystemException"></exception>
+    public async Task<bool> DeleteTicket(Page Previous)
+    {
+        // confirm that the passed Page is a MainPage
+        if (!Previous.GetType().Equals(typeof(MainPage)))
+        {
+            throw new SystemException("Cannot navigate to previous MainPage view to remove this Print Ticket.");
+        }
+        // convert the Page to MainPage, remove the Ticket, and save the open ticket list
+        MainPage Main = (MainPage)Previous;
+        bool Result = await Main.ViewModel.RemoveOpenPrintTicket(EditorTicket!.Untracked);
+        if (!Result)
+        {
+            return false;
+        }
+        try
+        {
+            await SaveTickets(Main);
+        }
+        catch (SystemException)
+        {
+            throw;
+        }
+        return true;
     }
 
     /// <summary>
@@ -50,8 +99,16 @@ public class TicketEditorPageViewModel : ObservableObject
     /// <exception cref="NullReferenceException"></exception>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="PrintRequestException"></exception>
-    public async Task<bool> Print()
+    /// <exception cref="SystemException"></exception>
+    public async Task<bool> PrintTicket(Page Previous)
     {
+        // confirm that the passed Page is a MainPage
+        if (!Previous.GetType().Equals(typeof(MainPage)))
+        {
+            throw new SystemException("Cannot navigate to previous MainPage view to print this Print Ticket.");
+        }
+        // convert the Page to MainPage
+        MainPage Main = (MainPage)Previous;
         // create a LabelPrintJob from the editing Print Ticket
         if (EditorTicket is null)
         {
@@ -81,22 +138,16 @@ public class TicketEditorPageViewModel : ObservableObject
         {
             throw new PrintRequestException("Failed to execute the print job for the generated Label.");
         }
-        // remove the Ticket if the print was successful
-        if (Printed)
+        // remove the Ticket from the OpenPrintTicket list
+        try
         {
-            bool Removed = Presenter.ViewModel.OpenPrintTickets.Remove(EditorTicket.Untracked);
-            // confirm that the EditorTicket exists in OpenPrintTickets and remove it
-            if (!Removed)
-            {
-                throw new NullReferenceException("The Untracked EditorTicket was not found in OpenPrintTickets.");
-            }
-            await Presenter.ViewModel.SaveOpenPrintTickets();
-            return true;
+            await DeleteTicket(Main);
         }
-        else
+        catch (SystemException)
         {
-            return false;
+            throw new NullReferenceException("The Untracked EditorTicket was not found in OpenPrintTickets.");
         }
+        return Printed;
     }
 
     /// <summary>
