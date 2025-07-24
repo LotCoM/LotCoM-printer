@@ -60,6 +60,8 @@ public partial class MainPage : ContentPage
 		}
 		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
 		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
+		// collapse the OpenPrintTickets panel
+		await AnimatedCollapseOpenPrintTicketsPanel();
 		if (Result is null)
 		{
 			return;
@@ -128,6 +130,8 @@ public partial class MainPage : ContentPage
 		}
 		TicketEditorPage Editor = new TicketEditorPage(ViewModel.SelectedTicket);
 		await Navigation.PushAsync(Editor);
+		// collapse the OpenPrintTickets panel
+		await AnimatedCollapseOpenPrintTicketsPanel();
 	}
 
 	/// <summary>
@@ -143,6 +147,8 @@ public partial class MainPage : ContentPage
 		(
 			ProcessSelection
 		);
+		// collapse the OpenPrintTickets panel
+		await AnimatedCollapseOpenPrintTicketsPanel();
 		if (Result is null)
 		{
 			return;
