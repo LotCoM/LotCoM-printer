@@ -414,19 +414,6 @@ public partial class TicketEditorPage : ContentPage
 				DieNumberControl.Stroke = Colors.Red;
 			}
 		}
-		// Model was updated
-		else if (sender.Equals(ModelNumberEntry))
-		{
-			try
-			{
-				ViewModel.EditorTicket.Tracked.VariableFields.ModelNumber = new ModelNumber(e.NewTextValue);
-				ModelNumberControl.Stroke = Grey500;
-			}
-			catch
-			{
-				ModelNumberControl.Stroke = Colors.Red;
-			}
-		}
 		// Heat was updated
 		else if (sender.Equals(HeatNumberEntry))
 		{
@@ -634,7 +621,6 @@ public partial class TicketEditorPage : ContentPage
     /// Creates a Ticket Editor page for EditorTicket.
     /// </summary>
     /// <param name="EditorTicket"></param>
-    /// <param name="Presenter"></param>
     public TicketEditorPage(PrintTicket EditorTicket)
     {
         ViewModel = new TicketEditorPageViewModel(EditorTicket);

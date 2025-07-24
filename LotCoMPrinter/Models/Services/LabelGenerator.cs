@@ -45,10 +45,6 @@ public static class LabelGenerator
             {
                 Data.Add(Ticket.VariableFields.DieNumber!.Literal.ToString());
             }
-            if (RequiredFields.ModelNumber)
-            {
-                Data.Add(Ticket.VariableFields.ModelNumber!.Code);
-            }
             if (RequiredFields.HeatNumber)
             {
                 Data.Add(Ticket.VariableFields.HeatNumber!.Literal.ToString());
@@ -98,10 +94,6 @@ public static class LabelGenerator
             if (RequiredFields.DieNumber)
             {
                 Body.Add($"Die #: {Ticket.VariableFields.DieNumber!.Literal}");
-            }
-            if (RequiredFields.ModelNumber)
-            {
-                Body.Add($"Model #: {Ticket.VariableFields.ModelNumber!.Code}");
             }
             if (RequiredFields.HeatNumber)
             {

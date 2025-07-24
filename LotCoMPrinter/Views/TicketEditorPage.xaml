@@ -357,7 +357,7 @@
                         <!-- Quantity / JBK / Lot Row (Max 3) -->
                         <!-- Dynamically Show Depending on Requirements -->
                         <RowDefinition Height="Auto"/>
-                        <!-- Die / Deburr JBK / Model / Heat Row (Max 2) -->
+                        <!-- Die / Deburr JBK / Heat Row (Max 2) -->
                         <!-- Dynamically Show Depending on Requirements -->
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -867,84 +867,6 @@
                                 Text="{Binding EditorTicket.Tracked.VariableFields.DieNumber.Literal}"
                                 TextChanged="OnVariableFieldSetEntryTextChanged"
                                 MaxLength="2"
-                                FontSize="20"
-                                WidthRequest="100"/>
-                        </Border>
-                    </HorizontalStackLayout>
-
-                    <!-- Model Input Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill"
-                        IsVisible="{Binding EditorTicket.Untracked.Process.RequiredFields.ModelNumber}">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="ModelNumberLabel"
-                            Margin="60,15,0,15"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="100"
-                            MinimumWidthRequest="100"
-                            FontSize="20"
-                            Text="Model #"/>
-                        <!-- Info Button -->
-                        <ImageButton
-                            x:Name="ModelNumberInfoButton"
-                            VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            HeightRequest="30"
-                            MinimumHeightRequest="30"
-                            WidthRequest="30"
-                            MinimumWidthRequest="30"
-                            CornerRadius="30"
-                            Source="information.png"
-                            ToolTipProperties.Text="The Model # assigned to the Parts in this Basket.                                                        ________________________________________________________                                                        NOTE: This field will auto-fill and lock by default. If it does not, please enter the Model # of your Parts and notify Management.">
-                            <ImageButton.Behaviors>
-                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
-                            </ImageButton.Behaviors>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroupList>
-                                    <VisualStateGroup x:Name="TransparentStates">
-                                        <VisualState x:Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Disabled">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="PointerOver">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateGroupList>
-                            </VisualStateManager.VisualStateGroups>
-                        </ImageButton>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="ModelNumberControl"
-                            Margin="0,15,0,15"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            HeightRequest="40"
-                            StrokeThickness="1.5"
-                            StrokeShape="RoundRectangle 0">
-                            <Entry
-                                x:Name="ModelNumberEntry"
-                                Text="{Binding EditorTicket.Tracked.VariableFields.ModelNumber.Code}"
-                                IsEnabled="False"
-                                MaxLength="3"
                                 FontSize="20"
                                 WidthRequest="100"/>
                         </Border>

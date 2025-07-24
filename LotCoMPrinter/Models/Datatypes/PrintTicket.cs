@@ -284,9 +284,8 @@ public partial class PrintTicket : ObservableObject
         _productionShift = TicketProductionShift;
         _productionQuantity = TicketProductionQuantity;
         _productionOperator = TicketProductionOperator;
-        // save the passed VariableSet and set its Model Number using the Part selected
+        // save the passed VariableSet
         _variableFields = VariableFields;
-        VariableFields.ModelNumber = Part.ModelNumber;
         // set Partial Datasets if passed
         _firstPartialDataSet = FirstPartialDataSet;
         _secondPartialDataSet = SecondPartialDataSet;
@@ -717,10 +716,6 @@ public partial class PrintTicket : ObservableObject
         if (Process.RequiredFields.DieNumber && VariableFields.DieNumber is null)
         {
             throw new ArgumentException("Please enter a valid Die # before printing a Label.");
-        }
-        if (Process.RequiredFields.ModelNumber && VariableFields.ModelNumber is null)
-        {
-            throw new ArgumentException("Please enter a valid Model # before printing a Label.");
         }
         if (Process.RequiredFields.HeatNumber && VariableFields.HeatNumber is null)
         {
