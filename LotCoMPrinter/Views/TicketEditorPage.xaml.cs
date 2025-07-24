@@ -621,7 +621,6 @@ public partial class TicketEditorPage : ContentPage
     /// Creates a Ticket Editor page for EditorTicket.
     /// </summary>
     /// <param name="EditorTicket"></param>
-    /// <param name="Presenter"></param>
     public TicketEditorPage(PrintTicket EditorTicket)
     {
         ViewModel = new TicketEditorPageViewModel(EditorTicket);
