@@ -39,10 +39,6 @@ public static class PrintLogger
         {
             Log = $"{Log},{JobSource.VariableFields.DieNumber!.Literal}";
         }
-        if (Requirements.ModelNumber)
-        {
-            Log = $"{Log},{JobSource.VariableFields.ModelNumber!.Code}";
-        }
         if (Requirements.HeatNumber)
         {
             Log = $"{Log},{JobSource.VariableFields.HeatNumber!.Literal}";
