@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:Datatypes="clr-namespace:LotComPrinter.Models.Datatypes"
              xmlns:Enums="clr-namespace:LotCom.Enums;assembly=LotCom"
              xmlns:ViewModels="clr-namespace:LotComPrinter.ViewModels"
@@ -126,9 +125,6 @@
                     VerticalOptions="Start"
                     CornerRadius="100"
                     ToolTipProperties.Text="Create and Edit a New Label">
-                    <ImageButton.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary-20}" />
-                    </ImageButton.Behaviors>
                     <VisualStateManager.VisualStateGroups>
                         <VisualStateGroupList>
                             <VisualStateGroup x:Name="TransparentStates">
@@ -190,9 +186,6 @@
                     VerticalOptions="Start"
                     CornerRadius="100"
                     ToolTipProperties.Text="Reprint an Existing Label">
-                    <ImageButton.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary-20}"/>
-                    </ImageButton.Behaviors>
                     <VisualStateManager.VisualStateGroups>
                         <VisualStateGroupList>
                             <VisualStateGroup x:Name="TransparentStates">
@@ -408,9 +401,6 @@
                 CornerRadius="30"
                 Source="menu.png"
                 ToolTipProperties.Text="Show/Hide the Open Print Tickets Menu">
-                <ImageButton.Behaviors>
-                    <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-White}"/>
-                </ImageButton.Behaviors>
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroupList>
                         <VisualStateGroup x:Name="TransparentStates">
