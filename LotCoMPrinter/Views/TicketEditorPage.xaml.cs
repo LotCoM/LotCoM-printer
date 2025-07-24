@@ -163,8 +163,8 @@ public partial class TicketEditorPage : ContentPage
 	{
 		ConfirmPopup Confirm = new ConfirmPopup
 		(
-			"Close without saving?",
-			"Are you sure you would like to close this Label editor and discard your changes?",
+			"Save and Close?",
+			"Are you sure you would like to save your changes and close this Label editor?",
 			"Yes, close",
 			"No, go back"
 		);
