@@ -1,0 +1,1629 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:Datatypes="clr-namespace:LotComPrinter.Models.Datatypes"
+             xmlns:Enums="clr-namespace:LotCom.Enums;assembly=LotCom"
+             xmlns:ViewModels="clr-namespace:LotComPrinter.ViewModels"
+             x:DataType="ViewModels:TicketEditorPageViewModel"
+             x:Class="LotComPrinter.Views.TicketEditorPage">
+
+    <!-- Customize NavigationPage Bar and Properties -->
+    <NavigationPage.HasBackButton>
+        <x:Boolean>False</x:Boolean>
+    </NavigationPage.HasBackButton>
+    <NavigationPage.HasNavigationBar>
+        <x:Boolean>False</x:Boolean>
+    </NavigationPage.HasNavigationBar>
+
+    <!-- Merge and Consume Custom ResourceDictionaries -->
+    <ContentPage.Resources>
+        <!-- SecondaryButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/SecondaryButton.xaml"/>
+        <!-- RecessedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RecessedButton.xaml"/>
+        <!-- GreenButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/GreenButton.xaml"/>
+        <!-- RedButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/RedButton.xaml"/>
+        <!-- InfoButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/InfoButton.xaml"/>
+        <!-- WarnButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/WarnButton.xaml"/>
+        <!-- TransparentImageButton Styles -->
+        <ResourceDictionary Source="/Resources/Styles/TransparentImageButton.xaml"/>
+    </ContentPage.Resources>
+
+    <!-- Print Ticket Editor Layout -->
+    <Grid
+        x:Name="TicketEditorMenu"
+        Grid.Row="0"
+        Grid.Column="1">
+        <Grid.RowDefinitions>
+            <!-- Header Panel Row -->
+            <RowDefinition Height="Auto"/>
+            <!-- Scrolling Body Panel Row -->
+            <RowDefinition Height="*"/>
+            <!-- Footer Panel Row -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Panel -->
+        <Grid
+            Grid.Row="0"
+            x:Name="TicketEditorMenuHeader"
+            BackgroundColor="{StaticResource Neutral-0}">
+            <Grid.RowDefinitions>
+                <!-- Editor Title Row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Label Title Row -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Titles Column -->
+                <ColumnDefinition Width="*"/>
+                <!-- Action Buttons Column -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Header Row Label -->
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="20,10,0,10"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                FontSize="32"
+                FontAttributes="Bold"
+                TextColor="{StaticResource Primary-20}"
+                Text="Label Editor"/>
+
+            <!-- Ticket Name Label -->
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="20,0,0,10"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                FontSize="20"
+                TextColor="{StaticResource TextDark}"
+                Text="{Binding EditorTicket.Untracked.Title}"/>
+
+            <!-- Action Panel Layout -->
+            <HorizontalStackLayout
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalOptions="End"
+                VerticalOptions="Center">
+                <!-- Delete Button -->
+                <Button
+                    x:Name="DeleteTicketButton"
+                    Clicked="OnDeleteTicketEditorButtonClicked"
+                    Text="Delete"
+                    FontSize="20"
+                    Margin="20"
+                    WidthRequest="100"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="RedStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource RedNormalStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource RedDisabledStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource RedPressedStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource RedPointerOverStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </Button>
+                <!-- Close Button -->
+                <Button
+                    x:Name="CloseTicketButton"
+                    Clicked="OnCloseTicketEditorButtonClicked"
+                    Text="Close"
+                    FontSize="20"
+                    Margin="20"
+                    WidthRequest="100"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="WarnStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnNormalStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnDisabledStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnPressedStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnPointerOverStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </Button>
+                <!-- Print Button -->
+                <Button
+                    x:Name="PrintTicketButton"
+                    Clicked="OnPrintTicketEditorButtonClicked"
+                    Text="Print"
+                    FontSize="20"
+                    Margin="20"
+                    WidthRequest="100"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="GreenStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource GreenNormalStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource GreenDisabledStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource GreenPressedStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource GreenPointerOverStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </Button>
+            </HorizontalStackLayout>
+        </Grid>
+
+        <!-- Scrolling Body Panel -->
+        <ScrollView
+            Grid.Row="1"
+            x:Name="TicketEditorMenuBody"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"
+            BackgroundColor="{StaticResource Neutral-OffWhite}">
+            <VerticalStackLayout>
+                <!-- Initial Production Info Header Layout -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <!-- Title Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Process Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Part Row -->
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <!-- Title / Labels Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Process / Part Column -->
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Ticket Title Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="20,20,0,10">
+                        <!-- Title Label -->
+                        <Label
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            FontSize="24"
+                            FontAttributes="Bold"
+                            TextColor="{StaticResource Primary-20}"
+                            Text="Initial Production Data"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="InitialProductionDataInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter the Initial Production information in this area                                                        ________________________________________________________                                                        NOTE: This should be the Lot Information of the FIRST Operator to produce Parts in this Basket.                                                        ________________________________________________________                                                        To add Parts from a different shift to this Label, click the 'Add Partial Basket' Button.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                    </HorizontalStackLayout>
+                    
+                    <!-- Process/Part Information Layout -->
+                    <Grid
+                        Grid.Row="1"
+                        Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Process Label -->
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            FontSize="20"
+                            TextColor="{StaticResource TextDark}"
+                            Margin="20,0,0,0"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            Text="{Binding EditorTicket.Untracked.Process.FullName, StringFormat='Process: {0}'}"/>
+                        <!-- Part Number Label -->
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            FontSize="20"
+                            TextColor="{StaticResource TextDark}"
+                            Margin="40,0,0,0"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            Text="{Binding EditorTicket.Untracked.Part.PartNumber, StringFormat='Part: {0}'}"/>
+                        <!-- Part Name Label -->
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            FontSize="20"
+                            TextColor="{StaticResource TextDark}"
+                            Margin="85,0,0,20"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            Text="{Binding EditorTicket.Untracked.Part.PartName}"/>
+                    </Grid>
+                </Grid>
+
+                <!-- Process/Part Separator Bar -->
+                <BoxView
+                    Margin="0"
+                    HeightRequest="1"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    BackgroundColor="{StaticResource Neutral-20}"/>
+
+                <!-- Production Data Fields Layout -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <!-- Date / Shift / Operator Row (Constant 3) -->
+                        <!-- These Controls are all Disabled by Default -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Quantity / JBK / Lot Row (Max 3) -->
+                        <!-- Dynamically Show Depending on Requirements -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Die / Deburr JBK / Model / Heat Row (Max 2) -->
+                        <!-- Dynamically Show Depending on Requirements -->
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <!-- Production Date Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Production Shift Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Production Operator Column -->
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Date Control -->
+                    <HorizontalStackLayout
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="ProductionDateLabel"
+                            Margin="20,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="130"
+                            MinimumWidthRequest="130"
+                            FontSize="20"
+                            Text="Date"/>
+                        <!-- Input DatePicker Control and Border -->
+                        <Border
+                            x:Name="ProductionDateControl"
+                            Margin="30,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <DatePicker
+                                x:Name="ProductionDatePicker"
+                                IsEnabled="False"
+                                Date="{Binding EditorTicket.Untracked.ProductionDate}"
+                                FontSize="18"
+                                WidthRequest="150"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Shift Control -->
+                    <HorizontalStackLayout
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                        <!-- Input Label -->
+                        <Label
+                            Margin="60,15,0,15"
+                            x:Name="ShiftLabel"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Shift"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="ShiftControl"
+                            Margin="30,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Picker
+                                x:Name="ShiftPicker"
+                                IsEnabled="False"
+                                SelectedItem="{Binding EditorTicket.Untracked.ProductionShift}"
+                                FontSize="18"
+                                WidthRequest="100">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type Enums:Shift}">
+                                        <Enums:Shift>First</Enums:Shift>
+                                        <Enums:Shift>Second</Enums:Shift>
+                                        <Enums:Shift>Third</Enums:Shift>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Operator Control -->
+                    <HorizontalStackLayout
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                        <!-- Input Label -->
+                        <Label
+                            Margin="60,15,0,15"
+                            x:Name="OperatorLabel"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Operator"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="OperatorControl"
+                            Margin="30,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="OperatorEntry"
+                                IsEnabled="False"
+                                Text="{Binding EditorTicket.Untracked.ProductionOperator.Initials}"
+                                TextChanged="OnOperatorEntryTextChanged"
+                                MaxLength="3"
+                                FontSize="20"
+                                WidthRequest="100"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Quantity Control -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="QuantityLabel"
+                            Margin="20,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="130"
+                            MinimumWidthRequest="130"
+                            FontSize="20"
+                            Text="Quantity"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="QuantityInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter the quantity of Parts initially produced for this Basket.                                                        ________________________________________________________                                                        NOTE: Do NOT enter the Basket's Total Quantity here. This should be the number of Parts produced on the Shift that created the Label.                                                        ________________________________________________________                                                        To add Parts from a different shift to this Label, click the 'Add Partial Basket' Button.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="QuantityControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="QuantityEntry"
+                                Text="{Binding EditorTicket.Tracked.ProductionQuantity.Value}"
+                                TextChanged="OnQuantityEntryTextChanged"
+                                FontSize="20"
+                                WidthRequest="100"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- JBK Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        IsVisible="{Binding EditorTicket.Untracked.Process.RequiredFields.JBKNumber}">
+                        <!-- JBK Input Label -->
+                        <Label
+                            x:Name="JBKNumberLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="JBK #"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="JBKNumberInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter the JBK # assigned to this Basket.                                                        ________________________________________________________                                                        NOTE: If your Process is an Originator (assigns JBK #s), this field will be locked.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        <!-- JBK Input Entry Control and Border -->
+                        <Border
+                            x:Name="JBKNumberControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="JBKNumberEntry"
+                                IsEnabled="{Binding EditorTicket.Untracked.JBKManualEntry}"
+                                Text="{Binding EditorTicket.Tracked.VariableFields.JBKNumber.Formatted}"
+                                Unfocused="OnSerialNumberEntryUnfocused"
+                                MaxLength="3"
+                                FontSize="20"
+                                WidthRequest="100"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Lot Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        IsVisible="{Binding EditorTicket.Untracked.Process.RequiredFields.LotNumber}">
+                        <!-- Lot Input Label -->
+                        <Label
+                            x:Name="LotNumberLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Lot #"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="LotNumberInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter the Lot # assigned to this Basket.                                                        ________________________________________________________                                                        NOTE: If your Process is an Originator (assigns Lot #s), this field will be locked.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        <!-- Lot Input Entry Control and Border -->
+                        <Border
+                            x:Name="LotNumberControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="LotNumberEntry"
+                                IsEnabled="{Binding EditorTicket.Untracked.LotManualEntry}"
+                                Text="{Binding EditorTicket.Tracked.VariableFields.LotNumber.Formatted}"
+                                Unfocused="OnSerialNumberEntryUnfocused"
+                                MaxLength="9"
+                                FontSize="20"
+                                WidthRequest="150"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Deburr JBK Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        IsVisible="{Binding EditorTicket.Untracked.Process.RequiredFields.DeburrJBKNumber}">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="DeburrJBKNumberLabel"
+                            Margin="20,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="130"
+                            MinimumWidthRequest="130"
+                            FontSize="20"
+                            Text="Deburr JBK #"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="DeburrJBKNumberInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter the JBK # assigned to the Deburr Basket you used to produce this Basket.                                                        ________________________________________________________                                                        NOTE: Be sure to copy the correct JBK # and copy it EXACTLY.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="DeburrJBKNumberControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="DeburrJBKNumberEntry"
+                                Text="{Binding EditorTicket.Tracked.VariableFields.DeburrJBKNumber.Formatted}"
+                                Unfocused="OnSerialNumberEntryUnfocused"
+                                MaxLength="3"
+                                FontSize="20"
+                                WidthRequest="100"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Die Number Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        IsVisible="{Binding EditorTicket.Untracked.Process.RequiredFields.DieNumber}">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="DieNumberLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Die #"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="DieNumberInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter the Die # that the Parts in this Basket were casted from.                                                        ________________________________________________________                                                        NOTE: Deburr Operators can find the Die # on the Basket's Diecast Label.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="DieNumberControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="DieNumberEntry"
+                                Text="{Binding EditorTicket.Tracked.VariableFields.DieNumber.Literal}"
+                                TextChanged="OnVariableFieldSetEntryTextChanged"
+                                MaxLength="2"
+                                FontSize="20"
+                                WidthRequest="100"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Model Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        IsVisible="{Binding EditorTicket.Untracked.Process.RequiredFields.ModelNumber}">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="ModelNumberLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Model #"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="ModelNumberInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="The Model # assigned to the Parts in this Basket.                                                        ________________________________________________________                                                        NOTE: This field will auto-fill and lock by default. If it does not, please enter the Model # of your Parts and notify Management.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="ModelNumberControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="ModelNumberEntry"
+                                Text="{Binding EditorTicket.Tracked.VariableFields.ModelNumber.Code}"
+                                IsEnabled="False"
+                                MaxLength="3"
+                                FontSize="20"
+                                WidthRequest="100"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Heat Number Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        IsVisible="{Binding EditorTicket.Untracked.Process.RequiredFields.HeatNumber}">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="HeatNumberLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Heat #"/>
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="HeatNumberInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter the Heat # assigned to this Basket.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="HeatNumberControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="HeatNumberEntry"
+                                Text="{Binding EditorTicket.Tracked.VariableFields.HeatNumber.Literal}"
+                                TextChanged="OnVariableFieldSetEntryTextChanged"
+                                FontSize="20"
+                                WidthRequest="150"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+                
+                <!-- Partial Separator -->
+                <BoxView
+                    Margin="0"
+                    HeightRequest="1"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    BackgroundColor="{StaticResource Neutral-20}"/>
+
+                <!-- First Partial Data Set Layout -->
+                <Grid
+                    IsVisible="{Binding EditorTicket.Tracked.HasFirstPartialDataSet}">
+                    <Grid.RowDefinitions>
+                        <!-- Header Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Inputs Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Buttons Row -->
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <!-- Shift Input Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Quantity Input Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Operator Input Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Margin Column -->
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Header Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
+
+                        <!-- Header Label -->
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Margin="20"
+                            FontSize="24"
+                            FontAttributes="Bold"
+                            TextColor="{StaticResource Primary-20}"
+                            Text="Partial Basket #1"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+                        
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="FirstPartialDataSetInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter additional Partial Production information in this area                                                        ________________________________________________________                                                        NOTE: This should be the Lot Information of the SECOND Operator to produce Parts in this Basket.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        
+                        <!-- Print Button -->
+                        <Button
+                            x:Name="PrintFirstPartialProductionDataSetButton"
+                            Clicked="OnPrintPartialProductionDataSetButtonClicked"
+                            Text="Print Label"
+                            Margin="5,10,5,10"
+                            WidthRequest="80"
+                            HeightRequest="25"
+                            MinimumHeightRequest="25"
+                            Padding="0"
+                            FontSize="16"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            ToolTipProperties.Text="Print a temporary Tracking Tag for this Basket's Partial Data.">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-0}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </Button>
+
+                        <!-- Remove Button -->
+                        <Button
+                            x:Name="RemoveFirstPartialProductionDataSetButton"
+                            Clicked="OnRemoveFirstPartialProductionDataSetButtonClicked"
+                            Text="- Remove"
+                            Margin="5,10,5,10"
+                            WidthRequest="80"
+                            HeightRequest="25"
+                            MinimumHeightRequest="25"
+                            Padding="0"
+                            FontSize="16"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"
+                            ToolTipProperties.Text="Remove this Partial Basket Lot Information from the Basket.">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Danger-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Danger-0}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </Button>  
+                    </HorizontalStackLayout>
+
+                    <!-- Shift Number Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="0">
+                        <!-- Input Label -->
+                        <Label
+                            Margin="20,15,0,15"
+                            x:Name="FirstPartialDataSetShiftLabel"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="70"
+                            MinimumWidthRequest="70"
+                            FontSize="20"
+                            Text="Shift"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="FirstPartialDataSetShiftControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Picker
+                                x:Name="FirstPartialDataSetShiftPicker"
+                                SelectedItem="{Binding EditorTicket.Tracked.FirstPartialDataSet.Shift}"
+                                WidthRequest="150"
+                                FontSize="20">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type Enums:Shift}">
+                                        <Enums:Shift>First</Enums:Shift>
+                                        <Enums:Shift>Second</Enums:Shift>
+                                        <Enums:Shift>Third</Enums:Shift>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Quantity Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="1">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="FirstPartialDataSetQuantityLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="110"
+                            MinimumWidthRequest="110"
+                            FontSize="20"
+                            Text="Quantity"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="FirstPartialDataSetQuantityControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="FirstPartialDataSetQuantityEntry"
+                                Text="{Binding EditorTicket.Tracked.FirstPartialDataSet.Quantity.Value}"
+                                TextChanged="OnQuantityEntryTextChanged"
+                                WidthRequest="150"
+                                FontSize="20"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Operator Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="2">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="FirstPartialDataSetOperatorLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Operator"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="FirstPartialDataSetOperatorControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="FirstPartialDataSetOperatorEntry"
+                                Text="{Binding EditorTicket.Tracked.FirstPartialDataSet.Operator.Initials}"
+                                TextChanged="OnOperatorEntryTextChanged"
+                                MaxLength="3"
+                                WidthRequest="150"
+                                FontSize="20"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!-- Partial #2 Separator -->
+                <BoxView
+                    Margin="0"
+                    HeightRequest="1"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="End"
+                    IsVisible="{Binding EditorTicket.Tracked.HasFirstPartialDataSet}"
+                    BackgroundColor="{StaticResource Neutral-20}"/>
+                
+                <!-- Second Partial Data Set Layout -->
+                <Grid
+                    IsVisible="{Binding EditorTicket.Tracked.HasSecondPartialDataSet}">
+                    <Grid.RowDefinitions>
+                        <!-- Header Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Inputs Row -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Buttons Row -->
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <!-- Shift Input Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Quantity Input Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Operator Input Column -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Margin Column -->
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Header Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
+
+                        <!-- Header Label -->
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Margin="20"
+                            FontSize="24"
+                            FontAttributes="Bold"
+                            TextColor="{StaticResource Primary-20}"
+                            Text="Partial Basket #2"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+
+                        <!-- Info Button -->
+                        <ImageButton
+                            x:Name="SecondPartialDataSetInfoButton"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            HeightRequest="30"
+                            MinimumHeightRequest="30"
+                            WidthRequest="30"
+                            MinimumWidthRequest="30"
+                            CornerRadius="30"
+                            Source="information.png"
+                            ToolTipProperties.Text="Enter additional Partial Production information in this area                                                        ________________________________________________________                                                        NOTE: This should be the Lot Information of the THIRD Operator to produce Parts in this Basket.">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                            </ImageButton.Behaviors>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="TransparentStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </ImageButton>
+                        
+                        <!-- Print Button -->
+                        <Button
+                            x:Name="PrintSecondPartialProductionDataSetButton"
+                            Clicked="OnPrintPartialProductionDataSetButtonClicked"
+                            Text="Print Label"
+                            Margin="5,10,5,10"
+                            WidthRequest="80"
+                            HeightRequest="25"
+                            MinimumHeightRequest="25"
+                            Padding="0"
+                            FontSize="16"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            ToolTipProperties.Text="Print a temporary Tracking Tag for this Basket's Partial Data.">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-0}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </Button>
+
+                        <!-- Remove Button -->
+                        <Button
+                            x:Name="RemoveSecondPartialProductionDataSetButton"
+                            Clicked="OnRemoveSecondPartialProductionDataSetButtonClicked"
+                            Text="- Remove"
+                            Margin="5,10,5,10"
+                            WidthRequest="80"
+                            HeightRequest="25"
+                            MinimumHeightRequest="25"
+                            Padding="0"
+                            FontSize="16"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"
+                            ToolTipProperties.Text="Remove this Partial Basket Lot Information from the Basket.">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-OffWhite}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDark}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Neutral-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextDarkDisabled}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Danger-20}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Danger-0}"/>
+                                                <Setter Property="TextColor" Value="{StaticResource TextLight}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </Button>  
+                    </HorizontalStackLayout>
+
+                    <!-- Shift Number Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="0">
+                        <!-- Input Label -->
+                        <Label
+                            Margin="20,15,0,15"
+                            x:Name="SecondPartialDataSetShiftLabel"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="70"
+                            MinimumWidthRequest="70"
+                            FontSize="20"
+                            Text="Shift"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="SecondPartialDataSetShiftControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Picker
+                                x:Name="SecondPartialDataSetShiftPicker"
+                                SelectedItem="{Binding EditorTicket.Tracked.SecondPartialDataSet.Shift}"
+                                WidthRequest="150"
+                                FontSize="20">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type Enums:Shift}">
+                                        <Enums:Shift>First</Enums:Shift>
+                                        <Enums:Shift>Second</Enums:Shift>
+                                        <Enums:Shift>Third</Enums:Shift>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Quantity Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="1">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="SecondPartialDataSetQuantityLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="110"
+                            MinimumWidthRequest="110"
+                            FontSize="20"
+                            Text="Quantity"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="SecondPartialDataSetQuantityControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="SecondPartialDataSetQuantityEntry"
+                                Text="{Binding EditorTicket.Tracked.SecondPartialDataSet.Quantity.Value}"
+                                TextChanged="OnQuantityEntryTextChanged"
+                                WidthRequest="150"
+                                FontSize="20"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Operator Input Layout -->
+                    <HorizontalStackLayout
+                        Grid.Row="1"
+                        Grid.Column="2">
+                        <!-- Input Label -->
+                        <Label
+                            x:Name="SecondPartialDataSetOperatorLabel"
+                            Margin="60,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="Operator"/>
+                        <!-- Input Entry Control and Border -->
+                        <Border
+                            x:Name="SecondPartialDataSetOperatorControl"
+                            Margin="0,15,0,15"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 0">
+                            <Entry
+                                x:Name="SecondPartialDataSetOperatorEntry"
+                                Text="{Binding EditorTicket.Tracked.SecondPartialDataSet.Operator.Initials}"
+                                TextChanged="OnOperatorEntryTextChanged"
+                                MaxLength="3"
+                                WidthRequest="150"
+                                FontSize="20"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!-- Add Partial Production Dataset Button -->
+                <Button
+                    x:Name="AddPartialProductionDatasetButton"
+                    Clicked="OnAddPartialProductionDataSetButtonClicked"
+                    IsVisible="{Binding EditorTicket.Tracked.HasSpace}"
+                    Margin="20"
+                    WidthRequest="250"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Text="+ Add Partial Basket"
+                    FontSize="18"
+                    ToolTipProperties.Text="Create a new set of Partial Production Data to fill out."/>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
