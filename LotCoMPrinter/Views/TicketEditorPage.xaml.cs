@@ -14,11 +14,6 @@ public partial class TicketEditorPage : ContentPage
     private TicketEditorPageViewModel ViewModel;
 
     /// <summary>
-    /// The MainPage instance that precedes the Editor in the Navigation Stack.
-    /// </summary>
-    private readonly MainPage Presenter;
-
-    /// <summary>
     /// StaticResource Grey500 color.
     /// </summary>
     private static readonly Color Grey500 = new Color(110, 110, 110);
@@ -183,7 +178,13 @@ public partial class TicketEditorPage : ContentPage
 		// close was confirmed
 		else
 		{
-			if (ViewModel.EditorTicket is null)
+			// save and close the Ticket Editor Menu window
+			ViewModel.EditorTicket!.MergeChanges();
+			try
+			{
+				await ViewModel.SaveTickets(Navigation.NavigationStack[^2]);
+			}
+			catch (SystemException)
 			{
 				this.ShowPopup
 				(
@@ -192,14 +193,10 @@ public partial class TicketEditorPage : ContentPage
 						"Unexpected Error",
 						"We encountered an unexpected error. Please see Management to resolve this issue." +
 						"\n\nReference message: " +
-						"Cannot close 'null'."
+						"Could not save current OpenPrintTickets to the cache."
 					)
 				);
-			}
-			else
-			{
-				// close the Ticket Editor Menu window
-				ViewModel.EditorTicket = new TrackedPrintTicket(ViewModel.EditorTicket!.Untracked);
+				return;
 			}
 		}
 		// return to previous view (presenter)
@@ -218,18 +215,23 @@ public partial class TicketEditorPage : ContentPage
 			"Yes, delete",
 			"No, go back"
 		);
-		// confirm the close action
+		// confirm the delete action
 		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
-		// close was cancelled
+		// delete was cancelled
 		if (Confirmation is null || !(bool)Confirmation)
 		{
 			return;
 		}
-		// close was confirmed
+		// delete was confirmed
 		else
 		{
-			// get the index of the EditorTicket in OpenPrintTickets
-			if (ViewModel.EditorTicket is null)
+			// confirm that the EditorTicket exists in OpenPrintTickets and remove it
+			bool Removed = false;
+			try
+			{
+				Removed = await ViewModel.DeleteTicket(Navigation.NavigationStack[^2]);
+			}
+			catch (SystemException)
 			{
 				this.ShowPopup
 				(
@@ -238,13 +240,10 @@ public partial class TicketEditorPage : ContentPage
 						"Unexpected Error",
 						"We encountered an unexpected error. Please see Management to resolve this issue." +
 						"\n\nReference message: " +
-						"Cannot delete 'null' from OpenPrintTickets."
+						"The PrintTicket was not found or could not be removed from OpenPrintTickets."
 					)
 				);
-				return;
 			}
-			// confirm that the EditorTicket exists in OpenPrintTickets and remove it
-			bool Removed = Presenter.ViewModel.OpenPrintTickets.Remove(ViewModel.EditorTicket!.Untracked);
 			if (!Removed)
 			{
 				this.ShowPopup
@@ -259,8 +258,6 @@ public partial class TicketEditorPage : ContentPage
 				);
 				return;
 			}
-			// close the Ticket Editor Menu window
-			await Presenter.ViewModel.SaveOpenPrintTickets();
 		}
 		// return to previous view (presenter)
 		await Navigation.PopAsync();
@@ -289,10 +286,10 @@ public partial class TicketEditorPage : ContentPage
 		else
 		{
 			// attempt to print the Label
-			bool Printed = false;
+			bool Printed;
 			try
 			{
-				Printed = await ViewModel.Print();
+				Printed = await ViewModel.PrintTicket(Navigation.NavigationStack[^2]);
 			}
 			// catch and handle validation messages
 			catch (ArgumentException _ex)
@@ -638,10 +635,9 @@ public partial class TicketEditorPage : ContentPage
     /// </summary>
     /// <param name="EditorTicket"></param>
     /// <param name="Presenter"></param>
-    public TicketEditorPage(PrintTicket EditorTicket, MainPage Presenter)
+    public TicketEditorPage(PrintTicket EditorTicket)
     {
-        this.Presenter = Presenter;
-        ViewModel = new TicketEditorPageViewModel(EditorTicket, Presenter);
+        ViewModel = new TicketEditorPageViewModel(EditorTicket);
         BindingContext = ViewModel;
         InitializeComponent();
     }
