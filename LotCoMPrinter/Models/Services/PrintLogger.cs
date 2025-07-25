@@ -37,7 +37,7 @@ public static class PrintLogger
         }
         if (Requirements.DieNumber)
         {
-            Log = $"{Log},{JobSource.VariableFields.DieNumber!.Literal}";
+            Log = $"{Log},{JobSource.VariableFields.DieNumber!.Formatted}";
         }
         if (Requirements.HeatNumber)
         {
