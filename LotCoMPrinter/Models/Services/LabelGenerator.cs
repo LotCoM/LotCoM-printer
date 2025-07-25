@@ -43,7 +43,7 @@ public static class LabelGenerator
             }
             if (RequiredFields.DieNumber)
             {
-                Data.Add(Ticket.VariableFields.DieNumber!.Literal.ToString());
+                Data.Add(Ticket.VariableFields.DieNumber!.Formatted);
             }
             if (RequiredFields.HeatNumber)
             {
@@ -93,7 +93,7 @@ public static class LabelGenerator
             }
             if (RequiredFields.DieNumber)
             {
-                Body.Add($"Die #: {Ticket.VariableFields.DieNumber!.Literal}");
+                Body.Add($"Die #: {Ticket.VariableFields.DieNumber!.Formatted}");
             }
             if (RequiredFields.HeatNumber)
             {

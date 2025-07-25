@@ -406,7 +406,7 @@ public partial class TicketEditorPage : ContentPage
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.VariableFields.DieNumber = new DieNumber(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.VariableFields.DieNumber = new DieNumber(e.NewTextValue);
 				DieNumberControl.Stroke = Grey500;
 			}
 			catch

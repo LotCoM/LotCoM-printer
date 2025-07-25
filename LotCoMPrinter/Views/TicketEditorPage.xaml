@@ -864,9 +864,9 @@
                             StrokeShape="RoundRectangle 0">
                             <Entry
                                 x:Name="DieNumberEntry"
-                                Text="{Binding EditorTicket.Tracked.VariableFields.DieNumber.Literal}"
+                                Text="{Binding EditorTicket.Tracked.VariableFields.DieNumber.Formatted}"
                                 TextChanged="OnVariableFieldSetEntryTextChanged"
-                                MaxLength="2"
+                                MaxLength="3"
                                 FontSize="20"
                                 WidthRequest="100"/>
                         </Border>
