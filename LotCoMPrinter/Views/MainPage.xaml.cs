@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Maui.Views;
 using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
-using LotComPrinter.Models.Exceptions;
 using LotComPrinter.ViewModels;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -167,54 +166,9 @@ public partial class MainPage : ContentPage
 		}
 		// save the selected PrintTicket object
 		PrintTicket SelectedReprintTicket = (PrintTicket)Result;
-		// attempt to print the Label
-		bool Printed = false;
-		try
-		{
-			Printed = await ViewModel.ReprintLabel(SelectedReprintTicket);
-		}
-		// catch and handle print spooling messages
-		catch (PrintRequestException _ex)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Reprint Failed",
-					$"The Print request could not be completed." +
-					" Please see Management to resolve this issue." +
-					$"\n\nReference message: {_ex.Message}."
-				)
-			);
-			return;
-		}
-		// catch other, unexpected issues
-		catch (Exception _ex)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Reprint Failed",
-					$"We encountered an unexpected error." +
-					" Please see Management to resolve this issue." +
-					$"\n\nReference message: {_ex.Message}."
-				)
-			);
-			return;
-		}
-		// print was successful
-		if (Printed)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Label Reprinted",
-					$"Label reprinting was successful. Retrieve your new Label Copy from the Printer!"
-				)
-			);
-		}
+		// create a new TicketReprintEditor for the Selected Ticket
+		TicketReprintEditorPage ReprintEditor = new TicketReprintEditorPage(SelectedReprintTicket);
+		await Navigation.PushAsync(ReprintEditor);
 	}
 
 	/// <summary>
