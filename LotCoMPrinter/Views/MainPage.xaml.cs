@@ -155,8 +155,8 @@ public partial class MainPage : ContentPage
 		}
 		// save the selected Process object
 		Process SelectedProcess = (Process)Result;
-		// create a new ReprintList popup for the Selected Process
-		ReprintListPopup ReprintSelection = new ReprintListPopup(SelectedProcess);
+		// create a new ReprintSelection popup for the Selected Process
+		ReprintSelectionPopup ReprintSelection = new ReprintSelectionPopup(SelectedProcess);
 		Result = await this.ShowPopupAsync
 		(
 			ReprintSelection

@@ -5,7 +5,7 @@ using LotComPrinter.Models.Datatypes;
 
 namespace LotComPrinter.Views;
 
-public partial class ReprintListPopup : Popup 
+public partial class ReprintSelectionPopup : Popup 
 {
     /// <summary>
     /// Contains the Process object passed to the Popup for History retrieval.
@@ -116,7 +116,7 @@ public partial class ReprintListPopup : Popup
     /// Creates a Simple Popup that contains a List of Print History from a Process.
     /// </summary>
     /// <param name="Process"></param>
-    public ReprintListPopup(Process Process)
+    public ReprintSelectionPopup(Process Process)
     {
         InitializeComponent();
         // assign properties
