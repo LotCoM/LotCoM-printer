@@ -7,6 +7,19 @@ namespace LotComPrinter.Views;
 
 public partial class ReprintSelectionPopup : Popup 
 {
+    private const int DefaultStroke = 1;
+    private const int ErrorStroke = 2;
+
+    /// <summary>
+    /// StaticResource Neutral-20 color.
+    /// </summary>
+    private static readonly Color Neutral20 = new Color(145, 145, 145);
+
+    /// <summary>
+    /// StaticResource Danger-20 color.
+    /// </summary>
+    private static readonly Color Danger0 = new Color(180, 28, 43);
+
     /// <summary>
     /// Contains the Process object passed to the Popup for History retrieval.
     /// </summary>
@@ -76,6 +89,12 @@ public partial class ReprintSelectionPopup : Popup
     /// <param name="e"></param>
     private async void OnConfirmButtonClicked(object sender, EventArgs e)
     {
+        if (SelectedTicket is null)
+        {
+            LabelReprintCollectionControl.StrokeThickness = ErrorStroke;
+            LabelReprintCollectionControl.Stroke = Danger0;
+            return;
+        }
         CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         await CloseAsync(SelectedTicket, TokenSource.Token);
     }
