@@ -76,7 +76,7 @@
                 FontSize="32"
                 FontAttributes="Bold"
                 TextColor="{StaticResource Primary-20}"
-                Text="Label Editor"/>
+                Text="Label Reprint Editor"/>
 
             <!-- Ticket Name Label -->
             <Label
@@ -95,11 +95,49 @@
                 Grid.Column="1"
                 HorizontalOptions="End"
                 VerticalOptions="Center">
+                <!-- Cancel Button -->
+                <Button
+                    x:Name="CancelTicketEditorButton"
+                    Clicked="OnCancelTicketEditorButtonClicked"
+                    Text="Cancel"
+                    FontSize="20"
+                    Margin="20"
+                    WidthRequest="100"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="WarnStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnNormalStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnDisabledStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnPressedStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Property="Style" Value="{StaticResource WarnPointerOverStyle}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </Button>
                 <!-- Reprint Button -->
                 <Button
                     x:Name="ReprintTicketButton"
                     Clicked="OnReprintTicketEditorButtonClicked"
-                    Text="Print"
+                    Text="Reprint"
                     FontSize="20"
                     Margin="20"
                     WidthRequest="100"
@@ -162,64 +200,84 @@
                     </Grid.ColumnDefinitions>
                     
                     <!-- Ticket Title Layout -->
-                    <HorizontalStackLayout
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="2"
-                        Margin="20,20,0,10">
-                        <!-- Title Label -->
-                        <Label
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            FontSize="24"
-                            FontAttributes="Bold"
-                            TextColor="{StaticResource Primary-20}"
-                            Text="Initial Production Data"/>
-                        <!-- Info Button -->
-                        <ImageButton
-                            x:Name="InitialProductionDataInfoButton"
-                            VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            HeightRequest="30"
-                            MinimumHeightRequest="30"
-                            WidthRequest="30"
-                            MinimumWidthRequest="30"
-                            CornerRadius="30"
-                            Source="information.png"
-                            ToolTipProperties.Text="Enter the Initial Production information in this area                                                        ________________________________________________________                                                        NOTE: This should be the Lot Information of the FIRST Operator to produce Parts in this Basket.                                                        ________________________________________________________                                                        To add Parts from a different shift to this Label, click the 'Add Partial Basket' Button.">
-                            <ImageButton.Behaviors>
-                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
-                            </ImageButton.Behaviors>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroupList>
-                                    <VisualStateGroup x:Name="TransparentStates">
-                                        <VisualState x:Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Disabled">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="PointerOver">
-                                            <VisualState.Setters>
-                                                <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateGroupList>
-                            </VisualStateManager.VisualStateGroups>
-                        </ImageButton>
-                    </HorizontalStackLayout>
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="20,20,0,10">
+                            <!-- Title Label -->
+                            <Label
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                FontSize="24"
+                                FontAttributes="Bold"
+                                TextColor="{StaticResource Primary-20}"
+                                Text="Initial Production Data"/>
+                            <!-- Info Button -->
+                            <ImageButton
+                                x:Name="InitialProductionDataInfoButton"
+                                Margin="10,0,0,0"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                HeightRequest="30"
+                                MinimumHeightRequest="30"
+                                WidthRequest="30"
+                                MinimumWidthRequest="30"
+                                CornerRadius="30"
+                                Source="information.png"
+                                ToolTipProperties.Text="The Initial Production information for this Label                                                      ________________________________________________________                                                        NOTE: This is the Lot Information of the FIRST Operator to produce Parts in this Basket.                                                               ________________________________________________________                                                        To add Parts from a different shift to this Label, click the 'Add Partial Basket' Button.">
+                                <ImageButton.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{StaticResource Neutral-Black}"/>
+                                </ImageButton.Behaviors>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroupList>
+                                        <VisualStateGroup x:Name="TransparentStates">
+                                            <VisualState x:Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Style" Value="{StaticResource TransparentNormalStyle}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Style" Value="{StaticResource TransparentDisabledStyle}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Style" Value="{StaticResource TransparentPressedStyle}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Style" Value="{StaticResource TransparentPointerOverStyle}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateGroupList>
+                                </VisualStateManager.VisualStateGroups>
+                            </ImageButton>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Image
+                                Margin="20,0,0,15"
+                                Source="annotation_warning.png"
+                                WidthRequest="30"
+                                HeightRequest="30"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"/>
+                            <Label
+                                Margin="10,0,0,15"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                Text="This information cannot be changed on reprint."
+                                FontSize="18"
+                                FontAttributes="Bold"
+                                TextColor="{StaticResource Warn-0}"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
                     
-                    <!-- Process/Part Information Layout -->
+                    <!-- Immutable Information Layout -->
                     <Grid
                         Grid.Row="1"
                         Grid.Column="0">
@@ -228,6 +286,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
@@ -247,24 +306,60 @@
                             Grid.Column="1"
                             FontSize="20"
                             TextColor="{StaticResource TextDark}"
-                            Margin="40,0,0,0"
+                            Margin="20,0,0,0"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
                             Text="{Binding EditorTicket.Untracked.Part.PartNumber, StringFormat='Part: {0}'}"/>
                         <!-- Part Name Label -->
                         <Label
-                            Grid.Row="1"
-                            Grid.Column="1"
+                            Grid.Row="0"
+                            Grid.Column="2"
                             FontSize="20"
                             TextColor="{StaticResource TextDark}"
-                            Margin="85,0,0,20"
+                            Margin="20,0,0,0"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
                             Text="{Binding EditorTicket.Untracked.Part.PartName}"/>
+                        <!-- Date Display -->
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            x:Name="ProductionDateLabel"
+                            Margin="20,20,0,20"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            WidthRequest="130"
+                            MinimumWidthRequest="130"
+                            FontSize="20"
+                            Text="{Binding EditorTicket.Untracked.ProductionDate, StringFormat='Date: {0}'}"/>
+                        <!-- Shift Display -->
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="20,20,0,20"
+                            x:Name="ShiftLabel"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="{Binding EditorTicket.Untracked.ProductionShift, StringFormat='Shift: {0}'}"/>
+                        <!-- Operator Display -->
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="20,20,0,20"
+                            x:Name="OperatorLabel"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            WidthRequest="100"
+                            MinimumWidthRequest="100"
+                            FontSize="20"
+                            Text="{Binding EditorTicket.Untracked.ProductionOperator.Initials, StringFormat='Operator: {0}'}"/>
                     </Grid>
                 </Grid>
 
-                <!-- Process/Part Separator Bar -->
+                <!-- Immutables Separator Bar -->
                 <BoxView
                     Margin="0"
                     HeightRequest="1"
@@ -272,12 +367,9 @@
                     VerticalOptions="End"
                     BackgroundColor="{StaticResource Neutral-20}"/>
 
-                <!-- Production Data Fields Layout -->
+                <!-- Variable Data Fields Layout -->
                 <Grid>
                     <Grid.RowDefinitions>
-                        <!-- Date / Shift / Operator Row (Constant 3) -->
-                        <!-- These Controls are all Disabled by Default -->
-                        <RowDefinition Height="Auto"/>
                         <!-- Quantity / JBK / Lot Row (Max 3) -->
                         <!-- Dynamically Show Depending on Requirements -->
                         <RowDefinition Height="Auto"/>
@@ -286,129 +378,14 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <!-- Production Date Column -->
                         <ColumnDefinition Width="Auto"/>
-                        <!-- Production Shift Column -->
                         <ColumnDefinition Width="Auto"/>
-                        <!-- Production Operator Column -->
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
-                    <!-- Date Control -->
-                    <HorizontalStackLayout
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill">
-                        <!-- Input Label -->
-                        <Label
-                            x:Name="ProductionDateLabel"
-                            Margin="20,15,0,15"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="130"
-                            MinimumWidthRequest="130"
-                            FontSize="20"
-                            Text="Date"/>
-                        <!-- Input DatePicker Control and Border -->
-                        <Border
-                            x:Name="ProductionDateControl"
-                            Margin="30,15,0,15"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            HeightRequest="40"
-                            StrokeThickness="1.5"
-                            StrokeShape="RoundRectangle 0">
-                            <DatePicker
-                                x:Name="ProductionDatePicker"
-                                IsEnabled="False"
-                                Date="{Binding EditorTicket.Untracked.ProductionDate}"
-                                FontSize="18"
-                                WidthRequest="150"/>
-                        </Border>
-                    </HorizontalStackLayout>
-
-                    <!-- Shift Control -->
-                    <HorizontalStackLayout
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill">
-                        <!-- Input Label -->
-                        <Label
-                            Margin="60,15,0,15"
-                            x:Name="ShiftLabel"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="100"
-                            MinimumWidthRequest="100"
-                            FontSize="20"
-                            Text="Shift"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="ShiftControl"
-                            Margin="30,15,0,15"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            HeightRequest="40"
-                            StrokeThickness="1.5"
-                            StrokeShape="RoundRectangle 0">
-                            <Picker
-                                x:Name="ShiftPicker"
-                                IsEnabled="False"
-                                SelectedItem="{Binding EditorTicket.Untracked.ProductionShift}"
-                                FontSize="18"
-                                WidthRequest="100">
-                                <Picker.ItemsSource>
-                                    <x:Array Type="{x:Type Enums:Shift}">
-                                        <Enums:Shift>First</Enums:Shift>
-                                        <Enums:Shift>Second</Enums:Shift>
-                                        <Enums:Shift>Third</Enums:Shift>
-                                    </x:Array>
-                                </Picker.ItemsSource>
-                            </Picker>
-                        </Border>
-                    </HorizontalStackLayout>
-
-                    <!-- Operator Control -->
-                    <HorizontalStackLayout
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill">
-                        <!-- Input Label -->
-                        <Label
-                            Margin="60,15,0,15"
-                            x:Name="OperatorLabel"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="100"
-                            MinimumWidthRequest="100"
-                            FontSize="20"
-                            Text="Operator"/>
-                        <!-- Input Entry Control and Border -->
-                        <Border
-                            x:Name="OperatorControl"
-                            Margin="30,15,0,15"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Start"
-                            HeightRequest="40"
-                            StrokeThickness="1.5"
-                            StrokeShape="RoundRectangle 0">
-                            <Entry
-                                x:Name="OperatorEntry"
-                                IsEnabled="False"
-                                Text="{Binding EditorTicket.Untracked.ProductionOperator.Initials}"
-                                TextChanged="OnOperatorEntryTextChanged"
-                                MaxLength="3"
-                                FontSize="20"
-                                WidthRequest="100"/>
-                        </Border>
-                    </HorizontalStackLayout>
 
                     <!-- Quantity Control -->
                     <HorizontalStackLayout
-                        Grid.Row="1"
+                        Grid.Row="0"
                         Grid.Column="0"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill">
@@ -484,7 +461,7 @@
 
                     <!-- JBK Input Layout -->
                     <HorizontalStackLayout
-                        Grid.Row="1"
+                        Grid.Row="0"
                         Grid.Column="1"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill"
@@ -563,7 +540,7 @@
 
                     <!-- Lot Input Layout -->
                     <HorizontalStackLayout
-                        Grid.Row="1"
+                        Grid.Row="0"
                         Grid.Column="2"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill"
@@ -642,7 +619,7 @@
 
                     <!-- Deburr JBK Input Layout -->
                     <HorizontalStackLayout
-                        Grid.Row="2"
+                        Grid.Row="1"
                         Grid.Column="0"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill"
@@ -720,7 +697,7 @@
 
                     <!-- Die Number Input Layout -->
                     <HorizontalStackLayout
-                        Grid.Row="2"
+                        Grid.Row="1"
                         Grid.Column="1"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill"
@@ -798,7 +775,7 @@
 
                     <!-- Heat Number Input Layout -->
                     <HorizontalStackLayout
-                        Grid.Row="2"
+                        Grid.Row="1"
                         Grid.Column="2"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill"
