@@ -155,81 +155,104 @@ public partial class TicketReprintEditorPage : ContentPage
 			);
 		}
 	}
-    
+	
 	/// <summary>
-    /// Handler for the Clicked event from the PrintTicketEditorButton control.
+    /// Handler for the Clicked event from the CancelTicketEditorButton control.
     /// </summary>
-    private async void OnReprintTicketEditorButtonClicked(object sender, EventArgs e)
+    private async void OnCancelTicketEditorButtonClicked(object sender, EventArgs e)
     {
         ConfirmPopup Confirm = new ConfirmPopup
         (
-            "Finalize Label and Reprint?",
-            "Are you sure you would like to finish editing this Label and Reprint it?",
-            "Yes, reprint",
-            "No, go back"
+            "Cancel Label Reprint?",
+            "Are you sure you would like to cancel reprinting?",
+            "Yes, cancel",
+            "No, continue"
         );
         // confirm the reprint action
         object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
-        // reprint was cancelled
+        // cancellation was cancelled
         if (Confirmation is null || !(bool)Confirmation)
         {
             return;
         }
-        // reprint was confirmed
-        else
-        {
-            // attempt to reprint the Label
-            bool Printed = false;
-            try
-            {
-                Printed = await ViewModel.ReprintTicket();
-            }
-            // catch and handle print spooling messages
-            catch (PrintRequestException _ex)
-            {
-                this.ShowPopup
-                (
-                    new BasicPopup
-                    (
-                        "Reprint Failed",
-                        $"The Print request could not be completed." +
-                        " Please see Management to resolve this issue." +
-                        $"\n\nReference message: {_ex.Message}."
-                    )
-                );
-                return;
-            }
-            // catch other, unexpected issues
-            catch (Exception _ex)
-            {
-                this.ShowPopup
-                (
-                    new BasicPopup
-                    (
-                        "Reprint Failed",
-                        $"We encountered an unexpected error." +
-                        " Please see Management to resolve this issue." +
-                        $"\n\nReference message: {_ex.Message}."
-                    )
-                );
-                return;
-            }
-            // print was successful
-            if (Printed)
-            {
-                this.ShowPopup
-                (
-                    new BasicPopup
-                    (
-                        "Label Reprinted",
-                        $"Label reprinting was successful. Retrieve your new Label Copy from the Printer!"
-                    )
-                );
-            }
-        }
-        // return to previous view (presenter)
+        // cancellation was confirmed
         await Navigation.PopAsync();
     }
+    
+	/// <summary>
+	/// Handler for the Clicked event from the PrintTicketEditorButton control.
+	/// </summary>
+	private async void OnReprintTicketEditorButtonClicked(object sender, EventArgs e)
+	{
+		ConfirmPopup Confirm = new ConfirmPopup
+		(
+			"Finalize Label and Reprint?",
+			"Are you sure you would like to finish editing this Label and Reprint it?",
+			"Yes, reprint",
+			"No, go back"
+		);
+		// confirm the reprint action
+		object? Confirmation = await this.ShowPopupAsync(Confirm, CancellationToken.None);
+		// reprint was cancelled
+		if (Confirmation is null || !(bool)Confirmation)
+		{
+			return;
+		}
+		// reprint was confirmed
+		else
+		{
+			// attempt to reprint the Label
+			bool Printed = false;
+			try
+			{
+				Printed = await ViewModel.ReprintTicket();
+			}
+			// catch and handle print spooling messages
+			catch (PrintRequestException _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Reprint Failed",
+						$"The Print request could not be completed." +
+						" Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex.Message}."
+					)
+				);
+				return;
+			}
+			// catch other, unexpected issues
+			catch (Exception _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Reprint Failed",
+						$"We encountered an unexpected error." +
+						" Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex.Message}."
+					)
+				);
+				return;
+			}
+			// print was successful
+			if (Printed)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Label Reprinted",
+						$"Label reprinting was successful. Retrieve your new Label Copy from the Printer!"
+					)
+				);
+			}
+		}
+		// return to previous view (presenter)
+		await Navigation.PopAsync();
+	}
     
 	/// <summary>
 	/// Handler for the TextChanged event from the VariableFieldSet Entry controls.
@@ -390,19 +413,6 @@ public partial class TicketReprintEditorPage : ContentPage
 		{
 			return;
 		}
-		// Main Quantity was updated
-		if (sender.Equals(QuantityEntry))
-		{
-			try
-			{
-				ViewModel.EditorTicket.Tracked.ProductionQuantity = new Quantity(int.Parse(e.NewTextValue));
-				QuantityControl.Stroke = Grey500;
-			}
-			catch
-			{
-				QuantityControl.Stroke = Colors.Red;
-			}
-		}
 		// First Partial Quantity was updated
 		else if
 		(
@@ -438,7 +448,7 @@ public partial class TicketReprintEditorPage : ContentPage
 			}
 		}
 	}
-
+	
 	/// <summary>
 	/// Handler for the TextChanged event from any of the Operator Initials Entry controls.
 	/// </summary>
@@ -455,26 +465,16 @@ public partial class TicketReprintEditorPage : ContentPage
 		{
 			return;
 		}
-		PrintTicket Ticket = ViewModel.EditorTicket.Tracked;
-		// Main Operator was updated
-		if (sender.Equals(OperatorEntry))
-		{
-			try
-			{
-				Ticket.ProductionOperator = new Operator(e.NewTextValue);
-				OperatorControl.Stroke = Grey500;
-			}
-			catch
-			{
-				OperatorControl.Stroke = Colors.Red;
-			}
-		}
 		// First Partial Operator was updated
-		else if (sender.Equals(FirstPartialDataSetOperatorEntry) && Ticket.HasFirstPartialDataSet)
+		if
+		(
+			ViewModel.EditorTicket.Tracked.HasFirstPartialDataSet &&
+			sender.Equals(FirstPartialDataSetOperatorEntry)
+		)
 		{
 			try
 			{
-				Ticket.FirstPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				ViewModel.EditorTicket.Tracked.FirstPartialDataSet!.Operator = new Operator(e.NewTextValue);
 				FirstPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch
@@ -483,11 +483,15 @@ public partial class TicketReprintEditorPage : ContentPage
 			}
 		}
 		// Second Partial Operator was updated
-		else if (sender.Equals(SecondPartialDataSetOperatorEntry) && Ticket.HasSecondPartialDataSet)
+		else if
+		(
+			ViewModel.EditorTicket.Tracked.HasSecondPartialDataSet &&
+			sender.Equals(SecondPartialDataSetOperatorEntry)
+		)
 		{
 			try
 			{
-				Ticket.SecondPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				ViewModel.EditorTicket.Tracked.SecondPartialDataSet!.Operator = new Operator(e.NewTextValue);
 				SecondPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch
@@ -498,13 +502,13 @@ public partial class TicketReprintEditorPage : ContentPage
 	}
 
     /// <summary>
-    /// Creates a Ticket Editor page for EditorTicket.
-    /// </summary>
-    /// <param name="EditorTicket"></param>
-    public TicketReprintEditorPage(PrintTicket EditorTicket)
-    {
-        ViewModel = new TicketReprintEditorPageViewModel(EditorTicket);
-        BindingContext = ViewModel;
-        InitializeComponent();
-    }
+	/// Creates a Ticket Editor page for EditorTicket.
+	/// </summary>
+	/// <param name="EditorTicket"></param>
+	public TicketReprintEditorPage(PrintTicket EditorTicket)
+	{
+		ViewModel = new TicketReprintEditorPageViewModel(EditorTicket);
+		BindingContext = ViewModel;
+		InitializeComponent();
+	}
 }
