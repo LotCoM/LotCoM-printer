@@ -3,12 +3,12 @@
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:datatypes="clr-namespace:LotComPrinter.Models.Datatypes"
                xmlns:views="clr-namespace:LotComPrinter.Views"
-               x:DataType="views:ReprintListPopup"
-               x:Class="LotComPrinter.Views.ReprintListPopup">
+               x:DataType="views:ReprintSelectionPopup"
+               x:Class="LotComPrinter.Views.ReprintSelectionPopup">
     
     <!-- Style the Popup Window -->
     <toolkit:Popup.Resources>
-        <Style TargetType="{x:Type views:ReprintListPopup}">
+        <Style TargetType="{x:Type views:ReprintSelectionPopup}">
             <Setter Property="Color" Value="Transparent" />
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="Start" />

@@ -624,6 +624,107 @@ public partial class PrintTicket : ObservableObject
     }
 
     /// <summary>
+    /// Creates a deep copy of the Source, removing all referential equivalencies.
+    /// </summary>
+    /// <param name="Source"></param>
+    /// <returns></returns>
+    public static PrintTicket DeepCopy(PrintTicket Source)
+    {
+        PrintTicket Copy = new PrintTicket
+        (
+            Source.Process,
+            Source.Part,
+            Source.SerializationMode,
+            new SerialNumber
+            (
+                Source.SerializationMode,
+                Source.Part,
+                Source.SerialNumber.Value
+            ),
+            new DateTime(Source.ProductionDate.Ticks),
+            Source.ProductionShift,
+            new Quantity
+            (
+                Source.ProductionQuantity.Value
+            ),
+            new Operator
+            (
+                Source.ProductionOperator.Initials
+            ),
+            new VariableFieldSet
+            (
+
+            )
+        );
+        if (Source.VariableFields.JBKNumber is not null)
+        {
+            Copy.VariableFields.JBKNumber = new JBKNumber
+            (
+                Source.VariableFields.JBKNumber.Literal
+            );
+        }
+        if (Source.VariableFields.LotNumber is not null)
+        {
+            Copy.VariableFields.LotNumber = new LotNumber
+            (
+                Source.VariableFields.LotNumber.Literal
+            );
+        }
+        if (Source.VariableFields.DieNumber is not null)
+        {
+            Copy.VariableFields.DieNumber = new DieNumber
+            (
+                Source.VariableFields.DieNumber.Formatted
+            );
+        }
+        if (Source.VariableFields.DeburrJBKNumber is not null)
+        {
+            Copy.VariableFields.DeburrJBKNumber = new JBKNumber
+            (
+                Source.VariableFields.DeburrJBKNumber.Literal
+            );
+        }
+        if (Source.VariableFields.HeatNumber is not null)
+        {
+            Copy.VariableFields.HeatNumber = new HeatNumber
+            (
+                Source.VariableFields.HeatNumber.Literal
+            );
+        }
+        if (Source.FirstPartialDataSet is not null)
+        {
+            Copy.FirstPartialDataSet = new PartialDataSet
+            (
+                new Quantity
+                (
+                    Source.FirstPartialDataSet.Quantity.Value
+                ),
+                Source.FirstPartialDataSet.Shift,
+                new Operator
+                (
+                    Source.FirstPartialDataSet.Operator.Initials
+                )
+            );
+        }
+        if (Source.SecondPartialDataSet is not null)
+        {
+            Copy.SecondPartialDataSet = new PartialDataSet
+            (
+                new Quantity
+                (
+                    Source.SecondPartialDataSet.Quantity.Value
+                ),
+                Source.SecondPartialDataSet.Shift,
+                new Operator
+                (
+                    Source.SecondPartialDataSet.Operator.Initials
+                )
+            );
+        }
+        return Copy;
+    }
+
+    /// <summary>
     /// Adds a PartialDataSet to either the First or Second PartialDataSet slot.
     /// </summary>
     /// <param name="DataSet"></param>
