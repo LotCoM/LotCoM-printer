@@ -93,13 +93,12 @@ public static class PrintLogger
             );
         }
         // read the Datafile for the Process and attempt to locate the Existing log
-        List<string> LinesList;
+        string[] Lines;
         int Position;
         try
         {
-            IEnumerable<string> Lines = await File.ReadAllLinesAsync($"{PrintDatabase}\\{ExistingSource.Process}.txt");
-            LinesList = Lines.ToList();
-            Position = LinesList.BinarySearch(GenerateLog(new PrintJob(ExistingSource, PrintJobType.Reprint)));
+            Lines = await File.ReadAllLinesAsync($"{PrintDatabase}\\{ExistingSource.Process}.txt");
+            Position = Lines.IndexOf(GenerateLog(new PrintJob(ExistingSource, PrintJobType.Full)));
         }
         catch (OperationCanceledException)
         {
@@ -111,10 +110,17 @@ public static class PrintLogger
             return false;
         }
         // overwrite the Log in Lines and re-write
-        LinesList[Position] = GenerateLog(new PrintJob(NewSource, PrintJobType.Reprint));
         try
         {
-            await File.WriteAllLinesAsync($"{PrintDatabase}\\{ExistingSource.Process}.txt", LinesList);
+            Lines.SetValue(GenerateLog(new PrintJob(NewSource, PrintJobType.Reprint)), Position);
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        try
+        {
+            await File.WriteAllLinesAsync($"{PrintDatabase}\\{ExistingSource.Process}.txt", Lines);
         }
         catch (OperationCanceledException)
         {
