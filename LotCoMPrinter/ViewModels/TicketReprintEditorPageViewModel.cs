@@ -4,6 +4,7 @@ using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Enums;
 using LotComPrinter.Models.Exceptions;
+using LotComPrinter.Models.Services;
 
 namespace LotComPrinter.ViewModels;
 
@@ -46,7 +47,6 @@ public class TicketReprintEditorPageViewModel : ObservableObject
     /// <exception cref="SystemException"></exception>
     public async Task<bool> ReprintTicket()
     {
-        // create a LabelPrintJob from the editing Print Ticket
         if (EditorTicket is null)
         {
             throw new NullReferenceException("Cannot print 'null' PrintTicket.");
@@ -59,6 +59,15 @@ public class TicketReprintEditorPageViewModel : ObservableObject
         catch (ArgumentException)
         {
             throw;
+        }
+        // check for and log changes to the Ticket
+        if
+        (
+            !EditorTicket.Untracked.ToJSON()!
+            .Equals(EditorTicket.Tracked.ToJSON())
+        )
+        {
+            await PrintLogger.UpdateLog(EditorTicket.Untracked, EditorTicket.Tracked);
         }
         PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Reprint);
         bool Printed;
