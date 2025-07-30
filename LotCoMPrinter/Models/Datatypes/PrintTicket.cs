@@ -623,67 +623,6 @@ public partial class PrintTicket : ObservableObject
         return NewTicket;
     }
 
-    public override int GetHashCode()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Evaluates equivalency of two PrintTicket objects based on data contained in the objects.
-    /// </summary>
-    /// <param name="Object"></param>
-    /// <returns></returns>
-    public override bool Equals(object? Object)
-    {
-        if (Object is null)
-        {
-            return false;
-        }
-        if (!Object.GetType().Equals(typeof(PrintTicket)))
-        {
-            return false;
-        }
-        PrintTicket Compare = (PrintTicket)Object;
-        if
-        (
-            !Compare.Process.Equals(Process)
-            || !Compare.Part.Equals(Part)
-            || Compare.SerializationMode != SerializationMode
-            || !Compare.SerialNumber.Equals(SerialNumber)
-            || !Compare.ProductionDate.Ticks.Equals(ProductionDate.Ticks)
-            || !Compare.ProductionShift.Equals(ProductionShift)
-            || Compare.ProductionQuantity.Equals(ProductionQuantity)
-            || !Compare.ProductionOperator.Equals(ProductionOperator)
-            || !Compare.VariableFields.Equals(VariableFields)
-        )
-        {
-            return false;
-        }
-        if (FirstPartialDataSet is not null)
-        {
-            if
-            (
-                Compare.FirstPartialDataSet is null
-                || !Compare.FirstPartialDataSet.Equals(FirstPartialDataSet)
-            )
-            {
-                return false;
-            }
-        }
-        if (SecondPartialDataSet is not null)
-        {
-            if
-            (
-                Compare.SecondPartialDataSet is null
-                || !Compare.SecondPartialDataSet.Equals(SecondPartialDataSet)
-            )
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /// <summary>
     /// Creates a deep copy of the Source, removing all referential equivalencies.
     /// </summary>
