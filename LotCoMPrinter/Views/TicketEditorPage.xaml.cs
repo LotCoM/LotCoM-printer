@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using LotCom.Enums;
 using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Exceptions;
@@ -178,11 +179,61 @@ public partial class TicketEditorPage : ContentPage
 		// close was confirmed
 		else
 		{
-			// save and close the Ticket Editor Menu window
-			ViewModel.EditorTicket!.MergeChanges();
+			// remove the old version of the Ticket
+			bool Removed;
 			try
 			{
-				await ViewModel.SaveTickets(Navigation.NavigationStack[^2]);
+				Removed = await ViewModel.DeleteTicket(Navigation.NavigationStack[^2]);
+			}
+			catch (SystemException)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Could not remove Editor Ticket from the cache."
+					)
+				);
+				return;
+			}
+			// save changes to the Ticket
+			if (!Removed)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Could not remove Editor Ticket from the cache."
+					)
+				);
+				return;
+			}
+			ViewModel.EditorTicket!.MergeChanges();
+			// ensure that Pass-through tickets have a Serial Number in their title
+			if (ViewModel.EditorTicket.Untracked.Process.PassThroughType == PassThroughType.JBK)
+			{
+				if (ViewModel.EditorTicket.Untracked.VariableFields.JBKNumber is not null)
+				{
+					ViewModel.EditorTicket.Untracked.UpdateTitleSerialNumber(ViewModel.EditorTicket.Untracked.VariableFields.JBKNumber!.Formatted);
+				}
+			}
+			else if (ViewModel.EditorTicket.Untracked.Process.PassThroughType == PassThroughType.Lot)
+			{
+				if (ViewModel.EditorTicket.Untracked.VariableFields.LotNumber is not null)
+				{
+					ViewModel.EditorTicket.Untracked.UpdateTitleSerialNumber(ViewModel.EditorTicket.Untracked.VariableFields.LotNumber!.Formatted);
+				}
+			}
+			// add the modified ticket to the Open Tickets list
+			try
+			{
+				await ViewModel.AddTicket(Navigation.NavigationStack[^2]);
 			}
 			catch (SystemException)
 			{

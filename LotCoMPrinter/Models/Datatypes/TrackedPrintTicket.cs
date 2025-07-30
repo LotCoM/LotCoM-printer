@@ -1,12 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.Types;
 
 namespace LotComPrinter.Models.Datatypes;
 
 public partial class TrackedPrintTicket : ObservableObject
 {
     /// <summary>
-    /// A Copy of the PrintTicket that the object was made to track.
+    /// The PrintTicket that the object was made to track.
     /// Does not receive any edits.
     /// </summary>
     [ObservableProperty]
@@ -24,7 +23,7 @@ public partial class TrackedPrintTicket : ObservableObject
     /// <param name="Ticket"></param>
     public TrackedPrintTicket(PrintTicket Ticket)
     {
-        Untracked = PrintTicket.DeepCopy(Ticket);
+        Untracked = Ticket;
         Tracked = PrintTicket.DeepCopy(Ticket);
     }
 
@@ -33,7 +32,7 @@ public partial class TrackedPrintTicket : ObservableObject
     /// </summary>
     public void DiscardChanges()
     {
-        Tracked = Untracked;
+        Tracked = PrintTicket.DeepCopy(Untracked);
     }
 
     /// <summary>
@@ -42,6 +41,6 @@ public partial class TrackedPrintTicket : ObservableObject
     /// <returns></returns>
     public void MergeChanges()
     {
-        Untracked = Tracked;
+        Untracked = PrintTicket.DeepCopy(Tracked);
     }
 }

@@ -12,8 +12,13 @@ public static class Serializer
     /// <param name="Process"></param>
     /// <param name="Part"></param>
     /// <returns></returns>
-    public static async Task<SerialNumber> Serialize(Process Process, Part Part)
+    public static async Task<SerialNumber?> Serialize(Process Process, Part Part)
     {
+        // check if the process is serialized
+        if (Process.Serialization == SerializationMode.None)
+        {
+            return null;
+        }
         // retrieve a new SerialNumber for the Part
         SerialNumber Number;
         if (Process.Serialization == SerializationMode.JBK)
