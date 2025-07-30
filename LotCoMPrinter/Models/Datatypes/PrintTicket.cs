@@ -924,4 +924,13 @@ public partial class PrintTicket : ObservableObject
         }
         return FullOperator;
     }
+
+    /// <summary>
+    /// Updates the Serial Number string attached to the end of a PrintTicket's title.
+    /// </summary>
+    /// <param name="NewNumber"></param>
+    public void UpdateTitleSerialNumber(string NewNumber)
+    {
+        Title = $"{Part.ModelNumber.Code} {Part.PartName} - {NewNumber}";
+    }
 }
