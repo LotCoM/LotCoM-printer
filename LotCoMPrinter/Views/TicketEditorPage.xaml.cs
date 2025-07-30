@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using LotCom.Enums;
 using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Exceptions;
@@ -198,7 +199,7 @@ public partial class TicketEditorPage : ContentPage
 				);
 				return;
 			}
-			// save changes to the Ticket and add updated Ticket to OpenTicketsList
+			// save changes to the Ticket
 			if (!Removed)
 			{
 				this.ShowPopup
@@ -214,6 +215,22 @@ public partial class TicketEditorPage : ContentPage
 				return;
 			}
 			ViewModel.EditorTicket!.MergeChanges();
+			// ensure that Pass-through tickets have a Serial Number in their title
+			if (ViewModel.EditorTicket.Untracked.Process.PassThroughType == PassThroughType.JBK)
+			{
+				if (ViewModel.EditorTicket.Untracked.VariableFields.JBKNumber is not null)
+				{
+					ViewModel.EditorTicket.Untracked.UpdateTitleSerialNumber(ViewModel.EditorTicket.Untracked.VariableFields.JBKNumber!.Formatted);
+				}
+			}
+			else if (ViewModel.EditorTicket.Untracked.Process.PassThroughType == PassThroughType.Lot)
+			{
+				if (ViewModel.EditorTicket.Untracked.VariableFields.LotNumber is not null)
+				{
+					ViewModel.EditorTicket.Untracked.UpdateTitleSerialNumber(ViewModel.EditorTicket.Untracked.VariableFields.LotNumber!.Formatted);
+				}
+			}
+			// add the modified ticket to the Open Tickets list
 			try
 			{
 				await ViewModel.AddTicket(Navigation.NavigationStack[^2]);
