@@ -92,6 +92,31 @@ public class TicketEditorPageViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Goes through the NavigationStack to add the Editor's Untracked ticket to the Open Ticket List.
+    /// </summary>
+    /// <param name="Previous"></param>
+    /// <returns></returns>
+    /// <exception cref="SystemException"></exception>
+    public async Task AddTicket(Page Previous)
+    {
+        // confirm that the passed Page is a MainPage
+        if (!Previous.GetType().Equals(typeof(MainPage)))
+        {
+            throw new SystemException("Cannot navigate to previous MainPage view to add this Print Ticket.");
+        }
+        // convert the Page to MainPage, add the Ticket, and save the open ticket list
+        MainPage Main = (MainPage)Previous;
+        try
+        {
+            await Main.ViewModel.AddNewOpenPrintTicket(EditorTicket!.Untracked);
+        }
+        catch (SystemException)
+        {
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Attempts to create and run a Label Print Job from EditorTicket.Tracked.
     /// Removes EditorTicket from OpenPrintTickets.
     /// </summary>
