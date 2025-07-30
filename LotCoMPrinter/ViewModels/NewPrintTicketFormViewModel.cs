@@ -224,9 +224,18 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         SerialNumber? TicketNumber = await Serializer.Serialize(Process, Part);
         if (TicketNumber is null)
         {
-            throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
+            // a serial number is needed
+            if (Process.Serialization != SerializationMode.None)
+            {
+                throw new SerializationException("Failed to retrieve a Serial Number for the new Print Ticket.");
+            }
+            // pass-through process
+            else
+            {
+                TicketNumber = new SerialNumber(SerializationMode.None, Part, 0);
+            }
         }
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, (Shift)ProductionShift, ProductionQuantity, ProductionOperator, new VariableFieldSet());
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, ProductionShift, ProductionQuantity, ProductionOperator, new VariableFieldSet());
         // apply the SerialNumber to the appropriate field and return the new Ticket
         if (NewTicket.SerializationMode == SerializationMode.JBK)
         {
