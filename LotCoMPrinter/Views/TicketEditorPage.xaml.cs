@@ -178,11 +178,45 @@ public partial class TicketEditorPage : ContentPage
 		// close was confirmed
 		else
 		{
-			// save and close the Ticket Editor Menu window
+			// remove the old version of the Ticket
+			bool Removed;
+			try
+			{
+				Removed = await ViewModel.DeleteTicket(Navigation.NavigationStack[^2]);
+			}
+			catch (SystemException)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Could not remove Editor Ticket from the cache."
+					)
+				);
+				return;
+			}
+			// save changes to the Ticket and add updated Ticket to OpenTicketsList
+			if (!Removed)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						"\n\nReference message: " +
+						"Could not remove Editor Ticket from the cache."
+					)
+				);
+				return;
+			}
 			ViewModel.EditorTicket!.MergeChanges();
 			try
 			{
-				await ViewModel.SaveTickets(Navigation.NavigationStack[^2]);
+				await ViewModel.AddTicket(Navigation.NavigationStack[^2]);
 			}
 			catch (SystemException)
 			{
