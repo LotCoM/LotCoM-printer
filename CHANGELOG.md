@@ -343,3 +343,18 @@ Introduction of the Label Reprint feature, which provides operators with the abi
 - Modify print system to process Label reprints separately and differently from initial prints.
 - Updates to Model layer classes to match additions/changes in **LotCom Libraries**:
   - [feature/210](https://github.com/LotCoM/LotCoM-printer/pull/212).
+
+## `0.8.0.1`
+#### Feature and Optimization Update
+- Implement Label editing on re-print:
+  - [feature/220](https://github.com/LotCom/LotCom-printer/pull/223).
+- Implement TicketEditor UI component:
+  - [feature/207](https://github.com/LotCom/LotCom-printer/pull/215).
+- Implement support for A/B split Dies:
+  - [feature/221](https://github.com/LotCom/LotCom-printer/pull/222).
+- Resolve issue where Pass-through Processes were force-serialized:
+  - [bug/219](https://github.com/LotCom/LotCom-printer/pull/224).
+- Replace legacy **LotCoM** name with new **LotCom** project name: 
+  - [task/name-change](https://github.com/LotCom/LotCom-printer/pull/214).
+- Remove `ModelNumber` logic/references:
+  - [feature/217](https://github.com/LotCom/LotCom-printer/pull/218).
