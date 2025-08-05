@@ -1,9 +1,9 @@
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-               xmlns:views="clr-namespace:LotCoMPrinter.Views"
+               xmlns:views="clr-namespace:LotComPrinter.Views"
                x:DataType="views:BasicPopup"
-               x:Class="LotCoMPrinter.Views.BasicPopup">
+               x:Class="LotComPrinter.Views.BasicPopup">
     
     <!-- Style the Popup Window -->
     <toolkit:Popup.Resources>

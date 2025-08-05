@@ -1,10 +1,10 @@
-using LotCoMPrinter.Models.Datatypes;
+using LotComPrinter.Models.Datatypes;
 using LotCom.Enums;
 using LotCom.Extensions;
 using LotCom.Types;
-using LotCoMPrinter.Models.Exceptions;
+using LotComPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Services;
+namespace LotComPrinter.Models.Services;
 
 public static class LabelGenerator 
 {
@@ -43,11 +43,7 @@ public static class LabelGenerator
             }
             if (RequiredFields.DieNumber)
             {
-                Data.Add(Ticket.VariableFields.DieNumber!.Literal.ToString());
-            }
-            if (RequiredFields.ModelNumber)
-            {
-                Data.Add(Ticket.VariableFields.ModelNumber!.Code);
+                Data.Add(Ticket.VariableFields.DieNumber!.Formatted);
             }
             if (RequiredFields.HeatNumber)
             {
@@ -97,11 +93,7 @@ public static class LabelGenerator
             }
             if (RequiredFields.DieNumber)
             {
-                Body.Add($"Die #: {Ticket.VariableFields.DieNumber!.Literal}");
-            }
-            if (RequiredFields.ModelNumber)
-            {
-                Body.Add($"Model #: {Ticket.VariableFields.ModelNumber!.Code}");
+                Body.Add($"Die #: {Ticket.VariableFields.DieNumber!.Formatted}");
             }
             if (RequiredFields.HeatNumber)
             {

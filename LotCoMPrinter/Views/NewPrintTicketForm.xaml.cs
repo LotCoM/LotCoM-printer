@@ -1,10 +1,10 @@
 using CommunityToolkit.Maui.Views;
 using LotCom.Enums;
 using LotCom.Types;
-using LotCoMPrinter.Models.Datatypes;
-using LotCoMPrinter.ViewModels;
+using LotComPrinter.Models.Datatypes;
+using LotComPrinter.ViewModels;
 
-namespace LotCoMPrinter.Views;
+namespace LotComPrinter.Views;
 
 public partial class NewPrintTicketForm : Popup
 {

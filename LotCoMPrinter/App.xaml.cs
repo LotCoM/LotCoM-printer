@@ -1,6 +1,6 @@
-﻿using LotCoMPrinter.Views;
+﻿using LotComPrinter.Views;
 
-namespace LotCoMPrinter;
+namespace LotComPrinter;
 
 public partial class App : Application 
 {

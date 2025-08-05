@@ -1,7 +1,7 @@
-using LotCoMPrinter.Models.Datatypes;
+using LotComPrinter.Models.Datatypes;
 using Newtonsoft.Json;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotComPrinter.Models.Datasources;
 
 public static class PrintTicketCache
 {
@@ -80,7 +80,7 @@ public static class PrintTicketCache
         }
         File.WriteAllText(CacheFile, JSON);
     }
-    
+
     /// <summary>
     /// Asynchronously writes a List of PrintTicket objects to the cache file.
     /// Converts Tickets to JSON streams to be written.
@@ -90,19 +90,34 @@ public static class PrintTicketCache
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="OperationCanceledException"></exception>
-    public static async Task SaveAsync(List<PrintTicket> Tickets) 
+    public static async Task SaveAsync(List<PrintTicket> Tickets)
     {
         // convert the passed Print Tickets to JSON streams and write them to the cache
-        List<string> JSONTickets = Tickets
-            .Select(x => x
-            .ToJSON())
-            .ToList();
+        List<string> JSONTickets;
+        try
+        {
+            JSONTickets = Tickets
+                .Select(x => x
+                .ToJSON())
+                .ToList();
+        }
+        catch (ArgumentNullException)
+        {
+            throw;
+        }
         string JSON = "";
         foreach (string _ticket in JSONTickets)
         {
             JSON = $"{JSON}{_ticket}\n";
         }
-        await File.WriteAllTextAsync(CacheFile, JSON);
+        try
+        {
+            await File.WriteAllTextAsync(CacheFile, JSON);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
     }
 
     /// <summary>

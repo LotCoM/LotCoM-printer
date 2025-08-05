@@ -1,7 +1,7 @@
 using System.Drawing;
 using QRCoder;
 
-namespace LotCoMPrinter.Models.Datatypes;
+namespace LotComPrinter.Models.Datatypes;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 

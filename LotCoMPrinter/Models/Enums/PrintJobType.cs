@@ -1,4 +1,4 @@
-namespace LotCoMPrinter.Models.Enums;
+namespace LotComPrinter.Models.Enums;
 
 /// <summary>
 /// Allows type configuration of PrintJob objects.

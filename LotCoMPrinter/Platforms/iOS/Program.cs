@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace LotCoMPrinter;
+namespace LotComPrinter;
 
 public class Program
 {

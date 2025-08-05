@@ -1,4 +1,4 @@
-﻿namespace LotCoMPrinter;
+﻿namespace LotComPrinter;
 
 public partial class AppShell : Shell {
 

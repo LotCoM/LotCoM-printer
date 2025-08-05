@@ -1,6 +1,6 @@
-using LotCoMPrinter.Models.Datasources;
+using LotComPrinter.Models.Datasources;
 
-namespace LotCoMPrinter.Models.Datatypes;
+namespace LotComPrinter.Models.Datatypes;
 
 /// <summary>
 /// A Label class used to track in-progress or partial Production data.

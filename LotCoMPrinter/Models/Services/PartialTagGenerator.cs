@@ -1,10 +1,10 @@
-using LotCoMPrinter.Models.Datatypes;
+using LotComPrinter.Models.Datatypes;
 using LotCom.Enums;
 using LotCom.Extensions;
 using LotCom.Types;
-using LotCoMPrinter.Models.Exceptions;
+using LotComPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Services;
+namespace LotComPrinter.Models.Services;
 
 public static class PartialTagGenerator
 {

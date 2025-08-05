@@ -44,7 +44,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         cache: true
-        cache-dependency-path: "./LotCoMPrinter/packages.lock.json"
+        cache-dependency-path: "./LotComPrinter/packages.lock.json"
 
     - name: Download LotCom Libraries
       env:
@@ -52,7 +52,7 @@ jobs:
       shell: pwsh
       run: |
         # download LotCom Libraries latest
-        cd "D:\a\LotCoM-printer"
+        cd "D:\a\LotCom-printer"
         git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-libraries.git
 
     - name: Install dependencies
@@ -97,7 +97,7 @@ jobs:
         .\LotComPrinterSetup.exe "$env:VERSION_NUMBER"
 
         # save the MSI to a Package directory
-        cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\Installer"
+        cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\Installer"
         New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
         Copy-Item -Path ".\LotComPrinter_$env:VERSION_NUMBER.msi" -Destination "D:\a\Package"
 

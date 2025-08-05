@@ -1,4 +1,4 @@
-using LotCoMPrinter.Models.Datatypes;
+using LotComPrinter.Models.Datatypes;
 using LotCom.Database;
 using LotCom.Enums;
 using LotCom.Exceptions;
@@ -6,7 +6,7 @@ using LotCom.Extensions;
 using LotCom.Types;
 using System.Globalization;
 
-namespace LotCoMPrinter.Models.Datasources;
+namespace LotComPrinter.Models.Datasources;
 
 /// <summary>
 /// Provides access to the Print History database.

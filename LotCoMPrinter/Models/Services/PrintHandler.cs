@@ -1,8 +1,8 @@
 using System.Drawing.Printing;
 using System.Drawing;
-using LotCoMPrinter.Models.Exceptions;
+using LotComPrinter.Models.Exceptions;
 
-namespace LotCoMPrinter.Models.Services;
+namespace LotComPrinter.Models.Services;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 

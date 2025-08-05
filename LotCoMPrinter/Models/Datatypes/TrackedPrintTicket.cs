@@ -1,41 +1,38 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace LotCoMPrinter.Models.Datatypes;
+namespace LotComPrinter.Models.Datatypes;
 
-public partial class TrackedPrintTicket(PrintTicket Ticket) : ObservableObject()
+public partial class TrackedPrintTicket : ObservableObject
 {
     /// <summary>
-    /// The PrintTicket that this class was made to track.
+    /// The PrintTicket that the object was made to track.
     /// Does not receive any edits.
     /// </summary>
     [ObservableProperty]
-    public partial PrintTicket Untracked { get; private set; } = Ticket;
+    public partial PrintTicket Untracked { get; private set; }
 
     /// <summary>
     /// A copy of the UntrackedTicket that tracks edits.
     /// </summary>
     [ObservableProperty]
-    public partial PrintTicket Tracked { get; set; } = new PrintTicket
-    (
-        Ticket.Process,
-        Ticket.Part,
-        Ticket.SerializationMode,
-        Ticket.SerialNumber,
-        Ticket.ProductionDate,
-        Ticket.ProductionShift,
-        Ticket.ProductionQuantity,
-        Ticket.ProductionOperator,
-        Ticket.VariableFields,
-        Ticket.FirstPartialDataSet,
-        Ticket.SecondPartialDataSet
-    );
+    public partial PrintTicket Tracked { get; set; }
+
+    /// <summary>
+    /// Creates a new TrackedPrintTicket that will track changes made to a copy of the passed Ticket.
+    /// </summary>
+    /// <param name="Ticket"></param>
+    public TrackedPrintTicket(PrintTicket Ticket)
+    {
+        Untracked = Ticket;
+        Tracked = PrintTicket.DeepCopy(Ticket);
+    }
 
     /// <summary>
     /// Overwrites changes made to Tracked by assigning it the value of Untracked.
     /// </summary>
     public void DiscardChanges()
     {
-        Tracked = Untracked;
+        Tracked = PrintTicket.DeepCopy(Untracked);
     }
 
     /// <summary>
@@ -44,6 +41,6 @@ public partial class TrackedPrintTicket(PrintTicket Ticket) : ObservableObject()
     /// <returns></returns>
     public void MergeChanges()
     {
-        Untracked = Tracked;
+        Untracked = PrintTicket.DeepCopy(Tracked);
     }
 }

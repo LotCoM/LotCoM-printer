@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace LotCoMPrinter;
+namespace LotComPrinter;
 
 [Application]
 public class MainApplication : MauiApplication
