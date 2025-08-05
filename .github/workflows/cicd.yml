@@ -79,21 +79,21 @@ jobs:
       shell: pwsh
       run: |
         # download LotCom-printer-setup latest
-        cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter"
+        cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter"
         git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-printer-setup.git
 
     - name: Build setup
       shell: pwsh
       run: |
         # build the Wix setup program
-        cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter\LotCom-printer-setup"
+        cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\LotCom-printer-setup"
         dotnet build
 
     - name: Run setup
       shell: pwsh
       run: |
         # run the LotComPrinterSetup.exe script (Wix)
-        cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter\LotCom-printer-setup\LotComPrinterSetup\bin\Debug\net472"
+        cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\LotCom-printer-setup\LotComPrinterSetup\bin\Debug\net472"
         .\LotComPrinterSetup.exe "$env:VERSION_NUMBER"
 
         # save the MSI to a Package directory
