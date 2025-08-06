@@ -61,8 +61,22 @@ public partial class MainPage : ContentPage
 		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
 		// collapse the OpenPrintTickets panel
 		await AnimatedCollapseOpenPrintTicketsPanel();
+		// ensure that a ticket was returned
 		if (Result is null)
 		{
+			Result = "No Ticket was returned and no exception occured.";
+		}
+		if (Result.GetType().Equals(typeof(string)))
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue." +
+					$"\n\nReference message: {Result}"
+				)
+			);
 			return;
 		}
 		if (Result.GetType().Equals(typeof(PrintTicket)))
@@ -74,14 +88,35 @@ public partial class MainPage : ContentPage
 			}
 			catch (SystemException _ex)
 			{
-				throw new SystemException
+				this.ShowPopup
 				(
-					"Could not create a new Ticket due to the following exception:"
-					+ $"\n\t{_ex.Message}"
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex}"
+					)
 				);
+				return;
 			}
-			TicketEditorPage Editor = new TicketEditorPage(ViewModel.OpenPrintTickets[^1]);
-			await Navigation.PushAsync(Editor);
+			try
+			{
+				TicketEditorPage Editor = new TicketEditorPage(ViewModel.OpenPrintTickets[^1]);
+				await Navigation.PushAsync(Editor);
+			}
+			catch (Exception _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex}"
+					)
+				);
+				return;
+			}
 		}
 	}
 

@@ -206,6 +206,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     /// Retrieves a Serial Number for a Process/Part pair and returns a new Print Ticket with the form's inputs.
     /// </summary>
     /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     /// <exception cref="SerializationException"></exception>
     public async Task<PrintTicket> OpenNewPrintTicket()
     {
