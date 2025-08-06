@@ -1,7 +1,7 @@
 using CommunityToolkit.Maui.Views;
 using LotCom.Enums;
+using LotCom.Exceptions;
 using LotCom.Types;
-using LotComPrinter.Models.Datatypes;
 using LotComPrinter.ViewModels;
 
 namespace LotComPrinter.Views;
@@ -76,18 +76,25 @@ public partial class NewPrintTicketForm : Popup
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
+    /// <exception cref="SystemException"></exception>
     private async void OnConfirmButtonClicked(object sender, EventArgs e)
     {
+        object? Output;
         try
         {
-            PrintTicket NewTicket = await ViewModel.OpenNewPrintTicket();
-            CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            await CloseAsync(NewTicket, TokenSource.Token);
+            Output = await ViewModel.OpenNewPrintTicket();
         }
-        catch
+        catch (ArgumentException _ex)
         {
             await ShowMissingInputs();
+            Output = $"{_ex.Message}";
         }
+        catch (SerializationException _ex)
+        {
+            Output = $"{_ex.Message}";
+        }
+        CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        await CloseAsync(Output, TokenSource.Token);
     }
 
     /// <summary>
