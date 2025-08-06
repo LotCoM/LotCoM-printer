@@ -358,3 +358,8 @@ Introduction of the Label Reprint feature, which provides operators with the abi
   - [task/name-change](https://github.com/LotCom/LotCom-printer/pull/214).
 - Remove `ModelNumber` logic/references:
   - [feature/217](https://github.com/LotCom/LotCom-printer/pull/218).
+  - 
+## `0.8.0.2`
+#### Hotfix
+- An exception thrown in a UI event handler caused a silent crash:
+  - Resolve [#228](https://github.com/LotCom/LotCom-printer/issues/228).
