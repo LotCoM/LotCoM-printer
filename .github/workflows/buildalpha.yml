@@ -125,6 +125,13 @@ jobs:
         # use default tag for generated releases
         $tag = "$env:VERSION_NUMBER-alpha"
         
+        # check for the tag
+        try
+          echo "Removing previous version Alpha build..."
+          gh release delete --cleanup-tag --yes
+        catch
+          echo "Alpha build does not exist yet."
+
         # create github release and set default notes
         gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release. This is an Alpha release! It contains potentially unstable features."
     
