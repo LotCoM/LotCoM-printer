@@ -1,0 +1,147 @@
+name: Build Alpha Release
+
+on:
+  push:
+    branches: develop
+
+permissions:
+  contents: write
+
+env:
+  DOTNET_VERSION: '9.0.103' # The .NET SDK version to use
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages # action runner's installed NuGet packages
+
+jobs:
+
+  build:
+
+    name: build-windows
+    runs-on: windows-2022
+    if: contains(github.event.head_commit.message, 'alpha')
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Get version number from commit
+      env:
+        GH_TOKEN: ${{ github.token }}
+      id: version-number
+      shell: pwsh
+      run: |
+        # retrieve the most recent commit via SHA
+        $sha = "${{ github.sha }}"
+        $commitMessage = gh api /repos/lotcom/lotcom-printer/commits/$sha --jq ".commit.message"
+
+        # parse the version number out of the commit message
+        $pattern = '\d+\.\d+\.\d+\.?[\d]*'
+        $result = $commitMessage | Select-String -Pattern $pattern
+        $result = $result.Matches.Value
+        Write-Host "New release version number: $result" 
+
+        # set the output of this step to the VERSION_NUMBER environment var
+        echo "VERSION_NUMBER=$result" >> $env:GITHUB_ENV
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4.3.0
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        cache: true
+        cache-dependency-path: "./LotComPrinter/packages.lock.json"
+
+    - name: Download LotCom Libraries
+      env:
+        PAT_1: ${{ secrets.PAT_1 }}
+      shell: pwsh
+      run: |
+        # download LotCom Libraries latest
+        cd "D:\a\LotCom-printer"
+        git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-libraries.git
+
+    - name: Install dependencies
+      shell: pwsh
+      run: dotnet restore
+    
+    - name: Install required workloads
+      shell: pwsh
+      run: |
+        # install dotnet tools
+        dotnet tool install --global wix
+        dotnet workload restore
+        dotnet workload install android
+        dotnet workload install maui
+      
+    - name: Build
+      shell: pwsh
+      run: |
+        dotnet build -f net9.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=None -p:WindowsAppSDKSelfContained=true --sc
+        
+    - name: Download setup
+      env:
+        PAT_1: ${{ secrets.PAT_1 }}
+      shell: pwsh
+      run: |
+        # download LotCom-printer-setup latest
+        cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter"
+        git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-printer-setup.git
+
+    - name: Build setup
+      shell: pwsh
+      run: |
+        # build the Wix setup program
+        cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\LotCom-printer-setup"
+        dotnet build
+
+    - name: Run setup
+      shell: pwsh
+      run: |
+        # run the LotComPrinterSetup.exe script (Wix)
+        cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter\LotCom-printer-setup\LotComPrinterSetup\bin\Debug\net472"
+        .\LotComPrinterSetup.exe "$env:VERSION_NUMBER"
+
+        # save the MSI to a Package directory
+        cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\Installer"
+        New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
+        Copy-Item -Path ".\LotComPrinter_$env:VERSION_NUMBER.msi" -Destination "D:\a\Package"
+        Rename-Item -Path "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER.msi" -NewName "LotComPrinter_$env:VERSION_NUMBER-alpha.msi"
+
+    - name: Archive MSI package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-latest
+        path: |
+          D:\a\Package
+
+    - name: Download MSI package
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-latest
+        path: |
+          D:\a\Package
+
+    - name: Create release
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_1 }}
+      shell: pwsh
+      run: |
+        # use default tag for generated releases
+        $tag = "$env:VERSION_NUMBER-alpha"
+        
+        # check for the tag
+        try
+          echo "Removing previous version Alpha build..."
+          gh release delete --cleanup-tag --yes
+        catch
+          echo "Alpha build does not exist yet."
+
+        # create github release and set default notes
+        gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release. This is an Alpha release! It contains potentially unstable features."
+    
+    - name: Upload MSI to release
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_1 }}
+      shell: pwsh
+      run: |
+        # use default tag for generated releases
+        $tag = "$env:VERSION_NUMBER-alpha"
+
+        # upload the MSIX to the release
+        gh release upload $tag "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER-alpha.msi"
