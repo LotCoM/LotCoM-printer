@@ -126,11 +126,13 @@ jobs:
         $tag = "$env:VERSION_NUMBER-debug"
         
         # check for the tag
-        try
+        try {
           echo "Removing previous version debug build..."
           gh release delete --cleanup-tag --yes
-        catch
+        }
+        catch {
           echo "debug build does not exist yet."
+        }
 
         # create github release and set default notes
         gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release. This is a debug release! It contains potentially unstable features."
