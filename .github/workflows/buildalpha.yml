@@ -1,8 +1,8 @@
-name: Build Alpha Release
+name: Build Debug Release
 
 on:
   push:
-    branches: develop
+    branches: debug
 
 permissions:
   contents: write
@@ -17,7 +17,7 @@ jobs:
 
     name: build-windows
     runs-on: windows-2022
-    if: contains(github.event.head_commit.message, 'alpha')
+    if: contains(github.event.head_commit.message, 'force build')
 
     steps:
     - uses: actions/checkout@v3
@@ -101,7 +101,7 @@ jobs:
         cd "D:\a\LotCom-printer\LotCom-printer\LotComPrinter\bin\Release\net9.0-windows10.0.19041.0\win10-x64\Installer"
         New-Item -ItemType directory -Path "D:\a\Package" -ErrorAction SilentlyContinue
         Copy-Item -Path ".\LotComPrinter_$env:VERSION_NUMBER.msi" -Destination "D:\a\Package"
-        Rename-Item -Path "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER.msi" -NewName "LotComPrinter_$env:VERSION_NUMBER-alpha.msi"
+        Rename-Item -Path "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER.msi" -NewName "LotComPrinter_$env:VERSION_NUMBER-debug.msi"
 
     - name: Archive MSI package artifact
       uses: actions/upload-artifact@v4
@@ -123,17 +123,17 @@ jobs:
       shell: pwsh
       run: |
         # use default tag for generated releases
-        $tag = "$env:VERSION_NUMBER-alpha"
+        $tag = "$env:VERSION_NUMBER-debug"
         
         # check for the tag
         try
-          echo "Removing previous version Alpha build..."
+          echo "Removing previous version debug build..."
           gh release delete --cleanup-tag --yes
         catch
-          echo "Alpha build does not exist yet."
+          echo "debug build does not exist yet."
 
         # create github release and set default notes
-        gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release. This is an Alpha release! It contains potentially unstable features."
+        gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="$tag" --notes "Generated release. This is a debug release! It contains potentially unstable features."
     
     - name: Upload MSI to release
       env:
@@ -141,7 +141,7 @@ jobs:
       shell: pwsh
       run: |
         # use default tag for generated releases
-        $tag = "$env:VERSION_NUMBER-alpha"
+        $tag = "$env:VERSION_NUMBER-debug"
 
         # upload the MSIX to the release
-        gh release upload $tag "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER-alpha.msi"
+        gh release upload $tag "D:\a\Package\LotComPrinter_$env:VERSION_NUMBER-debug.msi"
