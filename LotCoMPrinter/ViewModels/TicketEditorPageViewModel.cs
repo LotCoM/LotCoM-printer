@@ -4,6 +4,7 @@ using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Enums;
 using LotComPrinter.Models.Exceptions;
+using LotComPrinter.Models.Services;
 using LotComPrinter.Views;
 
 namespace LotComPrinter.ViewModels;
@@ -33,7 +34,26 @@ public class TicketEditorPageViewModel : ObservableObject
     /// </summary>
     public TicketEditorPageViewModel(PrintTicket EditorTicket)
     {
-        this.EditorTicket = new TrackedPrintTicket(EditorTicket);
+        DebugLogger.LogMessage("Starting TicketEditorPageViewModel initialization...", this);
+        DebugLogger.LogMessage
+        (
+            "Source for TicketEditorPage: \"" +
+            $"{EditorTicket.ToJSON()}"
+            + "\"",
+            this
+        );
+        DebugLogger.LogMessage("Creating new TrackedPrintTicket to use for change tracking...", this);
+        try
+        {
+            this.EditorTicket = new TrackedPrintTicket(EditorTicket);
+        }
+        catch (Exception _ex)
+        {
+			DebugLogger.LogError("Failed to create a TrackedPrintTicket.", _ex, this);
+			throw;
+        }
+		DebugLogger.LogMessage("ViewModel created.", this);
+		DebugLogger.LogMessage("BindingContext setup complete.", this);
     }
 
     /// <summary>

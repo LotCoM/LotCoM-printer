@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using LotComPrinter.Models.Services;
 
 namespace LotComPrinter.Models.Datatypes;
 
@@ -23,8 +24,28 @@ public partial class TrackedPrintTicket : ObservableObject
     /// <param name="Ticket"></param>
     public TrackedPrintTicket(PrintTicket Ticket)
     {
+        DebugLogger.LogMessage("Starting TrackedPrintTicket initialization...", this);
+        DebugLogger.LogMessage
+        (
+            "Source for TrackedPrintTicket: \"" +
+            $"{Ticket.ToJSON()}"
+            + "\"",
+            this
+        );
+        DebugLogger.LogMessage("Setting Untracked to Source...", this);
         Untracked = Ticket;
-        Tracked = PrintTicket.DeepCopy(Ticket);
+        DebugLogger.LogMessage("Untracked set.", this);
+        DebugLogger.LogMessage("Using PrintTicket.DeepCopy() to create a Copy of Untracked for Tracked...", this);
+        try
+        {
+            Tracked = PrintTicket.DeepCopy(Ticket);
+        }
+        catch (Exception _ex)
+        {
+			DebugLogger.LogError("Failed to create a Deep Copy of Untracked.", _ex, this);
+			throw;
+        }
+        DebugLogger.LogMessage("Deep Copy made; Tracked set.", this);
     }
 
     /// <summary>

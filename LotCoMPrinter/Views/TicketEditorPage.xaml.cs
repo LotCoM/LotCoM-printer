@@ -3,6 +3,7 @@ using LotCom.Enums;
 using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Exceptions;
+using LotComPrinter.Models.Services;
 using LotComPrinter.ViewModels;
 
 namespace LotComPrinter.Views;
@@ -674,8 +675,40 @@ public partial class TicketEditorPage : ContentPage
     /// <param name="EditorTicket"></param>
     public TicketEditorPage(PrintTicket EditorTicket)
     {
-        ViewModel = new TicketEditorPageViewModel(EditorTicket);
-        BindingContext = ViewModel;
-        InitializeComponent();
+		DebugLogger.LogMessage("Starting TicketEditorPage initialization...", this);
+		DebugLogger.LogMessage("Creating new TicketEditorPageViewModel to bind to...", this);
+		try
+		{
+			ViewModel = new TicketEditorPageViewModel(EditorTicket);
+		}
+		catch (Exception _ex)
+		{
+			DebugLogger.LogError("Failed to create a TicketEditorPageViewModel to bind to.", _ex, this);
+			throw;
+		}
+		DebugLogger.LogMessage("Created new TicketEditorPageViewModel.", this);
+		DebugLogger.LogMessage("Binding to new TicketEditorPageViewModel...", this);
+		try
+		{
+			BindingContext = ViewModel;
+		}
+		catch (Exception _ex)
+		{
+			DebugLogger.LogError("Failed to bind to TicketEditorPageViewModel.", _ex, this);
+			throw;
+		}
+		DebugLogger.LogMessage("Successfully bound to new TicketEditorPageViewModel.", this);
+		DebugLogger.LogMessage("Initializing UI Components...", this);
+		try
+		{
+			InitializeComponent();
+		}
+		catch (Exception _ex)
+		{ 
+			DebugLogger.LogError("Failed to initialize UI Components.", _ex, this);
+			throw;
+		}
+		DebugLogger.LogMessage("UI Components initialized.", this);
+		DebugLogger.LogMessage("Page setup complete.", this);
     }
 }

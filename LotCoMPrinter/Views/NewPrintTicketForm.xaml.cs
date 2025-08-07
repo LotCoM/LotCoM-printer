@@ -2,6 +2,7 @@ using CommunityToolkit.Maui.Views;
 using LotCom.Enums;
 using LotCom.Exceptions;
 using LotCom.Types;
+using LotComPrinter.Models.Services;
 using LotComPrinter.ViewModels;
 
 namespace LotComPrinter.Views;
@@ -79,22 +80,50 @@ public partial class NewPrintTicketForm : Popup
     /// <exception cref="SystemException"></exception>
     private async void OnConfirmButtonClicked(object sender, EventArgs e)
     {
+		DebugLogger.LogMessage("Handling ConfirmButton Clicked event...", this);
+		DebugLogger.LogMessage("Configuring output...", this);
         object? Output;
         try
         {
+		    DebugLogger.LogMessage("Calling ViewModel.OpenNewPrintTicket()...", this);
             Output = await ViewModel.OpenNewPrintTicket();
+		    DebugLogger.LogMessage("Method did not throw exceptions.", this);
         }
         catch (ArgumentException _ex)
         {
-            await ShowMissingInputs();
+            DebugLogger.LogError("A validation exception occurred.", _ex, this);
+            DebugLogger.LogWarning("This exception is non-fatal.", this);
+		    DebugLogger.LogMessage("Calling ShowMissingInputs()...", this);
+            try
+            {
+                await ShowMissingInputs();
+            }
+            catch (Exception _innerEx)
+            { 
+                DebugLogger.LogError("Failed to show missing inputs.", _innerEx, this);
+                throw;
+            }
+		    DebugLogger.LogMessage("Method did not throw exceptions.", this);
             Output = $"{_ex.Message}";
         }
         catch (SerializationException _ex)
         {
+            DebugLogger.LogError("A serialization exception occurred.", _ex, this);
             Output = $"{_ex.Message}";
         }
-        CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        await CloseAsync(Output, TokenSource.Token);
+        DebugLogger.LogMessage($"Output string: \"{Output}\".", this);
+        DebugLogger.LogMessage("Closing and returning output...", this);
+        try
+        {
+            CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await CloseAsync(Output, TokenSource.Token);
+        }
+        catch (Exception _ex)
+        { 
+            DebugLogger.LogError("Failed to close and return output.", _ex, this);
+            throw;
+        }
+        DebugLogger.LogMessage("Closed and returned output.", this);
     }
 
     /// <summary>
@@ -164,17 +193,21 @@ public partial class NewPrintTicketForm : Popup
 	/// </summary>
 	private bool InitializeViewModel()
     {
+		DebugLogger.LogMessage("Initializing ViewModel...", this);
         // attempt to create a new ViewModel
         try
         {
+		    DebugLogger.LogMessage("Attempting to create new NewPrintTicketFormViewModel...", this);
             ViewModel = new NewPrintTicketFormViewModel();
+		    DebugLogger.LogMessage("Created new NewPrintTicketFormViewModel.", this);
             return true;
         }
         // there was an issue communicating with or processing data from the Database 
         // or there was a formatting error in the JSON stream from the Database
-        catch (SystemException)
+        catch (SystemException _ex)
         {
-            return false;
+		    DebugLogger.LogError("Failed to create new NewPrintTicketFormViewModel.", _ex, this);
+            throw;
         }
     }
 
@@ -185,16 +218,51 @@ public partial class NewPrintTicketForm : Popup
     /// <exception cref="SystemException"></exception>
     public NewPrintTicketForm()
     {
-        bool Setup = InitializeViewModel();
+		DebugLogger.LogMessage("Starting NewPrintTicketForm initialization...", this);
+		DebugLogger.LogMessage("Creating new NewPrintTicketFormViewModel to bind to...", this);
+        bool Setup;
+        try
+        {
+            Setup = InitializeViewModel();
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to create a NewPrintTicketFormViewModel to bind to.", _ex, this);
+            throw;
+        }
         if (Setup)
         {
-            InitializeComponent();
-            BindingContext = ViewModel;
+            DebugLogger.LogMessage("Created new NewPrintTicketFormViewModel.", this);
+            DebugLogger.LogMessage("Initializing UI Components...", this);
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception _ex)
+            {
+                DebugLogger.LogError("Failed to initialize UI Components.", _ex, this);
+                throw;
+            }
+            DebugLogger.LogMessage("Initialized UI Components.", this);
+            DebugLogger.LogMessage("Binding to new TicketEditorPageViewModel...", this);
+            try
+            {
+                BindingContext = ViewModel;
+            }
+            catch (Exception _ex)
+            {
+                DebugLogger.LogError("Failed to bind to TicketEditorPageViewModel.", _ex, this);
+                throw;
+            }
+            DebugLogger.LogMessage("Bound to TicketEditorPageViewModel.", this);
         }
         else
         {
+            DebugLogger.LogError("Failed to create a NewPrintTicketFormViewModel to bind to.", new Exception(), this);
             throw new SystemException("Failed to initialize the ViewModel.");
         }
+		DebugLogger.LogMessage("UI Components initialized.", this);
+		DebugLogger.LogMessage("Page setup complete.", this);
     }
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 }

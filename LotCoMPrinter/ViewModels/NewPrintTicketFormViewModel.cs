@@ -182,24 +182,40 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     /// <exception cref="JsonException"></exception>
     public NewPrintTicketFormViewModel()
     {
+        DebugLogger.LogMessage("Initializing new NewPrintTicketFormViewModel...", this);
         // load Process data
+        DebugLogger.LogMessage("Loading Processes...", this);
         try
         {
             _allProcesses = new ProcessData().GetAllProcesses();
         }
-        catch (SystemException)
+        catch (SystemException _ex)
         {
+		    DebugLogger.LogError("Failed to load Process data.", _ex, this);
             throw;
         }
-        catch (JsonException)
+        catch (JsonException _ex)
         {
+		    DebugLogger.LogError("Failed to load Process data.", _ex, this);
             throw;
         }
+        DebugLogger.LogMessage("Loaded Processes.", this);
         // ensure access to Serial Queues
-        if (!Serializer.Ping())
+        DebugLogger.LogMessage("Pinging Serial Queues...", this);
+        try
         {
-            throw new SystemException("Cannot connect to the Serial Number Queues.");
+            if (!Serializer.Ping())
+            {
+		        DebugLogger.LogWarning("Could not connect to Serial Queues.", this);
+                throw new SystemException("Cannot connect to the Serial Number Queues.");
+            }
         }
+        catch (Exception _ex)
+        {
+		    DebugLogger.LogError("Failed to ping Serial Queues.", _ex, this);
+            throw;
+        }
+        DebugLogger.LogMessage("Initialized NewPrintTicketFormViewModel.", this);
     }
 
     /// <summary>

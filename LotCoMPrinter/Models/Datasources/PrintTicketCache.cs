@@ -1,4 +1,5 @@
 using LotComPrinter.Models.Datatypes;
+using LotComPrinter.Models.Services;
 using Newtonsoft.Json;
 
 namespace LotComPrinter.Models.Datasources;
@@ -92,32 +93,59 @@ public static class PrintTicketCache
     /// <exception cref="OperationCanceledException"></exception>
     public static async Task SaveAsync(List<PrintTicket> Tickets)
     {
+        DebugLogger.LogMessage("Saving PrintTicketCache to cache file...", Tickets);
         // convert the passed Print Tickets to JSON streams and write them to the cache
         List<string> JSONTickets;
         try
         {
-            JSONTickets = Tickets
-                .Select(x => x
-                .ToJSON())
-                .ToList();
+            DebugLogger.LogMessage("Converting Tickets to JSON...", Tickets);
+            try
+            {
+                JSONTickets = Tickets
+                    .Select(x => x
+                    .ToJSON())
+                    .ToList();
+            }
+            catch (ArgumentNullException _ex)
+            {
+			    DebugLogger.LogError("Failed to convert PrintTickets to JSON.", _ex, Tickets);
+                throw;
+            }
         }
-        catch (ArgumentNullException)
+        catch (Exception _ex)
         {
+            DebugLogger.LogError("Failed to convert PrintTickets to JSON.", _ex, Tickets);
             throw;
         }
+        DebugLogger.LogMessage("Converted Tickets to JSON.", Tickets);
+        DebugLogger.LogMessage("Compiling JSON stream...", Tickets);
         string JSON = "";
-        foreach (string _ticket in JSONTickets)
-        {
-            JSON = $"{JSON}{_ticket}\n";
-        }
         try
         {
-            await File.WriteAllTextAsync(CacheFile, JSON);
+            foreach (string _ticket in JSONTickets)
+            {
+                JSON = $"{JSON}{_ticket}\n";
+            }
         }
-        catch (OperationCanceledException)
+        catch (Exception _ex)
         {
+            DebugLogger.LogError("Failed to compile JSON stream.", _ex, Tickets);
             throw;
         }
+        DebugLogger.LogMessage("Compiled JSON stream.", Tickets);
+        DebugLogger.LogMessage("Writing JSON stream...", Tickets);
+        try
+        {
+            DebugLogger.LogMessage("Calling File.WriteAllTextAsync() to write JSON stream...", Tickets);
+            await File.WriteAllTextAsync(CacheFile, JSON);
+            DebugLogger.LogMessage("Method did not throw exceptions.", Tickets);
+        }
+        catch (OperationCanceledException _ex)
+        {
+            DebugLogger.LogError("Failed to write JSON stream.", _ex, Tickets);
+            throw;
+        }
+        DebugLogger.LogMessage("Wrote JSON stream; saved PrintTicketCache.", Tickets);
     }
 
     /// <summary>

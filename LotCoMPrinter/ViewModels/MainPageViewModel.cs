@@ -4,6 +4,7 @@ using LotComPrinter.Models.Datasources;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Exceptions;
 using LotComPrinter.Models.Enums;
+using LotComPrinter.Models.Services;
 
 namespace LotComPrinter.ViewModels;
 
@@ -136,12 +137,16 @@ public partial class MainPageViewModel : ObservableObject
     /// <exception cref="SystemException"></exception>
     public async Task SaveOpenPrintTickets()
     {
+        DebugLogger.LogMessage("Saving OpenPrintTickets...", this);
         try
         {
+            DebugLogger.LogMessage("Calling PrintTicketCache.SaveAsync()...", this);
             await PrintTicketCache.SaveAsync(OpenPrintTickets.ToList());
+            DebugLogger.LogMessage("Method did not throw exceptions.", this);
         }
         catch (ArgumentNullException _ex)
         {
+			DebugLogger.LogError("Failed to save OpenPrintTickets.", _ex, this);
             throw new SystemException
             (
                 "Could not save the Print Ticket Cache due to the following exception:"
@@ -151,6 +156,7 @@ public partial class MainPageViewModel : ObservableObject
         }
         catch (OperationCanceledException _ex)
         {
+			DebugLogger.LogError("Failed to save OpenPrintTickets.", _ex, this);
             throw new SystemException
             (
                 "Could not save the Print Ticket Cache due to the following operation cancellation:"
@@ -159,6 +165,7 @@ public partial class MainPageViewModel : ObservableObject
                 + $"\n\t{_ex.InnerException}"
             );
         }
+        DebugLogger.LogMessage("Saved OpenPrintTickets.", this);
     }
 
     /// <summary>
@@ -168,15 +175,37 @@ public partial class MainPageViewModel : ObservableObject
     /// <exception cref="SystemException"></exception>
     public async Task AddNewOpenPrintTicket(PrintTicket Ticket)
     {
-        OpenPrintTickets = new ObservableCollection<PrintTicket>(OpenPrintTickets.Append(Ticket));
+        DebugLogger.LogMessage("Adding new PrintTicket to OpenPrintTickets list...", this);
+        DebugLogger.LogMessage
+        (
+            "Adding: \"" +
+            $"{Ticket.ToJSON()}"
+            + "\"",
+            this
+        );
         try
         {
-            await SaveOpenPrintTickets();
+            OpenPrintTickets = new ObservableCollection<PrintTicket>(OpenPrintTickets.Append(Ticket));
         }
-        catch (SystemException)
+        catch (Exception _ex)
         {
+			DebugLogger.LogError("Failed to add PrintTicket to OpenPrintTickets.", _ex, this);
+			throw;
+        }
+        DebugLogger.LogMessage("Added PrintTicket to OpenPrintTickets list.", this);
+        DebugLogger.LogMessage("Saving OpenPrintTickets list...", this);
+        try
+        {
+            DebugLogger.LogMessage("Calling SaveOpenPrintTickets()...", this);
+            await SaveOpenPrintTickets();
+            DebugLogger.LogMessage("Method did not throw exceptions.", this);
+        }
+        catch (SystemException _ex)
+        {
+			DebugLogger.LogError("Failed to save OpenPrintTickets.", _ex, this);
             throw;
         }
+        DebugLogger.LogMessage("Saved OpenPrintTickets list.", this);
     }
 
     /// <summary>

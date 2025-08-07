@@ -4,6 +4,7 @@ using LotCom.Database;
 using LotCom.Enums;
 using LotCom.Extensions;
 using LotCom.Types;
+using LotComPrinter.Models.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -275,35 +276,74 @@ public partial class PrintTicket : ObservableObject
     /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
     public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, Quantity TicketProductionQuantity, Operator TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
     {
+        DebugLogger.LogMessage("Starting PrintTicket initialization...", this);
+        DebugLogger.LogMessage
+        (
+            "Source information: " +
+            $"{TicketProcess.FullName}, " +
+            $"{TicketPart.PartNumber}, " +
+            $"{SerializationModeExtensions.ToString(TicketSerializationMode)}, " +
+            $"{TicketSerialNumber.ToJSON()}, " +
+            $"{new Timestamp(TicketProductionDate).Stamp}, " +
+            $"{ShiftExtensions.ToString(TicketProductionShift)}, " +
+            $"{TicketProductionQuantity.Value}, " +
+            $"{TicketProductionOperator.Initials}, " +
+            $"{VariableFields.ToJSON()}, " +
+            $"{FirstPartialDataSet}, " +
+            $"{SecondPartialDataSet}, "
+            ,
+            this
+        );
+        DebugLogger.LogMessage("Setting PrintTicket properties...", this);
         // set the basic info input in the NewPrintTicketForm
-        _process = TicketProcess;
-        _part = TicketPart;
-        _serializationMode = TicketSerializationMode;
-        _serialNumber = TicketSerialNumber;
-        _productionDate = TicketProductionDate;
-        _productionShift = TicketProductionShift;
-        _productionQuantity = TicketProductionQuantity;
-        _productionOperator = TicketProductionOperator;
-        // save the passed VariableSet
-        _variableFields = VariableFields;
-        // set Partial Datasets if passed
-        _firstPartialDataSet = FirstPartialDataSet;
-        _secondPartialDataSet = SecondPartialDataSet;
+        try
+        {
+            _process = TicketProcess;
+            _part = TicketPart;
+            _serializationMode = TicketSerializationMode;
+            _serialNumber = TicketSerialNumber;
+            _productionDate = TicketProductionDate;
+            _productionShift = TicketProductionShift;
+            _productionQuantity = TicketProductionQuantity;
+            _productionOperator = TicketProductionOperator;
+            // save the passed VariableSet
+            _variableFields = VariableFields;
+            // set Partial Datasets if passed
+            _firstPartialDataSet = FirstPartialDataSet;
+            _secondPartialDataSet = SecondPartialDataSet;
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to set properties.", _ex, this);
+            throw;
+        }
+        DebugLogger.LogMessage("Properties set.", this);
         // calculate binding properties
-        HasFirstPartialDataSet = FirstPartialDataSet is not null;
-        HasSecondPartialDataSet = SecondPartialDataSet is not null;
-        HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
-        Title = $"{Part.ModelNumber.Code} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
-        IsPassThrough = _process.Origination == OriginationType.PassThrough;
-        ProductionDateShort = $"{ProductionDate.Month}/{ProductionDate.Day}";
-        if (Process.RequiredFields.JBKNumber && SerializationMode != SerializationMode.JBK)
+        DebugLogger.LogMessage("Calculating and setting binding properties...", this);
+        try
         {
-            JBKManualEntry = true;
+            HasFirstPartialDataSet = FirstPartialDataSet is not null;
+            HasSecondPartialDataSet = SecondPartialDataSet is not null;
+            HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
+            Title = $"{Part.ModelNumber.Code} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
+            IsPassThrough = _process.Origination == OriginationType.PassThrough;
+            ProductionDateShort = $"{ProductionDate.Month}/{ProductionDate.Day}";
+            if (Process.RequiredFields.JBKNumber && SerializationMode != SerializationMode.JBK)
+            {
+                JBKManualEntry = true;
+            }
+            if (Process.RequiredFields.LotNumber && SerializationMode != SerializationMode.Lot)
+            {
+                LotManualEntry = true;
+            }
         }
-        if (Process.RequiredFields.LotNumber && SerializationMode != SerializationMode.Lot)
+        catch (Exception _ex)
         {
-            LotManualEntry = true;
+            DebugLogger.LogError("Failed to calculate and set binding properties.", _ex, this);
+            throw;
         }
+        DebugLogger.LogMessage("Binding properties set.", this);
+        DebugLogger.LogMessage("PrintTicket initialization complete.", this);
     }
 
     /// <summary>
@@ -312,44 +352,77 @@ public partial class PrintTicket : ObservableObject
     /// <returns></returns>
     public string ToJSON()
     {
+        DebugLogger.LogMessage("Converting PrintTicket to JSON stream...", this);
         // build the JSON stream piece-by-piece
         // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
-        string JSON =
-            "{" +
-                "\"Process\":{" +
-                    $"\"FullName\":\"{Process.FullName}\"" +
-                "}," +
-                "\"Part\":{" +
-                    $"\"PartNumber\":\"{Part.PartNumber}\"" +
-                "}," +
-                $"\"SerializationMode\":\"{SerializationModeExtensions.ToString(SerializationMode)}\"," +
-                $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
-                $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
-                $"\"ProductionShift\":\"{ShiftExtensions.ToString(ProductionShift)}\"," +
-                $"\"ProductionQuantity\":\"{ProductionQuantity.Value}\"," +
-                $"\"ProductionOperator\":\"{ProductionOperator.Initials}\"," +
-                $"\"VariableFieldSet\":{VariableFields.ToJSON()}";
+        DebugLogger.LogMessage("Adding implicit (non-nullable) data to JSON stream...", this);
+        string JSON;
+        try
+        {
+            JSON =
+                "{" +
+                    "\"Process\":{" +
+                        $"\"FullName\":\"{Process.FullName}\"" +
+                    "}," +
+                    "\"Part\":{" +
+                        $"\"PartNumber\":\"{Part.PartNumber}\"" +
+                    "}," +
+                    $"\"SerializationMode\":\"{SerializationModeExtensions.ToString(SerializationMode)}\"," +
+                    $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
+                    $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
+                    $"\"ProductionShift\":\"{ShiftExtensions.ToString(ProductionShift)}\"," +
+                    $"\"ProductionQuantity\":\"{ProductionQuantity.Value}\"," +
+                    $"\"ProductionOperator\":\"{ProductionOperator.Initials}\"," +
+                    $"\"VariableFieldSet\":{VariableFields.ToJSON()}";
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to add implicits to JSON stream.", _ex, this);
+            throw;
+        }
+        DebugLogger.LogMessage("Added implicit (non-nullable) data to JSON stream.", this);
         // add partial data sets only if assigned
-        if (HasFirstPartialDataSet)
+        DebugLogger.LogMessage("Adding FirstPartialDataSet to JSON stream...", this);
+        try
         {
-            JSON +=
-                ",\"FirstPartialDataSet\":{" +
-                    $"\"Quantity\":\"{FirstPartialDataSet!.Quantity.Value}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(FirstPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{FirstPartialDataSet!.Operator.Initials}\"" +
-                "}";
+            if (HasFirstPartialDataSet)
+            {
+                JSON +=
+                    ",\"FirstPartialDataSet\":{" +
+                        $"\"Quantity\":\"{FirstPartialDataSet!.Quantity.Value}\"," +
+                        $"\"Shift\":\"{ShiftExtensions.ToString(FirstPartialDataSet.Shift!)}\"," +
+                        $"\"Operator\":\"{FirstPartialDataSet!.Operator.Initials}\"" +
+                    "}";
+            }
         }
-        if (HasSecondPartialDataSet)
+        catch (Exception _ex)
         {
-            JSON +=
-                ",\"SecondPartialDataSet\":{" +
-                    $"\"Quantity\":\"{SecondPartialDataSet!.Quantity.Value}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{SecondPartialDataSet!.Operator.Initials}\"" +
-                "}";
+            DebugLogger.LogError("Failed to add FirstPartialDataSet to JSON stream.", _ex, this);
+            throw;
         }
+        DebugLogger.LogMessage("Added FirstPartialDataSet to JSON stream.", this);
+        DebugLogger.LogMessage("Adding SecondPartialDataSet to JSON stream...", this);
+        try
+        {
+            if (HasSecondPartialDataSet)
+            {
+                JSON +=
+                    ",\"SecondPartialDataSet\":{" +
+                        $"\"Quantity\":\"{SecondPartialDataSet!.Quantity.Value}\"," +
+                        $"\"Shift\":\"{ShiftExtensions.ToString(SecondPartialDataSet.Shift!)}\"," +
+                        $"\"Operator\":\"{SecondPartialDataSet!.Operator.Initials}\"" +
+                    "}";
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to add SecondPartialDataSet to JSON stream.", _ex, this);
+            throw;
+        }
+        DebugLogger.LogMessage("Added SecondPartialDataSet to JSON stream.", this);
         // close the JSON stream
         JSON = $"{JSON}" + "}";
+        DebugLogger.LogMessage($"Converted PrintTicket to JSON stream: \"{JSON}\".", this);
         return JSON;
     }
 
@@ -630,97 +703,229 @@ public partial class PrintTicket : ObservableObject
     /// <returns></returns>
     public static PrintTicket DeepCopy(PrintTicket Source)
     {
-        PrintTicket Copy = new PrintTicket
+        DebugLogger.LogMessage("Creating a Deep Copy...", Source);
+        DebugLogger.LogMessage
         (
-            Source.Process,
-            Source.Part,
-            Source.SerializationMode,
-            new SerialNumber
-            (
-                Source.SerializationMode,
-                Source.Part,
-                Source.SerialNumber.Value
-            ),
-            new DateTime(Source.ProductionDate.Ticks),
-            Source.ProductionShift,
-            new Quantity
-            (
-                Source.ProductionQuantity.Value
-            ),
-            new Operator
-            (
-                Source.ProductionOperator.Initials
-            ),
-            new VariableFieldSet
-            (
-
-            )
+            "Source for Deep Copy: \"" +
+            $"{Source.ToJSON()}"
+            + "\"",
+            Source
         );
-        if (Source.VariableFields.JBKNumber is not null)
+        DebugLogger.LogMessage("Copying implicit values (non-nullable)...", Source);
+        PrintTicket Copy;
+        try
         {
-            Copy.VariableFields.JBKNumber = new JBKNumber
+            Copy = new PrintTicket
             (
-                Source.VariableFields.JBKNumber.Literal
-            );
-        }
-        if (Source.VariableFields.LotNumber is not null)
-        {
-            Copy.VariableFields.LotNumber = new LotNumber
-            (
-                Source.VariableFields.LotNumber.Literal
-            );
-        }
-        if (Source.VariableFields.DieNumber is not null)
-        {
-            Copy.VariableFields.DieNumber = new DieNumber
-            (
-                Source.VariableFields.DieNumber.Formatted
-            );
-        }
-        if (Source.VariableFields.DeburrJBKNumber is not null)
-        {
-            Copy.VariableFields.DeburrJBKNumber = new JBKNumber
-            (
-                Source.VariableFields.DeburrJBKNumber.Literal
-            );
-        }
-        if (Source.VariableFields.HeatNumber is not null)
-        {
-            Copy.VariableFields.HeatNumber = new HeatNumber
-            (
-                Source.VariableFields.HeatNumber.Literal
-            );
-        }
-        if (Source.FirstPartialDataSet is not null)
-        {
-            Copy.FirstPartialDataSet = new PartialDataSet
-            (
+                Source.Process,
+                Source.Part,
+                Source.SerializationMode,
+                new SerialNumber
+                (
+                    Source.SerializationMode,
+                    Source.Part,
+                    Source.SerialNumber.Value
+                ),
+                new DateTime(Source.ProductionDate.Ticks),
+                Source.ProductionShift,
                 new Quantity
                 (
-                    Source.FirstPartialDataSet.Quantity.Value
+                    Source.ProductionQuantity.Value
                 ),
-                Source.FirstPartialDataSet.Shift,
                 new Operator
                 (
-                    Source.FirstPartialDataSet.Operator.Initials
+                    Source.ProductionOperator.Initials
+                ),
+                new VariableFieldSet
+                (
+
                 )
             );
         }
-        if (Source.SecondPartialDataSet is not null)
+        catch (Exception _ex)
         {
-            Copy.SecondPartialDataSet = new PartialDataSet
-            (
-                new Quantity
-                (
-                    Source.SecondPartialDataSet.Quantity.Value
-                ),
-                Source.SecondPartialDataSet.Shift,
-                new Operator
-                (
-                    Source.SecondPartialDataSet.Operator.Initials
-                )
-            );
+            DebugLogger.LogError("Failed to copy implicit/non-nullable values.", _ex, Source);
+            throw;
         }
+        DebugLogger.LogMessage("Implicit values (non-nullable) copied.", Copy);
+        DebugLogger.LogMessage
+        (
+            "Deep Copy after implicit copying: \"" +
+            $"{Copy.ToJSON()}"
+            + "\"",
+            Copy
+        );
+        DebugLogger.LogMessage("Copying variable field values...", Copy);
+        DebugLogger.LogMessage("Copying JBK Number...", Copy);
+        DebugLogger.LogMessage($"Source: {Source.VariableFields.JBKNumber}.", Copy);
+        try
+        {
+            if (Source.VariableFields.JBKNumber is not null)
+            {
+                Copy.VariableFields.JBKNumber = new JBKNumber
+                (
+                    Source.VariableFields.JBKNumber.Literal
+                );
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to copy JBK Number value.", _ex, Copy);
+            throw;
+        }
+        DebugLogger.LogMessage("Copied JBK Number.", Copy);
+        DebugLogger.LogMessage($"Copied value: {Copy.VariableFields.JBKNumber}.", Copy);
+        DebugLogger.LogMessage("Copying Lot Number...", Copy);
+        DebugLogger.LogMessage($"Source: {Source.VariableFields.LotNumber}.", Copy);
+        try
+        {
+            if (Source.VariableFields.LotNumber is not null)
+            {
+                Copy.VariableFields.LotNumber = new LotNumber
+                (
+                    Source.VariableFields.LotNumber.Literal
+                );
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to copy JBK Number value.", _ex, Copy);
+            throw;
+        }
+        DebugLogger.LogMessage("Copied Lot Number.", Copy);
+        DebugLogger.LogMessage($"Copied value: {Copy.VariableFields.LotNumber}.", Copy);
+        DebugLogger.LogMessage("Copying Die Number...", Copy);
+        DebugLogger.LogMessage($"Source: {Source.VariableFields.DieNumber}.", Copy);
+        try
+        {
+            if (Source.VariableFields.DieNumber is not null)
+            {
+                Copy.VariableFields.DieNumber = new DieNumber
+                (
+                    Source.VariableFields.DieNumber.Formatted
+                );
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to copy JBK Number value.", _ex, Copy);
+            throw;
+        }
+        DebugLogger.LogMessage("Copied Die Number.", Copy);
+        DebugLogger.LogMessage($"Copied value: {Copy.VariableFields.DieNumber}.", Copy);
+        DebugLogger.LogMessage("Copying Deburr JBK Number...", Copy);
+        DebugLogger.LogMessage($"Source: {Source.VariableFields.DeburrJBKNumber}.", Copy);
+        try
+        {
+            if (Source.VariableFields.DeburrJBKNumber is not null)
+            {
+                Copy.VariableFields.DeburrJBKNumber = new JBKNumber
+                (
+                    Source.VariableFields.DeburrJBKNumber.Literal
+                );
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to copy JBK Number value.", _ex, Copy);
+            throw;
+        }
+        DebugLogger.LogMessage("Copied Deburr JBK Number.", Copy);
+        DebugLogger.LogMessage($"Copied value: {Copy.VariableFields.DeburrJBKNumber}.", Copy);
+        DebugLogger.LogMessage("Copying Heat Number...", Copy);
+        DebugLogger.LogMessage($"Source: {Source.VariableFields.HeatNumber}.", Copy);
+        try
+        {
+            if (Source.VariableFields.HeatNumber is not null)
+            {
+                Copy.VariableFields.HeatNumber = new HeatNumber
+                (
+                    Source.VariableFields.HeatNumber.Literal
+                );
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to copy JBK Number value.", _ex, Copy);
+            throw;
+        }
+        DebugLogger.LogMessage("Copied Heat Number.", Copy);
+        DebugLogger.LogMessage($"Copied value: {Copy.VariableFields.HeatNumber}.", Copy);
+        DebugLogger.LogMessage("Copied VariableFieldSet.", Copy);
+        DebugLogger.LogMessage
+        (
+            "Deep Copy after VariableFieldSet copying:\"" +
+            $"{Copy.ToJSON()}"
+            + "\"",
+            Copy
+        );
+        DebugLogger.LogMessage("Copying FirstPartialDataSet...", Copy);
+        DebugLogger.LogMessage($"Source: {Source.FirstPartialDataSet}.", Copy);
+        try
+        {
+            if (Source.FirstPartialDataSet is not null)
+            {
+                Copy.FirstPartialDataSet = new PartialDataSet
+                (
+                    new Quantity
+                    (
+                        Source.FirstPartialDataSet.Quantity.Value
+                    ),
+                    Source.FirstPartialDataSet.Shift,
+                    new Operator
+                    (
+                        Source.FirstPartialDataSet.Operator.Initials
+                    )
+                );
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to copy FirstPartialDataSet.", _ex, Copy);
+            throw;
+        }
+        DebugLogger.LogMessage("Copied FirstPartialDataSet.", Copy);
+        DebugLogger.LogMessage
+        (
+            "Deep Copy after FirstPartialDataSet copying: \"" +
+            $"{Copy.ToJSON()}"
+            + "\"",
+            Copy
+        );
+        DebugLogger.LogMessage("Copying SecondPartialDataSet...", Copy);
+        DebugLogger.LogMessage($"Source: {Source.SecondPartialDataSet}.", Copy);
+        try
+        {
+            if (Source.SecondPartialDataSet is not null)
+            {
+                Copy.SecondPartialDataSet = new PartialDataSet
+                (
+                    new Quantity
+                    (
+                        Source.SecondPartialDataSet.Quantity.Value
+                    ),
+                    Source.SecondPartialDataSet.Shift,
+                    new Operator
+                    (
+                        Source.SecondPartialDataSet.Operator.Initials
+                    )
+                );
+            }
+        }
+        catch (Exception _ex)
+        {
+            DebugLogger.LogError("Failed to copy SecondPartialDataSet.", _ex, Copy);
+            throw;
+        }
+        DebugLogger.LogMessage("Copied SecondPartialDataSet.", Copy);
+        DebugLogger.LogMessage
+        (
+            "Deep Copy after SecondPartialDataSet copying: \"" +
+            $"{Copy.ToJSON()}"
+            + "\"",
+            Copy
+        );
+        DebugLogger.LogMessage("Deep Copy complete.", Copy);
         return Copy;
     }
 
