@@ -317,8 +317,6 @@ public partial class PrintTicket : ObservableObject
     /// <exception cref="JsonException"></exception>
     public static async Task<PrintTicket> ParseJSON(string Line)
     {
-        // create a UA to use as the Agent for this parsing session
-        UserAgent Agent = UserAgentFactory.CreatePrinterAgent(System.Reflection.Assembly.GetEntryAssembly()!.GetName().Version!.ToString());
         // parse Line into JTokens
         JObject JSON = JObject.Parse(Line);
         // attempt to retrieve Process from the Database
@@ -326,7 +324,7 @@ public partial class PrintTicket : ObservableObject
         Part? Part;
         try
         {
-            Process = await ProcessService.Get(int.Parse(JSON["Process"]!.ToString()), Agent);
+            Process = await ProcessService.Get(int.Parse(JSON["Process"]!.ToString()), App.UserAgent);
         }
         catch (SystemException)
         {
@@ -339,7 +337,7 @@ public partial class PrintTicket : ObservableObject
         // attempt to retrieve Part from the Database
         try
         {
-            Part = await PartService.Get(int.Parse(JSON["Part"]!.ToString()), Agent);
+            Part = await PartService.Get(int.Parse(JSON["Part"]!.ToString()), App.UserAgent);
         }
         catch (SystemException)
         {
