@@ -19,7 +19,7 @@ public static class PrintingService
     private static void LoadLabelImage(object Sender, PrintPageEventArgs e, Datatypes.Label label)
     {
         // draw the Label Image onto the PrintDocument Graphic
-        Bitmap Resized = ResizeService.ResizeImage(label.GetImage(), 350, 350);
+        Bitmap Resized = ResizingService.ResizeImage(label.GetImage(), 350, 350);
         e.Graphics!.DrawImage(Resized, new System.Drawing.Point(0, 0));
     }
 
