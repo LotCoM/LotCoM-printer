@@ -42,12 +42,12 @@ public class PrintJob
         {
             if (Type == PrintJobType.Partial)
             {
-                Label = await PartialTagGenerator.GenerateTagAsync(Source, (int)PartialSetNumber!);
+                Label = await PartialTagService.GenerateTagAsync(Source, (int)PartialSetNumber!);
             }
             // both Full and Reprint Labels are identical
             else
             {
-                Label = await LabelGenerator.GenerateLabelAsync(Source);
+                Label = await LabelService.GenerateLabelAsync(Source);
             }
         }
         catch (LabelBuildException _ex)
@@ -109,7 +109,7 @@ public class PrintJob
         bool Printed = false;
         try
         {
-            Printed = await PrintHandler.PrintLabelAsync(Label!);
+            Printed = await PrintingService.PrintLabelAsync(Label!);
         }
         catch (PrintRequestException _ex)
         {
@@ -120,7 +120,7 @@ public class PrintJob
         {
             try
             {
-                await PrintLogger.LogPrintEvent(this);
+                await LoggingService.LogPrintEvent(this);
                 // the print logging was forced to default on its backup logging; report this to user
             }
             catch (Exception _ex)

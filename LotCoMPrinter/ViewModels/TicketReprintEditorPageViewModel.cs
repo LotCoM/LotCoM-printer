@@ -67,7 +67,7 @@ public class TicketReprintEditorPageViewModel : ObservableObject
             .Equals(EditorTicket.Tracked.ToJSON())
         )
         {
-            await PrintLogger.UpdateLog(EditorTicket.Untracked, EditorTicket.Tracked);
+            await LoggingService.UpdateLog(EditorTicket.Untracked, EditorTicket.Tracked);
         }
         PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Reprint);
         bool Printed;

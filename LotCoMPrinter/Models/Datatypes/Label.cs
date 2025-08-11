@@ -239,7 +239,7 @@ public class Label
             Surface.InterpolationMode = InterpolationMode.HighQualityBicubic;
             Surface.PixelOffsetMode = PixelOffsetMode.HighQuality;
             // resize and draw the QR Code
-            Bitmap LabelCodeImage = Resizer.ResizeImage
+            Bitmap LabelCodeImage = ResizingService.ResizeImage
             (
                 LabelCode.Code!,
                 Dimensions.CodeDimension,
