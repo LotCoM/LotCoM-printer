@@ -6,7 +6,7 @@ using LotComPrinter.Models.Exceptions;
 
 namespace LotComPrinter.Models.Services;
 
-public static class LabelGenerator 
+public static class LabelService
 {
     /// <summary>
     /// A special Header Message to show when there is an issue configuring the Label's Header text.

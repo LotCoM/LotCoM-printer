@@ -9,7 +9,7 @@ namespace LotComPrinter.Models.Services;
 /// <summary>
 /// Allows the printing of a Label.
 /// </summary>
-public static class PrintHandler
+public static class PrintingService
 {
     /// <summary>
     /// Loads the Label Image onto the PrintDocument.
@@ -19,7 +19,7 @@ public static class PrintHandler
     private static void LoadLabelImage(object Sender, PrintPageEventArgs e, Datatypes.Label label)
     {
         // draw the Label Image onto the PrintDocument Graphic
-        Bitmap Resized = Resizer.ResizeImage(label.GetImage(), 350, 350);
+        Bitmap Resized = ResizeService.ResizeImage(label.GetImage(), 350, 350);
         e.Graphics!.DrawImage(Resized, new System.Drawing.Point(0, 0));
     }
 

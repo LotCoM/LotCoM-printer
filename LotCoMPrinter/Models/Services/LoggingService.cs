@@ -5,7 +5,7 @@ using LotComPrinter.Models.Exceptions;
 
 namespace LotComPrinter.Models.Services;
 
-public static class PrintLogger
+public static class LoggingService
 {
     /// <summary>
     /// Directory that contains the Print Log Tables for each Process. 

@@ -6,7 +6,7 @@ using LotComPrinter.Models.Exceptions;
 
 namespace LotComPrinter.Models.Services;
 
-public static class PartialTagGenerator
+public static class PartialTagService
 {
     /// <summary>
     /// Creates a List of strings that can be added to the Tag as Body text.
