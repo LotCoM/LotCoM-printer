@@ -6,7 +6,7 @@ namespace LotComPrinter.Models.Services;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 
-public static class ResizeService {
+public static class ResizingService {
     
     /// <summary>
     /// Resize the image to print.
