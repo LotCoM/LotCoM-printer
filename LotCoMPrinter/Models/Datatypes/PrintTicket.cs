@@ -1,8 +1,9 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.Database;
-using LotCom.Enums;
-using LotCom.Extensions;
+using LotCom.DataAccess;
+using LotCom.DataAccess.Services;
+using LotCom.Types.Enums;
+using LotCom.Types.Extensions;
 using LotCom.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,8 +22,7 @@ public partial class PrintTicket : ObservableObject
         set
         {
             _process = value;
-            OnPropertyChanged(nameof(_process));
-            OnPropertyChanged(nameof(Process));
+            OnPropertyChanged();
         }
     }
 
@@ -36,8 +36,7 @@ public partial class PrintTicket : ObservableObject
         set
         {
             _part = value;
-            OnPropertyChanged(nameof(_part));
-            OnPropertyChanged(nameof(Part));
+            OnPropertyChanged();
         }
     }
 
@@ -50,9 +49,7 @@ public partial class PrintTicket : ObservableObject
         get { return _serializationMode; }
         set
         {
-            _serializationMode = value;
-            OnPropertyChanged(nameof(_serializationMode));
-            OnPropertyChanged(nameof(SerializationMode));
+            OnPropertyChanged();
         }
     }
 
@@ -66,8 +63,7 @@ public partial class PrintTicket : ObservableObject
         set
         {
             _serialNumber = value;
-            OnPropertyChanged(nameof(_serialNumber));
-            OnPropertyChanged(nameof(SerialNumber));
+            OnPropertyChanged();
         }
     }
 
@@ -81,51 +77,7 @@ public partial class PrintTicket : ObservableObject
         set
         {
             _productionDate = value;
-            OnPropertyChanged(nameof(_productionDate));
-            OnPropertyChanged(nameof(ProductionDate));
-        }
-    }
-
-    private Shift _productionShift;
-    /// <summary>
-    /// The Shift that this Print Ticket was initiated on.
-    /// </summary>
-    public Shift ProductionShift
-    {
-        get { return _productionShift; }
-        set
-        {
-            _productionShift = value;
-            OnPropertyChanged(nameof(_productionShift));
-            OnPropertyChanged(nameof(ProductionShift));
-        }
-    }
-
-    private Quantity _productionQuantity;
-
-    public Quantity ProductionQuantity
-    {
-        get { return _productionQuantity; }
-        set
-        {
-            _productionQuantity = value;
-            OnPropertyChanged(nameof(_productionQuantity));
-            OnPropertyChanged(nameof(ProductionQuantity));
-        }
-    }
-
-    private Operator _productionOperator;
-    /// <summary>
-    /// The Operator that this Print Ticket was initiated by.
-    /// </summary>
-    public Operator ProductionOperator
-    {
-        get { return _productionOperator; }
-        set
-        {
-            _productionOperator = value;
-            OnPropertyChanged(nameof(_productionOperator));
-            OnPropertyChanged(nameof(ProductionOperator));
+            OnPropertyChanged();
         }
     }
 
@@ -139,38 +91,49 @@ public partial class PrintTicket : ObservableObject
         set
         {
             _variableFields = value;
-            OnPropertyChanged(nameof(_variableFields));
-            OnPropertyChanged(nameof(VariableFields));
+            OnPropertyChanged();
         }
     }
 
-    private PartialDataSet? _firstPartialDataSet;
+    private PartialDataSet _primaryData;
     /// <summary>
-    /// The first of the Partial Production Data sets associated with this Print Ticket.
+    /// The primary, required set of Partial Production Data associated with this Print Ticket.
     /// </summary>
-    public PartialDataSet? FirstPartialDataSet
+    public PartialDataSet PrimaryData
     {
-        get { return _firstPartialDataSet; }
+        get { return _primaryData; }
         set
         {
-            _firstPartialDataSet = value;
-            OnPropertyChanged(nameof(_firstPartialDataSet));
-            OnPropertyChanged(nameof(FirstPartialDataSet));
+            _primaryData = value;
+            OnPropertyChanged();
         }
     }
 
-    private PartialDataSet? _secondPartialDataSet;
+    private PartialDataSet? _secondaryData;
     /// <summary>
-    /// The second of the Partial Production Data sets associated with this Print Ticket.
+    /// The first optional, additional Partial Production Data sets associated with this Print Ticket.
     /// </summary>
-    public PartialDataSet? SecondPartialDataSet
+    public PartialDataSet? SecondaryData
     {
-        get { return _secondPartialDataSet; }
+        get { return _secondaryData; }
         set
         {
-            _secondPartialDataSet = value;
-            OnPropertyChanged(nameof(_secondPartialDataSet));
-            OnPropertyChanged(nameof(SecondPartialDataSet));
+            _secondaryData = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private PartialDataSet? _tertiaryData;
+    /// <summary>
+    /// The second optional, additional Partial Production Data sets associated with this Print Ticket.
+    /// </summary>
+    public PartialDataSet? TertiaryData
+    {
+        get { return _tertiaryData; }
+        set
+        {
+            _tertiaryData = value;
+            OnPropertyChanged();
         }
     }
 
@@ -184,8 +147,7 @@ public partial class PrintTicket : ObservableObject
         set
         {
             _jbkManualEntry = value;
-            OnPropertyChanged(nameof(_jbkManualEntry));
-            OnPropertyChanged(nameof(JBKManualEntry));
+            OnPropertyChanged();
         }
     }
 
@@ -199,22 +161,21 @@ public partial class PrintTicket : ObservableObject
         set
         {
             _lotManualEntry = value;
-            OnPropertyChanged(nameof(_lotManualEntry));
-            OnPropertyChanged(nameof(LotManualEntry));
+            OnPropertyChanged();
         }
     }
 
     /// <summary>
-    /// Returns whether the Print Ticket has one Partial Data Set associated with it.
+    /// Returns whether the Print Ticket has a second Partial Data Set associated with it.
     /// </summary>
     [ObservableProperty]
-    public partial bool HasFirstPartialDataSet { get; private set; }
+    public partial bool HasSecondaryData { get; private set; }
 
     /// <summary>
-    /// Returns whether the Print Ticket has two Partial Data Sets associated with it.
+    /// Returns whether the Print Ticket has a third Partial Data Sets associated with it.
     /// </summary>
     [ObservableProperty]
-    public partial bool HasSecondPartialDataSet { get; private set; }
+    public partial bool HasTertiaryData { get; private set; }
 
     /// <summary>
     /// Returns whether the Print Ticket has space for another Partial Data Set.
@@ -248,14 +209,14 @@ public partial class PrintTicket : ObservableObject
     public partial bool IsSelectedInList { get; set; } = false;
 
     /// <summary>
-    /// Shifts the PartialDataSet from the Second position into the First.
+    /// Shifts the PartialDataSet in the Second position to the First.
     /// </summary>
     private void ShiftPartialDataSet()
     {
-        FirstPartialDataSet = SecondPartialDataSet;
-        HasFirstPartialDataSet = true;
-        SecondPartialDataSet = null;
-        HasSecondPartialDataSet = false;
+        SecondaryData = TertiaryData;
+        HasSecondaryData = true;
+        TertiaryData = null;
+        HasTertiaryData = false;
         HasSpace = true;
     }
 
@@ -267,13 +228,11 @@ public partial class PrintTicket : ObservableObject
     /// <param name="TicketSerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
     /// <param name="TicketSerialNumber">The Serial Number to apply to this Print Ticket.</param>
     /// <param name="TicketProductionDate">The Date on which this Print Ticket was initiated.</param>
-    /// <param name="TicketProductionShift">The Shift that this Print Ticket was initiated on.</param>
-    /// <param name="TicketProductionQuantity">The Quantity produced on the Shift that this Print Ticket was initiated on.</param>
-    /// <param name="TicketProductionOperator">The Operator that initiated this Print Ticket.</param>
     /// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
-    /// <param name="FirstPartialDataSet">An optional DataSet to include at instantiation.</param>
-    /// <param name="SecondPartialDataSet">A second optional DataSet to include at instantiation.</param>
-    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, Shift TicketProductionShift, Quantity TicketProductionQuantity, Operator TicketProductionOperator, VariableFieldSet VariableFields, PartialDataSet? FirstPartialDataSet = null, PartialDataSet? SecondPartialDataSet = null)
+    /// <param name="PrimaryData">The required DataSet to include at instantiation.</param>
+    /// <param name="SecondaryData">An optional DataSet to include at instantiation.</param>
+    /// <param name="TertiaryData">A second optional DataSet to include at instantiation.</param>
+    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, VariableFieldSet VariableFields, PartialDataSet PrimaryData, PartialDataSet? SecondaryData = null, PartialDataSet? TertiaryData = null)
     {
         // set the basic info input in the NewPrintTicketForm
         _process = TicketProcess;
@@ -281,18 +240,16 @@ public partial class PrintTicket : ObservableObject
         _serializationMode = TicketSerializationMode;
         _serialNumber = TicketSerialNumber;
         _productionDate = TicketProductionDate;
-        _productionShift = TicketProductionShift;
-        _productionQuantity = TicketProductionQuantity;
-        _productionOperator = TicketProductionOperator;
         // save the passed VariableSet
         _variableFields = VariableFields;
-        // set Partial Datasets if passed
-        _firstPartialDataSet = FirstPartialDataSet;
-        _secondPartialDataSet = SecondPartialDataSet;
+        // set Partial Datasets
+        _primaryData = PrimaryData;
+        _secondaryData = SecondaryData;
+        _tertiaryData = TertiaryData;
         // calculate binding properties
-        HasFirstPartialDataSet = FirstPartialDataSet is not null;
-        HasSecondPartialDataSet = SecondPartialDataSet is not null;
-        HasSpace = !(HasFirstPartialDataSet && HasSecondPartialDataSet);
+        HasSecondaryData = SecondaryData is not null;
+        HasTertiaryData = TertiaryData is not null;
+        HasSpace = !(HasSecondaryData && HasTertiaryData);
         Title = $"{Part.ModelNumber.Code} {Part.PartName} - {SerialNumber.GetFormattedValue()}";
         IsPassThrough = _process.Origination == OriginationType.PassThrough;
         ProductionDateShort = $"{ProductionDate.Month}/{ProductionDate.Day}";
@@ -316,36 +273,35 @@ public partial class PrintTicket : ObservableObject
         // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
         string JSON =
             "{" +
-                "\"Process\":{" +
-                    $"\"FullName\":\"{Process.FullName}\"" +
-                "}," +
-                "\"Part\":{" +
-                    $"\"PartNumber\":\"{Part.PartNumber}\"" +
-                "}," +
+                $"\"Process\":\"{Process.Id}\"" +
+                $"\"Part\":\"{Part.Id}\"" +
                 $"\"SerializationMode\":\"{SerializationModeExtensions.ToString(SerializationMode)}\"," +
                 $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
                 $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
-                $"\"ProductionShift\":\"{ShiftExtensions.ToString(ProductionShift)}\"," +
-                $"\"ProductionQuantity\":\"{ProductionQuantity.Value}\"," +
-                $"\"ProductionOperator\":\"{ProductionOperator.Initials}\"," +
                 $"\"VariableFieldSet\":{VariableFields.ToJSON()}";
-        // add partial data sets only if assigned
-        if (HasFirstPartialDataSet)
+        // add partial data sets
+        JSON +=
+            ",\"PrimaryData\":{" +
+                $"\"Quantity\":\"{PrimaryData!.Quantity.Value}\"," +
+                $"\"Shift\":\"{ShiftExtensions.ToString(PrimaryData.Shift!)}\"," +
+                $"\"Operator\":\"{PrimaryData!.Operator.Initials}\"" +
+            "}";
+        if (HasSecondaryData)
         {
             JSON +=
-                ",\"FirstPartialDataSet\":{" +
-                    $"\"Quantity\":\"{FirstPartialDataSet!.Quantity.Value}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(FirstPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{FirstPartialDataSet!.Operator.Initials}\"" +
+                ",\"SecondaryData\":{" +
+                    $"\"Quantity\":\"{SecondaryData!.Quantity.Value}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondaryData.Shift!)}\"," +
+                    $"\"Operator\":\"{SecondaryData!.Operator.Initials}\"" +
                 "}";
         }
-        if (HasSecondPartialDataSet)
+        if (HasTertiaryData)
         {
             JSON +=
-                ",\"SecondPartialDataSet\":{" +
-                    $"\"Quantity\":\"{SecondPartialDataSet!.Quantity.Value}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondPartialDataSet.Shift!)}\"," +
-                    $"\"Operator\":\"{SecondPartialDataSet!.Operator.Initials}\"" +
+                ",\"TertiaryData\":{" +
+                    $"\"Quantity\":\"{TertiaryData!.Quantity.Value}\"," +
+                    $"\"Shift\":\"{ShiftExtensions.ToString(TertiaryData.Shift!)}\"," +
+                    $"\"Operator\":\"{TertiaryData!.Operator.Initials}\"" +
                 "}";
         }
         // close the JSON stream
@@ -359,29 +315,39 @@ public partial class PrintTicket : ObservableObject
     /// <param name="Line"></param>
     /// <returns>A PrintTicket object.</returns>
     /// <exception cref="JsonException"></exception>
-    public static PrintTicket ParseJSON(string Line)
+    public static async Task<PrintTicket> ParseJSON(string Line)
     {
+        // create a UA to use as the Agent for this parsing session
+        UserAgent Agent = UserAgentFactory.CreatePrinterAgent(System.Reflection.Assembly.GetEntryAssembly()!.GetName().Version!.ToString());
         // parse Line into JTokens
         JObject JSON = JObject.Parse(Line);
-        // attempt to find Department, Process, and Part in the Process Masterlist
-        ProcessData Data = new ProcessData();
-        Process Process;
-        Part Part;
+        // attempt to retrieve Process from the Database
+        Process? Process;
+        Part? Part;
         try
         {
-            Process = Data.GetIndividualProcess(JSON["Process"]!["FullName"]!.ToString());
+            Process = await ProcessService.Get(int.Parse(JSON["Process"]!.ToString()), Agent);
         }
         catch (SystemException)
         {
-            throw new JsonException($"Could not parse a Process from '{JSON["Process"]!}'.");
+            throw new JsonException($"Could not find a Process with Id '{JSON["Process"]!}'.");
         }
+        if (Process is null)
+        {
+            throw new FormatException($"Could not find a Process with Id '{JSON["Process"]!}'.");
+        }
+        // attempt to retrieve Part from the Database
         try
         {
-            Part = Data.GetProcessPartData(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
+            Part = await PartService.Get(int.Parse(JSON["Part"]!.ToString()), Agent);
         }
         catch (SystemException)
         {
-            throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
+            throw new JsonException($"Could not find a Part with Id '{JSON["Part"]!}'.");
+        }
+        if (Part is null)
+        {
+            throw new FormatException($"Could not find a Part with Id '{JSON["Part"]!}'.");
         }
         // convert the SerializationMode from string to actual enum value and parse the SerialNumber
         SerializationMode Mode;
@@ -402,11 +368,8 @@ public partial class PrintTicket : ObservableObject
         {
             throw new JsonException($"Could not parse a SerialNumber from '{JSON["SerialNumber"]!}'.");
         }
-        // parse out a timestamp for ProductionDate, Shift number, and Operator
+        // parse out a timestamp for ProductionDate
         DateTime ParsedDate;
-        Shift ParsedShift;
-        Quantity ParsedQuantity;
-        Operator ParsedOperator;
         try
         {
             ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
@@ -414,30 +377,6 @@ public partial class PrintTicket : ObservableObject
         catch
         {
             throw new JsonException($"Could not parse a Production Date from '{JSON["ProductionDate"]!}'.");
-        }
-        try
-        {
-            ParsedShift = ShiftExtensions.FromString(JSON["ProductionShift"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a Production Shift from '{JSON["ProductionShift"]!}'.");
-        }
-        try
-        {
-            ParsedQuantity = new Quantity(int.Parse(JSON["ProductionQuantity"]!.ToString()));
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a Production Quantity from '{JSON["ProductionQuantity"]!}'.");
-        }
-        try
-        {
-            ParsedOperator = new Operator(JSON["ProductionOperator"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse an Operator from '{JSON["ProductionOperator"]!}'.");
         }
         // parse the variable field set assigned to the Ticket
         VariableFieldSet VariableFields;
@@ -450,174 +389,42 @@ public partial class PrintTicket : ObservableObject
             throw new JsonException($"Could not parse a VariableFieldSet from '{JSON["VariableFieldSet"]!}'.");
         }
         // check for and parse partial data sets
-        PartialDataSet? FirstPartialDataSet = null;
-        PartialDataSet? SecondPartialDataSet = null;
-        if (JSON.ContainsKey("FirstPartialDataSet"))
+        PartialDataSet Primary;
+        PartialDataSet? Secondary;
+        PartialDataSet? Tertiary;
+        try
         {
-            try
-            {
-                FirstPartialDataSet = PartialDataSet.ParseJSON(JSON["FirstPartialDataSet"]!);
-            }
-            catch
-            {
-                throw new JsonException($"Could not parse the First Partial Data Set from {JSON["FirstPartialDataSet"]!}.");
-            }
+            Primary = PartialDataSet.ParseJSON(JSON["PrimaryData"]!);
         }
-        if (JSON.ContainsKey("SecondPartialDataSet"))
+        catch (JsonException)
         {
-            try
-            {
-                SecondPartialDataSet = PartialDataSet.ParseJSON(JSON["SecondPartialDataSet"]!);
-            }
-            catch
-            {
-                throw new JsonException($"Could not parse the Second Partial Data Set from {JSON["SecondPartialDataSet"]!}.");
-            }
+            throw new FormatException("No Primary Production Data could be parsed from JSON.");
+        }
+        try
+        {
+            Secondary = PartialDataSet.ParseJSON(JSON["SecondaryData"]!);
+        }
+        catch (JsonException)
+        {
+            throw new FormatException("Secondary Production Data is in an invalid format.");
+        }
+        try
+        {
+            Tertiary = PartialDataSet.ParseJSON(JSON["TertiaryData"]!);
+        }
+        catch (JsonException)
+        {
+            throw new FormatException("Tertiary Production Data is in an invalid format.");
         }
         // construct and return the parsed PrintTicket
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
-        if (FirstPartialDataSet is not null)
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Mode, Number, ParsedDate, VariableFields, Primary, Secondary, Tertiary);
+        if (Secondary is not null)
         {
-            NewTicket.HasFirstPartialDataSet = true;
+            NewTicket.HasSecondaryData = true;
         }
-        if (SecondPartialDataSet is not null)
+        if (Tertiary is not null)
         {
-            NewTicket.HasSecondPartialDataSet = true;
-            NewTicket.HasSpace = false;
-        }
-        return NewTicket;
-    }
-
-    /// <summary>
-    /// Attempts to asynchronously parse a full PrintTicket object from a JSON formatted Line.
-    /// </summary>
-    /// <param name="Line"></param>
-    /// <returns>A PrintTicket object.</returns>
-    /// <exception cref="JsonException"></exception>
-    public static async Task<PrintTicket> ParseJSONAsync(string Line)
-    {
-        // parse Line into JTokens
-        JObject JSON = JObject.Parse(Line);
-        // attempt to find Department, Process, and Part in the Process Masterlist
-        ProcessData Data = new ProcessData();
-        Process Process;
-        Part Part;
-        try
-        {
-            Process = await Data.GetIndividualProcessAsync(JSON["Process"]!["FullName"]!.ToString());
-        }
-        catch (SystemException)
-        {
-            throw new JsonException($"Could not parse a Process from '{JSON["Process"]!}'.");
-        }
-        try
-        {
-            Part = await Data.GetProcessPartDataAsync(Process.FullName, JSON["Part"]!["PartNumber"]!.ToString());
-        }
-        catch (SystemException)
-        {
-            throw new JsonException($"Could not parse a Part from '{JSON["Part"]!}'.");
-        }
-        // convert the SerializationMode from string to actual enum value and parse the SerialNumber
-        SerializationMode Mode;
-        SerialNumber Number;
-        try
-        {
-            Mode = SerializationModeExtensions.FromString(JSON["SerializationMode"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a SerializationMode from '{JSON["SerializationMode"]!}'.");
-        }
-        try
-        {
-            Number = await SerialNumber.ParseJSONAsync(JSON["SerialNumber"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a SerialNumber from '{JSON["SerialNumber"]!}'.");
-        }
-        // parse out a timestamp for ProductionDate, Shift number, and Operator
-        DateTime ParsedDate;
-        Shift ParsedShift;
-        Quantity ParsedQuantity;
-        Operator ParsedOperator;
-        try
-        {
-            ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a Production Date from '{JSON["ProductionDate"]!}'.");
-        }
-        try
-        {
-            ParsedShift = ShiftExtensions.FromString(JSON["ProductionShift"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a Production Shift from '{JSON["ProductionShift"]!}'.");
-        }
-        try
-        {
-            ParsedQuantity = new Quantity(int.Parse(JSON["ProductionQuantity"]!.ToString()));
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a Production Quantity from '{JSON["ProductionQuantity"]!}'.");
-        }
-        try
-        {
-            ParsedOperator = new Operator(JSON["ProductionOperator"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse an Operator from '{JSON["ProductionOperator"]!}'.");
-        }
-        // parse the variable field set assigned to the Ticket
-        VariableFieldSet VariableFields;
-        try
-        {
-            VariableFields = VariableFieldSet.ParseJSON(JSON["VariableFieldSet"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a VariableFieldSet from '{JSON["VariableFieldSet"]!}'.");
-        }
-        // check for and parse partial data sets
-        PartialDataSet? FirstPartialDataSet = null;
-        PartialDataSet? SecondPartialDataSet = null;
-        if (JSON.ContainsKey("FirstPartialDataSet"))
-        {
-            try
-            {
-                FirstPartialDataSet = PartialDataSet.ParseJSON(JSON["FirstPartialDataSet"]!);
-            }
-            catch
-            {
-                throw new JsonException($"Could not parse the First Partial Data Set from {JSON["FirstPartialDataSet"]!}.");
-            }
-        }
-        if (JSON.ContainsKey("SecondPartialDataSet"))
-        {
-            try
-            {
-                SecondPartialDataSet = PartialDataSet.ParseJSON(JSON["SecondPartialDataSet"]!);
-            }
-            catch
-            {
-                throw new JsonException($"Could not parse the Second Partial Data Set from {JSON["SecondPartialDataSet"]!}.");
-            }
-        }
-        // construct and return the parsed PrintTicket
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Mode, Number, ParsedDate, ParsedShift, ParsedQuantity, ParsedOperator, VariableFields, FirstPartialDataSet, SecondPartialDataSet);
-        if (FirstPartialDataSet is not null)
-        {
-            NewTicket.HasFirstPartialDataSet = true;
-        }
-        if (SecondPartialDataSet is not null)
-        {
-            NewTicket.HasSecondPartialDataSet = true;
+            NewTicket.HasTertiaryData = true;
             NewTicket.HasSpace = false;
         }
         return NewTicket;
@@ -638,22 +445,25 @@ public partial class PrintTicket : ObservableObject
             new SerialNumber
             (
                 Source.SerializationMode,
-                Source.Part,
+                Source.Part.Id,
                 Source.SerialNumber.Value
             ),
             new DateTime(Source.ProductionDate.Ticks),
-            Source.ProductionShift,
-            new Quantity
-            (
-                Source.ProductionQuantity.Value
-            ),
-            new Operator
-            (
-                Source.ProductionOperator.Initials
-            ),
             new VariableFieldSet
             (
 
+            ),
+            new PartialDataSet
+            (
+                new Quantity
+                (
+                    Source.PrimaryData.Quantity.Value
+                ),
+                Source.PrimaryData.Shift,
+                new Operator
+                (
+                    Source.PrimaryData.Operator.Initials
+                )
             )
         );
         if (Source.VariableFields.JBKNumber is not null)
@@ -691,37 +501,58 @@ public partial class PrintTicket : ObservableObject
                 Source.VariableFields.HeatNumber.Literal
             );
         }
-        if (Source.FirstPartialDataSet is not null)
+        if (Source.SecondaryData is not null)
         {
-            Copy.FirstPartialDataSet = new PartialDataSet
+            Copy.SecondaryData = new PartialDataSet
             (
                 new Quantity
                 (
-                    Source.FirstPartialDataSet.Quantity.Value
+                    Source.SecondaryData.Quantity.Value
                 ),
-                Source.FirstPartialDataSet.Shift,
+                Source.SecondaryData.Shift,
                 new Operator
                 (
-                    Source.FirstPartialDataSet.Operator.Initials
+                    Source.SecondaryData.Operator.Initials
                 )
             );
         }
-        if (Source.SecondPartialDataSet is not null)
+        if (Source.TertiaryData is not null)
         {
-            Copy.SecondPartialDataSet = new PartialDataSet
+            Copy.TertiaryData = new PartialDataSet
             (
                 new Quantity
                 (
-                    Source.SecondPartialDataSet.Quantity.Value
+                    Source.TertiaryData.Quantity.Value
                 ),
-                Source.SecondPartialDataSet.Shift,
+                Source.TertiaryData.Shift,
                 new Operator
                 (
-                    Source.SecondPartialDataSet.Operator.Initials
+                    Source.TertiaryData.Operator.Initials
                 )
             );
         }
         return Copy;
+    }
+
+    /// <summary>
+    /// Converts a Print Model from the Database into a PrintTicket object.
+    /// </summary>
+    /// <param name="Model"></param>
+    /// <returns></returns>
+    public static PrintTicket FromPrint(Print Model)
+    {
+        return new PrintTicket
+        (
+            Model.Process,
+            Model.Part,
+            Model.Process.Serialization,
+            Model.GetSerialNumber(),
+            Model.ProductionDate,
+            Model.VariableFields,
+            Model.PrimaryDataSet,
+            Model.SecondaryDataSet,
+            Model.TertiaryDataSet
+        );
     }
 
     /// <summary>
@@ -730,15 +561,15 @@ public partial class PrintTicket : ObservableObject
     /// <param name="DataSet"></param>
     public void AddPartialDataSet(PartialDataSet DataSet)
     {
-        if (FirstPartialDataSet is null)
+        if (SecondaryData is null)
         {
-            FirstPartialDataSet = DataSet;
-            HasFirstPartialDataSet = true;
+            SecondaryData = DataSet;
+            HasSecondaryData = true;
         }
-        else if (SecondPartialDataSet is null)
+        else if (TertiaryData is null)
         {
-            SecondPartialDataSet = DataSet;
-            HasSecondPartialDataSet = true;
+            TertiaryData = DataSet;
+            HasTertiaryData = true;
             HasSpace = false;
         }
     }
@@ -750,16 +581,16 @@ public partial class PrintTicket : ObservableObject
     public void RemoveFirstPartialDataSet()
     {
         // quickly return if no DataSet is present in the First slot
-        if (!HasFirstPartialDataSet)
+        if (!HasSecondaryData)
         {
             return;
         }
         else
         {
             // remove the PartialDataSet and shift the Second PartialDataSet to the First position
-            FirstPartialDataSet = null;
-            HasFirstPartialDataSet = false;
-            if (HasSecondPartialDataSet)
+            SecondaryData = null;
+            HasSecondaryData = false;
+            if (HasTertiaryData)
             {
                 ShiftPartialDataSet();
             }
@@ -772,15 +603,15 @@ public partial class PrintTicket : ObservableObject
     public void RemoveSecondPartialDataSet()
     {
         // quickly return if no DataSet is present in the Second slot
-        if (!HasSecondPartialDataSet)
+        if (!HasTertiaryData)
         {
             return;
         }
         else
         {
             // remove the PartialDataSet
-            SecondPartialDataSet = null;
-            HasSecondPartialDataSet = false;
+            TertiaryData = null;
+            HasTertiaryData = false;
             HasSpace = true;
         }
     }
@@ -792,15 +623,6 @@ public partial class PrintTicket : ObservableObject
     /// <exception cref="ArgumentException"></exception>
     public PrintTicket SelfValidate()
     {
-        // validate quantity, operator
-        if (!ProductionQuantity.ConfirmPositiveCount())
-        {
-            throw new ArgumentException("Please enter a valid Production Quantity before printing a Label.");
-        }
-        if (!ProductionOperator.ConfirmProperInitials())
-        {
-            throw new ArgumentException("Please enter valid Operator Initials before printing a Label.");
-        }
         // validate the variable fields
         if (Process.RequiredFields.JBKNumber && VariableFields.JBKNumber is null)
         {
@@ -823,26 +645,34 @@ public partial class PrintTicket : ObservableObject
             throw new ArgumentException("Please enter a valid Heat # before printing a Label.");
         }
         // validate partial data sets
-        if (HasFirstPartialDataSet)
+        try
+        {
+            PrimaryData.SelfValidate();
+        }
+        catch (ArgumentException)
+        {
+            throw new ArgumentException("Please enter valid Production Data before printing a Label.");
+        }
+        if (HasSecondaryData)
         {
             try
             {
-                FirstPartialDataSet!.SelfValidate();
+                SecondaryData!.SelfValidate();
             }
             catch (ArgumentException)
             {
-                throw new ArgumentException("Please enter a valid Production Quantity in Partial Production Data #1 before printing a Label.");
+                throw new ArgumentException("Please enter valid Production Data in Partial Production Data #1 before printing a Label.");
             }
         }
-        if (HasSecondPartialDataSet)
+        if (HasTertiaryData)
         {
             try
             {
-                SecondPartialDataSet!.SelfValidate();
+                TertiaryData!.SelfValidate();
             }
             catch (ArgumentException)
             {
-                throw new ArgumentException("Please enter a valid Production Quantity in Partial Production Data #2 before printing a Label.");
+                throw new ArgumentException("Please enter valid Production Data in Partial Production Data #2 before printing a Label.");
             }
         }
         // validation is okay; return an updated version of self
@@ -856,14 +686,14 @@ public partial class PrintTicket : ObservableObject
     public Quantity GetTotalQuantity()
     {
         // compile the full PrintTicket quantity
-        int FullQuantity = ProductionQuantity.Value;
-        if (HasFirstPartialDataSet)
+        int FullQuantity = PrimaryData.Quantity.Value;
+        if (HasSecondaryData)
         {
-            FullQuantity += FirstPartialDataSet!.Quantity.Value;
+            FullQuantity += SecondaryData!.Quantity.Value;
         }
-        if (HasSecondPartialDataSet)
+        if (HasTertiaryData)
         {
-            FullQuantity += SecondPartialDataSet!.Quantity.Value;
+            FullQuantity += TertiaryData!.Quantity.Value;
         }
         return new Quantity(FullQuantity);
     }
@@ -875,14 +705,14 @@ public partial class PrintTicket : ObservableObject
     public string GetCombinedShifts()
     {
         // compile the Shift values into a single value
-        string FullShift = $"{ShiftExtensions.ToString(ProductionShift)}";
-        if (HasFirstPartialDataSet)
+        string FullShift = $"{ShiftExtensions.ToString(PrimaryData.Shift)}";
+        if (HasSecondaryData)
         {
-            FullShift = $"{FullShift}:{ShiftExtensions.ToString(FirstPartialDataSet!.Shift!)}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString(SecondaryData!.Shift!)}";
         }
-        if (HasSecondPartialDataSet)
+        if (HasTertiaryData)
         {
-            FullShift = $"{FullShift}:{ShiftExtensions.ToString(SecondPartialDataSet!.Shift!)}";
+            FullShift = $"{FullShift}:{ShiftExtensions.ToString(TertiaryData!.Shift!)}";
         }
         return FullShift;
     }
@@ -894,14 +724,14 @@ public partial class PrintTicket : ObservableObject
     public string GetCombinedQuantities()
     {
         // compile the Quantity values into a single value
-        string FullQuantity = $"{ProductionQuantity.Value}";
-        if (HasFirstPartialDataSet)
+        string FullQuantity = $"{PrimaryData.Quantity.Value}";
+        if (HasSecondaryData)
         {
-            FullQuantity = $"{FullQuantity}:{FirstPartialDataSet!.Quantity.Value}";
+            FullQuantity = $"{FullQuantity}:{SecondaryData!.Quantity.Value}";
         }
-        if (HasSecondPartialDataSet)
+        if (HasTertiaryData)
         {
-            FullQuantity = $"{FullQuantity}:{SecondPartialDataSet!.Quantity.Value}";
+            FullQuantity = $"{FullQuantity}:{TertiaryData!.Quantity.Value}";
         }
         return FullQuantity;
     }
@@ -913,14 +743,14 @@ public partial class PrintTicket : ObservableObject
     public string GetCombinedOperators()
     {
         // compile the Operator values into a single value
-        string FullOperator = $"{ProductionOperator.Initials}";
-        if (HasFirstPartialDataSet)
+        string FullOperator = $"{PrimaryData.Operator.Initials}";
+        if (HasSecondaryData)
         {
-            FullOperator = $"{FullOperator}:{FirstPartialDataSet!.Operator.Initials}";
+            FullOperator = $"{FullOperator}:{SecondaryData!.Operator.Initials}";
         }
-        if (HasSecondPartialDataSet)
+        if (HasTertiaryData)
         {
-            FullOperator = $"{FullOperator}:{SecondPartialDataSet!.Operator.Initials}";
+            FullOperator = $"{FullOperator}:{TertiaryData!.Operator.Initials}";
         }
         return FullOperator;
     }
