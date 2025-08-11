@@ -60,6 +60,34 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
+    private bool _isOpenPrintTicketsFaultedDetailShown = false;
+    /// <summary>
+    /// Provides the Visibility state of the Open Print Tickets Panel's inner faulted state details.
+    /// </summary>
+    public bool IsOpenPrintTicketsFaultedDetailShown
+    {
+        get { return _isOpenPrintTicketsFaultedDetailShown; }
+        set
+        {
+            _isOpenPrintTicketsFaultedDetailShown = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool _isOpenPrintTicketsSuccessDetailShown = false;
+    /// <summary>
+    /// Provides the Visibility state of the Open Print Tickets Panel's inner success state details.
+    /// </summary>
+    public bool IsOpenPrintTicketsSuccessDetailShown
+    {
+        get { return _isOpenPrintTicketsSuccessDetailShown; }
+        set
+        {
+            _isOpenPrintTicketsSuccessDetailShown = value;
+            OnPropertyChanged();
+        }
+    }
+
     private string _openPrintTicketsPanelLoadMessage = "Failed to load Open Tickets";
     /// <summary>
     /// Provides the message to show as the Load Message of the Open Print Tickets Panel.
@@ -110,6 +138,41 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Configures the OpenPrintTickets Panel to display its faulted details.
+    /// </summary>
+    private void SetOpenTicketsPanelDetailAsFaulted()
+    {
+        if (!IsOpenPrintTicketsPanelShown)
+        {
+            return;
+        }
+        IsOpenPrintTicketsFaultedDetailShown = false;
+        IsOpenPrintTicketsFaultedDetailShown = true;
+    }
+
+    /// <summary>
+    /// Configures the OpenPrintTickets Panel to display its success details.
+    /// </summary>
+    private void SetOpenTicketsPanelDetailAsSuccess()
+    {
+        if (!IsOpenPrintTicketsPanelShown)
+        {
+            return;
+        }
+        IsOpenPrintTicketsSuccessDetailShown = true;
+        IsOpenPrintTicketsFaultedDetailShown = false;
+    }
+
+    /// <summary>
+    /// Completely hides the inner details of the OpenPrintTickets panel.
+    /// </summary>
+    private void HideOpenTicketsPanelDetail()
+    {
+        IsOpenPrintTicketsSuccessDetailShown = false;
+        IsOpenPrintTicketsFaultedDetailShown = false;
+    }
+
+    /// <summary>
     /// Create a ViewModel for the MainPage to bind to.
     /// </summary>
     public MainPageViewModel()
@@ -129,6 +192,14 @@ public partial class MainPageViewModel : ObservableObject
         // don't load if tickets are already loaded
         if (Flags.IsComplete)
         {
+            if (Flags.IsFaulted)
+            {
+                SetOpenTicketsPanelDetailAsFaulted();
+            }
+            else
+            {
+                SetOpenTicketsPanelDetailAsSuccess();
+            }
             return;
         }
         // start the loading flags and attempt to load the PrintTicketCache
@@ -141,12 +212,14 @@ public partial class MainPageViewModel : ObservableObject
             );
             OpenPrintTicketsPanelLoadMessage = "";
             Flags.Success();
+            SetOpenTicketsPanelDetailAsSuccess();
             return;
         }
         catch
         {
-            OpenPrintTicketsPanelLoadMessage = $"Sorry, we couldn't load Open Labels.\n\nPlease see management to resolve the issue.";
+            OpenPrintTicketsPanelLoadMessage = $"Sorry, we couldn't load Open Labels.\n\nPlease see Management to resolve this issue.";
             OpenPrintTickets = [];
+            SetOpenTicketsPanelDetailAsFaulted();
             Flags.Failure();
         }
     }
@@ -168,6 +241,7 @@ public partial class MainPageViewModel : ObservableObject
     {
         OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidthClosed;
         IsOpenPrintTicketsPanelShown = false;
+        HideOpenTicketsPanelDetail();
     }
 
     /// <summary>
