@@ -1,6 +1,6 @@
 using LotComPrinter.Models.Datatypes;
-using LotCom.Enums;
-using LotCom.Extensions;
+using LotCom.Types.Enums;
+using LotCom.Types.Extensions;
 using LotCom.Types;
 using LotComPrinter.Models.Exceptions;
 
@@ -101,7 +101,7 @@ public static class LabelGenerator
             }
             // add the remaining required fields and return the body text
             Body.Add($"Date: {new Timestamp(Ticket.ProductionDate).Stamp}");
-            Body.Add($"Shift: {ShiftExtensions.ToString(Ticket.ProductionShift)}");
+            Body.Add($"Shift: {ShiftExtensions.ToString(Ticket.PrimaryData.Shift)}");
             return Body;
         });
     }

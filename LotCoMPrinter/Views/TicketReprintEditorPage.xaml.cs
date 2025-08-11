@@ -417,12 +417,12 @@ public partial class TicketReprintEditorPage : ContentPage
 		else if
 		(
 			sender.Equals(FirstPartialDataSetQuantityEntry)
-			&& ViewModel.EditorTicket.Tracked.HasFirstPartialDataSet
+			&& ViewModel.EditorTicket.Tracked.HasSecondaryData
 		)
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.FirstPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.SecondaryData!.Quantity = new Quantity(int.Parse(e.NewTextValue));
 				FirstPartialDataSetQuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -434,12 +434,12 @@ public partial class TicketReprintEditorPage : ContentPage
 		else if
 		(
 			sender.Equals(SecondPartialDataSetQuantityEntry)
-			&& ViewModel.EditorTicket.Tracked.HasSecondPartialDataSet
+			&& ViewModel.EditorTicket.Tracked.HasTertiaryData
 		)
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.SecondPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.TertiaryData!.Quantity = new Quantity(int.Parse(e.NewTextValue));
 				SecondPartialDataSetQuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -468,13 +468,13 @@ public partial class TicketReprintEditorPage : ContentPage
 		// First Partial Operator was updated
 		if
 		(
-			ViewModel.EditorTicket.Tracked.HasFirstPartialDataSet &&
+			ViewModel.EditorTicket.Tracked.HasSecondaryData &&
 			sender.Equals(FirstPartialDataSetOperatorEntry)
 		)
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.FirstPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				ViewModel.EditorTicket.Tracked.SecondaryData!.Operator = new Operator(e.NewTextValue);
 				FirstPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch
@@ -485,13 +485,13 @@ public partial class TicketReprintEditorPage : ContentPage
 		// Second Partial Operator was updated
 		else if
 		(
-			ViewModel.EditorTicket.Tracked.HasSecondPartialDataSet &&
+			ViewModel.EditorTicket.Tracked.HasTertiaryData &&
 			sender.Equals(SecondPartialDataSetOperatorEntry)
 		)
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.SecondPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				ViewModel.EditorTicket.Tracked.TertiaryData!.Operator = new Operator(e.NewTextValue);
 				SecondPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch

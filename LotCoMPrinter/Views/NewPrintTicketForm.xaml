@@ -3,7 +3,7 @@
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:Views="clr-namespace:LotComPrinter.Views"
                xmlns:ViewModels="clr-namespace:LotComPrinter.ViewModels"
-               xmlns:Enums="clr-namespace:LotCom.Enums;assembly=LotCom"
+               xmlns:Enums="clr-namespace:LotCom.Types.Enums;assembly=LotCom"
                x:DataType="ViewModels:NewPrintTicketFormViewModel"
                x:Class="LotComPrinter.Views.NewPrintTicketForm">
     

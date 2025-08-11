@@ -1,6 +1,6 @@
 using LotComPrinter.Models.Datatypes;
-using LotCom.Enums;
-using LotCom.Extensions;
+using LotCom.Types.Enums;
+using LotCom.Types.Extensions;
 using LotCom.Types;
 using LotComPrinter.Models.Exceptions;
 
@@ -28,15 +28,15 @@ public static class PartialTagGenerator
             Operator PartialOperator;
             if (PartialSetNumber == 1)
             {
-                PartialShift = Ticket.FirstPartialDataSet!.Shift;
-                PartialQuantity = Ticket.FirstPartialDataSet!.Quantity;
-                PartialOperator = Ticket.FirstPartialDataSet!.Operator;
+                PartialShift = Ticket.SecondaryData!.Shift;
+                PartialQuantity = Ticket.SecondaryData!.Quantity;
+                PartialOperator = Ticket.SecondaryData!.Operator;
             }
             else
             {
-                PartialShift = Ticket.SecondPartialDataSet!.Shift;
-                PartialQuantity = Ticket.SecondPartialDataSet!.Quantity;
-                PartialOperator = Ticket.SecondPartialDataSet!.Operator;
+                PartialShift = Ticket.TertiaryData!.Shift;
+                PartialQuantity = Ticket.TertiaryData!.Quantity;
+                PartialOperator = Ticket.TertiaryData!.Operator;
             }
             Body.Add($"Partial Shift: {ShiftExtensions.ToString(PartialShift)}");
             Body.Add($"Partial Quantity: {PartialQuantity.Value}");

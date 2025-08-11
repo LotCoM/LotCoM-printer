@@ -1,5 +1,5 @@
 using CommunityToolkit.Maui.Views;
-using LotCom.Enums;
+using LotCom.Types.Enums;
 using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Exceptions;
@@ -566,7 +566,7 @@ public partial class TicketEditorPage : ContentPage
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.ProductionQuantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.PrimaryData.Quantity = new Quantity(int.Parse(e.NewTextValue));
 				QuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -578,12 +578,12 @@ public partial class TicketEditorPage : ContentPage
 		else if
 		(
 			sender.Equals(FirstPartialDataSetQuantityEntry)
-			&& ViewModel.EditorTicket.Tracked.HasFirstPartialDataSet
+			&& ViewModel.EditorTicket.Tracked.HasSecondaryData
 		)
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.FirstPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.SecondaryData!.Quantity = new Quantity(int.Parse(e.NewTextValue));
 				FirstPartialDataSetQuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -595,12 +595,12 @@ public partial class TicketEditorPage : ContentPage
 		else if
 		(
 			sender.Equals(SecondPartialDataSetQuantityEntry)
-			&& ViewModel.EditorTicket.Tracked.HasSecondPartialDataSet
+			&& ViewModel.EditorTicket.Tracked.HasTertiaryData
 		)
 		{
 			try
 			{
-				ViewModel.EditorTicket.Tracked.SecondPartialDataSet!.Quantity = new Quantity(int.Parse(e.NewTextValue));
+				ViewModel.EditorTicket.Tracked.TertiaryData!.Quantity = new Quantity(int.Parse(e.NewTextValue));
 				SecondPartialDataSetQuantityControl.Stroke = Grey500;
 			}
 			catch
@@ -632,7 +632,7 @@ public partial class TicketEditorPage : ContentPage
 		{
 			try
 			{
-				Ticket.ProductionOperator = new Operator(e.NewTextValue);
+				Ticket.PrimaryData.Operator = new Operator(e.NewTextValue);
 				OperatorControl.Stroke = Grey500;
 			}
 			catch
@@ -641,11 +641,11 @@ public partial class TicketEditorPage : ContentPage
 			}
 		}
 		// First Partial Operator was updated
-		else if (sender.Equals(FirstPartialDataSetOperatorEntry) && Ticket.HasFirstPartialDataSet)
+		else if (sender.Equals(FirstPartialDataSetOperatorEntry) && Ticket.HasSecondaryData)
 		{
 			try
 			{
-				Ticket.FirstPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				Ticket.SecondaryData!.Operator = new Operator(e.NewTextValue);
 				FirstPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch
@@ -654,11 +654,11 @@ public partial class TicketEditorPage : ContentPage
 			}
 		}
 		// Second Partial Operator was updated
-		else if (sender.Equals(SecondPartialDataSetOperatorEntry) && Ticket.HasSecondPartialDataSet)
+		else if (sender.Equals(SecondPartialDataSetOperatorEntry) && Ticket.HasTertiaryData)
 		{
 			try
 			{
-				Ticket.SecondPartialDataSet!.Operator = new Operator(e.NewTextValue);
+				Ticket.TertiaryData!.Operator = new Operator(e.NewTextValue);
 				SecondPartialDataSetOperatorControl.Stroke = Grey500;
 			}
 			catch

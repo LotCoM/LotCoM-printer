@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.Enums;
+using LotCom.Types.Enums;
 using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Enums;
@@ -133,13 +133,13 @@ public class TicketReprintEditorPageViewModel : ObservableObject
         // validate the target PartialDataSet
         try
         {
-            if (PartialSetNumber == 1 && EditorTicket.Tracked.HasFirstPartialDataSet)
+            if (PartialSetNumber == 1 && EditorTicket.Tracked.HasSecondaryData)
             {
-                EditorTicket.Tracked.FirstPartialDataSet!.SelfValidate();
+                EditorTicket.Tracked.SecondaryData!.SelfValidate();
             }
-            else if (PartialSetNumber == 2 && EditorTicket.Tracked.HasSecondPartialDataSet)
+            else if (PartialSetNumber == 2 && EditorTicket.Tracked.HasTertiaryData)
             {
-                EditorTicket.Tracked.SecondPartialDataSet!.SelfValidate();
+                EditorTicket.Tracked.TertiaryData!.SelfValidate();
             }
             else
             {

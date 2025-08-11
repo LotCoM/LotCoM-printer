@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:Datatypes="clr-namespace:LotComPrinter.Models.Datatypes"
-             xmlns:Enums="clr-namespace:LotCom.Enums;assembly=LotCom"
+             xmlns:Enums="clr-namespace:LotCom.Types.Enums;assembly=LotCom"
              xmlns:ViewModels="clr-namespace:LotComPrinter.ViewModels"
              x:DataType="ViewModels:TicketReprintEditorPageViewModel"
              x:Class="LotComPrinter.Views.TicketReprintEditorPage">
@@ -343,7 +343,7 @@
                             WidthRequest="100"
                             MinimumWidthRequest="100"
                             FontSize="20"
-                            Text="{Binding EditorTicket.Untracked.ProductionShift, StringFormat='Shift: {0}'}"/>
+                            Text="{Binding EditorTicket.Untracked.PrimaryData.Shift, StringFormat='Shift: {0}'}"/>
                         <!-- Operator Display -->
                         <Label
                             Grid.Row="1"
@@ -355,7 +355,7 @@
                             WidthRequest="100"
                             MinimumWidthRequest="100"
                             FontSize="20"
-                            Text="{Binding EditorTicket.Untracked.ProductionOperator.Initials, StringFormat='Operator: {0}'}"/>
+                            Text="{Binding EditorTicket.Untracked.PrimaryData.Operator.Initials, StringFormat='Operator: {0}'}"/>
                     </Grid>
                 </Grid>
 
@@ -452,7 +452,7 @@
                             StrokeShape="RoundRectangle 0">
                             <Entry
                                 x:Name="QuantityEntry"
-                                Text="{Binding EditorTicket.Tracked.ProductionQuantity.Value}"
+                                Text="{Binding EditorTicket.Tracked.PrimaryData.Quantity.Value}"
                                 TextChanged="OnQuantityEntryTextChanged"
                                 FontSize="20"
                                 WidthRequest="100"/>
@@ -861,7 +861,7 @@
 
                 <!-- First Partial Data Set Layout -->
                 <Grid
-                    IsVisible="{Binding EditorTicket.Tracked.HasFirstPartialDataSet}">
+                    IsVisible="{Binding EditorTicket.Tracked.HasSecondaryData}">
                     <Grid.RowDefinitions>
                         <!-- Header Row -->
                         <RowDefinition Height="Auto"/>
@@ -1061,7 +1061,7 @@
                             StrokeShape="RoundRectangle 0">
                             <Picker
                                 x:Name="FirstPartialDataSetShiftPicker"
-                                SelectedItem="{Binding EditorTicket.Tracked.FirstPartialDataSet.Shift}"
+                                SelectedItem="{Binding EditorTicket.Tracked.SecondaryData.Shift}"
                                 WidthRequest="150"
                                 FontSize="20">
                                 <Picker.ItemsSource>
@@ -1100,7 +1100,7 @@
                             StrokeShape="RoundRectangle 0">
                             <Entry
                                 x:Name="FirstPartialDataSetQuantityEntry"
-                                Text="{Binding EditorTicket.Tracked.FirstPartialDataSet.Quantity.Value}"
+                                Text="{Binding EditorTicket.Tracked.SecondaryData.Quantity.Value}"
                                 TextChanged="OnQuantityEntryTextChanged"
                                 WidthRequest="150"
                                 FontSize="20"/>
@@ -1132,7 +1132,7 @@
                             StrokeShape="RoundRectangle 0">
                             <Entry
                                 x:Name="FirstPartialDataSetOperatorEntry"
-                                Text="{Binding EditorTicket.Tracked.FirstPartialDataSet.Operator.Initials}"
+                                Text="{Binding EditorTicket.Tracked.SecondaryData.Operator.Initials}"
                                 TextChanged="OnOperatorEntryTextChanged"
                                 MaxLength="3"
                                 WidthRequest="150"
@@ -1147,12 +1147,12 @@
                     HeightRequest="1"
                     HorizontalOptions="Fill"
                     VerticalOptions="End"
-                    IsVisible="{Binding EditorTicket.Tracked.HasFirstPartialDataSet}"
+                    IsVisible="{Binding EditorTicket.Tracked.HasSecondaryData}"
                     BackgroundColor="{StaticResource Neutral-20}"/>
                 
                 <!-- Second Partial Data Set Layout -->
                 <Grid
-                    IsVisible="{Binding EditorTicket.Tracked.HasSecondPartialDataSet}">
+                    IsVisible="{Binding EditorTicket.Tracked.HasTertiaryData}">
                     <Grid.RowDefinitions>
                         <!-- Header Row -->
                         <RowDefinition Height="Auto"/>
@@ -1352,7 +1352,7 @@
                             StrokeShape="RoundRectangle 0">
                             <Picker
                                 x:Name="SecondPartialDataSetShiftPicker"
-                                SelectedItem="{Binding EditorTicket.Tracked.SecondPartialDataSet.Shift}"
+                                SelectedItem="{Binding EditorTicket.Tracked.TertiaryData.Shift}"
                                 WidthRequest="150"
                                 FontSize="20">
                                 <Picker.ItemsSource>
@@ -1391,7 +1391,7 @@
                             StrokeShape="RoundRectangle 0">
                             <Entry
                                 x:Name="SecondPartialDataSetQuantityEntry"
-                                Text="{Binding EditorTicket.Tracked.SecondPartialDataSet.Quantity.Value}"
+                                Text="{Binding EditorTicket.Tracked.TertiaryData.Quantity.Value}"
                                 TextChanged="OnQuantityEntryTextChanged"
                                 WidthRequest="150"
                                 FontSize="20"/>
@@ -1423,7 +1423,7 @@
                             StrokeShape="RoundRectangle 0">
                             <Entry
                                 x:Name="SecondPartialDataSetOperatorEntry"
-                                Text="{Binding EditorTicket.Tracked.SecondPartialDataSet.Operator.Initials}"
+                                Text="{Binding EditorTicket.Tracked.TertiaryData.Operator.Initials}"
                                 TextChanged="OnOperatorEntryTextChanged"
                                 MaxLength="3"
                                 WidthRequest="150"
