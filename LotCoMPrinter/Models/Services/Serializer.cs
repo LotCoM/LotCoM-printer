@@ -1,17 +1,20 @@
-using LotCom.Database;
-using LotCom.Enums;
+using LotCom.Types.Enums;
 using LotCom.Types;
+using LotCom.DataAccess.Services;
+using LotCom.Exceptions;
+using Newtonsoft.Json;
 
 namespace LotComPrinter.Models.Services;
 
-public static class Serializer
+public static class SerializationService
 {
     /// <summary>
-    /// Assigns a Serial Number to use for a new Print Ticket.
+    /// Retrieves the appropriate Serial Number, based on Process and Part, from the LotCom Database.
     /// </summary>
     /// <param name="Process"></param>
     /// <param name="Part"></param>
     /// <returns></returns>
+    /// <exception cref="SerializationException"></exception>
     public static async Task<SerialNumber?> Serialize(Process Process, Part Part)
     {
         // check if the process is serialized
@@ -23,23 +26,34 @@ public static class Serializer
         SerialNumber Number;
         if (Process.Serialization == SerializationMode.JBK)
         {
-            Number = await new JBKQueue().ConsumeAsync(Part);
+            try
+            {
+                Number = await SerialFeedService.ConsumeJBKNumber(Part.Id, App.UserAgent);
+            }
+            catch (HttpRequestException)
+            {
+                throw new SerializationException($"Could not retrieve a JBK Number for the Part Id {Part.Id}.");
+            }
+            catch (JsonException)
+            {
+                throw new SerializationException($"Failed to process JSON response.");
+            }
         }
         else
         {
-            Number = await new LotQueue().ConsumeAsync(Part);
+            try
+            {
+                Number = await SerialFeedService.ConsumeLotNumber(Part.Id, App.UserAgent);
+            }
+            catch (HttpRequestException)
+            {
+                throw new SerializationException($"Could not retrieve a Lot Number for the Part Id {Part.Id}.");
+            }
+            catch (JsonException)
+            {
+                throw new SerializationException($"Failed to process JSON response.");
+            }
         }
         return Number;
-    }
-
-    /// <summary>
-    /// Pings the class' ability to read and consume numbers from the two Serial Queues.
-    /// </summary>
-    /// <returns></returns>
-    public static bool Ping()
-    {
-        bool JBK = new JBKQueue().Ping();
-        bool Lot = new LotQueue().Ping();
-        return JBK && Lot;
     }
 }
