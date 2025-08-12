@@ -1,12 +1,8 @@
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.DataAccess;
-using LotCom.DataAccess.Services;
 using LotCom.Types.Enums;
 using LotCom.Types.Extensions;
 using LotCom.Types;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace LotComPrinter.Models.Datatypes;
 
@@ -223,23 +219,23 @@ public partial class PrintTicket : ObservableObject
     /// <summary>
     /// Provides a structure for the creation and maintenance of a Printing Ticket.
     /// </summary>
-    /// <param name="TicketProcess">The Process that initiated this Print Ticket.</param>
-    /// <param name="TicketPart">The Part that this Print Ticket is applied to.</param>
-    /// <param name="TicketSerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
-    /// <param name="TicketSerialNumber">The Serial Number to apply to this Print Ticket.</param>
-    /// <param name="TicketProductionDate">The Date on which this Print Ticket was initiated.</param>
+    /// <param name="Process">The Process that initiated this Print Ticket.</param>
+    /// <param name="Part">The Part that this Print Ticket is applied to.</param>
+    /// <param name="SerializationMode">The type of Serial Number used to Serialize this Print Ticket.</param>
+    /// <param name="SerialNumber">The Serial Number to apply to this Print Ticket.</param>
+    /// <param name="ProductionDate">The Date on which this Print Ticket was initiated.</param>
     /// <param name="VariableFields">A set of VariableField values to include at instantiation.</param>
     /// <param name="PrimaryData">The required DataSet to include at instantiation.</param>
     /// <param name="SecondaryData">An optional DataSet to include at instantiation.</param>
     /// <param name="TertiaryData">A second optional DataSet to include at instantiation.</param>
-    public PrintTicket(Process TicketProcess, Part TicketPart, SerializationMode TicketSerializationMode, SerialNumber TicketSerialNumber, DateTime TicketProductionDate, VariableFieldSet VariableFields, PartialDataSet PrimaryData, PartialDataSet? SecondaryData = null, PartialDataSet? TertiaryData = null)
+    public PrintTicket(Process Process, Part Part, SerializationMode SerializationMode, SerialNumber SerialNumber, DateTime ProductionDate, VariableFieldSet VariableFields, PartialDataSet PrimaryData, PartialDataSet? SecondaryData = null, PartialDataSet? TertiaryData = null)
     {
         // set the basic info input in the NewPrintTicketForm
-        _process = TicketProcess;
-        _part = TicketPart;
-        _serializationMode = TicketSerializationMode;
-        _serialNumber = TicketSerialNumber;
-        _productionDate = TicketProductionDate;
+        _process = Process;
+        _part = Part;
+        _serializationMode = SerializationMode;
+        _serialNumber = SerialNumber;
+        _productionDate = ProductionDate;
         // save the passed VariableSet
         _variableFields = VariableFields;
         // set Partial Datasets
