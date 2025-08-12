@@ -202,41 +202,12 @@ public partial class NewPrintTicketForm : Popup
     }
 
     /// <summary>
-	/// Attempts to initialize a ViewModel for the Window to bind to.
-	/// </summary>
-	private bool InitializeViewModel()
-    {
-        // attempt to create a new ViewModel
-        try
-        {
-            ViewModel = new NewPrintTicketFormViewModel();
-            return true;
-        }
-        // there was an issue communicating with or processing data from the Database 
-        // or there was a formatting error in the JSON stream from the Database
-        catch (SystemException)
-        {
-            return false;
-        }
-    }
-
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    /// <summary>
     /// Creates an Input Form that prompts the user to configure and create a new Print Ticket.
     /// </summary>
-    /// <exception cref="SystemException"></exception>
     public NewPrintTicketForm()
     {
-        bool Setup = InitializeViewModel();
-        if (Setup)
-        {
-            InitializeComponent();
-            BindingContext = ViewModel;
-        }
-        else
-        {
-            throw new SystemException("Failed to initialize the ViewModel.");
-        }
+        ViewModel = new NewPrintTicketFormViewModel();
+        BindingContext = ViewModel;
+        InitializeComponent();
     }
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 }
