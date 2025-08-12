@@ -91,8 +91,10 @@ public partial class MainPage : ContentPage
 	/// <exception cref="SystemException"></exception>
 	private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
 	{
-		// attempt to create a NewPrintTicketForm
+		// collapse the OpenPrintTickets panel
 		ViewModel.StartTransition();
+		await AnimatedCollapseOpenPrintTicketsPanel();
+		// attempt to create a NewPrintTicketForm
 		NewPrintTicketForm Form;
 		try
 		{
@@ -111,8 +113,6 @@ public partial class MainPage : ContentPage
 			ViewModel.EndTransition();
 			return;
 		}
-		// collapse the OpenPrintTickets panel
-		await AnimatedCollapseOpenPrintTicketsPanel();
 		ViewModel.EndTransition();
 		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
 		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
@@ -191,37 +191,53 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private async void OnReprintLabelButtonClicked(object sender, EventArgs e)
 	{
+		// collapse the OpenPrintTickets panel
 		ViewModel.StartTransition();
+		await AnimatedCollapseOpenPrintTicketsPanel();
 		// create a new ProcessSelection popup
 		ProcessSelectionPopup ProcessSelection = new ProcessSelectionPopup();
+		await ProcessSelection.LoadProcesses();
+		if (!ProcessSelection.Flags.IsSuccess)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue."
+				)
+			);
+			ViewModel.EndTransition();
+			return;
+		}
+		ViewModel.EndTransition();
+		// show the process selection popup and capture the output
 		object? Result = await this.ShowPopupAsync
 		(
 			ProcessSelection
 		);
-		// collapse the OpenPrintTickets panel
-		await AnimatedCollapseOpenPrintTicketsPanel();
-		ViewModel.EndTransition();
+		// no selection was made, the window was closed
 		if (Result is null)
 		{
 			return;
 		}
-		// save the selected Process object
+		// a Process object was selected; create a new ReprintSelection popup for it
 		ViewModel.StartTransition();
 		Process SelectedProcess = (Process)Result;
-		// create a new ReprintSelection popup for the Selected Process
 		ReprintSelectionPopup ReprintSelection = new ReprintSelectionPopup(SelectedProcess);
+		// show the ReprintSelection popup and capture its output
 		Result = await this.ShowPopupAsync
 		(
 			ReprintSelection
 		);
+		// no selection was made
 		if (Result is null)
 		{
 			ViewModel.EndTransition();
 			return;
 		}
-		// save the selected PrintTicket object
+		// a PrintTicket object was selected; create a new TicketReprintEditor for it
 		PrintTicket SelectedReprintTicket = (PrintTicket)Result;
-		// create a new TicketReprintEditor for the Selected Ticket
 		TicketReprintEditorPage ReprintEditor = new TicketReprintEditorPage(SelectedReprintTicket);
 		await Navigation.PushAsync(ReprintEditor);
 		ViewModel.EndTransition();
