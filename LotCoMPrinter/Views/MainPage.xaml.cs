@@ -110,24 +110,25 @@ public partial class MainPage : ContentPage
 		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
 		// collapse the OpenPrintTickets panel
 		await AnimatedCollapseOpenPrintTicketsPanel();
-		// ensure that a ticket was returned
+		// nothing was done (window was just cancelled)
 		if (Result is null)
 		{
-			Result = "No Ticket was returned and no exception occured.";
-		}
-		if (Result.GetType().Equals(typeof(string)))
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					$"\n\nReference message: {Result}"
-				)
-			);
 			return;
 		}
+		// handle database exceptions from Process/Part loading and Serialization
+		if (Result.GetType().Equals(typeof(string)))
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						$"\n\nReference message: {Result}"
+					)
+				);
+				return;
+			}
 		if (Result.GetType().Equals(typeof(PrintTicket)))
 		{
 			// add the new ticket to the Open list and show an editor for that ticket
