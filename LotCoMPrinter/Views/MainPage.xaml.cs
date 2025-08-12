@@ -95,24 +95,7 @@ public partial class MainPage : ContentPage
 		ViewModel.StartTransition();
 		await AnimatedCollapseOpenPrintTicketsPanel();
 		// attempt to create a NewPrintTicketForm
-		NewPrintTicketForm Form;
-		try
-		{
-			Form = new NewPrintTicketForm();
-		}
-		catch (SystemException)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue."
-				)
-			);
-			ViewModel.EndTransition();
-			return;
-		}
+		NewPrintTicketForm Form = new NewPrintTicketForm();
 		ViewModel.EndTransition();
 		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
 		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
@@ -197,6 +180,7 @@ public partial class MainPage : ContentPage
 		// create a new ProcessSelection popup
 		ProcessSelectionPopup ProcessSelection = new ProcessSelectionPopup();
 		await ProcessSelection.LoadProcesses();
+		// if the Processes did not load correctly, show an error popup
 		if (!ProcessSelection.Flags.IsSuccess)
 		{
 			this.ShowPopup
@@ -225,6 +209,21 @@ public partial class MainPage : ContentPage
 		ViewModel.StartTransition();
 		Process SelectedProcess = (Process)Result;
 		ReprintSelectionPopup ReprintSelection = new ReprintSelectionPopup(SelectedProcess);
+		await ReprintSelection.LoadHistory(DateTime.Now);
+		// if the History did not load correctly, show an error popup
+		if (!ReprintSelection.Flags.IsSuccess)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue."
+				)
+			);
+			ViewModel.EndTransition();
+			return;
+		}
 		// show the ReprintSelection popup and capture its output
 		Result = await this.ShowPopupAsync
 		(
