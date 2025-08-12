@@ -120,7 +120,8 @@
                         VerticalOptions="Center"
                         WidthRequest="545"
                         SelectionMode="Single"
-                        SelectedItem="{Binding SelectedProcess}">
+                        SelectedItem="{Binding SelectedProcess}"
+                        ItemsSource="{Binding Processes}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate
                                 x:DataType="Types:Process">

@@ -1,6 +1,9 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Views;
-using LotCom.Database;
+using LotCom.DataAccess.Services;
 using LotCom.Types;
+using LotCom.UI;
+using Newtonsoft.Json;
 
 namespace LotComPrinter.Views;
 
@@ -19,6 +22,34 @@ public partial class ProcessSelectionPopup : Popup
     /// </summary>
     private static readonly Color Danger0 = new Color(180, 28, 43);
 
+    private PageLoadingFlags _flags = new PageLoadingFlags();
+    /// <summary>
+    /// Indicates different loading related properties for the Page's Process data.
+    /// </summary>
+    public PageLoadingFlags Flags
+    {
+        get { return _flags; }
+        set
+        {
+            _flags = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private ObservableCollection<Process>? _processes;
+    /// <summary>
+    /// Controls the list of Processes in the ProcessCollectionView.
+    /// </summary>
+    public ObservableCollection<Process>? Processes
+    {
+        get { return _processes; }
+        set
+        {
+            _processes = value;
+            OnPropertyChanged();
+        }
+    }
+
     private Process? _selectedProcess;
     /// <summary>
     /// Controls the currently selected Process in the ProcessCollectionView.
@@ -29,8 +60,7 @@ public partial class ProcessSelectionPopup : Popup
         set
         {
             _selectedProcess = value;
-            OnPropertyChanged(nameof(_selectedProcess));
-            OnPropertyChanged(nameof(SelectedProcess));
+            OnPropertyChanged();
         }
     }
 
@@ -45,6 +75,9 @@ public partial class ProcessSelectionPopup : Popup
         {
             ProcessCollectionControl.StrokeThickness = ErrorStroke;
             ProcessCollectionControl.Stroke = Danger0;
+            await Task.Delay(3000);
+            ProcessCollectionControl.StrokeThickness = DefaultStroke;
+            ProcessCollectionControl.Stroke = Neutral20;
             return;
         }
         CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -67,8 +100,42 @@ public partial class ProcessSelectionPopup : Popup
     /// </summary>
     public ProcessSelectionPopup()
     {
-        InitializeComponent();
         BindingContext = this;
-        ProcessCollectionView.ItemsSource = new ProcessData().GetAllProcesses();
+        InitializeComponent();
+    }
+
+    /// <summary>
+    /// Loads the Processes used to populate the popup.
+    /// </summary>
+    /// <returns></returns>
+    public async Task LoadProcesses()
+    {
+        Flags.Start();
+        IEnumerable<Process>? ProcessesFromDatabase;
+        try
+        {
+            ProcessesFromDatabase = await ProcessService.GetAll(App.UserAgent);
+        }
+        // some database-generated issue
+        catch (HttpRequestException)
+        {
+            Flags.Failure();
+            return;
+        }
+        // some formatting issue
+        catch (JsonException)
+        {
+            Flags.Failure();
+            return;
+        }
+        // no error but no results from the Database
+        if (ProcessesFromDatabase is null)
+        {
+            Processes = [];
+            Flags.Success();
+            return;
+        }
+        Processes = new ObservableCollection<Process> (ProcessesFromDatabase);
+        Flags.Success();
     }
 }
