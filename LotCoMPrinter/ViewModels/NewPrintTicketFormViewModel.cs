@@ -184,8 +184,6 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     /// <summary>
     /// Create a ViewModel to control the logic of a NewPrintTicketForm.
     /// </summary>
-    /// <exception cref="SystemException"></exception>
-    /// <exception cref="JsonException"></exception>
     public NewPrintTicketFormViewModel()
     {
 
