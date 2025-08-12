@@ -32,6 +32,20 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
+    private bool _transitioning = false;
+    /// <summary>
+    /// Indicates whether the page is transitioning to another window.
+    /// </summary>
+    public bool Transitioning
+    {
+        get { return _transitioning; }
+        set
+        {
+            _transitioning = value;
+            OnPropertyChanged();
+        }
+    }
+
     private int _openPrintTicketsPanelWidth = OpenPrintTicketsPanelWidthClosed;
     /// <summary>
     /// Provides the width Option of the Open Print Tickets Panel.
@@ -342,6 +356,22 @@ public partial class MainPageViewModel : ObservableObject
             throw new PrintRequestException("Failed to execute the print job for the generated Label.");
         }
         return Printed;
+    }
+
+    /// <summary>
+    /// Indicates the start of a transition to a new page.
+    /// </summary>
+    public void StartTransition()
+    {
+        Transitioning = true;
+    }
+    
+    /// <summary>
+    /// Indicates the end of a transition to a new page.
+    /// </summary>
+    public void EndTransition()
+    {
+        Transitioning = false;
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility
