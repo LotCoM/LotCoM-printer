@@ -1,16 +1,32 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.Database;
-using LotCom.Enums;
-using LotCom.Exceptions;
 using LotCom.Types;
+using LotCom.Types.Enums;
+using LotCom.Exceptions;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Services;
 using Newtonsoft.Json;
+using LotCom.DataAccess.Services;
+using System.Collections.ObjectModel;
+using LotCom.UI;
 
 namespace LotComPrinter.ViewModels;
 
 public partial class NewPrintTicketFormViewModel : ObservableObject
 {
+    private CompoundPageLoadingFlags _flags = new CompoundPageLoadingFlags();
+    /// <summary>
+    /// Indicates different loading related properties for the Page's Process and Part data.
+    /// </summary>
+    public CompoundPageLoadingFlags Flags
+    {
+        get { return _flags; }
+        set
+        {
+            _flags = value;
+            OnPropertyChanged();
+        }
+    }
+
     private Process? _process = null;
     /// <summary>
     /// The Process to assign to a PrintTicket object instantiated by this Form.
@@ -21,8 +37,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _process = value;
-            OnPropertyChanged(nameof(_process));
-            OnPropertyChanged(nameof(Process));
+            OnPropertyChanged();
         }
     }
 
@@ -36,14 +51,13 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _part = value;
-            OnPropertyChanged(nameof(_part));
-            OnPropertyChanged(nameof(Part));
+            OnPropertyChanged();
         }
     }
 
     private SerialNumber? _serialNumber = null;
     /// <summary>
-    /// The Serial Number (JBK or Lot Number) to assign to a PrintTicket object instantiated by this Form.
+    /// The Serial Number to assign to a PrintTicket object instantiated by this Form.
     /// </summary>
     public SerialNumber? SerialNumber
     {
@@ -51,8 +65,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _serialNumber = value;
-            OnPropertyChanged(nameof(_serialNumber));
-            OnPropertyChanged(nameof(SerialNumber));
+            OnPropertyChanged();
         }
     }
 
@@ -66,8 +79,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _productionDate = value;
-            OnPropertyChanged(nameof(_productionDate));
-            OnPropertyChanged(nameof(ProductionDate));
+            OnPropertyChanged();
         }
     }
 
@@ -81,8 +93,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _productionShift = value;
-            OnPropertyChanged(nameof(_productionShift));
-            OnPropertyChanged(nameof(ProductionShift));
+            OnPropertyChanged();
         }
     }
 
@@ -96,8 +107,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _productionQuantity = value;
-            OnPropertyChanged(nameof(_productionQuantity));
-            OnPropertyChanged(nameof(ProductionQuantity));
+            OnPropertyChanged();
         }
     }
 
@@ -111,8 +121,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _productionOperator = value;
-            OnPropertyChanged(nameof(_productionOperator));
-            OnPropertyChanged(nameof(ProductionOperator));
+            OnPropertyChanged();
         }
     }
     
@@ -126,23 +135,21 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _selectedProcessIndex = value;
-            OnPropertyChanged(nameof(_selectedProcessIndex));
-            OnPropertyChanged(nameof(SelectedProcessIndex));
+            OnPropertyChanged();
         }
     }
 
-    public List<Part>? _selectedProcessParts = [];
+    public ObservableCollection<Part>? _selectedProcessParts = [];
     /// <summary>
-    /// Provides the list of Parts assigned to the currently selected Process for the Form.
+    /// Provides the list of Printable Parts assigned to the currently selected Process for the Form.
     /// </summary>
-    public List<Part>? SelectedProcessParts
+    public ObservableCollection<Part>? SelectedProcessParts
     {
         get {return _selectedProcessParts;}
         set 
         {
             _selectedProcessParts = value;
-            OnPropertyChanged(nameof(_selectedProcessParts));
-            OnPropertyChanged(nameof(SelectedProcessParts));
+            OnPropertyChanged();
         }
     }
 
@@ -156,22 +163,21 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         set 
         {
             _selectedPartIndex = value;
-            OnPropertyChanged(nameof(_selectedPartIndex));
-            OnPropertyChanged(nameof(SelectedPartIndex));
+            OnPropertyChanged();
         }
     }
-    private List<Process> _allProcesses;
+
+    private ObservableCollection<Process> _allProcesses = [];
     /// <summary>
     /// The List of Processes in the Database, captured at the time of instantiation.
     /// </summary>
-    public List<Process> AllProcesses
+    public ObservableCollection<Process> AllProcesses
     {
         get {return _allProcesses;}
         set 
         {
             _allProcesses = value;
-            OnPropertyChanged(nameof(_allProcesses));
-            OnPropertyChanged(nameof(AllProcesses));
+            OnPropertyChanged();
         }
     }
 
@@ -182,24 +188,93 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     /// <exception cref="JsonException"></exception>
     public NewPrintTicketFormViewModel()
     {
+
+    }
+
+    /// <summary>
+    /// Loads the Processes used to populate the Process Selection Dropdown.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="DatabaseException"></exception>
+    public async Task LoadProcesses()
+    {
+        if (Flags.IsProcessComplete)
+        {
+            return;
+        }
         // load Process data
+        Flags.StartProcesses();
+        IEnumerable<Process>? ProcessesFromDatabase;
         try
         {
-            _allProcesses = new ProcessData().GetAllProcesses();
+            ProcessesFromDatabase = await ProcessService.GetAll(App.UserAgent);
         }
-        catch (SystemException)
+        // some database-generated issue
+        catch (HttpRequestException _ex)
         {
-            throw;
+            Flags.FailureProcesses();
+            throw new DatabaseException("Could not retreive Processes from the Database.", _ex);
         }
-        catch (JsonException)
+        // some formatting issue
+        catch (JsonException _ex)
         {
-            throw;
+            Flags.FailureProcesses();
+            throw new DatabaseException("Could not process JSON response.", _ex);
         }
-        // ensure access to Serial Queues
-        if (!Serializer.Ping())
+        // the response was nothing but there was no error (no contents returned)
+        if (ProcessesFromDatabase is null)
         {
-            throw new SystemException("Cannot connect to the Serial Number Queues.");
+            AllProcesses = [];
         }
+        else
+        {
+            AllProcesses = new ObservableCollection<Process>(ProcessesFromDatabase);
+        }
+        Flags.SuccessProcesses();
+        return;
+    }
+
+    /// <summary>
+    /// Loads the Parts used to populate the Part Selection Dropdown.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="DatabaseException"></exception>
+    public async Task LoadParts()
+    {
+        if (Flags.IsPartComplete || Process is null)
+        {
+            return;
+        }
+        // load Part data
+        Flags.StartParts();
+        IEnumerable<Part>? PartsFromDatabase;
+        try
+            {
+                PartsFromDatabase = await PartService.GetPrintedByProcess(Process.Id, App.UserAgent);
+            }
+            // some database-generated issue
+            catch (HttpRequestException _ex)
+            {
+                Flags.FailureParts();
+                throw new DatabaseException("Could not retreive Parts from the Database.", _ex);
+            }
+            // some formatting issue
+            catch (JsonException _ex)
+            {
+                Flags.FailureParts();
+                throw new DatabaseException("Could not process JSON response.", _ex);
+            }
+        // the response was nothing but there was no error (no contents returned)
+        if (PartsFromDatabase is null)
+        {
+            SelectedProcessParts = [];
+        }
+        else
+        {
+            SelectedProcessParts = new ObservableCollection<Part>(PartsFromDatabase);
+        }
+        Flags.SuccessParts();
+        return;
     }
 
     /// <summary>
@@ -222,7 +297,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
             throw new ArgumentException("Cannot create a PrintTicket without a full Form.");
         }
         // retrieve a Serial Number for this new Print Ticket
-        SerialNumber? TicketNumber = await Serializer.Serialize(Process, Part);
+        SerialNumber? TicketNumber = await SerializationService.Serialize(Process, Part);
         if (TicketNumber is null)
         {
             // a serial number is needed
@@ -233,10 +308,10 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
             // pass-through process
             else
             {
-                TicketNumber = new SerialNumber(SerializationMode.None, Part, 0);
+                TicketNumber = new SerialNumber(SerializationMode.None, Part.Id, 0);
             }
         }
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, ProductionShift, ProductionQuantity, ProductionOperator, new VariableFieldSet());
+        PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, new VariableFieldSet(), new PartialDataSet(ProductionQuantity, ProductionShift, ProductionOperator));
         // apply the SerialNumber to the appropriate field and return the new Ticket
         if (NewTicket.SerializationMode == SerializationMode.JBK)
         {
