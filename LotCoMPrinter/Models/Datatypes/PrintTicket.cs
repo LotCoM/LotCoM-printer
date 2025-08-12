@@ -269,44 +269,7 @@ public partial class PrintTicket : ObservableObject
     /// <returns></returns>
     public string ToJSON()
     {
-        // build the JSON stream piece-by-piece
-        // Department, Process, Part, SerializationMode, SerialNumber, and Production Date and Shift are all universal
-        string JSON =
-            "{" +
-                $"\"Process\":\"{Process.Id}\"" +
-                $"\"Part\":\"{Part.Id}\"" +
-                $"\"SerializationMode\":\"{SerializationModeExtensions.ToString(SerializationMode)}\"," +
-                $"\"SerialNumber\":{SerialNumber.ToJSON()}," +
-                $"\"ProductionDate\":\"{new Timestamp(ProductionDate).Stamp}\"," +
-                $"\"VariableFieldSet\":{VariableFields.ToJSON()}";
-        // add partial data sets
-        JSON +=
-            ",\"PrimaryData\":{" +
-                $"\"Quantity\":\"{PrimaryData!.Quantity.Value}\"," +
-                $"\"Shift\":\"{ShiftExtensions.ToString(PrimaryData.Shift!)}\"," +
-                $"\"Operator\":\"{PrimaryData!.Operator.Initials}\"" +
-            "}";
-        if (HasSecondaryData)
-        {
-            JSON +=
-                ",\"SecondaryData\":{" +
-                    $"\"Quantity\":\"{SecondaryData!.Quantity.Value}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(SecondaryData.Shift!)}\"," +
-                    $"\"Operator\":\"{SecondaryData!.Operator.Initials}\"" +
-                "}";
-        }
-        if (HasTertiaryData)
-        {
-            JSON +=
-                ",\"TertiaryData\":{" +
-                    $"\"Quantity\":\"{TertiaryData!.Quantity.Value}\"," +
-                    $"\"Shift\":\"{ShiftExtensions.ToString(TertiaryData.Shift!)}\"," +
-                    $"\"Operator\":\"{TertiaryData!.Operator.Initials}\"" +
-                "}";
-        }
-        // close the JSON stream
-        JSON = $"{JSON}" + "}";
-        return JSON;
+        return JsonConvert.SerializeObject(this);
     }
 
     /// <summary>
@@ -315,117 +278,14 @@ public partial class PrintTicket : ObservableObject
     /// <param name="Line"></param>
     /// <returns>A PrintTicket object.</returns>
     /// <exception cref="JsonException"></exception>
-    public static async Task<PrintTicket> ParseJSON(string Line)
+    public static PrintTicket ParseJSON(string Line)
     {
-        // parse Line into JTokens
-        JObject JSON = JObject.Parse(Line);
-        // attempt to retrieve Process from the Database
-        Process? Process;
-        Part? Part;
-        try
+        PrintTicket? Deserialized = JsonConvert.DeserializeObject<PrintTicket>(Line);
+        if (Deserialized is null)
         {
-            Process = await ProcessService.Get(int.Parse(JSON["Process"]!.ToString()), App.UserAgent);
+            throw new JsonException($"Could not deserialize '{Line}' into a PrintTicket.");
         }
-        catch (SystemException)
-        {
-            throw new JsonException($"Could not find a Process with Id '{JSON["Process"]!}'.");
-        }
-        if (Process is null)
-        {
-            throw new FormatException($"Could not find a Process with Id '{JSON["Process"]!}'.");
-        }
-        // attempt to retrieve Part from the Database
-        try
-        {
-            Part = await PartService.Get(int.Parse(JSON["Part"]!.ToString()), App.UserAgent);
-        }
-        catch (SystemException)
-        {
-            throw new JsonException($"Could not find a Part with Id '{JSON["Part"]!}'.");
-        }
-        if (Part is null)
-        {
-            throw new FormatException($"Could not find a Part with Id '{JSON["Part"]!}'.");
-        }
-        // convert the SerializationMode from string to actual enum value and parse the SerialNumber
-        SerializationMode Mode;
-        SerialNumber Number;
-        try
-        {
-            Mode = SerializationModeExtensions.FromString(JSON["SerializationMode"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a SerializationMode from '{JSON["SerializationMode"]!}'.");
-        }
-        try
-        {
-            Number = SerialNumber.ParseJSON(JSON["SerialNumber"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a SerialNumber from '{JSON["SerialNumber"]!}'.");
-        }
-        // parse out a timestamp for ProductionDate
-        DateTime ParsedDate;
-        try
-        {
-            ParsedDate = DateTime.ParseExact(JSON["ProductionDate"]!.ToString(), "MM/dd/yyyy-HH:mm:ss", CultureInfo.InvariantCulture);
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a Production Date from '{JSON["ProductionDate"]!}'.");
-        }
-        // parse the variable field set assigned to the Ticket
-        VariableFieldSet VariableFields;
-        try
-        {
-            VariableFields = VariableFieldSet.ParseJSON(JSON["VariableFieldSet"]!.ToString());
-        }
-        catch
-        {
-            throw new JsonException($"Could not parse a VariableFieldSet from '{JSON["VariableFieldSet"]!}'.");
-        }
-        // check for and parse partial data sets
-        PartialDataSet Primary;
-        PartialDataSet? Secondary;
-        PartialDataSet? Tertiary;
-        try
-        {
-            Primary = PartialDataSet.ParseJSON(JSON["PrimaryData"]!);
-        }
-        catch (JsonException)
-        {
-            throw new FormatException("No Primary Production Data could be parsed from JSON.");
-        }
-        try
-        {
-            Secondary = PartialDataSet.ParseJSON(JSON["SecondaryData"]!);
-        }
-        catch (JsonException)
-        {
-            throw new FormatException("Secondary Production Data is in an invalid format.");
-        }
-        try
-        {
-            Tertiary = PartialDataSet.ParseJSON(JSON["TertiaryData"]!);
-        }
-        catch (JsonException)
-        {
-            throw new FormatException("Tertiary Production Data is in an invalid format.");
-        }
-        // construct and return the parsed PrintTicket
-        PrintTicket NewTicket = new PrintTicket(Process, Part, Mode, Number, ParsedDate, VariableFields, Primary, Secondary, Tertiary);
-        if (Secondary is not null)
-        {
-            NewTicket.HasSecondaryData = true;
-        }
-        if (Tertiary is not null)
-        {
-            NewTicket.HasTertiaryData = true;
-            NewTicket.HasSpace = false;
-        }
-        return NewTicket;
+        return Deserialized;
     }
 
     /// <summary>
