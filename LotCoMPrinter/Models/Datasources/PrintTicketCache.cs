@@ -150,7 +150,7 @@ public static class PrintTicketCache
         }
         try
         {
-            return await PrintTicket.ParseJSON(JSON[Index]);
+            return PrintTicket.ParseJSON(JSON[Index]);
         }
         catch
         {
@@ -174,13 +174,9 @@ public static class PrintTicketCache
         {
             return [];
         }
-        IEnumerable<Task<PrintTicket>> ParseTasks = JSON
-            .Select(PrintTicket.ParseJSON);
-        PrintTicket[] ParseResults = await Task.WhenAll(ParseTasks);
-        if (ParseResults is null)
-        {
-            return [];
-        }
-        return ParseResults.ToList();
+        List<PrintTicket> PrintTickets = JSON
+            .Select(PrintTicket.ParseJSON)
+            .ToList();
+        return PrintTickets;
     }
 }
