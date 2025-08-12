@@ -70,14 +70,17 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private async void OnOpenPrintTicketFromCollectionViewButtonClicked(object sender, EventArgs e)
 	{
+		ViewModel.StartTransition();
 		if (ViewModel.SelectedTicket is null)
 		{
+			ViewModel.EndTransition();
 			return;
 		}
 		TicketEditorPage Editor = new TicketEditorPage(ViewModel.SelectedTicket);
 		await Navigation.PushAsync(Editor);
 		// collapse the OpenPrintTickets panel
 		await AnimatedCollapseOpenPrintTicketsPanel();
+		ViewModel.EndTransition();
 	}
 
 	/// <summary>
@@ -89,6 +92,7 @@ public partial class MainPage : ContentPage
 	private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
 	{
 		// attempt to create a NewPrintTicketForm
+		ViewModel.StartTransition();
 		NewPrintTicketForm Form;
 		try
 		{
@@ -104,15 +108,20 @@ public partial class MainPage : ContentPage
 					"We encountered an unexpected error. Please see Management to resolve this issue."
 				)
 			);
+			ViewModel.EndTransition();
 			return;
 		}
-		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
-		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
 		// collapse the OpenPrintTickets panel
 		await AnimatedCollapseOpenPrintTicketsPanel();
+		ViewModel.EndTransition();
+		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
+		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
+		// start processing output
+		ViewModel.StartTransition();
 		// nothing was done (window was just cancelled)
 		if (Result is null)
 		{
+			ViewModel.EndTransition();
 			return;
 		}
 		// handle database exceptions from Process/Part loading and Serialization
@@ -127,6 +136,7 @@ public partial class MainPage : ContentPage
 						$"\n\nReference message: {Result}"
 					)
 				);
+				ViewModel.EndTransition();
 				return;
 			}
 		if (Result.GetType().Equals(typeof(PrintTicket)))
@@ -147,12 +157,15 @@ public partial class MainPage : ContentPage
 						$"\n\nReference message: {_ex}"
 					)
 				);
+				ViewModel.EndTransition();
 				return;
 			}
 			try
 			{
 				TicketEditorPage Editor = new TicketEditorPage(ViewModel.OpenPrintTickets[^1]);
 				await Navigation.PushAsync(Editor);
+				ViewModel.EndTransition();
+				return;
 			}
 			catch (Exception _ex)
 			{
@@ -165,6 +178,7 @@ public partial class MainPage : ContentPage
 						$"\n\nReference message: {_ex}"
 					)
 				);
+				ViewModel.EndTransition();
 				return;
 			}
 		}
@@ -177,6 +191,7 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private async void OnReprintLabelButtonClicked(object sender, EventArgs e)
 	{
+		ViewModel.StartTransition();
 		// create a new ProcessSelection popup
 		ProcessSelectionPopup ProcessSelection = new ProcessSelectionPopup();
 		object? Result = await this.ShowPopupAsync
@@ -185,11 +200,13 @@ public partial class MainPage : ContentPage
 		);
 		// collapse the OpenPrintTickets panel
 		await AnimatedCollapseOpenPrintTicketsPanel();
+		ViewModel.EndTransition();
 		if (Result is null)
 		{
 			return;
 		}
 		// save the selected Process object
+		ViewModel.StartTransition();
 		Process SelectedProcess = (Process)Result;
 		// create a new ReprintSelection popup for the Selected Process
 		ReprintSelectionPopup ReprintSelection = new ReprintSelectionPopup(SelectedProcess);
@@ -199,6 +216,7 @@ public partial class MainPage : ContentPage
 		);
 		if (Result is null)
 		{
+			ViewModel.EndTransition();
 			return;
 		}
 		// save the selected PrintTicket object
@@ -206,6 +224,7 @@ public partial class MainPage : ContentPage
 		// create a new TicketReprintEditor for the Selected Ticket
 		TicketReprintEditorPage ReprintEditor = new TicketReprintEditorPage(SelectedReprintTicket);
 		await Navigation.PushAsync(ReprintEditor);
+		ViewModel.EndTransition();
 	}
 
 	/// <summary>

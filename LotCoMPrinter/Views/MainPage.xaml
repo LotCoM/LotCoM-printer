@@ -221,6 +221,30 @@
                 VerticalOptions="Fill"
                 BackgroundColor="{StaticResource Neutral-OffWhite}">
             </HorizontalStackLayout>
+            <!-- Loading/Transitioning Activity Indicator -->
+            <BoxView
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                IsVisible="{Binding Transitioning}"
+                BackgroundColor="{StaticResource Neutral-LoadingTint}"/>
+            <ActivityIndicator
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="400"
+                HeightRequest="400"
+                x:Name="DataLoadingIndicator"
+                Color="{StaticResource Secondary-0}"
+                IsEnabled="{Binding Transitioning}"
+                IsVisible="{Binding Transitioning}"
+                IsRunning="{Binding Transitioning}"/>
         </Grid>
 
         <!-- Open Print Tickets Panel Layout -->
