@@ -8,15 +8,7 @@ namespace LotComPrinter.Views;
 
 public partial class NewPrintTicketForm : Popup
 {
-    /// <summary>
-    /// The ViewModel object controlling this NewPrintTicketForm.
-    /// </summary>
-    private NewPrintTicketFormViewModel ViewModel;
-
-
     private const int DefaultStroke = 1;
-
-
     private const int ErrorStroke = 2;
 
     /// <summary>
@@ -28,6 +20,11 @@ public partial class NewPrintTicketForm : Popup
     /// StaticResource Danger-20 color.
     /// </summary>
     private static readonly Color Danger0 = new Color(180, 28, 43);
+
+    /// <summary>
+    /// The ViewModel object controlling this NewPrintTicketForm.
+    /// </summary>
+    private NewPrintTicketFormViewModel ViewModel;
 
     /// <summary>
     /// Highlights input borders that have null values with Red.
@@ -72,6 +69,48 @@ public partial class NewPrintTicketForm : Popup
     }
 
     /// <summary>
+    /// Handler for the Focused event from the ProcessPicker control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void OnProcessPickerFocused(object sender, EventArgs e)
+    {
+        ProcessPicker.IsEnabled = false;
+        try
+        {
+            await ViewModel.LoadProcesses();
+        }
+        catch (DatabaseException _ex)
+        {
+            string Output = $"{_ex.Message}";
+            CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await CloseAsync(Output, TokenSource.Token);
+        }
+        ProcessPicker.IsEnabled = true;
+    }
+
+    /// <summary>
+    /// Handler for the Focused event from the PartPicker control.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void OnPartPickerFocused(object sender, EventArgs e)
+    {
+        PartPicker.IsEnabled = false;
+        try
+        {
+            await ViewModel.LoadParts();
+        }
+        catch (DatabaseException _ex)
+        {
+            string Output = $"{_ex.Message}";
+            CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await CloseAsync(Output, TokenSource.Token);
+        }
+        PartPicker.IsEnabled = true;
+    }
+
+    /// <summary>
     /// Handler for the Clicked event from the ConfirmButton control.
     /// </summary>
     /// <param name="sender"></param>
@@ -84,15 +123,18 @@ public partial class NewPrintTicketForm : Popup
         {
             Output = await ViewModel.OpenNewPrintTicket();
         }
-        catch (ArgumentException _ex)
+        // a validation failed; show missing inputs and return without doing anything
+        catch (ArgumentException)
         {
             await ShowMissingInputs();
-            Output = $"{_ex.Message}";
+            return;
         }
+        // couldn't get a serial number for the ticket; fatal error
         catch (SerializationException _ex)
         {
             Output = $"{_ex.Message}";
         }
+        // return the PrintTicket or exception message
         CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         await CloseAsync(Output, TokenSource.Token);
     }
@@ -113,11 +155,11 @@ public partial class NewPrintTicketForm : Popup
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnProcessPickerSelectedIndexChanged(object sender, EventArgs e)
+    private async void OnProcessPickerSelectedIndexChanged(object sender, EventArgs e)
     {
         ViewModel.SelectedProcessIndex = ProcessPicker.SelectedIndex;
         ViewModel.Process = (Process)ProcessPicker.ItemsSource[ViewModel.SelectedProcessIndex]!;
-        ViewModel.SelectedProcessParts = ViewModel.Process.PrintParts;
+        await ViewModel.LoadParts();
     }
 
     /// <summary>
