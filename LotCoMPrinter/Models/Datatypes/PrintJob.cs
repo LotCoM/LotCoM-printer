@@ -106,7 +106,7 @@ public class PrintJob
             throw new LabelBuildException(_ex.Message);
         }
         // create a PrintHandler object for the new Label and attempt to print it
-        bool Printed = false;
+        bool Printed;
         try
         {
             Printed = await PrintingService.PrintLabelAsync(Label!);
@@ -116,18 +116,11 @@ public class PrintJob
             throw new PrintRequestException(_ex.Message);
         }
         // log successful print jobs
+        bool LogResult = false;
         if (Printed && Type == PrintJobType.Full)
         {
-            try
-            {
-                await LoggingService.LogPrintEvent(this);
-                // the print logging was forced to default on its backup logging; report this to user
-            }
-            catch (Exception _ex)
-            {
-                throw new PrintLogException(_ex.Message);
-            }
+            LogResult = await LoggingService.LogPrintEvent(this);
         }
-        return Printed;
+        return Printed && LogResult;
     }
 }
