@@ -8,6 +8,12 @@ namespace LotComPrinter.Models.Datatypes;
 
 public partial class PrintTicket : ObservableObject
 {
+    /// <summary>
+    /// Contains the Id of the Print object that the PrintTicket represents.
+    /// Null on PrintTickets that have not been inserted into the Database yet.
+    /// </summary>
+    public int? PrintId = null;
+
     private Process _process;
     /// <summary>
     /// The Process that initiated this Print Ticket.
@@ -389,13 +395,37 @@ public partial class PrintTicket : ObservableObject
     }
 
     /// <summary>
+    /// Converts the PrintTicket to a Print Model that can be added/updated in the Database.
+    /// </summary>
+    /// <returns></returns>
+    public Print ToPrint()
+    {
+        // if the PrintId is null here, it will be assigned by the database
+        if (PrintId is null)
+        {
+            PrintId = -1;
+        }
+        return new Print
+        (
+            (int)PrintId,
+            Process,
+            Part,
+            VariableFields,
+            ProductionDate,
+            PrimaryData,
+            SecondaryData,
+            TertiaryData
+        );
+    }
+
+    /// <summary>
     /// Converts a Print Model from the Database into a PrintTicket object.
     /// </summary>
     /// <param name="Model"></param>
     /// <returns></returns>
     public static PrintTicket FromPrint(Print Model)
     {
-        return new PrintTicket
+        PrintTicket Ticket = new PrintTicket
         (
             Model.Process,
             Model.Part,
@@ -407,6 +437,8 @@ public partial class PrintTicket : ObservableObject
             Model.SecondaryDataSet,
             Model.TertiaryDataSet
         );
+        Ticket.PrintId = Model.Id;
+        return Ticket;
     }
 
     /// <summary>
