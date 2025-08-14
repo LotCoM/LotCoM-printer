@@ -61,13 +61,15 @@ public class TicketReprintEditorPageViewModel : ObservableObject
             throw;
         }
         // check for and log changes to the Ticket
+        bool UpdateResult = false;
         if
         (
-            !EditorTicket.Untracked.ToJSON()!
-            .Equals(EditorTicket.Tracked.ToJSON())
+            !EditorTicket.Untracked
+                .ToJSON()!
+                .Equals(EditorTicket.Tracked.ToJSON())
         )
         {
-            await LoggingService.UpdateLog(EditorTicket.Untracked, EditorTicket.Tracked);
+            UpdateResult = await LoggingService.UpdateLog(EditorTicket.Untracked, EditorTicket.Tracked);
         }
         PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Reprint);
         bool Printed;
@@ -84,7 +86,7 @@ public class TicketReprintEditorPageViewModel : ObservableObject
         {
             throw new PrintRequestException("Failed to execute the print job for the generated Label.");
         }
-        return Printed;
+        return Printed && UpdateResult;
     }
 
     /// <summary>
