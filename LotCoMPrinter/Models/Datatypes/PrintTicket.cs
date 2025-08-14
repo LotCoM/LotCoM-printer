@@ -12,7 +12,7 @@ public partial class PrintTicket : ObservableObject
     /// Contains the Id of the Print object that the PrintTicket represents.
     /// Null on PrintTickets that have not been inserted into the Database yet.
     /// </summary>
-    public int? PrintId = null;
+    public int PrintId = 0;
 
     private Process _process;
     /// <summary>
@@ -391,6 +391,7 @@ public partial class PrintTicket : ObservableObject
                 )
             );
         }
+        Copy.PrintId = Source.PrintId;
         return Copy;
     }
 
@@ -400,14 +401,9 @@ public partial class PrintTicket : ObservableObject
     /// <returns></returns>
     public Print ToPrint()
     {
-        // if the PrintId is null here, it will be assigned by the database
-        if (PrintId is null)
-        {
-            PrintId = -1;
-        }
         return new Print
         (
-            (int)PrintId,
+            PrintId,
             Process,
             Part,
             VariableFields,
@@ -437,7 +433,9 @@ public partial class PrintTicket : ObservableObject
             Model.SecondaryDataSet,
             Model.TertiaryDataSet
         );
+        Console.WriteLine($"Creating Ticket from Print w Id: {Model.Id}");
         Ticket.PrintId = Model.Id;
+        Console.WriteLine($"New Ticket Id: {Ticket.PrintId}");
         return Ticket;
     }
 
