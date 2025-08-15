@@ -4,7 +4,7 @@ using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Enums;
 using LotComPrinter.Models.Exceptions;
-using LotComPrinter.Models.Services;
+using LotCom.UI;
 
 namespace LotComPrinter.ViewModels;
 
@@ -13,6 +13,20 @@ namespace LotComPrinter.ViewModels;
 /// </summary>
 public class TicketReprintEditorPageViewModel : ObservableObject
 {
+    private PageLoadingFlags _flags = new PageLoadingFlags();
+    /// <summary>
+    /// Indicates different data loading related properties.
+    /// </summary>
+    public PageLoadingFlags Flags
+    {
+        get { return _flags; }
+        set
+        {
+            _flags = value;
+            OnPropertyChanged();
+        }
+    }
+    
     private TrackedPrintTicket? _editorTicket = null;
     /// <summary>
     /// The PrintTicket currently being edited, with Tracked changes.
@@ -47,8 +61,10 @@ public class TicketReprintEditorPageViewModel : ObservableObject
     /// <exception cref="SystemException"></exception>
     public async Task<bool> ReprintTicket()
     {
+        Flags.Start();
         if (EditorTicket is null)
         {
+            Flags.Failure();
             throw new NullReferenceException("Cannot print 'null' PrintTicket.");
         }
         // validate the PrintTicket
@@ -58,20 +74,10 @@ public class TicketReprintEditorPageViewModel : ObservableObject
         }
         catch (ArgumentException)
         {
+            Flags.Failure();
             throw;
         }
-        // check for and log changes to the Ticket
-        bool UpdateResult = false;
-        if
-        (
-            !EditorTicket.Untracked
-                .ToJSON()!
-                .Equals(EditorTicket.Tracked.ToJSON())
-        )
-        {
-            UpdateResult = await LoggingService.UpdateLog(EditorTicket.Untracked, EditorTicket.Tracked);
-        }
-        PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Reprint);
+        PrintJob Job = new PrintJob(EditorTicket, PrintJobType.Reprint);
         bool Printed;
         // attempt to run the Print Job
         try
@@ -80,13 +86,16 @@ public class TicketReprintEditorPageViewModel : ObservableObject
         }
         catch (LabelBuildException)
         {
+            Flags.Failure();
             throw new PrintRequestException("Could not create a Label from the entered information.");
         }
         catch (PrintRequestException)
         {
+            Flags.Failure();
             throw new PrintRequestException("Failed to execute the print job for the generated Label.");
         }
-        return Printed && UpdateResult;
+        Flags.Success();
+        return Printed;
     }
 
     /// <summary>
@@ -119,9 +128,11 @@ public class TicketReprintEditorPageViewModel : ObservableObject
     /// <exception cref="PrintRequestException"></exception>
     public async Task<bool> PrintPartialTag(int PartialSetNumber)
     {
+        Flags.Start();
         // ensure the targeted PartialDataSet exists on the editing Print Ticket
         if (PartialSetNumber < 1 || PartialSetNumber > 2)
         {
+            Flags.Failure();
             throw new ArgumentException
             (
                 $"Cannot print PartialDataSet '{PartialSetNumber}' as it is outside the allowed set (1, 2).",
@@ -130,6 +141,7 @@ public class TicketReprintEditorPageViewModel : ObservableObject
         }
         if (EditorTicket is null)
         {
+            Flags.Failure();
             throw new NullReferenceException("Cannot print PartialDataSets from 'null' PrintTicket.");
         }
         // validate the target PartialDataSet
@@ -145,19 +157,22 @@ public class TicketReprintEditorPageViewModel : ObservableObject
             }
             else
             {
+                Flags.Failure();
                 throw new NullReferenceException($"Cannot print 'null' PartialDataSet Number '{PartialSetNumber}'.");
             }
         }
         catch (NullReferenceException _nullEx)
         {
+            Flags.Failure();
             throw new NullReferenceException(_nullEx.Message);
         }
         catch (ArgumentException _argEx)
         {
+            Flags.Failure();
             throw new ArgumentException(_argEx.Message);
         }
         // create a new PrintJob from the PartialDataSet and attempt to run it
-        PrintJob Job = new PrintJob(EditorTicket.Tracked, PrintJobType.Partial, PartialSetNumber);
+        PrintJob Job = new PrintJob(EditorTicket, PrintJobType.Partial, PartialSetNumber);
         bool Printed;
         try
         {
@@ -165,12 +180,15 @@ public class TicketReprintEditorPageViewModel : ObservableObject
         }
         catch (LabelBuildException)
         {
+            Flags.Failure();
             throw new PrintRequestException("Could not create a Label from the entered information.");
         }
         catch (PrintRequestException)
         {
+            Flags.Failure();
             throw new PrintRequestException("Failed to execute the print job for the generated Label.");
         }
+        Flags.Success();
         return Printed;
     }
 }
