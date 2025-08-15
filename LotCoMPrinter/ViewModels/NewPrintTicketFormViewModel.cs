@@ -194,9 +194,9 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     /// </summary>
     /// <returns></returns>
     /// <exception cref="DatabaseException"></exception>
-    public async Task LoadProcesses()
+    public async Task LoadProcesses(bool Force = false)
     {
-        if (Flags.IsProcessComplete)
+        if (Flags.IsProcessComplete && !Force)
         {
             return;
         }
@@ -237,9 +237,15 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
     /// </summary>
     /// <returns></returns>
     /// <exception cref="DatabaseException"></exception>
-    public async Task LoadParts()
+    public async Task LoadParts(bool Force = false)
     {
-        if (Flags.IsPartComplete || Process is null)
+        // without a process selected, this method cannot run
+        if (Process is null)
+        {
+            return;
+        }
+        // if the list has been previously loaded, loading is either skipped or forced
+        if (Flags.IsPartComplete && !Force)
         {
             return;
         }
