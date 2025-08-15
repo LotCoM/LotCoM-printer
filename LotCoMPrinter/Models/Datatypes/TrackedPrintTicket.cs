@@ -50,6 +50,7 @@ public partial class TrackedPrintTicket : ObservableObject
     /// <returns></returns>
     public bool HasUnmergedChanges()
     {
-        return Untracked.ToJSON().Equals(Tracked.ToJSON());
+        // return inverse of equality (true if unequal, false if equal)
+        return !Untracked.ToJSON().Equals(Tracked.ToJSON());
     }
 }
