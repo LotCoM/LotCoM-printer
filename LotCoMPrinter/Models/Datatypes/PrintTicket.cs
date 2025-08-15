@@ -433,9 +433,7 @@ public partial class PrintTicket : ObservableObject
             Model.SecondaryDataSet,
             Model.TertiaryDataSet
         );
-        Console.WriteLine($"Creating Ticket from Print w Id: {Model.Id}");
         Ticket.PrintId = Model.Id;
-        Console.WriteLine($"New Ticket Id: {Ticket.PrintId}");
         return Ticket;
     }
 
