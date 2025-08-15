@@ -17,7 +17,14 @@ public static class LoggingService
         PrintTicket SourceTicket = Job.Source;
         Print Model = SourceTicket.ToPrint();
         // add the Print Model to the Database
-        return await PrintService.Create(Model, App.UserAgent);
+        try
+        {
+            return await PrintService.Create(Model, App.UserAgent);
+        }
+        catch (HttpRequestException)
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -33,6 +40,13 @@ public static class LoggingService
         Print ExistingModel = ExistingSource.ToPrint();
         Print NewModel = NewSource.ToPrint();
         // update the Print Model in the Database
-        return await PrintService.Update(ExistingModel.Id, NewModel, App.UserAgent);
+        try
+        {
+            return await PrintService.Update(ExistingModel.Id, NewModel, App.UserAgent);
+        }
+        catch (HttpRequestException)
+        {
+            return false;
+        }
     }
 }
