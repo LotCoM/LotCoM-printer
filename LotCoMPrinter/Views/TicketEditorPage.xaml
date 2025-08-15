@@ -1547,5 +1547,28 @@
 
             </VerticalStackLayout>
         </ScrollView>
+        
+        <!-- Loading/Transitioning Activity Indicator -->
+        <BoxView
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"
+            IsVisible="{Binding Flags.IsLoading}"
+            BackgroundColor="{StaticResource Neutral-LoadingTint}"/>
+        <ActivityIndicator
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            WidthRequest="400"
+            HeightRequest="400"
+            x:Name="DataLoadingIndicator"
+            Color="{StaticResource Secondary-0}"
+            IsEnabled="{Binding Flags.IsLoading}"
+            IsVisible="{Binding Flags.IsLoading}"
+            IsRunning="{Binding Flags.IsLoading}"/>
     </Grid>
 </ContentPage>
