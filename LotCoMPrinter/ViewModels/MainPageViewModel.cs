@@ -2,8 +2,6 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotComPrinter.Models.Datasources;
 using LotComPrinter.Models.Datatypes;
-using LotComPrinter.Models.Exceptions;
-using LotComPrinter.Models.Enums;
 using LotCom.UI;
 
 namespace LotComPrinter.ViewModels;
@@ -330,32 +328,6 @@ public partial class MainPageViewModel : ObservableObject
             throw;
         }
         return Result;
-    }
-
-    /// <summary>
-    /// Reprints a Label using the information from the selected PrintTicket.
-    /// </summary>
-    /// <param name="ReprintTicket"></param>
-    /// <returns></returns>
-    public async Task<bool> ReprintLabel(PrintTicket ReprintTicket)
-    {
-        // setup a reprint Job from the selected PrintTicket
-        PrintJob Job = new PrintJob(ReprintTicket, PrintJobType.Reprint);
-        bool Printed;
-        // attempt to run the Print Job, handle exceptions, and return the result
-        try
-        {
-            Printed = await Job.Run();
-        }
-        catch (LabelBuildException)
-        {
-            throw new PrintRequestException("Could not create a Label from the entered information.");
-        }
-        catch (PrintRequestException)
-        {
-            throw new PrintRequestException("Failed to execute the print job for the generated Label.");
-        }
-        return Printed;
     }
 
     /// <summary>
