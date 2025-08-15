@@ -14,7 +14,7 @@ public static class LoggingService
     public static async Task<bool> LogPrintEvent(PrintJob Job)
     {
         // extract the PrintTicket from the PrintJob and convert it to a Print Model
-        PrintTicket SourceTicket = Job.Source;
+        PrintTicket SourceTicket = Job.Source.Tracked;
         Print Model = SourceTicket.ToPrint();
         // add the Print Model to the Database
         try
@@ -28,21 +28,19 @@ public static class LoggingService
     }
 
     /// <summary>
-    /// Attempts to update ExistingSource's Database entry with NewSource's information.
+    /// Attempts to update UpdatedTickets's Database entry with any changed fields.
     /// </summary>
-    /// <param name="ExistingSource"></param>
-    /// <param name="NewSource"></param>
+    /// <param name="UpdatedTicket"></param>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="SystemException"></exception>
-    public static async Task<bool> UpdateLog(PrintTicket ExistingSource, PrintTicket NewSource)
+    public static async Task<bool> UpdateLog(PrintTicket UpdatedTicket)
     {
-        // convert the sources to Print Models
-        Print ExistingModel = ExistingSource.ToPrint();
-        Print NewModel = NewSource.ToPrint();
+        // convert the source to a Print Model
+        Print Model = UpdatedTicket.ToPrint();
         // update the Print Model in the Database
         try
         {
-            return await PrintService.Update(ExistingModel.Id, NewModel, App.UserAgent);
+            return await PrintService.Update(Model.Id, Model, App.UserAgent);
         }
         catch (HttpRequestException)
         {
