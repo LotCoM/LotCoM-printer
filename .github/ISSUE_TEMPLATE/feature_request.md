@@ -1,9 +1,9 @@
 ---
 name: Feature request
 about: Create a tracker for a requested feature
-title: ''
+title: '[Feature] '
 labels: enhancement
-assignees: masonritchason
+assignees:
 
 ---
 
