@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui.Views;
-using LotCom.DataAccess.Services;
-using LotCom.Types;
+using LotCom.Core.Models;
+using LotCom.Database.Services;
 using LotCom.UI;
 using LotComPrinter.Models.Datatypes;
 

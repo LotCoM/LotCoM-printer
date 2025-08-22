@@ -1,7 +1,8 @@
 using CommunityToolkit.Maui.Views;
-using LotCom.Types.Enums;
-using LotCom.Exceptions;
-using LotCom.Types;
+using LotCom.Core.Enums;
+using LotCom.Core.Exceptions;
+using LotCom.Core.Models;
+using LotCom.Core.Types;
 using LotComPrinter.ViewModels;
 
 namespace LotComPrinter.Views;

@@ -1,7 +1,8 @@
-using LotCom.Types.Enums;
-using LotCom.Types;
-using LotCom.DataAccess.Services;
-using LotCom.Exceptions;
+using LotCom.Core.Enums;
+using LotCom.Core.Exceptions;
+using LotCom.Core.Models;
+using LotCom.Core.Types;
+using LotCom.Database.Services;
 using Newtonsoft.Json;
 
 namespace LotComPrinter.Models.Services;

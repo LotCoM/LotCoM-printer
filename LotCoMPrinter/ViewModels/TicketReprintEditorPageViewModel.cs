@@ -1,10 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.Types.Enums;
-using LotCom.Types;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Enums;
 using LotComPrinter.Models.Exceptions;
 using LotCom.UI;
+using LotCom.Core.Models;
+using LotCom.Core.Types;
+using LotCom.Core.Enums;
 
 namespace LotComPrinter.ViewModels;
 

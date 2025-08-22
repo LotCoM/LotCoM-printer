@@ -1,8 +1,9 @@
 using LotComPrinter.Models.Datatypes;
-using LotCom.Types.Enums;
-using LotCom.Types.Extensions;
-using LotCom.Types;
 using LotComPrinter.Models.Exceptions;
+using LotCom.Core.Models;
+using LotCom.Core.Types;
+using LotCom.Core.Enums;
+using LotCom.Core.Extensions;
 
 namespace LotComPrinter.Models.Services;
 
@@ -165,7 +166,7 @@ public static class LabelService
         // some mis-match between the SerializationMode and PassThroughType properties caused a Header failure
         else
         {
-                throw new LabelBuildException(HeaderErrorMessage);
+            throw new LabelBuildException(HeaderErrorMessage);
         }
     }
 
@@ -208,5 +209,5 @@ public static class LabelService
         await Label.AddBodyTextAsync(Body);
         // return the Label image
         return Label;
-        }
+    }
 }

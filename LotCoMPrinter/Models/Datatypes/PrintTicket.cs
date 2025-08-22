@@ -1,7 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.Types.Enums;
-using LotCom.Types.Extensions;
-using LotCom.Types;
+using LotCom.Core.Enums;
+using LotCom.Core.Extensions;
+using LotCom.Core.Models;
+using LotCom.Core.Types;
 using Newtonsoft.Json;
 
 namespace LotComPrinter.Models.Datatypes;

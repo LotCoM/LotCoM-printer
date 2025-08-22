@@ -1,7 +1,7 @@
+using LotCom.Core.Enums;
+using LotCom.Core.Extensions;
+using LotCom.Core.Types;
 using LotComPrinter.Models.Datatypes;
-using LotCom.Types.Enums;
-using LotCom.Types.Extensions;
-using LotCom.Types;
 using LotComPrinter.Models.Exceptions;
 
 namespace LotComPrinter.Models.Services;

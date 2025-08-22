@@ -1,13 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LotCom.Types;
-using LotCom.Types.Enums;
-using LotCom.Exceptions;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.Models.Services;
 using Newtonsoft.Json;
-using LotCom.DataAccess.Services;
 using System.Collections.ObjectModel;
 using LotCom.UI;
+using LotCom.Core.Models;
+using LotCom.Core.Types;
+using LotCom.Core.Enums;
+using LotCom.Database.Services;
+using LotCom.Core.Exceptions;
 
 namespace LotComPrinter.ViewModels;
 

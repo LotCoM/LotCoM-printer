@@ -1,5 +1,5 @@
-using LotCom.DataAccess.Services;
-using LotCom.Types;
+using LotCom.Core.Models;
+using LotCom.Database.Services;
 using LotComPrinter.Models.Datatypes;
 
 namespace LotComPrinter.Models.Services;

@@ -1,4 +1,4 @@
-﻿using LotCom.DataAccess;
+﻿using LotCom.Database.Auth;
 using LotComPrinter.Views;
 
 namespace LotComPrinter;
