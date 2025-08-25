@@ -1,12 +1,13 @@
 using LotComPrinter.Models.Datatypes;
-using LotCom.Enums;
-using LotCom.Extensions;
-using LotCom.Types;
 using LotComPrinter.Models.Exceptions;
+using LotCom.Core.Models;
+using LotCom.Core.Types;
+using LotCom.Core.Enums;
+using LotCom.Core.Extensions;
 
 namespace LotComPrinter.Models.Services;
 
-public static class LabelGenerator 
+public static class LabelService
 {
     /// <summary>
     /// A special Header Message to show when there is an issue configuring the Label's Header text.
@@ -101,7 +102,7 @@ public static class LabelGenerator
             }
             // add the remaining required fields and return the body text
             Body.Add($"Date: {new Timestamp(Ticket.ProductionDate).Stamp}");
-            Body.Add($"Shift: {ShiftExtensions.ToString(Ticket.ProductionShift)}");
+            Body.Add($"Shift: {ShiftExtensions.ToString(Ticket.PrimaryData.Shift)}");
             return Body;
         });
     }
@@ -165,7 +166,7 @@ public static class LabelGenerator
         // some mis-match between the SerializationMode and PassThroughType properties caused a Header failure
         else
         {
-                throw new LabelBuildException(HeaderErrorMessage);
+            throw new LabelBuildException(HeaderErrorMessage);
         }
     }
 
@@ -208,5 +209,5 @@ public static class LabelGenerator
         await Label.AddBodyTextAsync(Body);
         // return the Label image
         return Label;
-        }
+    }
 }

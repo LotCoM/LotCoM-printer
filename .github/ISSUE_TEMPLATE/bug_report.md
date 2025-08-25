@@ -1,9 +1,9 @@
 ---
 name: Bug report
 about: Create a report to track a new bug
-title: ''
+title: '[Bug] '
 labels: bug
-assignees: masonritchason
+assignees:
 
 ---
 

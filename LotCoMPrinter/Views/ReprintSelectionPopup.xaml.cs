@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Views;
-using LotCom.Types;
-using LotComPrinter.Models.Datasources;
+using LotCom.Core.Models;
+using LotCom.Database.Services;
+using LotCom.UI;
 using LotComPrinter.Models.Datatypes;
 
 namespace LotComPrinter.Views;
@@ -20,6 +21,20 @@ public partial class ReprintSelectionPopup : Popup
     /// </summary>
     private static readonly Color Danger0 = new Color(180, 28, 43);
 
+    private PageLoadingFlags _flags = new PageLoadingFlags();
+    /// <summary>
+    /// Indicates different loading related properties for the Page's Print History data.
+    /// </summary>
+    public PageLoadingFlags Flags
+    {
+        get { return _flags; }
+        set
+        {
+            _flags = value;
+            OnPropertyChanged();
+        }
+    }
+
     /// <summary>
     /// Contains the Process object passed to the Popup for History retrieval.
     /// </summary>
@@ -35,23 +50,21 @@ public partial class ReprintSelectionPopup : Popup
         set
         {
             _selectedDate = value;
-            OnPropertyChanged(nameof(_selectedDate));
-            OnPropertyChanged(nameof(SelectedDate));
+            OnPropertyChanged();
         }
     }
 
-    private List<PrintTicket> _list = [];
+    private IEnumerable<PrintTicket> _list = [];
     /// <summary>
     /// Serves a List of Print History Tickets for the Popup.
     /// </summary>
-    public List<PrintTicket> List
+    public IEnumerable<PrintTicket> List
     {
         get {return _list;}
         set
         {
             _list = value;
-            OnPropertyChanged(nameof(_list));
-            OnPropertyChanged(nameof(List));
+            OnPropertyChanged();
         }
     }
 
@@ -65,21 +78,8 @@ public partial class ReprintSelectionPopup : Popup
         set
         {
             _selectedTicket = value;
-            OnPropertyChanged(nameof(_selectedTicket));
-            OnPropertyChanged(nameof(SelectedTicket));
+            OnPropertyChanged();
         }
-    }
-
-    /// <summary>
-    /// Retrieves SelectedProcess' Print History for a specific Date.
-    /// </summary>
-    /// <param name="Date"></param>
-    /// <returns></returns>
-    private List<PrintTicket> GetHistoryForDate(DateTime Date)
-    {
-        List = PrintHistory.GetPrintTicketsForDate(Date, SelectedProcess);
-        List.Reverse();
-        return List;
     }
 
     /// <summary>
@@ -93,6 +93,9 @@ public partial class ReprintSelectionPopup : Popup
         {
             LabelReprintCollectionControl.StrokeThickness = ErrorStroke;
             LabelReprintCollectionControl.Stroke = Danger0;
+            await Task.Delay(3000);
+            LabelReprintCollectionControl.StrokeThickness = DefaultStroke;
+            LabelReprintCollectionControl.Stroke = Neutral20;
             return;
         }
         CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -115,10 +118,10 @@ public partial class ReprintSelectionPopup : Popup
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnReprintDatePickerDateSelected(object sender, EventArgs e)
+    private async void OnReprintDatePickerDateSelected(object sender, EventArgs e)
     {
         SelectedDate = ((DatePicker)sender).Date;
-        LabelReprintCollectionView.ItemsSource = GetHistoryForDate(SelectedDate);
+        await LoadHistory(SelectedDate);
     }
 
     /// <summary>
@@ -137,9 +140,37 @@ public partial class ReprintSelectionPopup : Popup
     /// <param name="Process"></param>
     public ReprintSelectionPopup(Process Process)
     {
+        BindingContext = this;
         InitializeComponent();
         // assign properties
         SelectedProcess = Process;
-        LabelReprintCollectionView.ItemsSource = GetHistoryForDate(DateTime.Now);
+    }
+
+    /// <summary>
+    /// Populates the Popup with SelectedProcess' Print History for a specific Date.
+    /// </summary>
+    /// <param name="Date"></param>
+    /// <returns></returns>
+    public async Task LoadHistory(DateTime Date)
+    {
+        Flags.Start();
+        // retrieve Prints from database
+        IEnumerable<Print>? PrintsFromDatabase = await PrintService.GetOnDateByProcess
+        (
+            Date,
+            SelectedProcess.Id,
+            App.UserAgent
+        );
+        if (PrintsFromDatabase is null)
+        {
+            Flags.Failure();
+            return;
+        }
+        // convert Prints to PrintTickets
+        IEnumerable<PrintTicket> PrintTickets = PrintsFromDatabase
+            .Select(PrintTicket.FromPrint);
+        // reverse and return the list of PrintTickets
+        List = PrintTickets.Reverse();
+        Flags.Success();
     }
 }

@@ -2,39 +2,59 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LotComPrinter.Models.Datasources;
 using LotComPrinter.Models.Datatypes;
-using LotComPrinter.Models.Exceptions;
-using LotComPrinter.Models.Enums;
+using LotCom.UI;
 
 namespace LotComPrinter.ViewModels;
 
 # pragma warning disable CA1416 // Validate platform compatibility
 
 /// <summary>
-/// Constructs a ViewModel for the MainPage class.
+/// Binding context (ViewModel) for the MainPage UI component.
 /// </summary>
 public partial class MainPageViewModel : ObservableObject
 {
+    private const int OpenPrintTicketsPanelWidthOpen = 350;
+    private const int OpenPrintTicketsPanelWidthClosed = 90;
+
+    private PageLoadingFlags _flags = new PageLoadingFlags();
     /// <summary>
-    /// Provides default widths for the Open Print Tickets Panel.
+    /// Indicates different data loading related properties.
     /// </summary>
-    public enum OpenPrintTicketsPanelWidths
+    public PageLoadingFlags Flags
     {
-        Open = 350,
-        Closed = 90
+        get { return _flags; }
+        set
+        {
+            _flags = value;
+            OnPropertyChanged();
+        }
     }
 
-    private OpenPrintTicketsPanelWidths _openPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
+    private bool _transitioning = false;
+    /// <summary>
+    /// Indicates whether the page is transitioning to another window.
+    /// </summary>
+    public bool Transitioning
+    {
+        get { return _transitioning; }
+        set
+        {
+            _transitioning = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _openPrintTicketsPanelWidth = OpenPrintTicketsPanelWidthClosed;
     /// <summary>
     /// Provides the width Option of the Open Print Tickets Panel.
     /// </summary>
-    public OpenPrintTicketsPanelWidths OpenPrintTicketsPanelWidth
+    public int OpenPrintTicketsPanelWidth
     {
         get { return _openPrintTicketsPanelWidth; }
         set
         {
             _openPrintTicketsPanelWidth = value;
-            OnPropertyChanged(nameof(_openPrintTicketsPanelWidth));
-            OnPropertyChanged(nameof(OpenPrintTicketsPanelWidth));
+            OnPropertyChanged();
         }
     }
 
@@ -48,8 +68,49 @@ public partial class MainPageViewModel : ObservableObject
         set
         {
             _isOpenPrintTicketsPanelShown = value;
-            OnPropertyChanged(nameof(_isOpenPrintTicketsPanelShown));
-            OnPropertyChanged(nameof(IsOpenPrintTicketsPanelShown));
+            OnPropertyChanged();
+        }
+    }
+
+    private bool _isOpenPrintTicketsFaultedDetailShown = false;
+    /// <summary>
+    /// Provides the Visibility state of the Open Print Tickets Panel's inner faulted state details.
+    /// </summary>
+    public bool IsOpenPrintTicketsFaultedDetailShown
+    {
+        get { return _isOpenPrintTicketsFaultedDetailShown; }
+        set
+        {
+            _isOpenPrintTicketsFaultedDetailShown = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool _isOpenPrintTicketsSuccessDetailShown = false;
+    /// <summary>
+    /// Provides the Visibility state of the Open Print Tickets Panel's inner success state details.
+    /// </summary>
+    public bool IsOpenPrintTicketsSuccessDetailShown
+    {
+        get { return _isOpenPrintTicketsSuccessDetailShown; }
+        set
+        {
+            _isOpenPrintTicketsSuccessDetailShown = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private string _openPrintTicketsPanelLoadMessage = "Failed to load Open Tickets";
+    /// <summary>
+    /// Provides the message to show as the Load Message of the Open Print Tickets Panel.
+    /// </summary>
+    public string OpenPrintTicketsPanelLoadMessage
+    {
+        get { return _openPrintTicketsPanelLoadMessage; }
+        set
+        {
+            _openPrintTicketsPanelLoadMessage = value;
+            OnPropertyChanged();
         }
     }
 
@@ -70,8 +131,7 @@ public partial class MainPageViewModel : ObservableObject
         set
         {
             _openPrintTickets = value;
-            OnPropertyChanged(nameof(_openPrintTickets));
-            OnPropertyChanged(nameof(OpenPrintTickets));
+            OnPropertyChanged();
         }
     }
 
@@ -85,39 +145,105 @@ public partial class MainPageViewModel : ObservableObject
         set
         {
             _selectedTicket = value;
-            OnPropertyChanged(nameof(_selectedTicket));
-            OnPropertyChanged(nameof(SelectedTicket));
+            OnPropertyChanged();
         }
     }
 
     /// <summary>
-    /// Create a ViewModel to control the logic of a Main Page instance.
+    /// Configures the OpenPrintTickets Panel to display its faulted details.
+    /// </summary>
+    private void SetOpenTicketsPanelDetailAsFaulted()
+    {
+        if (!IsOpenPrintTicketsPanelShown)
+        {
+            return;
+        }
+        IsOpenPrintTicketsFaultedDetailShown = false;
+        IsOpenPrintTicketsFaultedDetailShown = true;
+    }
+
+    /// <summary>
+    /// Configures the OpenPrintTickets Panel to display its success details.
+    /// </summary>
+    private void SetOpenTicketsPanelDetailAsSuccess()
+    {
+        if (!IsOpenPrintTicketsPanelShown)
+        {
+            return;
+        }
+        IsOpenPrintTicketsSuccessDetailShown = true;
+        IsOpenPrintTicketsFaultedDetailShown = false;
+    }
+
+    /// <summary>
+    /// Completely hides the inner details of the OpenPrintTickets panel.
+    /// </summary>
+    private void HideOpenTicketsPanelDetail()
+    {
+        IsOpenPrintTicketsSuccessDetailShown = false;
+        IsOpenPrintTicketsFaultedDetailShown = false;
+    }
+
+    /// <summary>
+    /// Create a ViewModel for the MainPage to bind to.
     /// </summary>
     public MainPageViewModel()
     {
+        _openPrintTickets = [];
+        SelectedTicket = null;
+        OpenPrintTicketsPanelLoadMessage = "";
+        Flags.Reset();
+    }
+
+    /// <summary>
+    /// Attempts to Load the PrintTicketCache and update OpenPrintTickets.
+    /// </summary>
+    /// <returns></returns>
+    public async Task LoadOpenPrintTickets()
+    {
+        // don't load if tickets are already loaded
+        if (Flags.IsComplete)
+        {
+            if (Flags.IsFaulted)
+            {
+                SetOpenTicketsPanelDetailAsFaulted();
+            }
+            else
+            {
+                SetOpenTicketsPanelDetailAsSuccess();
+            }
+            return;
+        }
+        // start the loading flags and attempt to load the PrintTicketCache
+        Flags.Start();
         try
         {
-            // read and set PrintTicket properties
-            _openPrintTickets = new ObservableCollection<PrintTicket>
+            OpenPrintTickets = new ObservableCollection<PrintTicket>
             (
-                PrintTicketCache.GetAllPrintTickets()
+                await PrintTicketCache.GetAllPrintTickets()
             );
-            SelectedTicket = OpenPrintTickets[0];
+            OpenPrintTicketsPanelLoadMessage = "";
+            Flags.Success();
+            SetOpenTicketsPanelDetailAsSuccess();
+            return;
         }
         catch
         {
-            _openPrintTickets = [];
-            SelectedTicket = null;
+            OpenPrintTicketsPanelLoadMessage = $"Sorry, we couldn't load Open Labels.\n\nPlease see Management to resolve this issue.";
+            OpenPrintTickets = [];
+            SetOpenTicketsPanelDetailAsFaulted();
+            Flags.Failure();
         }
     }
 
     /// <summary>
     /// Opens the Open Print Tickets Panel.
     /// </summary>
-    public void RaiseOpenPrintTicketsPanel()
+    public async Task RaiseOpenPrintTicketsPanel()
     {
-        OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Open;
+        OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidthOpen;
         IsOpenPrintTicketsPanelShown = true;
+        await LoadOpenPrintTickets();
     }
 
     /// <summary>
@@ -125,8 +251,9 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public void CollapseOpenPrintTicketsPanel()
     {
-        OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidths.Closed;
+        OpenPrintTicketsPanelWidth = OpenPrintTicketsPanelWidthClosed;
         IsOpenPrintTicketsPanelShown = false;
+        HideOpenTicketsPanelDetail();
     }
 
     /// <summary>
@@ -138,7 +265,7 @@ public partial class MainPageViewModel : ObservableObject
     {
         try
         {
-            await PrintTicketCache.SaveAsync(OpenPrintTickets.ToList());
+            await PrintTicketCache.Save(OpenPrintTickets.ToList());
         }
         catch (ArgumentNullException _ex)
         {
@@ -204,29 +331,19 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Reprints a Label using the information from the selected PrintTicket.
+    /// Indicates the start of a transition to a new page.
     /// </summary>
-    /// <param name="ReprintTicket"></param>
-    /// <returns></returns>
-    public async Task<bool> ReprintLabel(PrintTicket ReprintTicket)
+    public void StartTransition()
     {
-        // setup a reprint Job from the selected PrintTicket
-        PrintJob Job = new PrintJob(ReprintTicket, PrintJobType.Reprint);
-        bool Printed;
-        // attempt to run the Print Job, handle exceptions, and return the result
-        try
-        {
-            Printed = await Job.Run();
-        }
-        catch (LabelBuildException)
-        {
-            throw new PrintRequestException("Could not create a Label from the entered information.");
-        }
-        catch (PrintRequestException)
-        {
-            throw new PrintRequestException("Failed to execute the print job for the generated Label.");
-        }
-        return Printed;
+        Transitioning = true;
+    }
+    
+    /// <summary>
+    /// Indicates the end of a transition to a new page.
+    /// </summary>
+    public void EndTransition()
+    {
+        Transitioning = false;
     }
 }
 # pragma warning restore CA1416 // Validate platform compatibility

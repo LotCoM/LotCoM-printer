@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
-using LotCom.Types;
+using LotCom.Core.Models;
 using LotComPrinter.Models.Datatypes;
 using LotComPrinter.ViewModels;
 
@@ -10,7 +10,7 @@ namespace LotComPrinter.Views;
 public partial class MainPage : ContentPage
 {
 	/// <summary>
-	/// The ViewModel controlling the UI and logic of the MainPage.
+	/// The ViewModel providing Binding Context and business logic of the MainPage.
 	/// </summary>
 	public MainPageViewModel ViewModel;
 
@@ -24,99 +24,11 @@ public partial class MainPage : ContentPage
 		if (ViewModel.IsOpenPrintTicketsPanelShown)
 		{
 			await AnimatedCollapseOpenPrintTicketsPanel();
+			await ViewModel.LoadOpenPrintTickets();
 		}
 		else
 		{
 			await AnimatedRaiseOpenPrintTicketsPanel();
-		}
-	}
-
-	/// <summary>
-	/// Handler for the Clicked event from the OnStartNewLabelButton control.
-	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
-	/// <exception cref="SystemException"></exception>
-	private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
-	{
-		// attempt to create a NewPrintTicketForm
-		NewPrintTicketForm Form;
-		try
-		{
-			Form = new NewPrintTicketForm();
-		}
-		catch (SystemException)
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue."
-				)
-			);
-			return;
-		}
-		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
-		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
-		// collapse the OpenPrintTickets panel
-		await AnimatedCollapseOpenPrintTicketsPanel();
-		// ensure that a ticket was returned
-		if (Result is null)
-		{
-			Result = "No Ticket was returned and no exception occured.";
-		}
-		if (Result.GetType().Equals(typeof(string)))
-		{
-			this.ShowPopup
-			(
-				new BasicPopup
-				(
-					"Unexpected Error",
-					"We encountered an unexpected error. Please see Management to resolve this issue." +
-					$"\n\nReference message: {Result}"
-				)
-			);
-			return;
-		}
-		if (Result.GetType().Equals(typeof(PrintTicket)))
-		{
-			// add the new ticket to the Open list and show an editor for that ticket
-			try
-			{
-				await ViewModel.AddNewOpenPrintTicket((PrintTicket)Result);
-			}
-			catch (SystemException _ex)
-			{
-				this.ShowPopup
-				(
-					new BasicPopup
-					(
-						"Unexpected Error",
-						"We encountered an unexpected error. Please see Management to resolve this issue." +
-						$"\n\nReference message: {_ex}"
-					)
-				);
-				return;
-			}
-			try
-			{
-				TicketEditorPage Editor = new TicketEditorPage(ViewModel.OpenPrintTickets[^1]);
-				await Navigation.PushAsync(Editor);
-			}
-			catch (Exception _ex)
-			{
-				this.ShowPopup
-				(
-					new BasicPopup
-					(
-						"Unexpected Error",
-						"We encountered an unexpected error. Please see Management to resolve this issue." +
-						$"\n\nReference message: {_ex}"
-					)
-				);
-				return;
-			}
 		}
 	}
 
@@ -158,14 +70,101 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private async void OnOpenPrintTicketFromCollectionViewButtonClicked(object sender, EventArgs e)
 	{
+		ViewModel.StartTransition();
 		if (ViewModel.SelectedTicket is null)
 		{
+			ViewModel.EndTransition();
 			return;
 		}
 		TicketEditorPage Editor = new TicketEditorPage(ViewModel.SelectedTicket);
 		await Navigation.PushAsync(Editor);
 		// collapse the OpenPrintTickets panel
 		await AnimatedCollapseOpenPrintTicketsPanel();
+		ViewModel.EndTransition();
+	}
+
+	/// <summary>
+	/// Handler for the Clicked event from the OnStartNewLabelButton control.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	/// <exception cref="SystemException"></exception>
+	private async void OnStartNewLabelButtonClicked(object sender, EventArgs e)
+	{
+		// collapse the OpenPrintTickets panel
+		ViewModel.StartTransition();
+		await AnimatedCollapseOpenPrintTicketsPanel();
+		// attempt to create a NewPrintTicketForm
+		NewPrintTicketForm Form = new NewPrintTicketForm();
+		ViewModel.EndTransition();
+		// check if there was a PrintTicket created and returned by the Popup form, then add it to the ViewModel
+		object? Result = await this.ShowPopupAsync(Form, CancellationToken.None);
+		// start processing output
+		ViewModel.StartTransition();
+		// nothing was done (window was just cancelled)
+		if (Result is null)
+		{
+			ViewModel.EndTransition();
+			return;
+		}
+		// handle database exceptions from Process/Part loading and Serialization
+		if (Result.GetType().Equals(typeof(string)))
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						$"\n\nReference message: {Result}"
+					)
+				);
+				ViewModel.EndTransition();
+				return;
+			}
+		if (Result.GetType().Equals(typeof(PrintTicket)))
+		{
+			// add the new ticket to the Open list and show an editor for that ticket
+			try
+			{
+				await ViewModel.AddNewOpenPrintTicket((PrintTicket)Result);
+			}
+			catch (SystemException _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex}"
+					)
+				);
+				ViewModel.EndTransition();
+				return;
+			}
+			try
+			{
+				TicketEditorPage Editor = new TicketEditorPage(ViewModel.OpenPrintTickets[^1]);
+				await Navigation.PushAsync(Editor);
+				ViewModel.EndTransition();
+				return;
+			}
+			catch (Exception _ex)
+			{
+				this.ShowPopup
+				(
+					new BasicPopup
+					(
+						"Unexpected Error",
+						"We encountered an unexpected error. Please see Management to resolve this issue." +
+						$"\n\nReference message: {_ex}"
+					)
+				);
+				ViewModel.EndTransition();
+				return;
+			}
+		}
 	}
 
 	/// <summary>
@@ -175,64 +174,72 @@ public partial class MainPage : ContentPage
 	/// <param name="e"></param>
 	private async void OnReprintLabelButtonClicked(object sender, EventArgs e)
 	{
+		// collapse the OpenPrintTickets panel
+		ViewModel.StartTransition();
+		await AnimatedCollapseOpenPrintTicketsPanel();
 		// create a new ProcessSelection popup
 		ProcessSelectionPopup ProcessSelection = new ProcessSelectionPopup();
+		await ProcessSelection.LoadProcesses();
+		// if the Processes did not load correctly, show an error popup
+		if (!ProcessSelection.Flags.IsSuccess)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue."
+				)
+			);
+			ViewModel.EndTransition();
+			return;
+		}
+		ViewModel.EndTransition();
+		// show the process selection popup and capture the output
 		object? Result = await this.ShowPopupAsync
 		(
 			ProcessSelection
 		);
-		// collapse the OpenPrintTickets panel
-		await AnimatedCollapseOpenPrintTicketsPanel();
+		// no selection was made, the window was closed
 		if (Result is null)
 		{
 			return;
 		}
-		// save the selected Process object
+		// a Process object was selected; create a new ReprintSelection popup for it
+		ViewModel.StartTransition();
 		Process SelectedProcess = (Process)Result;
-		// create a new ReprintSelection popup for the Selected Process
 		ReprintSelectionPopup ReprintSelection = new ReprintSelectionPopup(SelectedProcess);
+		await ReprintSelection.LoadHistory(DateTime.Now);
+		// if the History did not load correctly, show an error popup
+		if (!ReprintSelection.Flags.IsSuccess)
+		{
+			this.ShowPopup
+			(
+				new BasicPopup
+				(
+					"Unexpected Error",
+					"We encountered an unexpected error. Please see Management to resolve this issue."
+				)
+			);
+			ViewModel.EndTransition();
+			return;
+		}
+		// show the ReprintSelection popup and capture its output
 		Result = await this.ShowPopupAsync
 		(
 			ReprintSelection
 		);
+		// no selection was made
 		if (Result is null)
 		{
+			ViewModel.EndTransition();
 			return;
 		}
-		// save the selected PrintTicket object
+		// a PrintTicket object was selected; create a new TicketReprintEditor for it
 		PrintTicket SelectedReprintTicket = (PrintTicket)Result;
-		// create a new TicketReprintEditor for the Selected Ticket
 		TicketReprintEditorPage ReprintEditor = new TicketReprintEditorPage(SelectedReprintTicket);
 		await Navigation.PushAsync(ReprintEditor);
-	}
-
-	/// <summary>
-	/// Attempts to initialize a ViewModel for the Window to bind to.
-	/// If this method raises an exception, it will create a popup for the user and then Quit.
-	/// </summary>
-	private bool InitializeViewModel()
-	{
-		// attempt to create a new ViewModel
-		try
-		{
-			ViewModel = new MainPageViewModel();
-			return true;
-		}
-		// there was an issue communicating with or processing data from the Database 
-		// or there was a formatting error in the JSON stream from the Database
-		catch (SystemException)
-		{
-			this.ShowPopup
-			(
-				new FailedStartupPopup
-				(
-					PopupTitle: "Failed to Launch",
-					PopupMessage: "We're sorry, we couldn't launch LotCom WIP Labels. Please see Management to resolve this issue."
-				)
-			);
-			// return false so the application can begin exiting
-			return false;
-		}
+		ViewModel.EndTransition();
 	}
 
 	/// <summary>
@@ -241,13 +248,10 @@ public partial class MainPage : ContentPage
 	public MainPage()
 	{
 		// instantiate the ViewModel and bind the Page to it
-		bool Launch = InitializeViewModel();
-		if (Launch)
-		{
-			BindingContext = ViewModel;
-			// show the window from XAML
-			InitializeComponent();
-		}
+		ViewModel = new MainPageViewModel();
+		BindingContext = ViewModel;
+		// initialize the UI components from XAML
+		InitializeComponent();
 	}
 
 	/// <summary>
@@ -268,7 +272,7 @@ public partial class MainPage : ContentPage
 	/// <returns></returns>
 	public async Task AnimatedRaiseOpenPrintTicketsPanel(uint Duration = 200)
 	{
-		ViewModel.RaiseOpenPrintTicketsPanel();
+		await ViewModel.RaiseOpenPrintTicketsPanel();
 		await OpenPrintTicketsCollapseButton.RotateTo(0, length: Duration);
 	}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
