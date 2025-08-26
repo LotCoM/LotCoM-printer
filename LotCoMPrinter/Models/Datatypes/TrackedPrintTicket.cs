@@ -43,4 +43,14 @@ public partial class TrackedPrintTicket : ObservableObject
     {
         Untracked = PrintTicket.DeepCopy(Tracked);
     }
+
+    /// <summary>
+    /// Checks if the TrackedPrintTicket has unmerged changes (Tracked is not the same as Untracked).
+    /// </summary>
+    /// <returns></returns>
+    public bool HasUnmergedChanges()
+    {
+        // return inverse of equality (true if unequal, false if equal)
+        return !Untracked.ToJSON().Equals(Tracked.ToJSON());
+    }
 }

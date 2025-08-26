@@ -20,9 +20,9 @@ public class PrintJob
     public PrintJobType Type { get; private set; }
 
     /// <summary>
-    /// The PrintTicket to use as the source of Data for this Print Job.
+    /// The TrackedPrintTicket to use as the source of Data for this Print Job.
     /// </summary>
-    public PrintTicket Source { get; private set; }
+    public TrackedPrintTicket Source { get; private set; }
 
     /// <summary>
     /// A generated Label object.
@@ -42,12 +42,12 @@ public class PrintJob
         {
             if (Type == PrintJobType.Partial)
             {
-                Label = await PartialTagGenerator.GenerateTagAsync(Source, (int)PartialSetNumber!);
+                Label = await PartialTagService.GenerateTagAsync(Source.Tracked, (int)PartialSetNumber!);
             }
             // both Full and Reprint Labels are identical
             else
             {
-                Label = await LabelGenerator.GenerateLabelAsync(Source);
+                Label = await LabelService.GenerateLabelAsync(Source.Tracked);
             }
         }
         catch (LabelBuildException _ex)
@@ -64,7 +64,7 @@ public class PrintJob
     /// <param name="Type"></param>
     /// <param name="PartialSetNumber"></param>
     /// <exception cref="ArgumentException"></exception>
-    public PrintJob(PrintTicket Ticket, PrintJobType Type, int? PartialSetNumber = null)
+    public PrintJob(TrackedPrintTicket Ticket, PrintJobType Type, int? PartialSetNumber = null)
     {
         Source = Ticket;
         this.Type = Type;
@@ -96,6 +96,8 @@ public class PrintJob
     /// <exception cref="PrintRequestException"></exception>
     public async Task<bool> Run()
     {
+        bool Printed = false;
+        bool Logged = false;
         // set the final ProductionDate and generate a Label from the saved Source
         try
         {
@@ -105,29 +107,42 @@ public class PrintJob
         {
             throw new LabelBuildException(_ex.Message);
         }
-        // create a PrintHandler object for the new Label and attempt to print it
-        bool Printed = false;
+        // attempt to print the new Label
         try
         {
-            Printed = await PrintHandler.PrintLabelAsync(Label!);
+            Printed = await PrintingService.PrintLabelAsync(Label!);
         }
         catch (PrintRequestException _ex)
         {
             throw new PrintRequestException(_ex.Message);
         }
-        // log successful print jobs
-        if (Printed && Type == PrintJobType.Full)
+        // print failed; output cannot be successful
+        if (!Printed)
         {
-            try
+            return false;
+        }
+        // print success
+        // full labels must log successfully
+        if (Type == PrintJobType.Full)
+        {
+            Logged = await LoggingService.LogPrintEvent(this);
+        }
+        // reprints must log successfully (if edited)
+        else if (Type == PrintJobType.Reprint)
+        {
+            // changes must be logged
+            if (Source.HasUnmergedChanges())
             {
-                await PrintLogger.LogPrintEvent(this);
-                // the print logging was forced to default on its backup logging; report this to user
+                Source.MergeChanges();
+                Logged = await LoggingService.UpdateLog(Source.Untracked);
             }
-            catch (Exception _ex)
+            // no changes, no logging
+            else
             {
-                throw new PrintLogException(_ex.Message);
+                Logged = true;
             }
         }
-        return Printed;
+        // return printing and logging success, compounded
+        return Printed && Logged;
     }
 }

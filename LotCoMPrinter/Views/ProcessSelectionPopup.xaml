@@ -3,7 +3,7 @@
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:Views="clr-namespace:LotComPrinter.Views"
                xmlns:ViewModels="clr-namespace:LotComPrinter.ViewModels"
-               xmlns:Types="clr-namespace:LotCom.Types;assembly=LotCom"
+               xmlns:Types="clr-namespace:LotCom.Core.Models;assembly=LotCom"
                x:DataType="Views:ProcessSelectionPopup"
                x:Class="LotComPrinter.Views.ProcessSelectionPopup">
     
@@ -120,7 +120,8 @@
                         VerticalOptions="Center"
                         WidthRequest="545"
                         SelectionMode="Single"
-                        SelectedItem="{Binding SelectedProcess}">
+                        SelectedItem="{Binding SelectedProcess}"
+                        ItemsSource="{Binding Processes}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate
                                 x:DataType="Types:Process">
@@ -230,6 +231,30 @@
                     </VisualStateGroupList>
                 </VisualStateManager.VisualStateGroups>
             </Button>
+            
+            <!-- Loading Activity Indicator -->
+            <BoxView
+                Grid.Row="0"
+                Grid.RowSpan="4"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                IsVisible="{Binding Flags.IsLoading}"
+                BackgroundColor="{StaticResource Neutral-LoadingTint}"/>
+
+            <ActivityIndicator
+                Grid.Row="0"
+                Grid.RowSpan="4"
+                Grid.Column="0"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="200"
+                HeightRequest="200"
+                x:Name="DataLoadingIndicator"
+                Color="{StaticResource Secondary-0}"
+                IsEnabled="{Binding Flags.IsLoading}"
+                IsVisible="{Binding Flags.IsLoading}"
+                IsRunning="{Binding Flags.IsLoading}"/>
         </Grid>
     </Border>
 </toolkit:Popup>
