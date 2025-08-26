@@ -30,7 +30,7 @@
 
 		<!-- Versions -->
 		<!-- ALWAYS set the version to 4 digits for Windows SxS Requirements -->
-		<ApplicationDisplayVersion>1.0.0.0</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.0.0.1</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
   <!-- ALWAYS set the version to 4 digits for Windows SxS Requirements -->
-  <assemblyIdentity version="1.0.0.0" name="LotComPrinter.WinUI.app"/>
+  <assemblyIdentity version="1.0.0.1" name="LotComPrinter.WinUI.app"/>
 
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
