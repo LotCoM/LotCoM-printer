@@ -363,3 +363,13 @@ Introduction of the Label Reprint feature, which provides operators with the abi
 #### Hotfix
 - An exception thrown in a UI event handler caused a silent crash:
   - Resolve [#228](https://github.com/LotCom/LotCom-printer/issues/228).
+
+# `1.0.0`
+### API Integration (Long-Term-Support [LTS] established)
+- [`feature/231`](https://github.com/LotCom/LotCom-printer/pull/237):
+  - `PrintTicket` now holds the Id of the Print entity it was created from (if applicable). Additionally, casting to and from Print entity has been added. The `PrimaryData` property has been implemented to consolidate initial `Quantity`, `Shift`, and `Operator`. Finally, a safer serialization approach has been leveraged for data storage.
+  - `PrintJob` now requires a `TrackedPrintTicket` object, which can now track unmerged changes.
+  - UI Pages now have loading and transitioning indicators that are backed by a flag system for loading, success, and failure.
+  - UI Models defer loading of data to allow immediate navigation and more responsive experience.
+  - Several long deprecated methods have been cleared from the application's source code.
+  - `PrintHistory`, `PrintLogger`, and `Serializer` classes have all been removed. These classes were deprecated by the implementation of the **LotCom API** and Data Access Layer (DAL) in **LotCom Libraries**
