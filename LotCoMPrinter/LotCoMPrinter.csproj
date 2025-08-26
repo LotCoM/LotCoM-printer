@@ -29,7 +29,7 @@
 		<ApplicationId>com.companyname.LotComPrinter</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>0.8.0.2</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
