@@ -159,6 +159,7 @@ public partial class ReprintSelectionPopup : Popup
         (
             Date,
             SelectedProcess.Id,
+            App.Http,
             App.UserAgent
         );
         if (PrintsFromDatabase is null)
