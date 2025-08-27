@@ -1,4 +1,5 @@
 ﻿using LotCom.Database.Auth;
+using LotCom.Database.Http;
 using LotComPrinter.Views;
 
 namespace LotComPrinter;
@@ -14,6 +15,11 @@ public partial class App : Application
 	/// A global UserAgent object to use as an API interaction authorizer for this app instance.
 	/// </summary>
 	public static readonly UserAgent UserAgent = UserAgentFactory.CreatePrinterAgent(AppVersion);
+
+	/// <summary>
+	/// A global HttpClient.
+	/// </summary>
+	public static readonly HttpClient Http = HttpClientFactory.Create(UserAgent);
 
 	public App()
 	{
