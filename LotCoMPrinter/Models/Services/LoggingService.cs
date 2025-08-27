@@ -19,7 +19,7 @@ public static class LoggingService
         // add the Print Model to the Database
         try
         {
-            return await PrintService.Create(Model, App.UserAgent);
+            return await PrintService.Create(Model, App.Http, App.UserAgent);
         }
         catch (HttpRequestException)
         {
@@ -40,7 +40,7 @@ public static class LoggingService
         // update the Print Model in the Database
         try
         {
-            return await PrintService.Update(Model.Id, Model, App.UserAgent);
+            return await PrintService.Update(Model.Id, Model, App.Http, App.UserAgent);
         }
         catch (HttpRequestException)
         {

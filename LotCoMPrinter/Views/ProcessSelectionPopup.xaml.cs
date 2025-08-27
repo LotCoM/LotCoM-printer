@@ -114,7 +114,7 @@ public partial class ProcessSelectionPopup : Popup
         IEnumerable<Process>? ProcessesFromDatabase;
         try
         {
-            ProcessesFromDatabase = await ProcessService.GetAll(App.UserAgent);
+            ProcessesFromDatabase = await ProcessService.GetAll(App.Http, App.UserAgent);
         }
         // some database-generated issue
         catch (HttpRequestException)
