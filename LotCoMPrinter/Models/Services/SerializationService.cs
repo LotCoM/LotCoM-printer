@@ -29,7 +29,7 @@ public static class SerializationService
         {
             try
             {
-                Number = await SerialFeedService.ConsumeJBKNumber(Part.Id, App.UserAgent);
+                Number = await SerialFeedService.ConsumeJBKNumber(Part.Id, App.Http, App.UserAgent);
             }
             catch (HttpRequestException)
             {
@@ -44,7 +44,7 @@ public static class SerializationService
         {
             try
             {
-                Number = await SerialFeedService.ConsumeLotNumber(Part.Id, App.UserAgent);
+                Number = await SerialFeedService.ConsumeLotNumber(Part.Id, App.Http, App.UserAgent);
             }
             catch (HttpRequestException)
             {

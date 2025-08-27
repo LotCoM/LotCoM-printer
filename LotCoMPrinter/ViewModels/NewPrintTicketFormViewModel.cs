@@ -206,7 +206,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         IEnumerable<Process>? ProcessesFromDatabase;
         try
         {
-            ProcessesFromDatabase = await ProcessService.GetAll(App.UserAgent);
+            ProcessesFromDatabase = await ProcessService.GetAll(App.Http, App.UserAgent);
         }
         // some database-generated issue
         catch (HttpRequestException _ex)
@@ -255,7 +255,7 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
         IEnumerable<Part>? PartsFromDatabase;
         try
             {
-                PartsFromDatabase = await PartService.GetPrintedByProcess(Process.Id, App.UserAgent);
+                PartsFromDatabase = await PartService.GetPrintedByProcess(Process.Id, App.Http, App.UserAgent);
             }
             // some database-generated issue
             catch (HttpRequestException _ex)

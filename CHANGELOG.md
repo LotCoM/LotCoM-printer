@@ -373,3 +373,8 @@ Introduction of the Label Reprint feature, which provides operators with the abi
   - UI Models defer loading of data to allow immediate navigation and more responsive experience.
   - Several long deprecated methods have been cleared from the application's source code.
   - `PrintHistory`, `PrintLogger`, and `Serializer` classes have all been removed. These classes were deprecated by the implementation of the **LotCom API** and Data Access Layer (DAL) in **LotCom Libraries**
+
+## `1.0.0.2`
+#### HttpClient Hotfix
+- [`feat/1.0.0.2`](https://github.com/LotCom/LotCom-printer/pull/239):
+  - Dependency injection of `HttpClient` now allows access to the network through the application.
