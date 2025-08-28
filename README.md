@@ -1,6 +1,6 @@
 # LotCom WIP Printer
 
-[![CI/CD](https://github.com/LotCom/LotCom-printer/actions/workflows/cicd.yml/badge.svg)](https://github.com/LotCom/LotCom-printer/actions/workflows/cicd.yml) [![CodeQL](https://github.com/LotCom/LotCom-printer/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/LotCom/LotCom-printer/actions/workflows/github-code-scanning/codeql)
+[![CI/CD](https://github.com/Yamada-North-America/LotCom-printer/actions/workflows/cicd.yml/badge.svg)](https://github.com/Yamada-North-America/LotCom-printer/actions/workflows/cicd.yml) [![CodeQL](https://github.com/Yamada-North-America/LotCom-printer/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Yamada-North-America/LotCom-printer/actions/workflows/github-code-scanning/codeql)
 
 [LotCom](https://github.com/LotCom) System dedicated Work-in-Progress part Label Printing application.
 
@@ -8,4 +8,4 @@ Low-level, high-security printing software used to produce lot-tracing labels. P
 
 ### This is a privately-directed project
 
-Please read the [Contribution Guide](https://github.com/LotCom/LotCom-printer/blob/main/CONTRIBUTING.md) for more information.
+Please read the [Contribution Guide](https://github.com/Yamada-North-America/LotCom-printer/blob/main/CONTRIBUTING.md) for more information.
