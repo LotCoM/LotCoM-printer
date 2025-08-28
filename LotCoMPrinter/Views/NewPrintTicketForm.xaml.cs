@@ -76,7 +76,6 @@ public partial class NewPrintTicketForm : Popup
     /// <param name="e"></param>
     private async void OnProcessPickerFocused(object sender, EventArgs e)
     {
-        ProcessPicker.IsEnabled = false;
         try
         {
             await ViewModel.LoadProcesses();
@@ -87,7 +86,6 @@ public partial class NewPrintTicketForm : Popup
             CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             await CloseAsync(Output, TokenSource.Token);
         }
-        ProcessPicker.IsEnabled = true;
     }
 
     /// <summary>
@@ -97,7 +95,6 @@ public partial class NewPrintTicketForm : Popup
     /// <param name="e"></param>
     private async void OnPartPickerFocused(object sender, EventArgs e)
     {
-        PartPicker.IsEnabled = false;
         try
         {
             await ViewModel.LoadParts();
@@ -108,7 +105,6 @@ public partial class NewPrintTicketForm : Popup
             CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             await CloseAsync(Output, TokenSource.Token);
         }
-        PartPicker.IsEnabled = true;
     }
 
     /// <summary>
