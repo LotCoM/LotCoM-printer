@@ -7,7 +7,7 @@
   IgnorableNamespaces="uap rescap">
 
   <!-- ALWAYS set the version to 4 digits for Windows SxS Requirements -->
-  <Identity Name="LotComPrinter" Publisher="E=masonritchason@gmail.com, CN=Mason Ritchason" Version="1.0.0.2" />
+  <Identity Name="LotComPrinter" Publisher="E=masonritchason@gmail.com, CN=Mason Ritchason" Version="1.0.0.21" />
 
   <mp:PhoneIdentity PhoneProductId="F69185D5-8BB2-4FBA-A087-414B199240E7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
