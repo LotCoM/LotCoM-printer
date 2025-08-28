@@ -39,11 +39,11 @@
 ### Operator ID Input
 - Operator identification (initial) input in UI.
 - Refactor `ProcessRequirements` datasource to leverage more code reuse and enforce universal basket data fields.
-- Resolve issue with error messaging on UI validation failure ([#16](https://github.com/LotCoM/LotCoM-printer/issues/16)).
-- Resolve issue with improper JBK # formatting ([#17](https://github.com/LotCoM/LotCoM-printer/issues/17)).
-- Resolve a fatal formatting error in the Deburr JBK # field ([#18](https://github.com/LotCoM/LotCoM-printer/issues/18)).
-- Resolve omission of Process Title in Label text ([#19](https://github.com/LotCoM/LotCoM-printer/issues/19)).
-- Resolve issue with required data fields not hiding/showing on Process ([#20](https://github.com/LotCoM/LotCoM-printer/issues/20)).
+- Resolve issue with error messaging on UI validation failure ([#16](https://github.com/Yamada-North-America/LotCoM-printer/issues/16)).
+- Resolve issue with improper JBK # formatting ([#17](https://github.com/Yamada-North-America/LotCoM-printer/issues/17)).
+- Resolve a fatal formatting error in the Deburr JBK # field ([#18](https://github.com/Yamada-North-America/LotCoM-printer/issues/18)).
+- Resolve omission of Process Title in Label text ([#19](https://github.com/Yamada-North-America/LotCoM-printer/issues/19)).
+- Resolve issue with required data fields not hiding/showing on Process ([#20](https://github.com/Yamada-North-America/LotCoM-printer/issues/20)).
 
 # `v0.4.0`
 ### JBK Queue System
@@ -58,7 +58,7 @@
 
 ## `v0.4.2 (dead branch)`
 #### Improve Serialization Integrity
-- Adress a gap in the serialization system, outlined in [#25](https://github.com/LotCoM/LotCoM-printer/issues/25).
+- Adress a gap in the serialization system, outlined in [#25](https://github.com/Yamada-North-America/LotCoM-printer/issues/25).
 - Approach 1; **not selected for implementation**.
 
 ## `v0.4.21`
@@ -96,8 +96,8 @@ Approach 2:
 
 ## `0.5.1`
 #### Queue Consumption and Reserving (Partial Label)
-- Refactor Serial # assignment and queueing to eliminate the gap outlined in [#53](https://github.com/LotCoM/LotCoM-printer/issues/53).
-- Resolve [#58](https://github.com/LotCoM/LotCoM-printer/issues/58).
+- Refactor Serial # assignment and queueing to eliminate the gap outlined in [#53](https://github.com/Yamada-North-America/LotCoM-printer/issues/53).
+- Resolve [#58](https://github.com/Yamada-North-America/LotCoM-printer/issues/58).
 - Implement standalone `Serialization` namespace, classes, and system.
   - `CachedSerialNumber.cs`: represents a simple `Part Number`: `Serial Number` pair with basic methods.
   - `SerialCache.cs`: controls interaction with the Serial Caching file system and contents.
@@ -117,17 +117,17 @@ Approach 2:
 
 ## `0.5.3`
 #### Serialization, UI Optimization
-- Fix for [#77](https://github.com/LotCoM/LotCoM-printer/issues/77).
-- Fix for [#27](https://github.com/LotCoM/LotCoM-printer/issues/27).
-- Fix for [#59](https://github.com/LotCoM/LotCoM-printer/issues/59).
+- Fix for [#77](https://github.com/Yamada-North-America/LotCoM-printer/issues/77).
+- Fix for [#27](https://github.com/Yamada-North-America/LotCoM-printer/issues/27).
+- Fix for [#59](https://github.com/Yamada-North-America/LotCoM-printer/issues/59).
 
 ## `0.5.4`
 #### More Serialization bug fixes
-- Resolve [#76](https://github.com/LotCoM/LotCoM-printer/issues/76).
-- Resolve [#74](https://github.com/LotCoM/LotCoM-printer/issues/74).
-- Resolve [#22](https://github.com/LotCoM/LotCoM-printer/issues/22).
+- Resolve [#76](https://github.com/Yamada-North-America/LotCoM-printer/issues/76).
+- Resolve [#74](https://github.com/Yamada-North-America/LotCoM-printer/issues/74).
+- Resolve [#22](https://github.com/Yamada-North-America/LotCoM-printer/issues/22).
 ### `0.5.4.2`
-Fix for a silent crash, outlined and documented in [#81](https://github.com/LotCoM/LotCoM-printer/issues/81).
+Fix for a silent crash, outlined and documented in [#81](https://github.com/Yamada-North-America/LotCoM-printer/issues/81).
 ### `0.5.4.3`
 Refactor database access paths to mirror schema change.
 
@@ -146,83 +146,83 @@ Refactor database access paths to mirror schema change.
 
 ## `0.6.0`
 #### Print Logging; UI Optimization and Stylizing
-- [`0.6.0`](https://github.com/LotCoM/LotCoM-printer/pull/87)
-  - Implement print confirmation message (resolve [#85](https://github.com/LotCoM/LotCoM-printer/issues/85)).
+- [`0.6.0`](https://github.com/Yamada-North-America/LotCoM-printer/pull/87)
+  - Implement print confirmation message (resolve [#85](https://github.com/Yamada-North-America/LotCoM-printer/issues/85)).
   - Improve stand-out of entries and dropdowns in the UI.
   - Change UI title from "Print Labels" => "Print WIP Labels".
   - Add Originator/Pass-through indication.
-- [`feature/0.6.1`](https://github.com/LotCoM/LotCoM-printer/pull/94)
+- [`feature/0.6.1`](https://github.com/Yamada-North-America/LotCoM-printer/pull/94)
   - Implement print history logging.
   - Implement an activity indicator from print button click to print job completion.
-- [`bug/91`](https://github.com/LotCoM/LotCoM-printer/pull/96)
+- [`bug/91`](https://github.com/Yamada-North-America/LotCoM-printer/pull/96)
   - Resolve crash on empty form print attempt.
-- [`bug/92`](https://github.com/LotCoM/LotCoM-printer/pull/98)
+- [`bug/92`](https://github.com/Yamada-North-America/LotCoM-printer/pull/98)
   - Resolve double error messages (actual error cause + failed print message).
-- [`bug/95`](https://github.com/LotCoM/LotCoM-printer/pull/99)
+- [`bug/95`](https://github.com/Yamada-North-America/LotCoM-printer/pull/99)
   - Uniform alert raising location (code-behind `MainPage.xaml.cs`).
-- [`bug/93`](https://github.com/LotCoM/LotCoM-printer/pull/100)
+- [`bug/93`](https://github.com/Yamada-North-America/LotCoM-printer/pull/100)
   - Refactor from `IAlertService` implementation to `CommunityToolkit.Maui.Views.Popup` dependency.
   - Improve Popup styles.
-- [`feature/97`](https://github.com/LotCoM/LotCoM-printer/pull/103)
+- [`feature/97`](https://github.com/Yamada-North-America/LotCoM-printer/pull/103)
   - Improve clarity of locked entry controls.
 
 ## `0.6.1`
 #### 
-- [`feature/106`](https://github.com/LotCoM/LotCoM-printer/pull/111)
-  - Bring datasource classes to parity with new Database schemas ([#106](https://github.com/LotCoM/LotCoM-printer/issues/106)).
+- [`feature/106`](https://github.com/Yamada-North-America/LotCoM-printer/pull/111)
+  - Bring datasource classes to parity with new Database schemas ([#106](https://github.com/Yamada-North-America/LotCoM-printer/issues/106)).
     - Process masterlist with Names, Part Lists, etc.
-  - Resolve issue with Model Number logic not disabling/enabling on Part selection as expected ([#107](https://github.com/LotCoM/LotCoM-printer/issues/107)).
+  - Resolve issue with Model Number logic not disabling/enabling on Part selection as expected ([#107](https://github.com/Yamada-North-America/LotCoM-printer/issues/107)).
   - New Datasources:
     - `Process.cs`: Represents a Process in the WIP process-flow.
     - `ProcessData.cs`: Exposes methods for interaction with the Process datasource.
     - `Part.cs`: Represents a Part in the WIP process-flow. 
     - `PartData.cs`: Exposes methods for interaction with the Parts in the Process datasource.
   - Pass more explicit data through MVVM architecture (less processing time, more security and resillience).
-- [`feature/110`](https://github.com/LotCoM/LotCoM-printer/pull/112)
-  - Implement a new UI Capture class to replace the previous (flimsy) dictionary approach ([#110](https://github.com/LotCoM/LotCoM-printer/issues/110)).
-  - Resolve issue with missing Part Name on Partial Label ([#109](https://github.com/LotCoM/LotCoM-printer/issues/109)).
-  - Partially integrate printing process with Process/Part classes ([#108](https://github.com/LotCoM/LotCoM-printer/issues/108)).
+- [`feature/110`](https://github.com/Yamada-North-America/LotCoM-printer/pull/112)
+  - Implement a new UI Capture class to replace the previous (flimsy) dictionary approach ([#110](https://github.com/Yamada-North-America/LotCoM-printer/issues/110)).
+  - Resolve issue with missing Part Name on Partial Label ([#109](https://github.com/Yamada-North-America/LotCoM-printer/issues/109)).
+  - Partially integrate printing process with Process/Part classes ([#108](https://github.com/Yamada-North-America/LotCoM-printer/issues/108)).
   - Slight tweaks to Partial Label formatting.
   - New classes:
     - `InterfaceCapture.cs`: Captures and holds the data input in the UI controls at the time of creation.
     - `Timestamp.cs`: Provides quick and uniform formatting of a `DateTime` object to the desired system format `MM/DD/YYYY-HH:MM:SS`.
-- [`bug/113`](https://github.com/LotCoM/LotCoM-printer/pull/119)
-  - Resolve issue with missing data in Print Logs ([#113](https://github.com/LotCoM/LotCoM-printer/issues/113)).
-- [`feature/114`](https://github.com/LotCoM/LotCoM-printer/pull/116)
-  - Bring Process datasource classes to parity with new Database schema ([#114](https://github.com/LotCoM/LotCoM-printer/issues/114)).
+- [`bug/113`](https://github.com/Yamada-North-America/LotCoM-printer/pull/119)
+  - Resolve issue with missing data in Print Logs ([#113](https://github.com/Yamada-North-America/LotCoM-printer/issues/113)).
+- [`feature/114`](https://github.com/Yamada-North-America/LotCoM-printer/pull/116)
+  - Bring Process datasource classes to parity with new Database schema ([#114](https://github.com/Yamada-North-America/LotCoM-printer/issues/114)).
     - Add each Process' Requirements into the database.
-- [`feature/117`](https://github.com/LotCoM/LotCoM-printer/pull/118)
-  - Implement new Heat Number UI control element ([#117](https://github.com/LotCoM/LotCoM-printer/issues/117)).
-- [`feature/120`](https://github.com/LotCoM/LotCoM-printer/pull/124)
-  - Change Print Logging function to report printing to individual Process datatables ([#120](https://github.com/LotCoM/LotCoM-printer/issues/120)).
+- [`feature/117`](https://github.com/Yamada-North-America/LotCoM-printer/pull/118)
+  - Implement new Heat Number UI control element ([#117](https://github.com/Yamada-North-America/LotCoM-printer/issues/117)).
+- [`feature/120`](https://github.com/Yamada-North-America/LotCoM-printer/pull/124)
+  - Change Print Logging function to report printing to individual Process datatables ([#120](https://github.com/Yamada-North-America/LotCoM-printer/issues/120)).
   - New classes:
     - `PrintLogException.cs`: Custom exception thrown when Print Logging fails and defaults to a dump file.
-- [`feature/122`](https://github.com/LotCoM/LotCoM-printer/pull/123)
-  - Change serialization from Model-based to Part-based ([#122](https://github.com/LotCoM/LotCoM-printer/issues/122)).
+- [`feature/122`](https://github.com/Yamada-North-America/LotCoM-printer/pull/123)
+  - Change serialization from Model-based to Part-based ([#122](https://github.com/Yamada-North-America/LotCoM-printer/issues/122)).
   - New classes:
     - `SerialQueue.cs`: Abstraction of methods and properties from `JBKQueue.cs` and `LotQueue.cs`.
       - These classes have been refactored to extend from `SerialQueue.cs`.
 
 ## `0.6.1.1`
 #### Bugfix
-- [bug/126](https://github.com/LotCoM/LotCoM-printer/pull/127).
-  - Resolve [#126](https://github.com/LotCoM/LotCoM-printer/issues/126).
+- [bug/126](https://github.com/Yamada-North-America/LotCoM-printer/pull/127).
+  - Resolve [#126](https://github.com/Yamada-North-America/LotCoM-printer/issues/126).
 
 ## `0.6.1.2`
 #### Bugfixes
-- [bug/128](https://github.com/LotCoM/LotCoM-printer/pull/134).
-  - Resolve [#128](https://github.com/LotCoM/LotCoM-printer/issues/128).
+- [bug/128](https://github.com/Yamada-North-America/LotCoM-printer/pull/134).
+  - Resolve [#128](https://github.com/Yamada-North-America/LotCoM-printer/issues/128).
   - Implements `GetPartInfo` computed property on `Part.cs`. 
     - Formats `Part.PartNumber` and `Part.PartName` into a singular string that the `PartPicker.ItemDisplayBinding` property can bind to.
-- [bug/130](https://github.com/LotCoM/LotCoM-printer/pull/132).
-  - Resolve [#130](https://github.com/LotCoM/LotCoM-printer/issues/130).
+- [bug/130](https://github.com/Yamada-North-America/LotCoM-printer/pull/132).
+  - Resolve [#130](https://github.com/Yamada-North-America/LotCoM-printer/issues/130).
   - Implements `PassThroughHeadingType` property on `Process.cs`.
     - Matches a new key in the Process Datasource.
     - A `PassThroughHeadingType` value is assigned to Pass-through Processes and nullified on Originator Processes.
     - This property makes Header formatting possible on Pass-through Processes, which do not have a Serialization value.
   - Modifies `MainPageViewModel.FormatLabelHeader()` method to check both `Process.Serialization` and `Process.PassThroughHeadingType` for either `JBK` or `Lot` values before formatting the Label's header.
-- [bug/131](https://github.com/LotCoM/LotCoM-printer/pull/133).
-  - Resolve [#131](https://github.com/LotCoM/LotCoM-printer/issues/131).
+- [bug/131](https://github.com/Yamada-North-America/LotCoM-printer/pull/133).
+  - Resolve [#131](https://github.com/Yamada-North-America/LotCoM-printer/issues/131).
   - Allows `SerialCacheController.RemoveCachedSerialNumber()` to ignore and immediately return null when an empty string passed as the `SerialNumber` parameter.
     - This was previously causing the method to throw an error because it was incapable of locating the empty string in the cache file.
     - Pass-through Processes do not prompt for a Serial Number in the UI, so they pass an empty string as the `SerialNumber` parameter when invoking the `RemoveCachedSerialNumber()` method.
@@ -234,66 +234,66 @@ Introduction of Print Ticket system, a design change where operators can open an
 ## `0.7.0`
 #### Feature Update
 **For Detailed Changes, see PR Messages**
-- [feature/136](https://github.com/LotCoM/LotCoM-printer/pull/139).
+- [feature/136](https://github.com/Yamada-North-America/LotCoM-printer/pull/139).
   - Implementation of base-level architecture for Print Ticketing;
   - Improve LotCom environment parity.
-- [bug/140](https://github.com/LotCoM/LotCoM-printer/pull/142).
+- [bug/140](https://github.com/Yamada-North-America/LotCoM-printer/pull/142).
   - Deprecation/removal of Basket Type and Partial Label features.
-- [feature/141](https://github.com/LotCoM/LotCoM-printer/pull/143).
+- [feature/141](https://github.com/Yamada-North-America/LotCoM-printer/pull/143).
   - Implementation of `Label` base class;
   - Implementation of `LabelDimensions` class to control Label graphical designs/layouts. 
-- [feature/144](https://github.com/LotCoM/LotCoM-printer/pull/145).
+- [feature/144](https://github.com/Yamada-North-America/LotCoM-printer/pull/145).
   - Overhaul of Serialization system to better serve Print Ticketing;
   - Implementation controlled `SerialNumber` class;
   - Deprecation/removal caching features.
-- [feature/146](https://github.com/LotCoM/LotCoM-printer/pull/149).
+- [feature/146](https://github.com/Yamada-North-America/LotCoM-printer/pull/149).
   - Implementation of Print Ticket caching feature.
-- [feature/147](https://github.com/LotCoM/LotCoM-printer/pull/151).
+- [feature/147](https://github.com/Yamada-North-America/LotCoM-printer/pull/151).
   - Implementation of Print Ticket creation feature.
-- [feature/148](https://github.com/LotCoM/LotCoM-printer/pull/152).
+- [feature/148](https://github.com/Yamada-North-America/LotCoM-printer/pull/152).
   - Implementation of Print Ticket selection/loading features.
-- [feature/150](https://github.com/LotCoM/LotCoM-printer/pull/153).
+- [feature/150](https://github.com/Yamada-North-America/LotCoM-printer/pull/153).
   - Stylization to bring to parity with LotCom system designs.
-- [feature/138](https://github.com/LotCoM/LotCoM-printer/pull/154).
+- [feature/138](https://github.com/Yamada-North-America/LotCoM-printer/pull/154).
   - Overhaul of Printing back-end;
   - Deprecation/removal of `InterfaceCapture` features and the single-screen input paradigm.
-- [feature/155](https://github.com/LotCoM/LotCoM-printer/pull/159).
+- [feature/155](https://github.com/Yamada-North-America/LotCoM-printer/pull/159).
   - Implementation of specialized number data type classes.
-- [feature/156](https://github.com/LotCoM/LotCoM-printer/pull/160).
+- [feature/156](https://github.com/Yamada-North-America/LotCoM-printer/pull/160).
   - Implementation of Model Code on Full Basket Labels.
-- [feature/157](https://github.com/LotCoM/LotCoM-printer/pull/162).
+- [feature/157](https://github.com/Yamada-North-America/LotCoM-printer/pull/162).
   - Reorganization of `Models` namespace to support growing source.
-- [bug/158](https://github.com/LotCoM/LotCoM-printer/pull/164).
+- [bug/158](https://github.com/Yamada-North-America/LotCoM-printer/pull/164).
   - Resolution of a bug causing timestamps to always read "00:00:00".
-- [feature/161](https://github.com/LotCoM/LotCoM-printer/pull/165).
+- [feature/161](https://github.com/Yamada-North-America/LotCoM-printer/pull/165).
   - Implementation of Partial Tag printing back-end;
   - Implementation of `Quantity` and `Operator` special data type classes.
-- [bug/166](https://github.com/LotCoM/LotCoM-printer/pull/167).
+- [bug/166](https://github.com/Yamada-North-America/LotCoM-printer/pull/167).
   - Resolution of bugs causing silent crashes on startup;
   - Implementation of improved exception handling throughout Database interactions.
-- [feature/163](https://github.com/LotCoM/LotCoM-printer/pull/168).
+- [feature/163](https://github.com/Yamada-North-America/LotCoM-printer/pull/168).
   - Implementation of manual entry support for JBK and Lot Numbers on special Processes.
 
 ## `0.7.0.1`
 #### Hotfix
-- [hotfix/170](https://github.com/LotCoM/LotCoM-printer/pull/171).
+- [hotfix/170](https://github.com/Yamada-North-America/LotCoM-printer/pull/171).
   - Restores Date information on list items in the Open Tickets Panel.
 
 ## `0.7.0.2`
 #### Bugfix Patch
-- [bug/173](https://github.com/LotCoM/LotCoM-printer/pull/176).
+- [bug/173](https://github.com/Yamada-North-America/LotCoM-printer/pull/176).
   - Labels printed for the Deburr Process now print with JBK Number Headers.
-- [bug/175](https://github.com/LotCoM/LotCoM-printer/pull/177).
+- [bug/175](https://github.com/Yamada-North-America/LotCoM-printer/pull/177).
   - Resolves forced formatting of Deburr JBK Number entry before entry is complete.
-- [bug/174](https://github.com/LotCoM/LotCoM-printer/pull/178).
+- [bug/174](https://github.com/Yamada-North-America/LotCoM-printer/pull/178).
   - Resolves a scaling issue where Labels were cut-off on the production floor computers.
-- [bug/179](https://github.com/LotCoM/LotCoM-printer/pull/180).
+- [bug/179](https://github.com/Yamada-North-America/LotCoM-printer/pull/180).
   - Model Number Entry now auto-fills.
 
 ## `0.7.0.3`
 #### Bugfix Patch
-- [bug/179](https://github.com/LotCoM/LotCoM-printer/pull/182).
-  - The initial [fix](https://github.com/LotCoM/LotCoM-printer/pull/180) for this issue opened a binding-related issue. This subsequent fault has been addressed, restoring intended functionality and truly addressing the Model Number Entry issue.
+- [bug/179](https://github.com/Yamada-North-America/LotCoM-printer/pull/182).
+  - The initial [fix](https://github.com/Yamada-North-America/LotCoM-printer/pull/180) for this issue opened a binding-related issue. This subsequent fault has been addressed, restoring intended functionality and truly addressing the Model Number Entry issue.
 
 ## `0.7.0.4`
 #### Minor feature update
@@ -306,19 +306,19 @@ This update implements the following minor functional features:
 
 #### PRs
 
-- [`feature/184`](https://github.com/LotCoM/LotCoM-printer/pull/185):
+- [`feature/184`](https://github.com/Yamada-North-America/LotCoM-printer/pull/185):
   - Project Model updated to utilize the **LotCom Libraries** class library. 
   - Pulling classes such as **Type** and **Datasources** from the class library helps improve project maintainability by removing the need to maintain copies on each **LotCom** component.
-- [`feature/187`](https://github.com/LotCoM/LotCoM-printer/pull/193):
+- [`feature/187`](https://github.com/Yamada-North-America/LotCoM-printer/pull/193):
   - References to modified Process properties updated to restore intended functionality.
-  - The modifications and additions made to the Database Schema (documented in [LotCom Libraries #6](https://github.com/LotCoM/LotCom-libraries/pull/7)) created faulting references throughout the **LotCom** environment. These references impacted the functionality and usability of the application.
-- [`feature/191`](https://github.com/LotCoM/LotCoM-printer/pull/194):
+  - The modifications and additions made to the Database Schema (documented in [LotCom Libraries #6](https://github.com/Yamada-North-America/LotCom-libraries/pull/7)) created faulting references throughout the **LotCom** environment. These references impacted the functionality and usability of the application.
+- [`feature/191`](https://github.com/Yamada-North-America/LotCoM-printer/pull/194):
   - Implemented Confirmation popups following impactful buttons and actions.
   - To protect the application and the user from unintentionally making impactful changes, confirmation popups were added. Now, there are two levels of action between the user and an impactful choice.
-- [`feature/188`](https://github.com/LotCoM/LotCoM-printer/pull/195):
+- [`feature/188`](https://github.com/Yamada-North-America/LotCoM-printer/pull/195):
   - Implemented new CI/CD automation pipeline to better interface with YNA IT and to improve deployment cleanliness.
   - YNA IT's automation processes generally center on the use of MSI installers. The key difference between MSI and MSIX installers is that MSI installs as the system, while MSIX only installs as the user. This causes issues for their automation and creates incongruous installations. There have been multiple cases of faulting application instances on different computers due to deployment issues. With the MSI installation process, YNA IT can force installation at the system level, ensuring clean and uniform application instances.
-- [`feature/186`](https://github.com/LotCoM/LotCoM-printer/pull/192):
+- [`feature/186`](https://github.com/Yamada-North-America/LotCoM-printer/pull/192):
   - User Interface components redesigned to meet user requests and improve user-friendliness.
   - The original UI was very sterile and low contrast. This interface style is not good for users who aren't familiar with computer systems/don't use a lot of software. Higher contrast and more intense interfaces generally work better for users who are less adept with computer applications.
 
@@ -328,7 +328,7 @@ This update implements the following minor functional features:
 ## `0.7.0.8`
 #### Dependency update
 - Update to new version of **LotCom Libraries**:
-  - [Hotfix](https://github.com/LotCoM/LotCom-libraries/commit/af74e5d0dbc933db70809675086366c6116f2fbd) addressing a silent crash created by `SerializationModeExtensions` when loading the application at Pass-through Process stations.
+  - [Hotfix](https://github.com/Yamada-North-America/LotCom-libraries/commit/af74e5d0dbc933db70809675086366c6116f2fbd) addressing a silent crash created by `SerializationModeExtensions` when loading the application at Pass-through Process stations.
 
 # `0.8`
 ### Reprint Feature Update
@@ -337,36 +337,36 @@ Introduction of the Label Reprint feature, which provides operators with the abi
 ## `0.8.0.0`
 #### Feature Update
 - Design new UI components for the Reprint Label features:
-  - [feature/197](https://github.com/LotCoM/LotCoM-printer/pull/208).
+  - [feature/197](https://github.com/Yamada-North-America/LotCoM-printer/pull/208).
 - Implement a new datasource class to read past printed Labels:
-  - [feature/198](https://github.com/LotCoM/LotCoM-printer/pull/203).
+  - [feature/198](https://github.com/Yamada-North-America/LotCoM-printer/pull/203).
 - Modify print system to process Label reprints separately and differently from initial prints.
 - Updates to Model layer classes to match additions/changes in **LotCom Libraries**:
-  - [feature/210](https://github.com/LotCoM/LotCoM-printer/pull/212).
+  - [feature/210](https://github.com/Yamada-North-America/LotCoM-printer/pull/212).
 
 ## `0.8.0.1`
 #### Feature and Optimization Update
 - Implement Label editing on re-print:
-  - [feature/220](https://github.com/LotCom/LotCom-printer/pull/223).
+  - [feature/220](https://github.com/Yamada-North-America/LotCom-printer/pull/223).
 - Implement TicketEditor UI component:
-  - [feature/207](https://github.com/LotCom/LotCom-printer/pull/215).
+  - [feature/207](https://github.com/Yamada-North-America/LotCom-printer/pull/215).
 - Implement support for A/B split Dies:
-  - [feature/221](https://github.com/LotCom/LotCom-printer/pull/222).
+  - [feature/221](https://github.com/Yamada-North-America/LotCom-printer/pull/222).
 - Resolve issue where Pass-through Processes were force-serialized:
-  - [bug/219](https://github.com/LotCom/LotCom-printer/pull/224).
+  - [bug/219](https://github.com/Yamada-North-America/LotCom-printer/pull/224).
 - Replace legacy **LotCoM** name with new **LotCom** project name: 
-  - [task/name-change](https://github.com/LotCom/LotCom-printer/pull/214).
+  - [task/name-change](https://github.com/Yamada-North-America/LotCom-printer/pull/214).
 - Remove `ModelNumber` logic/references:
-  - [feature/217](https://github.com/LotCom/LotCom-printer/pull/218).
+  - [feature/217](https://github.com/Yamada-North-America/LotCom-printer/pull/218).
   - 
 ## `0.8.0.2`
 #### Hotfix
 - An exception thrown in a UI event handler caused a silent crash:
-  - Resolve [#228](https://github.com/LotCom/LotCom-printer/issues/228).
+  - Resolve [#228](https://github.com/Yamada-North-America/LotCom-printer/issues/228).
 
 # `1.0.0`
 ### API Integration (Long-Term-Support [LTS] established)
-- [`feature/231`](https://github.com/LotCom/LotCom-printer/pull/237):
+- [`feature/231`](https://github.com/Yamada-North-America/LotCom-printer/pull/237):
   - `PrintTicket` now holds the Id of the Print entity it was created from (if applicable). Additionally, casting to and from Print entity has been added. The `PrimaryData` property has been implemented to consolidate initial `Quantity`, `Shift`, and `Operator`. Finally, a safer serialization approach has been leveraged for data storage.
   - `PrintJob` now requires a `TrackedPrintTicket` object, which can now track unmerged changes.
   - UI Pages now have loading and transitioning indicators that are backed by a flag system for loading, success, and failure.
@@ -376,5 +376,5 @@ Introduction of the Label Reprint feature, which provides operators with the abi
 
 ## `1.0.0.2`
 #### HttpClient Hotfix
-- [`feat/1.0.0.2`](https://github.com/LotCom/LotCom-printer/pull/239):
+- [`feat/1.0.0.2`](https://github.com/Yamada-North-America/LotCom-printer/pull/239):
   - Dependency injection of `HttpClient` now allows access to the network through the application.

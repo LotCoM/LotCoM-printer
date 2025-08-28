@@ -29,7 +29,7 @@ jobs:
       run: |
         # retrieve the most recent commit via SHA
         $sha = "${{ github.sha }}"
-        $commitMessage = gh api /repos/lotcom/lotcom-printer/commits/$sha --jq ".commit.message"
+        $commitMessage = gh api /repos/Yamada-North-America/lotcom-printer/commits/$sha --jq ".commit.message"
 
         # parse the version number out of the commit message
         $pattern = '\d+\.\d+\.\d+\.?[\d]*'
@@ -54,7 +54,7 @@ jobs:
       run: |
         # download LotCom Libraries latest
         cd "D:\a\LotCom-printer"
-        git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-libraries.git
+        git clone https://masonritchason:${env:PAT_1}@github.com/Yamada-North-America/LotCom-libraries.git
 
     - name: Install dependencies
       shell: pwsh
@@ -81,7 +81,7 @@ jobs:
       run: |
         # download LotCom-printer-setup latest
         cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter"
-        git clone https://masonritchason:${env:PAT_1}@github.com/LotCom/LotCom-printer-setup.git
+        git clone https://masonritchason:${env:PAT_1}@github.com/Yamada-North-America/LotCom-printer-setup.git
 
     - name: Build setup
       shell: pwsh
