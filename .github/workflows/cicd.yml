@@ -6,6 +6,8 @@ on:
 
 permissions:
   contents: write
+  packages: write
+  actions: write
 
 env:
   DOTNET_VERSION: '9.0.103' # The .NET SDK version to use
