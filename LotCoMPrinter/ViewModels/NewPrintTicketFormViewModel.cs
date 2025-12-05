@@ -313,18 +313,18 @@ public partial class NewPrintTicketFormViewModel : ObservableObject
             // pass-through process
             else
             {
-                TicketNumber = new SerialNumber(SerializationMode.None, Part.Id, "0");
+                TicketNumber = new SerialNumber(SerializationMode.None, Part.Id, 0);
             }
         }
         PrintTicket NewTicket = new PrintTicket(Process, Part, Process.Serialization, TicketNumber, DateTime.Now, new VariableFieldSet(), new PartialDataSet(ProductionQuantity, ProductionShift, ProductionOperator));
         // apply the SerialNumber to the appropriate field and return the new Ticket
         if (NewTicket.SerializationMode == SerializationMode.JBK)
         {
-            NewTicket.VariableFields.JBKNumber = new JBKNumber(int.Parse(NewTicket.SerialNumber.Value));
+            NewTicket.VariableFields.JBKNumber = new JBKNumber(NewTicket.SerialNumber.Value);
         }
         else if (NewTicket.SerializationMode == SerializationMode.Lot)
         {
-            NewTicket.VariableFields.LotNumber = new LotNumber(int.Parse(NewTicket.SerialNumber.Value));
+            NewTicket.VariableFields.LotNumber = new LotNumber(NewTicket.SerialNumber.Value);
         }
         return NewTicket;
     }
