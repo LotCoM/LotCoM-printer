@@ -55,7 +55,7 @@ jobs:
       run: |
         # download LotCom Libraries latest
         cd "D:\a\LotCom-printer"
-        git clone https://masonritchason:${env:PAT_1}@github.com/Yamada-North-America/LotCom-libraries.git
+        git clone https://sourve:${env:PAT_1}@github.com/Yamada-North-America/LotCom-libraries.git
 
     - name: Install dependencies
       shell: pwsh
@@ -82,7 +82,7 @@ jobs:
       run: |
         # download LotCom-printer-setup latest
         cd "D:\a\LotCoM-printer\LotCoM-printer\LotCoMPrinter"
-        git clone https://masonritchason:${env:PAT_1}@github.com/Yamada-North-America/LotCom-printer-setup.git
+        git clone https://sourve:${env:PAT_1}@github.com/Yamada-North-America/LotCom-printer-setup.git
 
     - name: Build setup
       shell: pwsh
